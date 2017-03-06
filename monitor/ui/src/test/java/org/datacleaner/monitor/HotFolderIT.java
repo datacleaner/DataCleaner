@@ -31,8 +31,6 @@ import java.util.Date;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.restassured.RestAssured;
 
@@ -40,7 +38,6 @@ public class HotFolderIT {
     
     private static final String USER_NAME = "admin";
     private static final String USER_PASSWORD = "admin";
-    private static final Logger logger = LoggerFactory.getLogger(HotFolderIT.class); 
     
     @Before
     public void setup() throws IOException {
@@ -54,7 +51,6 @@ public class HotFolderIT {
 
             final Date date = new Date();
             final long time = date.getTime();
-            logger.info("The time is:" + time);
             final String command = "docker exec " + HotFolderHelper.getContainerId()
                     + " /bin/sh /tmp/generate-hot-folder-input.sh";
             HotFolderHelper.getCommandOutput(command);
@@ -63,7 +59,7 @@ public class HotFolderIT {
             boolean findJob;
             do {
                 Thread.sleep(1000);
-                findJob = given().contentType("application/json").when().get("/results?time=" + time).then().statusCode(
+                findJob = given().contentType("application/json").when().get("/results?not_before=" + time).then().statusCode(
                         HttpStatus.SC_OK).extract().body().jsonPath().getString("filename").contains(
                                 "simple_numbers_distribution");
             } while (findJob == false);

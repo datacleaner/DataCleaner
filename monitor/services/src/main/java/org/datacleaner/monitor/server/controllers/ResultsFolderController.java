@@ -19,8 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,15 +52,15 @@ public class ResultsFolderController {
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") final String tenant,
-            @RequestParam(value = "time", required = false) final String timestamp) {
+            @RequestParam(value = "not_before", required = false) final String timestamp) {
         
         
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
         if (timestamp == null || Long.valueOf(timestamp) < 0) {
-            return resultsFolderJsonHelper(tenant);
+            return resultsFolderJsonHelper(tenant, context);
         }
 
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
-        final Timestamp searchedTimestamp = new Timestamp(Long.valueOf(timestamp));
+        final Date searchedTimestamp = new Date(Long.valueOf(timestamp));
         final RepositoryFolder resultsFolder = context.getResultFolder();
 
         final List<Map<String, String>> result = new ArrayList<>();
@@ -73,8 +73,8 @@ public class ResultsFolderController {
                 final String name = file.getName();
                 // get the timestamp of the job
                 final String timestampString = name.substring(name.lastIndexOf("-") + 1, name.indexOf("."));
-                final Timestamp jobTimestamp = new Timestamp(Long.valueOf(timestampString));
-                if (jobTimestamp.after(searchedTimestamp)) {
+                final Date jobDate = new Date(Long.valueOf(timestampString));
+                if (jobDate.after(searchedTimestamp)) {
                     map.put("filename", name);
                     map.put("repository_path", file.getQualifiedPath());
                 }
@@ -87,11 +87,8 @@ public class ResultsFolderController {
         return result;
     }
 
-    private List<Map<String, String>> resultsFolderJsonHelper(final String tenant) {
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
-
+    private List<Map<String, String>> resultsFolderJsonHelper(final String tenant, final TenantContext context) {
         final RepositoryFolder resultsFolder = context.getResultFolder();
-
         final List<Map<String, String>> result = new ArrayList<>();
 
         {

@@ -93,7 +93,7 @@ public class RESTEndpointsIT {
         boolean findJob;
         do {
             Thread.sleep(1000);
-            findJob = given().contentType("application/json").when().get("/results?time=" + time).then().statusCode(
+            findJob = given().contentType("application/json").when().get("/results?not_before=" + time).then().statusCode(
                     HttpStatus.SC_OK).extract().body().jsonPath().getString("filename").contains(jobName);
         } while (findJob == false);
         assertTrue(findJob);

@@ -23,6 +23,9 @@
 <module>
 	<inherits name='com.google.gwt.user.User' />
 
+	<source path='dashboard' />
+	<source path='scheduling' />
 	<source path='shared' />
-	
+	<source path='wizard' />
+
 </module>

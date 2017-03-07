@@ -64,13 +64,11 @@ public class ResultsFolderController {
             for (final RepositoryFile file : files) {
                 final Map<String, String> map = new HashMap<>();
                 final String name = file.getName();
-                if (!isEligibleJob(timestamp, name)) {
-                    continue;
+                if (isEligibleJob(timestamp, name)) {
+                    map.put("filename", name);
+                    map.put("repository_path", file.getQualifiedPath());
+                    result.add(map);
                 }
-                map.put("filename", name);
-                map.put("repository_path", file.getQualifiedPath());
-
-                result.add(map);
             }
         }
 
@@ -88,9 +86,7 @@ public class ResultsFolderController {
         // get the timestamp of the job
         final String timestampString = name.substring(name.lastIndexOf("-") + 1, name.indexOf("."));
         final Date jobDate = new Date(Long.valueOf(timestampString));
-        if (jobDate.after(searchedTimestamp)) {
-            return true;
-        }
-        return false;
+        
+        return jobDate.after(searchedTimestamp); 
     }
 }

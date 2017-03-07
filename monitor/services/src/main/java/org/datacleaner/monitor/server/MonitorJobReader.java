@@ -56,22 +56,38 @@ public class MonitorJobReader {
     }
 
     public AnalysisJob readJob(final Map<String, String> variableOverrides) {
+        return readJob(variableOverrides, null);
+    }
+
+    public AnalysisJob readJob(final Map<String, String> variableOverrides, final Datastore datastore) {
         final JaxbJobReader jobReader = new JaxbJobReader(_configuration);
 
-        // read metadata
+        if (datastore == null) {
+            // Datastore not overridden. Get from metadata
+            return getAnalysisJobInternal(variableOverrides, jobReader);
+        } else {
+            final Func<InputStream, AnalysisJobBuilder> inputStreamAnalysisJobBuilderFunc =
+                    inputStream -> jobReader.create(inputStream, variableOverrides, datastore);
+
+            try (AnalysisJobBuilder jobBuilder = _jobFile.readFile(inputStreamAnalysisJobBuilderFunc)) {
+                return jobBuilder.toAnalysisJob(false);
+            }
+        }
+    }
+
+    private AnalysisJob getAnalysisJobInternal(final Map<String, String> variableOverrides,
+            final JaxbJobReader jobReader) {
+
         final AnalysisJobMetadata metadata =
                 _jobFile.readFile((Func<InputStream, AnalysisJobMetadata>) jobReader::readMetadata);
 
-        final String datastoreName = metadata.getDatastoreName();
-        final Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
-
-        // read job
         final Func<InputStream, AnalysisJobBuilder> readCallback = inputStream -> {
-            if (datastore == null) {
+            if (_configuration.getDatastoreCatalog().getDatastore(metadata.getDatastoreName()) == null) {
+                // Not possible to retrieve a datastore. Put a placeholder in
                 final List<String> sourceColumnPaths = metadata.getSourceColumnPaths();
                 final List<ColumnType> sourceColumnTypes = metadata.getSourceColumnTypes();
                 final PlaceholderDatastore placeholderDatastore =
-                        new PlaceholderDatastore(datastoreName, sourceColumnPaths, sourceColumnTypes);
+                        new PlaceholderDatastore(metadata.getDatastoreName(), sourceColumnPaths, sourceColumnTypes);
 
                 final SourceColumnMapping sourceColumnMapping = new SourceColumnMapping(sourceColumnPaths);
                 sourceColumnMapping.setDatastore(placeholderDatastore);

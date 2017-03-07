@@ -22,6 +22,7 @@ package org.datacleaner.monitor.server.job;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.MetricJobContext;
@@ -38,6 +39,9 @@ public interface DataCleanerJobContext extends XmlJobContext, MetricJobContext {
     AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
 
     AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, Map<String, String> overrideProperties);
+
+    AnalysisJob getAnalysisJob(Map<String, String> variableOverrides, Map<String, String> overrideProperties,
+            Datastore datastore);
 
     AnalysisJob getAnalysisJob();
 

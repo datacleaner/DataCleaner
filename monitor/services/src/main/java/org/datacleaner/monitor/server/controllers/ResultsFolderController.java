@@ -55,14 +55,7 @@ public class ResultsFolderController {
             @RequestParam(value = "not_before", required = false) final String timestamp) {
 
         final TenantContext context = _tenantContextFactory.getContext(tenant);
-        final Date searchedTimestamp;
-        if (timestamp == null || Long.valueOf(timestamp) < 0) {
-            searchedTimestamp = null;
-        } else {
-            searchedTimestamp = new Date(Long.valueOf(timestamp));
-        }
         final RepositoryFolder resultsFolder = context.getResultFolder();
-
         final List<Map<String, String>> result = new ArrayList<>();
 
         {
@@ -71,12 +64,8 @@ public class ResultsFolderController {
             for (final RepositoryFile file : files) {
                 final Map<String, String> map = new HashMap<>();
                 final String name = file.getName();
-                // if the timestamp is not null then we check if we can add the job,
-                // otherwise we continue with loop
-                if (searchedTimestamp != null) {
-                    if (!isEligibleJob(searchedTimestamp, name)) {
-                        continue;
-                    }
+                if (!isEligibleJob(timestamp, name)) {
+                    continue;
                 }
                 map.put("filename", name);
                 map.put("repository_path", file.getQualifiedPath());
@@ -88,14 +77,19 @@ public class ResultsFolderController {
         return result;
     }
 
-    public boolean isEligibleJob(final Date searchedTimestamp, final String name) {
-        if (searchedTimestamp != null) {
-            // get the timestamp of the job
-            final String timestampString = name.substring(name.lastIndexOf("-") + 1, name.indexOf("."));
-            final Date jobDate = new Date(Long.valueOf(timestampString));
-            if (jobDate.after(searchedTimestamp)) {
-                return true;
-            }
+    public boolean isEligibleJob(final String timestamp, final String name) {
+        final Date searchedTimestamp;
+        if (timestamp == null || Long.valueOf(timestamp) < 0) {
+            // we do not care about the timestamp, therefore we add the job to the result
+            return true;
+        } else {
+            searchedTimestamp = new Date(Long.valueOf(timestamp));
+        }
+        // get the timestamp of the job
+        final String timestampString = name.substring(name.lastIndexOf("-") + 1, name.indexOf("."));
+        final Date jobDate = new Date(Long.valueOf(timestampString));
+        if (jobDate.after(searchedTimestamp)) {
+            return true;
         }
         return false;
     }

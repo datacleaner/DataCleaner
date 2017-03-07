@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -49,11 +51,11 @@ public class ResultsFolderController {
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") final String tenant) {
+    public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") final String tenant,
+            @RequestParam(value = "not_before", required = false) final String timestamp) {
+
         final TenantContext context = _tenantContextFactory.getContext(tenant);
-
         final RepositoryFolder resultsFolder = context.getResultFolder();
-
         final List<Map<String, String>> result = new ArrayList<>();
 
         {
@@ -61,12 +63,30 @@ public class ResultsFolderController {
                     resultsFolder.getFiles(null, FileFilters.ANALYSIS_RESULT_SER.getExtension());
             for (final RepositoryFile file : files) {
                 final Map<String, String> map = new HashMap<>();
-                map.put("filename", file.getName());
-                map.put("repository_path", file.getQualifiedPath());
-                result.add(map);
+                final String name = file.getName();
+                if (isEligibleJob(timestamp, name)) {
+                    map.put("filename", name);
+                    map.put("repository_path", file.getQualifiedPath());
+                    result.add(map);
+                }
             }
         }
 
         return result;
+    }
+
+    public boolean isEligibleJob(final String timestamp, final String name) {
+        final Date searchedTimestamp;
+        if (timestamp == null || Long.valueOf(timestamp) < 0) {
+            // we do not care about the timestamp, therefore we add the job to the result
+            return true;
+        } else {
+            searchedTimestamp = new Date(Long.valueOf(timestamp));
+        }
+        // get the timestamp of the job
+        final String timestampString = name.substring(name.lastIndexOf("-") + 1, name.indexOf("."));
+        final Date jobDate = new Date(Long.valueOf(timestampString));
+        
+        return jobDate.after(searchedTimestamp); 
     }
 }

@@ -8,5 +8,4 @@ CMD ["/bin/sh", "-c", "catalina.sh run > /usr/local/tomcat/logs/catalina.out 2>&
 COPY maven/${project.build.finalName}.war /usr/local/tomcat/webapps/${project.build.finalName}.war
 RUN mkdir /tmp/hot_folder
 COPY maven/generate-hot-folder-input.sh /tmp/generate-hot-folder-input.sh
-COPY maven/get-results-count.sh /tmp/get-results-count.sh
 COPY maven/remove-hot-folder.sh /tmp/remove-hot-folder.sh

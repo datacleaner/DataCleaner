@@ -23,10 +23,10 @@ import static io.restassured.RestAssured.basic;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.http.HttpStatus;
 import org.datacleaner.test.MonitorRestEndpoint;
@@ -46,13 +46,14 @@ public class RESTEndpointsIT {
 
     private static final String USER_NAME = "admin";
     private static final String USER_PASSWORD = "admin";
-
+    
     @Rule
     public ExternalResource monitorRestEndpoint = new MonitorRestEndpoint();
 
     @Before
     public void setup() throws IOException {
         RestAssured.authentication = basic(USER_NAME, USER_PASSWORD);
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
     @Test(timeout = 10 * ONE_MINUTE)
@@ -79,25 +80,25 @@ public class RESTEndpointsIT {
         given().multiPart(file).param("hotfolder", hotFolder).when().post(JOBS_PATH).then().statusCode(
                 HttpStatus.SC_OK);
 
+        final Date date = new Date();
+        final long time = date.getTime();
+        
         // check that the job is scheduled with a hot folder
         final boolean scheduleCheck = given().contentType("application/json").when().get("/schedules/" + jobName).then()
                 .statusCode(HttpStatus.SC_OK).extract().body().asString().contains(hotFolder);
 
         assertTrue(scheduleCheck);
 
-        try {
-            // wait for the hot folder trigger and job execution
-            Thread.sleep(20 * 1000);
-        } catch (final InterruptedException e) {
-            fail("Waiting for the job execution was interrupted. " + e.getMessage());
-        }
-
         // check the result
-        final boolean resultCheck = given().contentType("application/json").when().get("/results/").then().statusCode(
-                HttpStatus.SC_OK).extract().body().jsonPath().getString("filename").contains(jobName);
-        assertTrue(resultCheck);
+        boolean findJob;
+        do {
+            Thread.sleep(1000);
+            findJob = given().contentType("application/json").when().get("/results?not_before=" + time).then().statusCode(
+                    HttpStatus.SC_OK).extract().body().jsonPath().getString("filename").contains(jobName);
+        } while (findJob == false);
+        assertTrue(findJob);
 
-        //remove the hot folder 
+        // remove the hot folder
         final String removeHotFolderCommand = "docker exec " + HotFolderHelper.getContainerId()
                 + " /bin/sh /tmp/remove-hot-folder.sh";
         HotFolderHelper.getCommandOutput(removeHotFolderCommand);

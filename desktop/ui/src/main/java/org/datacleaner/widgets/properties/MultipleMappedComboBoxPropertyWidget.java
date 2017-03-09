@@ -139,7 +139,8 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         return false;
     }
 
-    protected DCGroupComboBox createComboBox(final InputColumn<?> inputColumn, final HasColumnMeaning mappedValue) {
+    protected DCGroupComboBox createComboBox(final InputColumn<?> inputColumn,
+            final HasColumnMeaning mappedValue) {
         final DCGroupComboBox comboBox = new DCGroupComboBox();
         fillComboBox(comboBox);
         _mappedComboBoxes.put(inputColumn, comboBox);

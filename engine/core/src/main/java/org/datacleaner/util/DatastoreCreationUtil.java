@@ -38,7 +38,6 @@ import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.OdbDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.XmlDatastore;
-import org.datacleaner.user.MutableDatastoreCatalog;
 
 public class DatastoreCreationUtil {
 
@@ -79,7 +78,7 @@ public class DatastoreCreationUtil {
         return FileDatastoreEnum.getDatastoreTypeFromResource(resource);
     }
 
-    public static Datastore createAndAddUniqueDatastoreFromResource(final DatastoreCatalog catalog,
+    public static Datastore createUniqueDatastoreFromResource(final DatastoreCatalog catalog,
             final Resource resource) {
         String name = resource.getName();
         if (catalog.containsDatastore(name)) {
@@ -89,11 +88,7 @@ public class DatastoreCreationUtil {
                 name = originalName + "_" + prefix++;
             } while (catalog.containsDatastore(name));
         }
-        final Datastore datastore = createDatastoreFromResource(resource, name);
-        if (catalog instanceof MutableDatastoreCatalog) {
-            ((MutableDatastoreCatalog) catalog).addDatastore(datastore);
-        }
-        return datastore;
+        return createDatastoreFromResource(resource, name);
     }
 
     public static Datastore createDatastoreFromResource(final Resource resource, final String datastoreName) {

@@ -22,6 +22,7 @@ package org.datacleaner.monitor.job;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
@@ -76,6 +77,16 @@ public interface JobEngine<T extends JobContext> {
      */
     void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception;
+
+    /**
+     * Executes a job using overridden properties and/or datastore. Not supported by all engines, in which case
+     * overridden values will be silently ignored
+     */
+    default void executeJob(final TenantContext tenantContext, final ExecutionLog execution,
+            final ExecutionLogger executionLogger, final Map<String, String> variables,
+            final Map<String, String> overrideProperties, final Datastore datastore) throws Exception {
+        executeJob(tenantContext, execution, executionLogger, variables);
+    }
 
     /**
      * Requests a cancellation of a running job.

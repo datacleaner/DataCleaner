@@ -206,7 +206,11 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
             @Override
             public void setSelectedIndex(final int index) {
-                super.setSelectedIndex(index, false);
+                if (index == 0) {
+                    super.setSelectedIndex(index, false);
+                } else {
+                    super.setSelectedIndex(index, true);
+                }
             }
         };
 

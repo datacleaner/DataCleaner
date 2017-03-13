@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -226,6 +227,12 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         panel.add(checkBox, BorderLayout.CENTER);
         panel.add(comboBox, BorderLayout.EAST);
         return panel;
+    }
+
+    @Override
+    protected void onValuesBatchSelected(final List<InputColumn<?>> values) {
+        _mappedComboBoxes.values().forEach(cb -> cb.setVisible(false));
+        values.stream().map(_mappedComboBoxes::get).filter(Objects::nonNull).forEach(cb -> cb.setVisible(true));
     }
 
     @Override

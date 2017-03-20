@@ -35,7 +35,7 @@ import org.datacleaner.util.ReflectionUtils;
  * Default {@link ResultDescriptor} implementation which can be used stand-alone
  * or as a delegate for e.g. an {@link AnalyzerDescriptor} implementation.
  */
-final class ResultDescriptorImpl implements ResultDescriptor {
+public final class ResultDescriptorImpl implements ResultDescriptor {
 
     private static final long serialVersionUID = 1L;
 

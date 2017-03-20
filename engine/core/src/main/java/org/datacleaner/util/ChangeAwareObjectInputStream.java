@@ -215,6 +215,9 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
 
         // DataCleaner output writers package changed
         addRenamedPackage("org.datacleaner.output.beans", "org.datacleaner.extension.output");
+
+        // Monitor removal from OSS
+        addRenamedPackage("org.datacleaner.monitor", "com.hi.datacleaner.monitor");
     }
 
     public void addClassLoader(final ClassLoader classLoader) {

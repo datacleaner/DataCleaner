@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns4:schedule xmlns:ns4="http://eobjects.org/datacleaner/schedule/1.0">
-    <ns4:manual-trigger>true</ns4:manual-trigger>
-    <ns4:distributed-execution>false</ns4:distributed-execution>
-    <ns4:run-on-hadoop>true</ns4:run-on-hadoop>
-    <ns4:alerts/>
-</ns4:schedule>

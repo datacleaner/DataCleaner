@@ -21,12 +21,13 @@ package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
@@ -176,13 +177,14 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         final HashMap<String, Set<HasColumnMeaning>> groupedMeanings = new HashMap<>();
         final String nullCategory = "Meanings";
 
-        for (final HasColumnMeaning meaning : _availableColumnMeanings.getSortedColumnMeanings()) {
+        for (final HasColumnMeaning meaning : _availableColumnMeanings.getColumnMeanings()) {
             final String categoryName = meaning.getGroup() == null ? nullCategory : meaning.getGroup();
 
             if (groupedMeanings.containsKey(categoryName)) {
                 groupedMeanings.get(categoryName).add(meaning);
             } else {
-                final Set<HasColumnMeaning> categorySet = new HashSet<>();
+                final Set<HasColumnMeaning> categorySet =
+                        new TreeSet<>(Comparator.comparing(HasColumnMeaning::getName, String.CASE_INSENSITIVE_ORDER));
                 categorySet.add(meaning);
                 groupedMeanings.put(categoryName, categorySet);
             }

@@ -392,19 +392,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         }
 
         final Map<String, String> variables = getVariables(job);
-        if (variableOverrides != null) {
-            final Set<Entry<String, String>> entrySet = variableOverrides.entrySet();
-            for (final Entry<String, String> entry : entrySet) {
-                final String key = entry.getKey();
-                final String value = entry.getValue();
-                final String originalValue = variables.put(key, value);
-                if (originalValue == null) {
-                    logger.debug("Setting variable: {}={}", key, value);
-                } else {
-                    logger.info("Overriding variable: {}={} (original value was {})", key, value, originalValue);
-                }
-            }
-        }
+        overrideVariables(variables, variableOverrides);
 
         final JobMetadataType metadata = job.getJobMetadata();
         if (metadata != null) {
@@ -420,16 +408,32 @@ public class JaxbJobReader implements JobReader<InputStream> {
         final AnalysisJobBuilder builder = new AnalysisJobBuilder(_configuration);
 
         try {
-            return create(job, sourceColumnMapping, metadata, variables, builder);
+            return create(job, sourceColumnMapping, metadata, variables, variableOverrides, builder);
         } catch (final RuntimeException e) {
             FileHelper.safeClose(builder);
             throw e;
         }
     }
 
+    private void overrideVariables(final Map<String, String> variables, final Map<String, String> variableOverrides) {
+        if (variableOverrides != null) {
+            final Set<Entry<String, String>> entrySet = variableOverrides.entrySet();
+            for (final Entry<String, String> entry : entrySet) {
+                final String key = entry.getKey();
+                final String value = entry.getValue();
+                final String originalValue = variables.put(key, value);
+                if (originalValue == null) {
+                    logger.debug("Setting variable: {}={}", key, value);
+                } else {
+                    logger.info("Overriding variable: {}={} (original value was {})", key, value, originalValue);
+                }
+            }
+        }
+    }
+
     private AnalysisJobBuilder create(final JobType job, SourceColumnMapping sourceColumnMapping,
             final JobMetadataType metadata, final Map<String, String> variables,
-            final AnalysisJobBuilder analysisJobBuilder) {
+            final Map<String, String> variableOverrides, final AnalysisJobBuilder analysisJobBuilder) {
 
         final Datastore datastore;
         final DatastoreConnection datastoreConnection;
@@ -479,7 +483,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             final Map<String, InputColumn<?>> inputColumns =
                     readSourceColumns(sourceColumnMapping, analysisJobBuilder, source);
 
-            configureComponents(job, variables, analysisJobBuilder, inputColumns, sourceColumnMapping);
+            configureComponents(job, variables, variableOverrides, analysisJobBuilder, inputColumns, sourceColumnMapping);
 
             return analysisJobBuilder;
         } finally {
@@ -488,8 +492,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     private void configureComponents(final JobType job, final Map<String, String> variables,
-            final AnalysisJobBuilder analysisJobBuilder, final Map<String, InputColumn<?>> inputColumns,
-            final SourceColumnMapping sourceColumnMapping) {
+            final Map<String, String> variableOverrides, final AnalysisJobBuilder analysisJobBuilder,
+            final Map<String, InputColumn<?>> inputColumns, final SourceColumnMapping sourceColumnMapping) {
         final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
         final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
 
@@ -511,10 +515,11 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
         wireRequirements(componentBuilders);
 
-        wireOutputDataStreams(componentBuilders, sourceColumnMapping);
+        wireOutputDataStreams(variableOverrides, componentBuilders, sourceColumnMapping);
     }
 
-    private void wireOutputDataStreams(final Map<ComponentType, ComponentBuilder> componentBuilders,
+    private void wireOutputDataStreams(final Map<String, String> variableOverrides,
+            final Map<ComponentType, ComponentBuilder> componentBuilders,
             final SourceColumnMapping sourceColumnMapping) {
         for (final Map.Entry<ComponentType, ComponentBuilder> entry : componentBuilders.entrySet()) {
             final ComponentType componentType = entry.getKey();
@@ -558,7 +563,11 @@ public class JaxbJobReader implements JobReader<InputStream> {
                                     .getId(), inputColumn));
                 }
 
-                configureComponents(job, getVariables(job), outputDataStreamJobBuilder, inputColumns, sourceColumnMapping);
+                final Map<String, String> variables = getVariables(job);
+                overrideVariables(variables, variableOverrides);
+
+                configureComponents(job, variables, variableOverrides, outputDataStreamJobBuilder, inputColumns,
+                        sourceColumnMapping);
             }
         }
     }
@@ -962,7 +971,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     }
 
                     String stringValue = getValue(property);
-                    String templateValue = null;
+                    String templateValue;
                     if (stringValue == null) {
                         final String variableRef = property.getRef();
 
@@ -970,7 +979,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                             templateValue = property.getTemplate();
                             if (templateValue != null) {
                                 for (final Entry<String, String> variable : variables.entrySet()) {
-                                    templateValue = templateValue.replace("${" + variable.getKey() + "}", variable.getValue());
+                                    templateValue =
+                                            templateValue.replace("${" + variable.getKey() + "}", variable.getValue());
                                 }
                                 stringValue = templateValue;
                             } else {
@@ -983,7 +993,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         if (stringValue == null) {
                             throw new ComponentConfigurationException("No such variable: " + variableRef);
                         }
-                        if (variableRef != null && templateValue == null) {
+                        if (variableRef != null) {
                             builder.getMetadataProperties()
                                     .put(DATACLEANER_JAXB_VARIABLE_PREFIX + configuredProperty.getName(), variableRef);
                         }
@@ -1003,17 +1013,16 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
                         final ArrayList<CoalesceUnit> newUnitsList = new ArrayList<>();
                         final Set<Entry<String, InputColumn<?>>> mappingColumnsSet = mappingInputColumns.entrySet();
-                        for (int i = 0; i < units.length; i++) {
-                            final String[] oldInputColumns = units[i].getInputColumnNames();
+                        for (final CoalesceUnit unit : units) {
+                            final String[] oldInputColumns = unit.getInputColumnNames();
                             final ArrayList<String> newInputColumns = new ArrayList<>();
-                            for (int j = 0; j < oldInputColumns.length; j++) {
+                            for (final String oldColumn : oldInputColumns) {
                                 /*
                                  * Eg. <column id="col_given_name"
                                  * path="given_name" type="STRING"/> The path is
                                  * found in the name of the column:
                                  * datastores.customers.csv.given_name
                                  */
-                                final String oldColumn = oldInputColumns[j];
                                 boolean found = false;
                                 for (final Entry<String, InputColumn<?>> entry : mappingColumnsSet) {
                                     final String column_id = entry.getKey();
@@ -1036,7 +1045,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                                 // the original value. Eg value="[&amp;#91;EQ
                                 // name&amp;#44;NEQ name&amp;#93;]"/>
                                 if (!found) {
-                                    newInputColumns.add(oldInputColumns[j]);
+                                    newInputColumns.add(oldColumn);
                                 }
                             }
 

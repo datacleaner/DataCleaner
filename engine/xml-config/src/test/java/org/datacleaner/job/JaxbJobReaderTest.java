@@ -393,7 +393,7 @@ public class JaxbJobReaderTest extends TestCase {
         assertTrue(file.exists());
         final AnalysisJobBuilder ajb = reader.create(file);
 
-        AnalysisJobBuilder odsjb =
+        final AnalysisJobBuilder odsjb =
                 ajb.getAnalyzerComponentBuilders().get(0).getOutputDataStreamJobBuilder("Complete rows");
 
         final List<TransformerComponentBuilder<?>> tjbs = odsjb.getTransformerComponentBuilders();

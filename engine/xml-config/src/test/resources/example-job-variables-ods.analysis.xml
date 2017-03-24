@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="date-datastore" />
+		<columns>
+			<column id="col_1" path="datestring" />
+		</columns>
+	</source>
+
+	<transformation/>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="Completeness analyzer"/>
+			<properties>
+				<property name="Conditions" value="[NOT_BLANK_OR_NULL]"/>
+				<property name="Evaluation mode" value="ANY_FIELD"/>
+			</properties>
+			<input ref="col_1" name="Values"/>
+			<output-data-stream name="Complete rows">
+				<job>
+					<source>
+						<columns>
+							<column id="col_2" path="datestring" type="STRING"/>
+						</columns>
+						<variables>
+							<variable id="var_datemask" value="[yyyy-MM-dd]" />
+						</variables>
+					</source>
+					<transformation>
+						<transformer>
+							<descriptor ref="Date mask matcher"/>
+							<properties>
+								<property name="Date masks" ref="var_datemask"/>
+								<property name="Output type" value="TRUE_FALSE"/>
+							</properties>
+							<input ref="col_2"/>
+							<output id="col_match" name="Matches date mask?"/>
+						</transformer>
+
+						<transformer>
+							<descriptor ref="Date mask matcher"/>
+							<properties>
+								<property name="Date masks" value="[yy-dd-MM]"/>
+								<property name="Output type" value="TRUE_FALSE"/>
+							</properties>
+							<input ref="col_2"/>
+							<output id="col_match2" name="Matches date mask?"/>
+						</transformer>
+
+						<transformer>
+							<descriptor ref="Convert to date"/>
+							<properties>
+								<property name="Date masks" ref="var_datemask"/>
+								<property name="Null replacement" value="2000-01-01"/>
+								<property name="Time zone" value="Europe/Copenhagen"/>
+							</properties>
+							<input ref="col_2"/>
+							<output id="col_convert" name="Typed date column"/>
+						</transformer>
+					</transformation>
+					<analysis>
+						<analyzer>
+							<descriptor ref="Boolean analyzer"/>
+							<properties/>
+							<input ref="col_match"/>
+						</analyzer>
+						<analyzer>
+							<descriptor ref="Date/time analyzer"/>
+							<properties>
+								<property name="Descriptive statistics" value="false"/>
+							</properties>
+							<input ref="col_convert"/>
+						</analyzer>
+					</analysis>
+				</job>
+			</output-data-stream>
+		</analyzer>
+	</analysis>
+</job>

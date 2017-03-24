@@ -389,11 +389,14 @@ public class JaxbJobReaderTest extends TestCase {
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
                 .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
         final JaxbJobReader reader = new JaxbJobReader(configuration);
-        final File file = new File("src/test/resources/example-job-variables.xml");
+        final File file = new File("src/test/resources/example-job-variables-ods.analysis.xml");
         assertTrue(file.exists());
         final AnalysisJobBuilder ajb = reader.create(file);
 
-        final List<TransformerComponentBuilder<?>> tjbs = ajb.getTransformerComponentBuilders();
+        final AnalysisJobBuilder odsjb =
+                ajb.getAnalyzerComponentBuilders().get(0).getOutputDataStreamJobBuilder("Complete rows");
+
+        final List<TransformerComponentBuilder<?>> tjbs = odsjb.getTransformerComponentBuilders();
 
         final DateMaskMatcherTransformer dateMaskMatcherTransformer1 =
                 (DateMaskMatcherTransformer) tjbs.get(0).getComponentInstance();

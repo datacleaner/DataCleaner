@@ -63,6 +63,9 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
         key = replaceAll(key, " ", "");
         key = replaceAll(key, "_", "");
         key = replaceAll(key, "-", "");
+        // remove all the numbers at the end of a string to avoid words like
+        // ADDRESSLINE1 being mapped to OTHER
+        key = key.replaceAll("\\d*$", "");
 
         return key.toLowerCase();
     }

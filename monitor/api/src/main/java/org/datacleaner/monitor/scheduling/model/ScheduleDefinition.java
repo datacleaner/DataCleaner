@@ -45,6 +45,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     private Map<String, String> _jobMetadataProperties;
     private boolean _runOnHadoop;
     private String _hotFolder;
+    private boolean _exportMetrics;
 
     // no-args constructor
     public ScheduleDefinition() {
@@ -168,6 +169,14 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 
     public void setHotFolder(final String hotFolder) {
         _hotFolder = hotFolder;
+    }
+
+    public Boolean isExportMetrics() {
+        return _exportMetrics;
+    }
+
+    public void setExportMetrics(boolean exportMetrics) {
+        _exportMetrics = exportMetrics;
     }
 
     @Override

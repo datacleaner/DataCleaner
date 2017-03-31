@@ -98,7 +98,11 @@ public class EnumerationValue implements HasName, JsonSerializable, Serializable
                 final Enum<?>[] values = (Enum[]) value;
                 final EnumerationValue[] result = new EnumerationValue[values.length];
                 for (int i = 0; i < result.length; i++) {
-                    result[i] = new EnumerationValue(values[i]);
+                    if (values[i] == null) {
+                        result[i] = null;
+                    } else {
+                        result[i] = new EnumerationValue(values[i]);
+                    }
                 }
                 return result;
             }

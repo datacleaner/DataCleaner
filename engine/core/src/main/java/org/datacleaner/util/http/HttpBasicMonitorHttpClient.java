@@ -56,10 +56,10 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
 
         _context = HttpClientContext.create();
         _context.setCredentialsProvider(credentialsProvider);
-        if(preemptiveAuth) {
-            AuthCache authCache = new BasicAuthCache();
-            BasicScheme basicScheme = new BasicScheme();
-            HttpHost authTarget = new HttpHost(hostname, port);
+        if (preemptiveAuth) {
+            final AuthCache authCache = new BasicAuthCache();
+            final BasicScheme basicScheme = new BasicScheme();
+            final HttpHost authTarget = new HttpHost(hostname, port);
             authCache.put(authTarget, basicScheme);
             _context.setAuthCache(authCache);
         }

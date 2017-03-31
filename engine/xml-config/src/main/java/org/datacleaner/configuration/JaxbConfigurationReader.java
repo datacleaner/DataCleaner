@@ -145,9 +145,18 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbConfigurationReader.class);
 
-    private final JAXBContext _jaxbContext;
+    private static final JAXBContext _jaxbContext;
     private final ConfigurationReaderInterceptor _interceptor;
     private final Deque<String> _variablePathBuilder;
+
+    static {
+        try {
+            _jaxbContext = JAXBContext
+                    .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
+        } catch (final JAXBException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     public JaxbConfigurationReader() {
         this(null);
@@ -159,12 +168,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
         _interceptor = interceptor;
         _variablePathBuilder = new ArrayDeque<>(4);
-        try {
-            _jaxbContext = JAXBContext
-                    .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
-        } catch (final JAXBException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     /**

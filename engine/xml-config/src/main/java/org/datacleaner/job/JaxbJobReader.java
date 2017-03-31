@@ -105,20 +105,23 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbJobReader.class);
 
-    private final JAXBContext _jaxbContext;
+    private static final JAXBContext _jaxbContext;
     private final DataCleanerConfiguration _configuration;
 
-    public JaxbJobReader(final DataCleanerConfiguration configuration) {
-        if (configuration == null) {
-            throw new IllegalArgumentException("Configuration cannot be null");
-        }
-        _configuration = configuration;
+    static {
         try {
             _jaxbContext = JAXBContext
                     .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
         } catch (final JAXBException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public JaxbJobReader(final DataCleanerConfiguration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("Configuration cannot be null");
+        }
+        _configuration = configuration;
     }
 
     private static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,

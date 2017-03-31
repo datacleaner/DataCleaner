@@ -19,12 +19,16 @@
  */
 package org.datacleaner.util.http;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.metamodel.util.FileHelper;
@@ -39,6 +43,11 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
 
     public HttpBasicMonitorHttpClient(final CloseableHttpClient httpClient, final String hostname, final int port,
             final String username, final String password) {
+        this(httpClient, hostname, port, username, password, false);
+    }
+
+    public HttpBasicMonitorHttpClient(final CloseableHttpClient httpClient, final String hostname, final int port,
+            final String username, final String password, final boolean preemptiveAuth) {
         _httpClient = httpClient;
 
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -47,6 +56,13 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
 
         _context = HttpClientContext.create();
         _context.setCredentialsProvider(credentialsProvider);
+        if(preemptiveAuth) {
+            AuthCache authCache = new BasicAuthCache();
+            BasicScheme basicScheme = new BasicScheme();
+            HttpHost authTarget = new HttpHost(hostname, port);
+            authCache.put(authTarget, basicScheme);
+            _context.setAuthCache(authCache);
+        }
     }
 
     @Override

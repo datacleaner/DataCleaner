@@ -95,17 +95,6 @@
 			</modules>
 		</profile>
 		<profile>
-			<id>monitor</id>
-			<modules>
-				<module>api</module>
-				<module>resources</module>
-				<module>testware</module>
-				<module>engine</module>
-				<module>components</module>
-				<module>monitor</module>
-			</modules>
-		</profile>
-		<profile>
 			<id>code-coverage</id>
 			<build>
 				<plugins>

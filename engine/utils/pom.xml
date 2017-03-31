@@ -10,11 +10,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.metamodel</groupId>
 			<artifactId>MetaModel-csv</artifactId>
 		</dependency>

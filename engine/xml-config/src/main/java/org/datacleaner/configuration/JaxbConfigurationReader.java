@@ -144,9 +144,18 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbConfigurationReader.class);
 
-    private final JAXBContext _jaxbContext;
+    private static final JAXBContext _jaxbContext;
     private final ConfigurationReaderInterceptor _interceptor;
     private final Deque<String> _variablePathBuilder;
+
+    static {
+        try {
+            _jaxbContext = JAXBContext
+                    .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
+        } catch (final JAXBException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     public JaxbConfigurationReader() {
         this(null);
@@ -158,12 +167,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
         _interceptor = interceptor;
         _variablePathBuilder = new ArrayDeque<>(4);
-        try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class
-                    .getClassLoader());
-        } catch (JAXBException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     @Override
@@ -665,11 +668,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
                         final String categories = getStringVariable("categories", regexSwapPatternType.getCategories());
                         final List<Category> categoryList = new ArrayList<>();
-                        
+
                         for (String categoryName : categories.split(",")) {
                             categoryList.add(new Category(categoryName, "", ""));
                         }
-                                
+
                         addVariablePath(name);
                         Regex regex = new Regex(
                                 getStringVariable("name", regexSwapPatternType.getName()),
@@ -1213,7 +1216,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     private Datastore createDatastore(String name, FixedWidthDatastoreType fixedWidthDatastore, DataCleanerConfiguration configuration) {
-        final String filename = getStringVariable("filename", fixedWidthDatastore.getFilename());   
+        final String filename = getStringVariable("filename", fixedWidthDatastore.getFilename());
         final Resource resource = _interceptor.createResource(filename, configuration);
         String encoding = getStringVariable("encoding", fixedWidthDatastore.getEncoding());
         if (!StringUtils.isNullOrEmpty(encoding)) {
@@ -1246,7 +1249,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             if (fixedWidthDatastore.getCustomColumnNames() != null) {
                 customColumnNames = fixedWidthDatastore.getCustomColumnNames().getColumnName();
             }
- 
+
             ds = new FixedWidthDatastore(name, resource, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader,
                     eolPresent, headerLineNumber, customColumnNames);
         } else {
@@ -1415,11 +1418,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     public Long getLongVariable(String key, Long valueIfNull) {
         String value = getStringVariable(key, null);
-        
+
         if (value == null) {
             return valueIfNull;
         }
-        
+
         return Long.parseLong(value);
     }
 

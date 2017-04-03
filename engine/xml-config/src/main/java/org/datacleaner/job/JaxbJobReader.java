@@ -105,20 +105,23 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbJobReader.class);
 
-    private final JAXBContext _jaxbContext;
+    private static final JAXBContext _jaxbContext;
     private final DataCleanerConfiguration _configuration;
+
+    static {
+        try {
+            _jaxbContext = JAXBContext
+                    .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
+        } catch (final JAXBException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     public JaxbJobReader(DataCleanerConfiguration configuration) {
         if (configuration == null) {
             throw new IllegalArgumentException("Configuration cannot be null");
         }
         _configuration = configuration;
-        try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                    ObjectFactory.class.getClassLoader());
-        } catch (JAXBException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     /**
@@ -372,7 +375,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         if (job == null) {
             throw new IllegalArgumentException("Job cannot be null");
         }
-      
+
         if (sourceColumnMapping != null && !sourceColumnMapping.isSatisfied()) {
             throw new IllegalArgumentException("Source column mapping is not satisfied!");
         }
@@ -589,12 +592,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
         if (StringUtils.isNullOrEmpty(ref)) {
             throw new IllegalStateException(componentType.getClass().getSimpleName() + " descriptor ref cannot be null");
         }
-        
+
         final ComponentDescriptor<?> descriptor = descriptorProvider.getComponentDescriptorByDisplayName(ref);
         if (descriptor == null) {
             throw new NoSuchComponentException(componentType.getClass(), ref);
         }
-        
+
         return analysisJobBuilder.addComponent(descriptor);
     }
 
@@ -615,7 +618,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
      * Wires input columns from either source or transformer output. This
      * process is an iteration to find the next consumer with
      * "satisfied column requirements".
-     * 
+     *
      * @param inputColumns
      * @param componentBuilders
      */
@@ -758,7 +761,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
     /**
      * Reads the source element of the job to extract a map of column IDs and
      * related source {@link InputColumn}s.
-     * 
+     *
      * @param sourceColumnMapping
      * @param analysisJobBuilder
      * @param source
@@ -909,10 +912,10 @@ public class JaxbJobReader implements JobReader<InputStream> {
             final ComponentDescriptor<?> descriptor = builder.getDescriptor();
 
             final Map<String, String> removedProperties = new HashMap<>();
-            
+
             for (Property property : properties) {
                 final String name = property.getName();
-                
+
                 if (isRemovedProperty(descriptor, name)) {
                     removedProperties.put(name, getValue(property));
                 } else {
@@ -1011,7 +1014,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     logger.debug("Setting property '{}' to {}", name, value);
                 }
             }
-            
+
             processRemovedProperties(builder, stringConverter, descriptor, removedProperties);
         }
         if (metadataPropertiesType != null) {
@@ -1028,10 +1031,10 @@ public class JaxbJobReader implements JobReader<InputStream> {
     private String getPath(List<ColumnType> columnsTypes, final String column_id) {
         for(ColumnType column: columnsTypes){
                if (column_id.equals(column.getId())){
-                   return column.getPath(); 
+                   return column.getPath();
                }
            }
-        return null; 
+        return null;
     }
 
     private static void processRemovedProperties(final ComponentBuilder builder, final StringConverter stringConverter,
@@ -1043,7 +1046,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     private static boolean isRemovedProperty(final ComponentDescriptor<?> descriptor, final String name) {
-        return PlainSearchReplaceTransformer.isRemovedProperty(descriptor, name); 
+        return PlainSearchReplaceTransformer.isRemovedProperty(descriptor, name);
     }
 
     private String getValue(Property property) {

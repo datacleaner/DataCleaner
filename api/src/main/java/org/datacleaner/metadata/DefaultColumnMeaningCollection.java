@@ -56,15 +56,21 @@ public class DefaultColumnMeaningCollection implements ColumnMeaningCollection {
     }
 
     private static String standardizeForMatching(String key) {
-        key = key.trim();
+        key = key.trim().toLowerCase();
         key = replaceAll(key, ".", "");
         key = replaceAll(key, ",", "");
         key = replaceAll(key, "'", "");
         key = replaceAll(key, " ", "");
         key = replaceAll(key, "_", "");
         key = replaceAll(key, "-", "");
+        // remove all the numbers at the end of a string to avoid words like
+        // ADDRESSLINE1 being mapped to OTHER
+        key = key.replaceAll("\\d*$", "");
+        // remove the 'FLD' prefix of some fields such as FLD_FIRSTNAME
+        // so it can be mapped properly
+        key = replaceAll(key, "fld" , "");
 
-        return key.toLowerCase();
+        return key;
     }
 
     private static String replaceAll(String str, final String searchFor, final String replaceWith) {

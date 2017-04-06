@@ -24,6 +24,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ScheduleDefinitionModel {
     private final String _hotFolder;
+    
+    @JsonProperty("exportMetrics")
+    private boolean _exportMetrics;
 
     @JsonCreator
     public ScheduleDefinitionModel(@JsonProperty("hotFolder") final String hotFolder) {
@@ -34,4 +37,11 @@ public class ScheduleDefinitionModel {
         return _hotFolder;
     }
 
+    public boolean isExportMetrics() {
+        return _exportMetrics;
+    }
+
+    public void setExportMetrics(boolean exportMetrics) {
+        _exportMetrics = exportMetrics;
+    }
 }

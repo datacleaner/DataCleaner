@@ -31,7 +31,7 @@ import org.datacleaner.util.http.MonitorHttpClient;
  * Note: Some REST controllers do not need the tenant info. Others do.
  */
 public class DataHubUpdateConnection {
-    public static final String CONTEXT_PATH = "/service/v1";
+    public static final String CONTEXT_PATH = "/datahub/api/v1";
     public static final String GOLDEN_RECORDS_PATH = "/goldenrecords/batch";
     public static final String SOURCE_RECORDS_PATH = "/sourcerecords/batch";
 

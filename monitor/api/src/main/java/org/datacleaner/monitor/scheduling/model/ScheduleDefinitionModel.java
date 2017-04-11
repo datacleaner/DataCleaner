@@ -19,19 +19,28 @@
  */
 package org.datacleaner.monitor.scheduling.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ScheduleDefinitionModel {
-    private final String _hotFolder;
-
-    @JsonCreator
-    public ScheduleDefinitionModel(@JsonProperty("hotFolder") final String hotFolder) {
-        _hotFolder = hotFolder;
-    }
+    @JsonProperty("hotFolder")
+    private String _hotFolder;
+    
+    @JsonProperty("exportMetrics")
+    private boolean _exportMetrics;
 
     public String getHotFolder() {
         return _hotFolder;
     }
 
+    public void setHotFolder(final String hotFolder) {
+        _hotFolder = hotFolder;
+    }
+    
+    public boolean isExportMetrics() {
+        return _exportMetrics;
+    }
+
+    public void setExportMetrics(boolean exportMetrics) {
+        _exportMetrics = exportMetrics;
+    }
 }

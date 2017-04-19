@@ -41,7 +41,7 @@ import org.datacleaner.util.http.MonitorHttpClient;
 public class DataHubRepoConnection {
     private final static String DATASTORES_PATH = "/datastores";
     private final static String CONTEXT_PATH = "/datahub";
-    private final static String REPOSITORY_PATH = "/repository";
+    private final static String REPOSITORY_PATH = "/api/dc-monitor";
     private final static String SCHEMA_EXTENSION = ".schemas";
     private final static String QUERY_EXTENSION = ".query?";
     private final static String USERINFO_PATH = "/_user";

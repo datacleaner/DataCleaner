@@ -8,7 +8,7 @@
 		<version>5.1.6-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>oss-branding</artifactId>
+	<artifactId>DataCleaner-oss-branding</artifactId>
 
 <dependencies>
 	<dependency>

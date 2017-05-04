@@ -18,10 +18,9 @@
  * Boston, MA  02110-1301  USA
  */
 import java.io.IOException;
-import java.net.URL;
 
-public class CategoriesResourceBundle extends ImageLoadingPropertyResourceBundle {
-    public CategoriesResourceBundle() throws IOException {
-        super(CategoriesResourceBundle.class.getClassLoader().getResource("category-images.properties"));
+public class MonitorResourceBundle extends ImageLoadingPropertyResourceBundle {
+    public MonitorResourceBundle() throws IOException {
+        super(MonitorResourceBundle.class.getClassLoader().getResource("monitor-images.properties"));
     }
 }

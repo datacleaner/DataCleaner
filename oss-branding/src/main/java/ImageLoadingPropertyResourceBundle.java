@@ -17,6 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
@@ -36,9 +37,9 @@ import org.slf4j.LoggerFactory;
  * This loads images from a property file containing resource paths.
  */
 public class ImageLoadingPropertyResourceBundle extends ResourceBundle {
-    static final Logger logger = LoggerFactory.getLogger(ImageLoadingPropertyResourceBundle.class);
+    private static final Logger logger = LoggerFactory.getLogger(ImageLoadingPropertyResourceBundle.class);
 
-    final Map<String, String> paths;
+    private final Map<String, String> paths;
 
     @SuppressWarnings("unchecked")
     public ImageLoadingPropertyResourceBundle(final URL url) throws IOException {

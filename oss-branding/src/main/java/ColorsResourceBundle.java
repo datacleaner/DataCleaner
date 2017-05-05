@@ -67,7 +67,7 @@ public class ColorsResourceBundle extends ResourceBundle {
         final Color darkColor = new Color(33, 33, 33);
         _colorMap.put("color.dark", darkColor);
 
-        _colorMap.put("color.darkest", java.awt.Color.BLACK);
+        _colorMap.put("color.darkest", Color.BLACK);
 
         _colorMap.put("color.background.default", Color.WHITE);
         _colorMap.put("color.background.well", brightColor);

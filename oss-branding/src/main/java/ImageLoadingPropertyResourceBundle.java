@@ -39,13 +39,13 @@ import org.slf4j.LoggerFactory;
 public class ImageLoadingPropertyResourceBundle extends ResourceBundle {
     private static final Logger logger = LoggerFactory.getLogger(ImageLoadingPropertyResourceBundle.class);
 
-    private final Map<String, String> paths;
+    private final Map<String, String> _paths;
 
     @SuppressWarnings("unchecked")
     public ImageLoadingPropertyResourceBundle(final URL url) throws IOException {
         final Properties properties = new Properties();
         properties.load(url.openStream());
-        paths = new HashMap(properties);
+        _paths = new HashMap(properties);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ImageLoadingPropertyResourceBundle extends ResourceBundle {
             throw new NullPointerException();
         }
 
-        final String path = paths.get(key);
+        final String path = _paths.get(key);
         if (path == null) {
             logger.warn("No such key {}", key);
             return null;
@@ -75,6 +75,6 @@ public class ImageLoadingPropertyResourceBundle extends ResourceBundle {
 
     @Override
     protected Set<String> handleKeySet() {
-        return paths.keySet();
+        return _paths.keySet();
     }
 }

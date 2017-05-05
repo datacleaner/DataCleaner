@@ -17,8 +17,8 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+
 import java.io.IOException;
-import java.net.URL;
 
 public class CategoriesResourceBundle extends ImageLoadingPropertyResourceBundle {
     public CategoriesResourceBundle() throws IOException {

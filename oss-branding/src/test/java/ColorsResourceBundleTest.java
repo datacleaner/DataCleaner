@@ -37,5 +37,4 @@ public class ColorsResourceBundleTest {
 
         assertEquals(Color.WHITE, resourceBundle.getObject("color.brightest"));
     }
-
 }

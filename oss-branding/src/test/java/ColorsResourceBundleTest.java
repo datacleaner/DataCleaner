@@ -24,13 +24,14 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.util.ResourceBundle;
 
+import org.datacleaner.branding.ColorsResourceBundle;
 import org.junit.Test;
 
 public class ColorsResourceBundleTest {
     @Test
     public void testColorsResourceBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = ColorsResourceBundle.getBundle("ColorsResourceBundle");
+        final ResourceBundle resourceBundle = ColorsResourceBundle.getBundle("org.datacleaner.branding.ColorsResourceBundle");
 
         assertTrue(resourceBundle.getObject("color.orange.dark") instanceof Color);
         assertTrue(resourceBundle.getObject("color.background.alternative") instanceof Color);

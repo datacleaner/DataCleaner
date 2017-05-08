@@ -23,6 +23,14 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Image;
 import java.util.ResourceBundle;
 
+import org.datacleaner.branding.CategoriesResourceBundle;
+import org.datacleaner.branding.ComponentInstanceResourceBundle;
+import org.datacleaner.branding.ComponentTypeResourceBundle;
+import org.datacleaner.branding.DatastoreTypeResourceBundle;
+import org.datacleaner.branding.DesktopUiResourceBundle;
+import org.datacleaner.branding.FileTypeResourceBundle;
+import org.datacleaner.branding.ModelResourceBundle;
+import org.datacleaner.branding.MonitorResourceBundle;
 import org.junit.Test;
 
 public class ImageLoadingResourceBundleTest {
@@ -30,14 +38,14 @@ public class ImageLoadingResourceBundleTest {
     @Test
     public void testCategoriesResourceBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = CategoriesResourceBundle.getBundle("CategoriesResourceBundle");
+        final ResourceBundle resourceBundle = CategoriesResourceBundle.getBundle("org.datacleaner.branding.CategoriesResourceBundle");
         assertTrue(resourceBundle.getObject("component.category.DateAndTimeCategory") instanceof Image);
     }
 
     @Test
     public void testComponentTypeResourceBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = ComponentTypeResourceBundle.getBundle("ComponentTypeResourceBundle");
+        final ResourceBundle resourceBundle = ComponentTypeResourceBundle.getBundle("org.datacleaner.branding.ComponentTypeResourceBundle");
         assertTrue(resourceBundle.getObject("component.type.category") instanceof Image);
     }
 
@@ -45,14 +53,14 @@ public class ImageLoadingResourceBundleTest {
     public void testComponentInstanceResourceBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
         final ResourceBundle resourceBundle =
-                ComponentInstanceResourceBundle.getBundle("ComponentInstanceResourceBundle");
+                ComponentInstanceResourceBundle.getBundle("org.datacleaner.branding.ComponentInstanceResourceBundle");
         assertTrue(resourceBundle.getObject("component.instance.ConvertToBooleanTransformer") instanceof Image);
     }
 
     @Test
     public void testDatastoreTypeResourceBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = DatastoreTypeResourceBundle.getBundle("DatastoreTypeResourceBundle");
+        final ResourceBundle resourceBundle = DatastoreTypeResourceBundle.getBundle("org.datacleaner.branding.DatastoreTypeResourceBundle");
 
         assertTrue(resourceBundle.getObject("datastore.type.couchdb") instanceof Image);
         assertTrue(resourceBundle.getObject("datastore.type.database.kettle") instanceof Image);
@@ -61,7 +69,7 @@ public class ImageLoadingResourceBundleTest {
     @Test
     public void testDesktopUiResourceBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = DesktopUiResourceBundle.getBundle("DesktopUiResourceBundle");
+        final ResourceBundle resourceBundle = DesktopUiResourceBundle.getBundle("org.datacleaner.branding.DesktopUiResourceBundle");
 
         assertTrue(resourceBundle.getObject("desktop.actions.close_bright") instanceof Image);
         assertTrue(resourceBundle.getObject("desktop.chart-types.scatter") instanceof Image);
@@ -72,21 +80,21 @@ public class ImageLoadingResourceBundleTest {
     @Test
     public void testFileTypeResourceBundleBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = FileTypeResourceBundle.getBundle("FileTypeResourceBundle");
+        final ResourceBundle resourceBundle = FileTypeResourceBundle.getBundle("org.datacleaner.branding.FileTypeResourceBundle");
         assertTrue(resourceBundle.getObject("filetypes.new-folder") instanceof Image);
     }
 
     @Test
     public void testModelResourceBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = ModelResourceBundle.getBundle("ModelResourceBundle");
+        final ResourceBundle resourceBundle = ModelResourceBundle.getBundle("org.datacleaner.branding.ModelResourceBundle");
         assertTrue(resourceBundle.getObject("model.progress_information") instanceof Image);
     }
 
     @Test
     public void testMonitorResourceBundleHasImage() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = MonitorResourceBundle.getBundle("MonitorResourceBundle");
+        final ResourceBundle resourceBundle = MonitorResourceBundle.getBundle("org.datacleaner.branding.MonitorResourceBundle");
 
         assertTrue(resourceBundle.getObject("monitor.extensions.jdbc-wizard-background") instanceof Image);
         assertTrue(resourceBundle.getObject("monitor.services.launch-datacleaner-app-icon") instanceof Image);

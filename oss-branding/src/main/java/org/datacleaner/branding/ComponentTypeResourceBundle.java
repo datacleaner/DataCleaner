@@ -18,6 +18,8 @@
  * Boston, MA  02110-1301  USA
  */
 
+package org.datacleaner.branding;
+
 import java.io.IOException;
 
 public class ComponentTypeResourceBundle extends ImageLoadingPropertyResourceBundle {

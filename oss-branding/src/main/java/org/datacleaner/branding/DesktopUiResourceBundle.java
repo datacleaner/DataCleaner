@@ -18,10 +18,12 @@
  * Boston, MA  02110-1301  USA
  */
 
+package org.datacleaner.branding;
+
 import java.io.IOException;
 
-public class ComponentInstanceResourceBundle extends ImageLoadingPropertyResourceBundle {
-    public ComponentInstanceResourceBundle() throws IOException {
-        super(ComponentInstanceResourceBundle.class.getClassLoader().getResource("component-images.properties"));
+public class DesktopUiResourceBundle extends ImageLoadingPropertyResourceBundle {
+    public DesktopUiResourceBundle() throws IOException {
+        super(DesktopUiResourceBundle.class.getClassLoader().getResource("desktop-ui-images.properties"));
     }
 }

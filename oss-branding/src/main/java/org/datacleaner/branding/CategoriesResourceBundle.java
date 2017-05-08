@@ -18,10 +18,12 @@
  * Boston, MA  02110-1301  USA
  */
 
+package org.datacleaner.branding;
+
 import java.io.IOException;
 
-public class FileTypeResourceBundle extends ImageLoadingPropertyResourceBundle {
-    public FileTypeResourceBundle() throws IOException {
-        super(FileTypeResourceBundle.class.getClassLoader().getResource("filetype-images.properties"));
+public class CategoriesResourceBundle extends ImageLoadingPropertyResourceBundle {
+    public CategoriesResourceBundle() throws IOException {
+        super(CategoriesResourceBundle.class.getClassLoader().getResource("category-images.properties"));
     }
 }

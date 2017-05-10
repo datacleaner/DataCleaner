@@ -17,10 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+
+package org.datacleaner.branding;
+
 import java.io.IOException;
 
-public class MonitorResourceBundle extends ImageLoadingPropertyResourceBundle {
-    public MonitorResourceBundle() throws IOException {
-        super(MonitorResourceBundle.class.getClassLoader().getResource("monitor-images.properties"));
+public class FileTypeResourceBundle extends ImageLoadingPropertyResourceBundle {
+    public FileTypeResourceBundle() throws IOException {
+        super(FileTypeResourceBundle.class.getClassLoader().getResource("filetype-images.properties"));
     }
 }

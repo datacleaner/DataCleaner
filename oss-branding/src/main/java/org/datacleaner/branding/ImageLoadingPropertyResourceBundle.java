@@ -18,6 +18,8 @@
  * Boston, MA  02110-1301  USA
  */
 
+package org.datacleaner.branding;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;

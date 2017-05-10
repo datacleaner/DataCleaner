@@ -17,11 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-import java.io.IOException;
-import java.net.URL;
 
-public class CategoriesResourceBundle extends ImageLoadingPropertyResourceBundle {
-    public CategoriesResourceBundle() throws IOException {
-        super(CategoriesResourceBundle.class.getClassLoader().getResource("category-images.properties"));
+package org.datacleaner.branding;
+
+import java.io.IOException;
+
+public class DatastoreTypeResourceBundle extends ImageLoadingPropertyResourceBundle {
+    public DatastoreTypeResourceBundle() throws IOException {
+        super(DatastoreTypeResourceBundle.class.getClassLoader().getResource("datastore-type-images.properties"));
     }
 }

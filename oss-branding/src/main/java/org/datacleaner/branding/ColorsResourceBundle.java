@@ -72,7 +72,7 @@ public class ColorsResourceBundle extends ResourceBundle {
                 return Color.WHITE;
             }
         } else {
-            return (Color) handleGetObject(valueDefinition);
+            return Color.WHITE;
         }
     }
 

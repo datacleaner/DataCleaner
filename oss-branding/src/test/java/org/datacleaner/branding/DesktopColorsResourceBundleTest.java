@@ -34,7 +34,6 @@ public class DesktopColorsResourceBundleTest {
                 DesktopColorsResourceBundle.getBundle("org.datacleaner.branding.DesktopColorsResourceBundle");
         assertTrue(resourceBundle.getObject("color.blue.medium") instanceof Color); // some HEX
         assertTrue(resourceBundle.getObject("color.semitransparent") instanceof Color); // some rgba
-        assertTrue(resourceBundle.getObject("color.background.alternative") instanceof Color); // some variable
         assertEquals(Color.WHITE, resourceBundle.getObject("color.brightest")); // some particular value
     }
 }

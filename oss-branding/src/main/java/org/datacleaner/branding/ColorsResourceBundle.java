@@ -21,75 +21,81 @@
 package org.datacleaner.branding;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ColorsResourceBundle extends ResourceBundle {
-    private Map<String, Color> _colorMap;
+    private static final String RGBA = "rgba";
+    private static final Logger logger = LoggerFactory.getLogger(ImageLoadingPropertyResourceBundle.class);
+    private final Map<String, String> _colors;
 
-    public ColorsResourceBundle() {
-        _colorMap = new HashMap<>();
-        // blue base color of DC styling (#05b9f0)
-        _colorMap.put("color.blue.medium", new Color(5, 185, 240));
-        _colorMap.put("color.blue.bright", new Color(11, 205, 255));
-        _colorMap.put("color.blue.dark", new Color(4, 166, 216));
-
-        // green base color of DC styling (#70be44)
-        _colorMap.put("color.green", new Color(122, 190, 68));
-        _colorMap.put("color.green.bright", new Color(135, 211, 75));
-        _colorMap.put("color.green.dark", new Color(109, 171, 61));
-
-        // orange base color of DC styling (#f58132)
-        _colorMap.put("color.orange", new Color(245, 129, 50));
-        _colorMap.put("color.orange.bright", new Color(255, 143, 55));
-        _colorMap.put("color.orange.dark", new Color(220, 116, 45));
-
-        // white with 10% alpha/opacity
-        _colorMap.put("color.semitransparent", new Color(0.0f, 0.0f, 0.0f, 0.05f));
-
-        // white
-        _colorMap.put("color.brightest", Color.WHITE);
-
-        // #e1e1e1 (silver-ish)
-        final Color brightColor = new Color(245, 245, 245);
-        _colorMap.put("color.bright", brightColor);
-
-        // slightly darker than BRIGHT
-        _colorMap.put("color.semibright", new Color(220, 220, 220));
-
-        // #a0a0a0
-        _colorMap.put("color.medium", new Color(130, 140, 150));
-
-        _colorMap.put("color.semidark", new Color(55, 55, 55));
-
-        final Color darkColor = new Color(33, 33, 33);
-        _colorMap.put("color.dark", darkColor);
-
-        _colorMap.put("color.darkest", Color.BLACK);
-
-        _colorMap.put("color.background.default", Color.WHITE);
-        _colorMap.put("color.background.well", brightColor);
-        _colorMap.put("color.background.alternative", darkColor);
-
-        // additional colors, only intended for special widget coloring such as
-        // charts etc.
-        // Red: #d32424
-        _colorMap.put("color.red.bright", new Color(211, 36, 36));
-
-        // Purple: #d3249c
-        _colorMap.put("color.purple.bright", new Color(211, 36, 156));
-
-        // Cyan: #24d1d3
-        _colorMap.put("color.cyan.bright", new Color(36, 209, 211));
+    public ColorsResourceBundle(final URL url) throws IOException {
+        final Properties properties = new Properties();
+        properties.load(url.openStream());
+        _colors = new HashMap(properties);
     }
 
     @Override
     protected Object handleGetObject(final String key) {
-        return _colorMap.get(key);
+        if (key == null) {
+            throw new NullPointerException();
+        }
+
+        final String value = _colors.get(key);
+
+        if (value == null) {
+            logger.warn("No such key {}", key);
+            return null;
+        }
+
+        return createColor(value);
+    }
+
+    private Color createColor(final String valueDefinition) {
+        if (valueDefinition.startsWith("#")) {
+            return Color.decode(valueDefinition);
+        } else if (valueDefinition.startsWith(RGBA)) {
+            try {
+                final float[] values = parseColorValues(valueDefinition);
+                return new Color(values[0], values[1], values[2], values[3]);
+            } catch (final Exception e) {
+                return Color.WHITE;
+            }
+        } else {
+            return (Color) handleGetObject(valueDefinition);
+        }
+    }
+
+    private float[] parseColorValues(final String text) throws IllegalArgumentException {
+        // rgba(10, 20, 30, 0) => Color(10.0, 20.0, 30.0, 0)
+        final String[] valueParts = text.replaceAll(" ", "").substring(RGBA.length() + 1, text.length() - 1).split(",");
+
+        if (valueParts.length == 3) {
+            return new float[] {
+                    Float.parseFloat(valueParts[0]),
+                    Float.parseFloat(valueParts[1]),
+                    Float.parseFloat(valueParts[2]),
+            };
+        } else if (valueParts.length == 4) {
+            return new float[] {
+                    Float.parseFloat(valueParts[0]),
+                    Float.parseFloat(valueParts[1]),
+                    Float.parseFloat(valueParts[2]),
+                    Float.parseFloat(valueParts[3]),
+            };
+        } else {
+            throw new IllegalArgumentException("Definition '" + text + "' was not recognized as a valid color. ");
+        }
     }
 
     @Override
@@ -99,6 +105,6 @@ public class ColorsResourceBundle extends ResourceBundle {
 
     @Override
     protected Set<String> handleKeySet() {
-        return _colorMap.keySet();
+        return _colors.keySet();
     }
 }

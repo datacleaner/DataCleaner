@@ -279,5 +279,10 @@
 			<version>1.4</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-oss-branding</artifactId>
+			<version>5.1.6-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

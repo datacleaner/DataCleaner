@@ -1,4 +1,4 @@
-/**
+package org.datacleaner.branding; /**
  * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
  *
@@ -23,14 +23,6 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Image;
 import java.util.ResourceBundle;
 
-import org.datacleaner.branding.CategoriesResourceBundle;
-import org.datacleaner.branding.ComponentInstanceResourceBundle;
-import org.datacleaner.branding.ComponentTypeResourceBundle;
-import org.datacleaner.branding.DatastoreTypeResourceBundle;
-import org.datacleaner.branding.DesktopUiResourceBundle;
-import org.datacleaner.branding.FileTypeResourceBundle;
-import org.datacleaner.branding.ModelResourceBundle;
-import org.datacleaner.branding.MonitorResourceBundle;
 import org.junit.Test;
 
 public class ImageLoadingResourceBundleTest {

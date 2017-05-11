@@ -17,25 +17,23 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+package org.datacleaner.branding;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.awt.Color;
 import java.util.ResourceBundle;
 
-import org.datacleaner.branding.ColorsResourceBundle;
 import org.junit.Test;
 
-public class ColorsResourceBundleTest {
+public class DesktopColorsResourceBundleTest {
     @Test
-    public void testColorsResourceBundleHasImage() {
+    public void testDesktopColorsResourceBundle() {
         // Only using concrete class directly so static analysis knows that it is being used.
-        final ResourceBundle resourceBundle = ColorsResourceBundle.getBundle("org.datacleaner.branding.ColorsResourceBundle");
-
-        assertTrue(resourceBundle.getObject("color.orange.dark") instanceof Color);
-        assertTrue(resourceBundle.getObject("color.background.alternative") instanceof Color);
-
-        assertEquals(Color.WHITE, resourceBundle.getObject("color.brightest"));
+        final ResourceBundle resourceBundle =
+                DesktopColorsResourceBundle.getBundle("org.datacleaner.branding.DesktopColorsResourceBundle");
+        assertTrue(resourceBundle.getObject("color.blue.medium") instanceof Color); // some HEX
+        assertTrue(resourceBundle.getObject("color.semitransparent") instanceof Color); // some rgba
+        assertEquals(Color.WHITE, resourceBundle.getObject("color.brightest")); // some particular value
     }
 }

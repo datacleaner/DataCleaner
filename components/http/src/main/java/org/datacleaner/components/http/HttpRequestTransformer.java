@@ -150,7 +150,8 @@ public class HttpRequestTransformer implements Transformer {
         if (headers != null) {
             final Set<Entry<String, String>> entries = headers.entrySet();
             for (final Entry<String, String> entry : entries) {
-                request.setHeader(entry.getKey(), entry.getValue());
+                final String finalValue = applyVariablesToString(entry.getValue(), inputRow).trim();
+                request.setHeader(entry.getKey(), finalValue);
             }
         }
 

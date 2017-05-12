@@ -86,7 +86,6 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         _securityTokenTextField.getDocument().addDocumentListener(genericDocumentListener);
         _endpointUrlComboBox.addListener(item -> validateAndUpdate());
 
-
         if (originalDatastore != null) {
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEditable(false);
@@ -114,10 +113,6 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         }
 
         final String securityToken = _securityTokenTextField.getText();
-        if (StringUtils.isNullOrEmpty(securityToken)) {
-            setStatusError("Please enter Salesforce security token");
-            return false;
-        }
 
         final String endpointUrl = getUrlFromComboBox();
 

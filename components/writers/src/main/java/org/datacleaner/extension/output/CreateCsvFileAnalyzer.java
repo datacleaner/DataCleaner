@@ -42,6 +42,7 @@ import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.FileProperty;
@@ -123,12 +124,14 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
     private Resource _targetResource;
     private int _indexOfColumnToBeSortedOn = -1;
     private boolean _isColumnToBeSortedOnPresentInInput = true;
+    private File tempFile = null;
 
     @Initialize
     public void initTempFile() throws Exception {
         if (_targetResource == null) {
             if (columnToBeSortedOn != null) {
-                _targetResource = new FileResource(File.createTempFile("csv_file_analyzer", ".csv"));
+                 tempFile = File.createTempFile("csv_file_analyzer", ".csv");
+                _targetResource = new FileResource(tempFile);
             } else {
                 _targetResource = file;
             }
@@ -305,7 +308,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
 
             sortMergeWriter.write(file);
         }
-
+        
         final Datastore datastore = new CsvDatastore(file.getName(), file, csvConfiguration);
         return new WriteDataResultImpl(rowCount, datastore, null, null);
     }
@@ -321,5 +324,13 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
     @Override
     public boolean isDistributable() {
         return columnToBeSortedOn == null;
+    }
+
+    @Close
+    public void close() {
+      //delete the temporary file
+        if (tempFile != null) {
+            tempFile.delete();
+        }
     }
 }

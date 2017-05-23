@@ -328,7 +328,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Close
     public void close() {
-      //delete the temporary file
+        // delete the temporary file
         if (tempFile != null) {
             tempFile.delete();
         }

@@ -330,7 +330,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     
     @Close
     public void close() {
-      //delete the temporary file
+        // delete the temporary file
         if (isTempFile) {
             _targetFile.delete();
         }

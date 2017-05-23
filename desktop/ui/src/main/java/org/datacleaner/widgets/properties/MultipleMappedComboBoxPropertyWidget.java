@@ -135,6 +135,10 @@ public class MultipleMappedComboBoxPropertyWidget extends MultipleInputColumnsPr
         return _mappedComboBoxPropertyWidget;
     }
 
+    public Map<InputColumn<?>, DCGroupComboBox> getMappedComboBoxes() {
+        return _mappedComboBoxes;
+    }
+
     @Override
     protected boolean isAllInputColumnsSelectedIfNoValueExist() {
         return false;

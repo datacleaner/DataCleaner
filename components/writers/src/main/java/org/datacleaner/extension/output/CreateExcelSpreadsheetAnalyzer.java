@@ -42,6 +42,7 @@ import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Distributed;
@@ -99,12 +100,14 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     private File _targetFile;
     private int indexOfColumnToBeSortedOn = -1;
     private boolean isColumnToBeSortedOnPresentInInput = true;
+    private boolean isTempFile = false;
 
     @Initialize
     public void initTempFile() throws Exception {
         if (_targetFile == null) {
             if (columnToBeSortedOn != null) {
                 _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
+                isTempFile = true; 
             } else {
                 _targetFile = file;
             }
@@ -323,6 +326,14 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     public void setSheetName(final String sheetName) {
         this.sheetName = sheetName;
+    }
+    
+    @Close
+    public void close() {
+        // delete the temporary file
+        if (isTempFile) {
+            _targetFile.delete();
+        }
     }
 
 }

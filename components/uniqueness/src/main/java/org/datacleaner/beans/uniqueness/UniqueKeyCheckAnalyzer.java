@@ -164,6 +164,9 @@ public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerRe
         final int nullCount = _nullCount.get();
         final int uniqueCount = rowCount - nullCount - nonUniqueCount;
 
+        // delete the temporary file
+        file.delete();
+
         return new UniqueKeyCheckAnalyzerResult(rowCount, uniqueCount, nonUniqueCount, nullCount, samples);
     }
 }

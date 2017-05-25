@@ -19,53 +19,42 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableModel;
 
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.util.AlphabeticSequence;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.guice.Nullable;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImmutableEntry;
-import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
-import org.datacleaner.widgets.CustomColumnNamesWidget;
-import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.HeaderLineComboBox;
 import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
-import org.jdesktop.swingx.JXTextField;
+import org.datacleaner.widgets.table.DCEditableTable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 
 public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatastoreDialog<FixedWidthDatastore> {
 
@@ -75,80 +64,56 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
     private final JCheckBox _failOnInconsistenciesCheckBox;
     private final JCheckBox _skipEbcdicHeaderCheckBox;
     private final JCheckBox _eolPresentCheckBox;
-    private final List<JXTextField> _valueWidthTextFields;
-    private final DCPanel _valueWidthsPanel;
-    private final DCLabel _lineWidthLabel;
+    private final DCEditableTable _columnsTable;
     private final HeaderLineComboBox _headerLineComboBox;
-    private final JButton _addValueWidthButton;
-    private final JButton _removeValueWidthButton;
-    private final DocumentListener _updatePreviewTableDocumentListener;
-    private final CustomColumnNamesWidget _columnNamesWidget;
-
     private volatile boolean showPreview = true;
-
-    private Set<JTextField> _columnNameFields = new HashSet<>();
 
     @Inject
     protected FixedWidthDatastoreDialog(@Nullable final FixedWidthDatastore originalDatastore,
             final MutableDatastoreCatalog mutableDatastoreCatalog, final WindowContext windowContext,
             final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, configuration, userPreferences);
-        _updatePreviewTableDocumentListener = new DCDocumentListener() {
-            @Override
-            protected void onChange(final DocumentEvent event) {
-                onSettingsUpdated(false);
-            }
-        };
-        _lineWidthLabel = DCLabel.bright("");
-        _valueWidthsPanel = new DCPanel();
-        _valueWidthsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
-        _valueWidthTextFields = new ArrayList<>();
-        _encodingComboBox = new CharSetEncodingComboBox();
-        _addValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
-        _removeValueWidthButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
+        _columnsTable =
+                new DCEditableTable(new String[] { "Name", "Width" }, new Class[] { String.class, Integer.class });
 
-        _headerLineComboBox = new HeaderLineComboBox();
+        _encodingComboBox = new CharSetEncodingComboBox();
+
+        _headerLineComboBox = new HeaderLineComboBox(false); // usually fixed width files don't have headers
 
         _failOnInconsistenciesCheckBox = createCheckBox("Fail on inconsistent line length", true);
         _skipEbcdicHeaderCheckBox = createCheckBox("Input file contains a header that should be skipped", false);
         _eolPresentCheckBox = createCheckBox("Input file contains new line characters", true);
 
         if (originalDatastore != null) {
-            _columnNamesWidget = new CustomColumnNamesWidget(originalDatastore.getCustomColumnNames());
-
             _encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
             _failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
             _skipEbcdicHeaderCheckBox.setSelected(originalDatastore.isSkipEbcdicHeader());
             _eolPresentCheckBox.setSelected(originalDatastore.isEolPresent());
 
+            final List<String> customColumnNames = originalDatastore.getCustomColumnNames();
             final int[] valueWidths = originalDatastore.getValueWidths();
-            for (final int valueWidth : valueWidths) {
-                addValueWidthTextField(valueWidth);
+
+            final DefaultTableModel model = (DefaultTableModel) _columnsTable.getModel();
+            model.setRowCount(Math.max(valueWidths.length, customColumnNames.size()));
+
+            for (int rowIndex = 0; rowIndex < customColumnNames.size(); rowIndex++) {
+                final String columnName = customColumnNames.get(rowIndex);
+                _columnsTable.setValueAt(columnName, rowIndex, 0);
+            }
+
+            for (int rowIndex = 0; rowIndex < valueWidths.length; rowIndex++) {
+                final int valueWidth = valueWidths[rowIndex];
+                _columnsTable.setValueAt(valueWidth, rowIndex, 1);
             }
 
             _headerLineComboBox.setSelectedIndex(originalDatastore.getHeaderLineNumber());
 
             onSettingsUpdated(false);
-        } else {
-            _columnNamesWidget = new CustomColumnNamesWidget(null);
-
-            addValueWidthTextField();
-            addValueWidthTextField();
-            addValueWidthTextField();
         }
 
-        _addValueWidthButton.addActionListener(e -> addValueWidthTextField());
-        _removeValueWidthButton.addActionListener(e -> removeValueWidthTextField());
         _encodingComboBox.addListener(item -> onSettingsUpdated(false));
         _headerLineComboBox.addListener(item -> onSettingsUpdated(false));
-
-        _columnNamesWidget.getButtons().forEach(button -> button.addActionListener(action -> {
-            onSettingsUpdated(false);
-            SwingUtilities.invokeLater(this::registerColumnNameFields);
-        }));
-
-        registerColumnNameFields();
-
+        _columnsTable.getModel().addTableModelListener(event -> onSettingsUpdated(false));
     }
 
     private JCheckBox createCheckBox(final String label, final boolean selected) {
@@ -201,13 +166,6 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
             // don't show the preview if no newlines were found (it may try to treat the whole file as a single row)
             showPreview = false;
         } else {
-            final int[] valueWidths = getValueWidths(false);
-            int totalMappedWidth = 0;
-            for (final int valueWidth : valueWidths) {
-                totalMappedWidth += valueWidth;
-            }
-            _lineWidthLabel.setText(lineLength + " chars in first line. " + totalMappedWidth + " mapped.");
-            _lineWidthLabel.updateUI();
             showPreview = true;
             validateAndUpdate();
         }
@@ -246,15 +204,9 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
     private int getRecordDataLength() {
         int length = 0;
 
-        if (_valueWidthTextFields != null && _valueWidthTextFields.size() > 0) {
-            for (final JXTextField textField : _valueWidthTextFields) {
-                try {
-                    final int columnWidth = Integer.parseInt(textField.getText());
-                    length += columnWidth;
-                } catch (final NumberFormatException e) {
-                    throw new IllegalStateException("Value width must be a valid number.");
-                }
-            }
+        final int[] valueWidths = getValueWidths(false);
+        for (int width : valueWidths) {
+            length += width;
         }
 
         return length;
@@ -276,45 +228,6 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
         return true;
     }
 
-    private JXTextField addValueWidthTextField() {
-        return addValueWidthTextField(8);
-    }
-
-    private JXTextField addValueWidthTextField(final int valueWidth) {
-        final JXTextField textField = WidgetFactory.createTextField();
-        textField.setColumns(2);
-        final NumberDocument document = new NumberDocument();
-        document.addDocumentListener(_updatePreviewTableDocumentListener);
-        textField.setDocument(document);
-        textField.setText(valueWidth + "");
-        _valueWidthTextFields.add(textField);
-        _valueWidthsPanel.add(textField);
-        if (_valueWidthTextFields.size() > 1) {
-            _removeValueWidthButton.setEnabled(true);
-        }
-        _valueWidthsPanel.updateUI();
-        onSettingsUpdated(false);
-        return textField;
-    }
-
-    private JXTextField removeValueWidthTextField() {
-        if (_valueWidthTextFields.isEmpty()) {
-            return null;
-        }
-        final JXTextField textField = _valueWidthTextFields.get(_valueWidthTextFields.size() - 1);
-        _valueWidthTextFields.remove(textField);
-        _valueWidthsPanel.remove(textField);
-
-        if (_valueWidthTextFields.size() == 1) {
-            _removeValueWidthButton.setEnabled(false);
-        } else {
-            _removeValueWidthButton.setEnabled(true);
-        }
-        _valueWidthsPanel.updateUI();
-        onSettingsUpdated(false);
-        return textField;
-    }
-
     @Override
     protected boolean isWindowResizable() {
         return true;
@@ -322,26 +235,13 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
-        buttonPanel.add(_addValueWidthButton);
-        buttonPanel.add(_removeValueWidthButton);
-
-        final DCPanel valueWidthConfigurationPanel = new DCPanel();
-        valueWidthConfigurationPanel.setLayout(new BorderLayout());
-        valueWidthConfigurationPanel.add(_valueWidthsPanel, BorderLayout.CENTER);
-        valueWidthConfigurationPanel.add(buttonPanel, BorderLayout.EAST);
-        valueWidthConfigurationPanel.add(_lineWidthLabel, BorderLayout.SOUTH);
-
         final List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<>("Character encoding", _encodingComboBox));
-        result.add(new ImmutableEntry<>("Column widths", valueWidthConfigurationPanel));
+        result.add(new ImmutableEntry<>("Columns", _columnsTable.toPanel(false)));
         result.add(new ImmutableEntry<>("Header line", _headerLineComboBox));
         result.add(new ImmutableEntry<>("", _failOnInconsistenciesCheckBox));
         result.add(new ImmutableEntry<>("", _skipEbcdicHeaderCheckBox));
         result.add(new ImmutableEntry<>("", _eolPresentCheckBox));
-        // TODO: Uncomment the line about columns names panel after the release of metamodel 4.5.5
-        //result.add(new ImmutableEntry<>("Column Names", _columnNamesWidget.getPanel()));
         return result;
     }
 
@@ -367,32 +267,40 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     private FixedWidthDatastore createDatastore(final String name, final Resource resource,
             final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent) {
-        final int[] valueWidths = getValueWidths(true);
-        try {
-            return new FixedWidthDatastore(name, resource, resource.getQualifiedPath(),
-                    _encodingComboBox.getSelectedItem(), valueWidths, failOnInconsistencies, skipEbcdicHeader,
-                    eolPresent, getHeaderLine(), _columnNamesWidget.getColumnNames());
-        } catch (final NumberFormatException e) {
-            throw new IllegalStateException("Value width must be a valid number.");
+        final int[] valueWidths = getValueWidths(failOnInconsistencies);
+        return new FixedWidthDatastore(name, resource, resource.getQualifiedPath(), _encodingComboBox.getSelectedItem(),
+                valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent, getHeaderLine(), getColumnNames());
+    }
+
+    private List<String> getColumnNames() {
+        final int rowCount = _columnsTable.getRowCount();
+        final List<String> list = new ArrayList<>(rowCount);
+        final AlphabeticSequence sequence = new AlphabeticSequence();
+        for (int i = 0; i < rowCount; i++) {
+            final String nameStr = (String) _columnsTable.getValueAt(i, 0);
+            list.add(Objects.firstNonNull(Strings.emptyToNull(nameStr), sequence.next()));
         }
+        return list;
     }
 
     private int[] getValueWidths(final boolean failOnMissingValue) {
-        final int[] valueWidths = new int[_valueWidthTextFields.size()];
+        final int rowCount = _columnsTable.getRowCount();
+        final int[] valueWidths = new int[rowCount];
 
         try {
             for (int i = 0; i < valueWidths.length; i++) {
-                String text = _valueWidthTextFields.get(i).getText();
+                final Object value = _columnsTable.getValueAt(i, 1);
+                final Number number = ConvertToNumberTransformer.transformValue(value);
 
-                if (StringUtils.isNullOrEmpty(text)) {
+                if (number == null) {
                     if (failOnMissingValue) {
                         throw new IllegalStateException("Please fill out all column widths.");
                     } else {
-                        text = "0";
+                        valueWidths[i] = 1; // Use 1 as the default, although no default is very sensible
                     }
+                } else {
+                    valueWidths[i] = number.intValue();
                 }
-
-                valueWidths[i] = Integer.parseInt(text);
             }
         } catch (final NumberFormatException e) {
             throw new IllegalStateException("Please specify all column widths as numbers. ");
@@ -421,25 +329,10 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
         }
     }
 
-    private void registerColumnNameFields() {
-        _columnNamesWidget.getColumnNameFields().stream().filter(field -> !_columnNameFields.contains(field))
-                .forEach(field -> {
-                    field.addKeyListener(new KeyAdapter() {
-                        @Override
-                        public void keyTyped(final KeyEvent e) {
-                            onSettingsUpdated(false);
-                        }
-                    });
-
-                    _columnNameFields.add(field);
-                });
-    }
-
     @Override
     protected void initializeFileFilters(final ResourceSelector resourceSelector) {
-        final FileFilter combinedFilter = FileFilters
-                .combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)", FileFilters.TXT, FileFilters.DAT,
-                        FileFilters.EBC);
+        final FileFilter combinedFilter = FileFilters.combined("Any text, data or EBCDIC files (.txt, .dat, .ebc)",
+                FileFilters.TXT, FileFilters.DAT, FileFilters.EBC);
         resourceSelector.addChoosableFileFilter(combinedFilter);
         resourceSelector.addChoosableFileFilter(FileFilters.TXT);
         resourceSelector.addChoosableFileFilter(FileFilters.DAT);

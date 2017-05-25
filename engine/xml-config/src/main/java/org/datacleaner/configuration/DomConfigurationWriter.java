@@ -76,12 +76,10 @@ import org.w3c.dom.NodeList;
 import com.google.common.base.Strings;
 
 /**
- * Utility class for writing configuration elements to the XML format of
- * conf.xml.
+ * Utility class for writing configuration elements to the XML format of conf.xml.
  *
- * Generally speaking, XML elements created by this class, and placed in a the
- * &lt;datastore-catalog&gt; and &lt;reference-data-catalog&gt; elements of conf.xml, will
- * be readable by {@link JaxbConfigurationReader}.
+ * Generally speaking, XML elements created by this class, and placed in a the &lt;datastore-catalog&gt; and
+ * &lt;reference-data-catalog&gt; elements of conf.xml, will be readable by {@link JaxbConfigurationReader}.
  */
 public class DomConfigurationWriter {
 
@@ -203,8 +201,7 @@ public class DomConfigurationWriter {
     }
 
     /**
-     * Removes a Hadoop cluster by its name, if it exists and is recognizeable by the
-     * externalizer.
+     * Removes a Hadoop cluster by its name, if it exists and is recognizeable by the externalizer.
      *
      * @param serverName
      * @return true if a server information element was removed from the XML document.
@@ -217,8 +214,7 @@ public class DomConfigurationWriter {
     }
 
     /**
-     * Removes a datastore by its name, if it exists and is recognizeable by the
-     * externalizer.
+     * Removes a datastore by its name, if it exists and is recognizeable by the externalizer.
      *
      * @param datastoreName
      * @return true if a datastore element was removed from the XML document.
@@ -229,8 +225,7 @@ public class DomConfigurationWriter {
     }
 
     /**
-     * Removes a dictionary by its name, if it exists and is recognizable by the
-     * externalizer.
+     * Removes a dictionary by its name, if it exists and is recognizable by the externalizer.
      *
      * @param dictionaryName
      * @return true if dictionary element was removed from the XML document
@@ -241,8 +236,7 @@ public class DomConfigurationWriter {
     }
 
     /**
-     * Removes a synonym catalog by its name, if it exists and is recognizable
-     * by the externalizer.
+     * Removes a synonym catalog by its name, if it exists and is recognizable by the externalizer.
      *
      * @param synonymCatalogName
      * @return true if dictionary element was removed from the XML document
@@ -253,8 +247,7 @@ public class DomConfigurationWriter {
     }
 
     /**
-     * Removes a string pattern by its name, if it exists and is recognizable by
-     * the externalizer.
+     * Removes a string pattern by its name, if it exists and is recognizable by the externalizer.
      *
      * @param stringPatternName
      * @return true if string pattern element was removed from the XML document
@@ -483,7 +476,7 @@ public class DomConfigurationWriter {
 
         final String csvList = builder.toString();
 
-        return csvList.substring(0, csvList.length() - 1); // remove last comma 
+        return csvList.substring(0, csvList.length() - 1); // remove last comma
     }
 
     private Element toElement(final SimpleStringPattern sp) {
@@ -604,8 +597,7 @@ public class DomConfigurationWriter {
     }
 
     /**
-     * Creates a filename string to externalize, based on a given
-     * {@link Resource}.
+     * Creates a filename string to externalize, based on a given {@link Resource}.
      *
      * @param resource
      * @return
@@ -790,7 +782,6 @@ public class DomConfigurationWriter {
         return ds;
     }
 
-
     public Element toElement(final FixedWidthDatastore datastore, final String filename) {
         final Element ds = getDocument().createElement("fixed-width-datastore");
         ds.setAttribute("name", datastore.getName());
@@ -812,6 +803,16 @@ public class DomConfigurationWriter {
             }
         }
         ds.appendChild(widthElement);
+
+        final List<String> customColumnNames = datastore.getCustomColumnNames();
+        if (customColumnNames != null && !customColumnNames.isEmpty()) {
+            final Element columnNamesElement = getDocument().createElement("custom-column-names");
+            for (String columnName : customColumnNames) {
+                appendElement(widthElement, "column-name", columnName);
+            }
+            ds.appendChild(columnNamesElement);
+        }
+
         appendElement(ds, "header-line-number", datastore.getHeaderLineNumber());
         appendElement(ds, "fail-on-inconsistencies", String.valueOf(datastore.isFailOnInconsistencies()));
         appendElement(ds, "skip-ebcdic-header", String.valueOf(datastore.isSkipEbcdicHeader()));
@@ -873,11 +874,9 @@ public class DomConfigurationWriter {
      * Externalizes a {@link ExcelDatastore} to a XML element.
      *
      * @param datastore
-     * @param filename
-     *            the filename/path to use in the XML element. Since the
-     *            appropriate path will depend on the reading application's
-     *            environment (supported {@link Resource} types), this specific
-     *            property of the datastore is provided separately.
+     * @param filename the filename/path to use in the XML element. Since the appropriate path will depend on the
+     *            reading application's environment (supported {@link Resource} types), this specific property of the
+     *            datastore is provided separately.
      * @return
      */
     public Element toElement(final ExcelDatastore datastore, final String filename) {
@@ -904,13 +903,10 @@ public class DomConfigurationWriter {
     /**
      * Externalizes a {@link CsvDatastore} to a XML element.
      *
-     * @param datastore
-     *            the datastore to externalize
-     * @param filename
-     *            the filename/path to use in the XML element. Since the
-     *            appropriate path will depend on the reading application's
-     *            environment (supported {@link Resource} types), this specific
-     *            property of the datastore is provided separately.
+     * @param datastore the datastore to externalize
+     * @param filename the filename/path to use in the XML element. Since the appropriate path will depend on the
+     *            reading application's environment (supported {@link Resource} types), this specific property of the
+     *            datastore is provided separately.
      * @return a XML element representing the datastore.
      */
     public Element toElement(final CsvDatastore datastore, final String filename) {
@@ -944,6 +940,7 @@ public class DomConfigurationWriter {
 
     /**
      * Extrnalizes a Json datastore
+     * 
      * @param datastore
      * @param filename
      * @return
@@ -1001,7 +998,6 @@ public class DomConfigurationWriter {
 
         return getOrCreateChildElementByTagName(hadoopClustersElement, "hadoop-clusters");
     }
-
 
     /**
      * Gets the XML element that represents the dictionaries
@@ -1125,7 +1121,6 @@ public class DomConfigurationWriter {
         element.setTextContent(stringValue);
         parent.appendChild(element);
     }
-
 
     public void addRemoteServer(final String serverName, final String url, final String username,
             final String password) {

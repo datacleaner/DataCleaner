@@ -25,6 +25,7 @@ import java.awt.Insets;
 
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
 
 import org.datacleaner.panels.DCPanel;
@@ -39,11 +40,12 @@ public final class DCTablePanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private final JScrollPane _scrollPane;
-    private final DCTable _table;
+    private final JTable _table;
 
-    public DCTablePanel(final DCTable table, final boolean scrolleable) {
+    public DCTablePanel(final JTable table, final boolean scrolleable) {
         _table = table;
         setLayout(new BorderLayout());
+        
         final JTableHeader tableHeader = table.getTableHeader();
         add(tableHeader, BorderLayout.NORTH);
 

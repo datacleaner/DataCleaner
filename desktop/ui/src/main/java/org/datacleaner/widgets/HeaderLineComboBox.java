@@ -35,12 +35,18 @@ public class HeaderLineComboBox extends DCComboBox<Integer> {
     private static final long serialVersionUID = 1L;
 
     public HeaderLineComboBox() {
+        this(true);
+    }
+
+    public HeaderLineComboBox(boolean hasHeaderByDefault) {
         super();
         final JTextComponent headerLineNumberText = (JTextComponent) getEditor().getEditorComponent();
         headerLineNumberText.setDocument(new NumberDocument());
         setEditable(true);
         setModel(new DefaultComboBoxModel<>(new Integer[] { 0, 1 }));
-        setSelectedItem(1);
+        if (hasHeaderByDefault) {
+            setSelectedItem(1);
+        }
         setRenderer(new DCListCellRenderer() {
 
             private static final long serialVersionUID = 1L;

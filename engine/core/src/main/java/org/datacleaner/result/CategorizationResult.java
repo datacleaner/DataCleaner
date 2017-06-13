@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
-import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Distributed;
@@ -42,7 +42,7 @@ public class CategorizationResult implements AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
 
-    private final Ref<RowAnnotationFactory> _annotationFactoryRef;
+    private final Supplier<RowAnnotationFactory> _annotationFactoryRef;
     private final Map<String, RowAnnotation> _categories;
 
     public CategorizationResult(final RowAnnotationFactory annotationFactory,

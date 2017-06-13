@@ -29,7 +29,7 @@ public class WriteBufferTest extends TestCase {
         final AtomicInteger counter = new AtomicInteger();
 
         final WriteBuffer buffer = new WriteBuffer(5, rows -> {
-            for (final Object[] row : rows) {
+            for (@SuppressWarnings("unused") final Object[] row : rows) {
                 counter.incrementAndGet();
             }
         });

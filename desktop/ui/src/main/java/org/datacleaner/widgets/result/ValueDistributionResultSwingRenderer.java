@@ -21,6 +21,7 @@ package org.datacleaner.widgets.result;
 
 import java.awt.BorderLayout;
 import java.util.Collection;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 import javax.swing.Box;
@@ -28,7 +29,6 @@ import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.valuedist.GroupedValueDistributionResult;
@@ -100,7 +100,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
                 panel.add(Box.createVerticalStrut(10));
             }
 
-            final Ref<JComponent> componentRef = new LazyRef<JComponent>() {
+            final Supplier<JComponent> componentRef = new LazyRef<JComponent>() {
                 @Override
                 protected JComponent fetch() {
                     final ValueDistributionResultSwingRendererGroupDelegate delegate =

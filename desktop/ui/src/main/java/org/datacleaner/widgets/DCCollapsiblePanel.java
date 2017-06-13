@@ -25,11 +25,11 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.function.Supplier;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -53,7 +53,7 @@ public class DCCollapsiblePanel {
 
     private final JXCollapsiblePane _collapsiblePane;
     private final DCLabel _label;
-    private final Ref<? extends JComponent> _componentRef;
+    private final Supplier<? extends JComponent> _componentRef;
     private String _collapsedText;
     private String _expandedText;
     private boolean _rendered = false;
@@ -63,7 +63,7 @@ public class DCCollapsiblePanel {
     }
 
     public DCCollapsiblePanel(final String collapsedText, final String expandedText, final boolean collapsed,
-            final Ref<? extends JComponent> componentRef) {
+            final Supplier<? extends JComponent> componentRef) {
         _collapsedText = collapsedText;
         _expandedText = expandedText;
         _collapsiblePane = WidgetFactory.createCollapsiblePane(Direction.DOWN);

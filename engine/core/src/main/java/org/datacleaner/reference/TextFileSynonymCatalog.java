@@ -33,7 +33,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.convert.ResourceConverter;
 
-import au.com.bytecode.opencsv.CSVParser;
+import com.opencsv.CSVParser;
 
 /**
  * Synonym catalog based on a text file.

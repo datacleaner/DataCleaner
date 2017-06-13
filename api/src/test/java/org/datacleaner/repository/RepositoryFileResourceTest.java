@@ -21,9 +21,9 @@ package org.datacleaner.repository;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.function.Function;
 
 import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.InMemoryResource;
 import org.apache.metamodel.util.Resource;
 
@@ -84,7 +84,7 @@ public class RepositoryFileResourceTest extends TestCase {
             }
 
             @Override
-            public <E> E readFile(final Func<InputStream, E> readCallback) {
+            public <E> E readFile(final Function<InputStream, E> readCallback) {
                 return _resource.read(readCallback);
             }
 

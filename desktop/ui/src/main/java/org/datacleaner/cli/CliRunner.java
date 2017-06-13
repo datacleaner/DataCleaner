@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -42,7 +43,6 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -75,8 +75,8 @@ public final class CliRunner implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(CliRunner.class);
 
     private final CliArguments _arguments;
-    private final Ref<OutputStream> _outputStreamRef;
-    private final Ref<Writer> _writerRef;
+    private final Supplier<OutputStream> _outputStreamRef;
+    private final Supplier<Writer> _writerRef;
     private final boolean _closeOut;
 
     /**
@@ -494,7 +494,7 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void close(final Ref<?> ref) {
+    private void close(final Supplier<?> ref) {
         if (ref != null) {
             if (ref instanceof LazyRef) {
                 final LazyRef<?> lazyRef = (LazyRef<?>) ref;

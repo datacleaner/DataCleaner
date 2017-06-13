@@ -21,9 +21,9 @@ package org.datacleaner.repository;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.function.Function;
 
 import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
 
 /**
@@ -106,7 +106,7 @@ public interface RepositoryFile extends RepositoryNode {
      * @param readCallback
      * @return the result of the function
      */
-    <E> E readFile(Func<InputStream, E> readCallback);
+    <E> E readFile(Function<InputStream, E> readCallback);
 
     /**
      * Gets the type of the file.

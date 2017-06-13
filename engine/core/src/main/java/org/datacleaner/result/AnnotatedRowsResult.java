@@ -26,12 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Description;
@@ -56,7 +56,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
 
     private static final long serialVersionUID = 1L;
 
-    private final Ref<RowAnnotationFactory> _annotationFactoryRef;
+    private final Supplier<RowAnnotationFactory> _annotationFactoryRef;
     private final InputColumn<?>[] _highlightedColumns;
     private final RowAnnotation _annotation;
     private transient List<InputRow> _rows;

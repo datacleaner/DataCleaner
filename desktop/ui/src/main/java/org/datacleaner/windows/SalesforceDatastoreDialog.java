@@ -112,8 +112,6 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
             return false;
         }
 
-        final String securityToken = _securityTokenTextField.getText();
-
         final String endpointUrl = getUrlFromComboBox();
 
         if (!StringUtils.isNullOrEmpty(endpointUrl)) {

@@ -27,9 +27,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Predicate;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

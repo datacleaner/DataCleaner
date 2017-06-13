@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.TransformerComponentBuilderPanel;
@@ -41,7 +41,7 @@ public class HelloWorldTransformerPresenter extends TransformerComponentBuilderP
 
     public HelloWorldTransformerPresenter(final TransformerComponentBuilder<?> transformerJobBuilder,
             final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
-            final AnalyzerBeansConfiguration configuration) {
+            final DataCleanerConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
     }
 

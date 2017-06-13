@@ -22,10 +22,10 @@ package org.datacleaner.output.csv;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvWriter;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.output.OutputRow;
@@ -34,10 +34,10 @@ final class CsvOutputRow implements OutputRow {
 
     private final Map<InputColumn<?>, Object> _map;
     private final InputColumn<?>[] _columns;
-    private final Ref<OutputStream> _outputStreamRef;
+    private final Supplier<OutputStream> _outputStreamRef;
     private final CsvConfiguration _csvConfiguration;
 
-    public CsvOutputRow(final Ref<OutputStream> outputStreamRef, final CsvConfiguration csvConfiguration,
+    public CsvOutputRow(final Supplier<OutputStream> outputStreamRef, final CsvConfiguration csvConfiguration,
             final InputColumn<?>[] columns) {
         _outputStreamRef = outputStreamRef;
         _csvConfiguration = csvConfiguration;

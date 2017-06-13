@@ -32,20 +32,16 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
-import org.jdesktop.swingx.JXTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,14 +49,14 @@ import org.slf4j.LoggerFactory;
  * An extension of JTable that provides a styling consistent with DataCleaner
  * GUI and some functional improvements like right-click menu's etc.
  */
-public class DCTable extends JXTable implements MouseListener {
+public class DCTable extends DCBaseTable implements MouseListener {
 
     public static final int EDITABLE_TABLE_ROW_HEIGHT = 30;
     private static final Logger logger = LoggerFactory.getLogger(DCTable.class);
     private static final long serialVersionUID = -5376226138423224572L;
     private final transient DCTableCellRenderer _tableCellRenderer;
     protected transient List<JMenuItem> _rightClickMenuItems;
-    protected transient DCPanel _panel;
+    
     private ActionListener _copySelectItemsActionListener = e -> {
         final int rowIndex = DCTable.this.getSelectedRow();
         final int rowCount = DCTable.this.getSelectedRowCount();
@@ -74,22 +70,16 @@ public class DCTable extends JXTable implements MouseListener {
             e -> copyToClipboard(0, 0, DCTable.this.getColumnCount(), DCTable.this.getRowCount());
 
     public DCTable(final String... columnNames) {
-        super(new Object[0][columnNames.length], columnNames);
-        addHighlighter(WidgetUtils.LIBERELLO_HIGHLIGHTER);
-        getTableHeader().setReorderingAllowed(true);
-        setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        setOpaque(false);
-        setRowSelectionAllowed(true);
-        setColumnSelectionAllowed(true);
-        setColumnControlVisible(true);
+        super(columnNames);
+        
         setSortable(true);
 
         // currently (because of the implementation of the editor) the enabled
         // "editable" property is only to enable clicking on buttons etc. in
         // tables.
         setEditable(true);
-
         addMouseListener(this);
+
         _tableCellRenderer = new DCTableCellRenderer(this);
     }
 
@@ -100,50 +90,6 @@ public class DCTable extends JXTable implements MouseListener {
     public DCTable(final TableModel tableModel) {
         this();
         setModel(tableModel);
-    }
-
-    /**
-     * Convenience method to create a panel with this table, including it's
-     * header, correctly layed out.
-     *
-     * @param scrolleable
-     *            whether or not the table panel should feature scrolleable
-     *            table contents.
-     * @return
-     */
-    public DCPanel toPanel(final boolean scrolleable) {
-        if (_panel == null) {
-            _panel = new DCTablePanel(this, scrolleable);
-        }
-        return _panel;
-    }
-
-    /**
-     * Convenience method to create a panel with this table, including it's
-     * header, correctly layed out.
-     */
-    public DCPanel toPanel() {
-        return toPanel(true);
-    }
-
-    @Override
-    public void setVisible(final boolean visible) {
-        super.setVisible(visible);
-        if (_panel != null) {
-            _panel.updateUI();
-        }
-    }
-
-    /**
-     * Since setModel(...) is used to update the contents and repaint the
-     * widget, we will also make this happen if a panel is presenting the table.
-     */
-    @Override
-    public void setModel(final TableModel dataModel) {
-        super.setModel(dataModel);
-        if (_panel != null) {
-            _panel.updateUI();
-        }
     }
 
     protected List<JMenuItem> getCopyMenuItems() {
@@ -311,19 +257,6 @@ public class DCTable extends JXTable implements MouseListener {
         return value;
     }
 
-    public void setVisibleColumns(final int min, final int max) {
-        // Note: The loop starts in the top and goes down, this is because the
-        // getColumnExt() index is affected directly, when setting a column as
-        // invisible!
-        for (int i = getColumnCount(); i > 0; i--) {
-            if (i >= min && i <= max) {
-                getColumnExt(i - 1).setVisible(true);
-            } else {
-                getColumnExt(i - 1).setVisible(false);
-            }
-        }
-    }
-
     public DCTableCellRenderer getDCTableCellRenderer() {
         if (_tableCellRenderer == null) {
             // should only occur in deserialized instances
@@ -351,30 +284,5 @@ public class DCTable extends JXTable implements MouseListener {
 
     public void setAlignment(final int column, final Alignment alignment) {
         getDCTableCellRenderer().setAlignment(column, alignment);
-    }
-
-    public void selectRows(final int... rowIndexes) {
-        final ListSelectionModel selectionModel = getSelectionModel();
-        selectionModel.setValueIsAdjusting(true);
-        for (int i = 0; i < rowIndexes.length; i++) {
-            final int rowIndex = rowIndexes[i];
-            if (i == 0) {
-                setRowSelectionInterval(rowIndex, rowIndex);
-            } else {
-                addRowSelectionInterval(rowIndex, rowIndex);
-            }
-        }
-        selectionModel.setValueIsAdjusting(false);
-        getColumnModel().getSelectionModel().setValueIsAdjusting(true);
-        setColumnSelectionInterval(0, getColumnCount() - 1);
-        getColumnModel().getSelectionModel().setValueIsAdjusting(false);
-    }
-
-    public void autoSetHorizontalScrollEnabled() {
-        if (getColumnCount() >= 9) {
-            setHorizontalScrollEnabled(true);
-        } else {
-            setHorizontalScrollEnabled(false);
-        }
     }
 }

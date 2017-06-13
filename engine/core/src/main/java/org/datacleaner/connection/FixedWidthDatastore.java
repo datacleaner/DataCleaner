@@ -24,12 +24,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.fixedwidth.EbcdicConfiguration;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.schema.naming.AlphabeticColumnNamingStrategy;
+import org.apache.metamodel.schema.naming.ColumnNamingStrategy;
+import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SerializableRef;
@@ -116,7 +120,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
             final boolean failOnInconsistencies, final boolean skipEbcdicHeader, final boolean eolPresent,
             final int headerLineNumber, final List<String> customColumnNames) {
         this(name, null, filename, encoding, valueWidths, failOnInconsistencies, skipEbcdicHeader, eolPresent,
-                headerLineNumber, null);
+                headerLineNumber, customColumnNames);
     }
 
     public FixedWidthDatastore(final String name, Resource resource, final String filename, final String encoding,
@@ -174,18 +178,26 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
 
         if (isEbcdic()) {
             if (_fixedValueWidth == -1) {
-                configuration =
-                        new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths, _failOnInconsistencies,
-                                _skipEbcdicHeader, _eolPresent);
+                configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _valueWidths,
+                        _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
             } else {
-                configuration =
-                        new EbcdicConfiguration(_headerLineNumber, _encoding, _fixedValueWidth, _failOnInconsistencies,
-                                _skipEbcdicHeader, _eolPresent);
+                configuration = new EbcdicConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
+                        _failOnInconsistencies, _skipEbcdicHeader, _eolPresent);
             }
         } else {
             if (_fixedValueWidth == -1) {
-                configuration =
-                        new FixedWidthConfiguration(_headerLineNumber, _encoding, _valueWidths, _failOnInconsistencies);
+                final ColumnNamingStrategy columnNamingStrategy;
+                if (_headerLineNumber > 0) {
+                    columnNamingStrategy = null;
+                } else {
+                    if (_customColumnNames != null && !_customColumnNames.isEmpty()) {
+                        columnNamingStrategy = new CustomColumnNamingStrategy(_customColumnNames);
+                    } else {
+                        columnNamingStrategy = new AlphabeticColumnNamingStrategy();
+                    }
+                }
+                configuration = new FixedWidthConfiguration(_headerLineNumber, columnNamingStrategy, _encoding,
+                        _valueWidths, _failOnInconsistencies);
             } else {
                 configuration = new FixedWidthConfiguration(_headerLineNumber, _encoding, _fixedValueWidth,
                         _failOnInconsistencies);
@@ -203,7 +215,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     }
 
     public int[] getValueWidths() {
-        return _valueWidths;
+        return _valueWidths == null ? new int[0] : _valueWidths;
     }
 
     public int getHeaderLineNumber() {
@@ -236,7 +248,7 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
     }
 
     public List<String> getCustomColumnNames() {
-        return _customColumnNames;
+        return _customColumnNames == null ? Collections.emptyList() : _customColumnNames;
     }
 
     @Override

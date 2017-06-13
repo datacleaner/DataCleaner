@@ -25,8 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-
-import org.apache.metamodel.util.Func;
+import java.util.function.Function;
 
 import com.google.common.collect.Maps;
 
@@ -34,10 +33,10 @@ import com.google.common.collect.Maps;
  * A utility function for reading properties as a {@link Map} of Strings from an
  * {@link InputStream}.
  */
-public class InputStreamToPropertiesMapFunc implements Func<InputStream, Map<String, String>> {
+public class InputStreamToPropertiesMapFunc implements Function<InputStream, Map<String, String>> {
 
     @Override
-    public Map<String, String> eval(final InputStream in) {
+    public Map<String, String> apply(final InputStream in) {
         final Properties properties = new Properties();
         try {
             properties.load(in);

@@ -20,6 +20,7 @@
 package org.datacleaner.descriptors;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -33,6 +34,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -40,8 +43,6 @@ import javax.inject.Named;
 
 import org.apache.metamodel.util.ExclusionPredicate;
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Predicate;
-import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.TruePredicate;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
@@ -59,17 +60,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Descriptor provider implementation that works by scanning particular packages
- * in the classpath for annotated classes. Descriptors will be generated based
- * on encountered annotations.
+ * Descriptor provider implementation that works by scanning particular packages in the classpath for annotated classes.
+ * Descriptors will be generated based on encountered annotations.
  *
- * This implementation also supports adding single descriptors by using the
- * add... methods.
+ * This implementation also supports adding single descriptors by using the add... methods.
  *
- * Classes with the {@link Named} annotation will be picked by the classpath
- * scanner. Furthermore the legacy annotations {@link org.eobjects.analyzer.beans.api.AnalyzerBean},
- * {@link org.eobjects.analyzer.beans.api.TransformerBean} and {@link org.eobjects.analyzer.beans.api.FilterBean}
- * are currently being checked for.
+ * Classes with the {@link Named} annotation will be picked by the classpath scanner. Furthermore the legacy annotations
+ * {@link org.eobjects.analyzer.beans.api.AnalyzerBean}, {@link org.eobjects.analyzer.beans.api.TransformerBean} and
+ * {@link org.eobjects.analyzer.beans.api.FilterBean} are currently being checked for.
  *
  * <li>{@link RendererBean}</li>
  *
@@ -88,17 +86,15 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     private final AtomicInteger _tasksPending;
 
     /**
-     * Default constructor. Will perform classpath scanning in the calling
-     * thread(s).
+     * Default constructor. Will perform classpath scanning in the calling thread(s).
      */
     public ClasspathScanDescriptorProvider() {
         this(new SingleThreadedTaskRunner());
     }
 
     /**
-     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
-     * {@link TaskRunner}. The taskrunner will be used to perform the classpath
-     * scan, potentially in a parallel fashion.
+     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified {@link TaskRunner}. The taskrunner will be
+     * used to perform the classpath scan, potentially in a parallel fashion.
      *
      * @param taskRunner
      */
@@ -107,14 +103,11 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
-     * {@link TaskRunner}. The taskrunner will be used to perform the classpath
-     * scan, potentially in a parallel fashion.
+     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified {@link TaskRunner}. The taskrunner will be
+     * used to perform the classpath scan, potentially in a parallel fashion.
      *
      * @param taskRunner
-     * @param excludedRenderingFormats
-     *            rendering formats to exclude from loading into the descriptor
-     *            provider
+     * @param excludedRenderingFormats rendering formats to exclude from loading into the descriptor provider
      */
     public ClasspathScanDescriptorProvider(final TaskRunner taskRunner,
             final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats) {
@@ -122,17 +115,13 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
-     * {@link TaskRunner}. The taskrunner will be used to perform the classpath
-     * scan, potentially in a parallel fashion.
+     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified {@link TaskRunner}. The taskrunner will be
+     * used to perform the classpath scan, potentially in a parallel fashion.
      *
      * @param taskRunner
-     * @param excludedRenderingFormats
-     *            rendering formats to exclude from loading into the descriptor
-     *            provider
-     * @param autoLoadDescriptorClasses
-     *            whether or not to automatically load descriptors when they are
-     *            requested by class names.
+     * @param excludedRenderingFormats rendering formats to exclude from loading into the descriptor provider
+     * @param autoLoadDescriptorClasses whether or not to automatically load descriptors when they are requested by
+     *            class names.
      */
     public ClasspathScanDescriptorProvider(final TaskRunner taskRunner,
             final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats,
@@ -141,14 +130,12 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
-     * {@link TaskRunner}. The taskrunner will be used to perform the classpath
-     * scan, potentially in a parallel fashion.
+     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified {@link TaskRunner}. The taskrunner will be
+     * used to perform the classpath scan, potentially in a parallel fashion.
      *
      * @param taskRunner
-     * @param renderingFormatPredicate
-     *            predicate function to apply when evaluating if a particular
-     *            rendering format is of interest or not
+     * @param renderingFormatPredicate predicate function to apply when evaluating if a particular rendering format is
+     *            of interest or not
      */
     public ClasspathScanDescriptorProvider(final TaskRunner taskRunner,
             final Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate) {
@@ -156,17 +143,14 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
-     * {@link TaskRunner}. The taskrunner will be used to perform the classpath
-     * scan, potentially in a parallel fashion.
+     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified {@link TaskRunner}. The taskrunner will be
+     * used to perform the classpath scan, potentially in a parallel fashion.
      *
      * @param taskRunner
-     * @param renderingFormatPredicate
-     *            predicate function to apply when evaluating if a particular
-     *            rendering format is of interest or not
-     * @param autoLoadDescriptorClasses
-     *            whether or not to automatically load descriptors when they are
-     *            requested by class names.
+     * @param renderingFormatPredicate predicate function to apply when evaluating if a particular rendering format is
+     *            of interest or not
+     * @param autoLoadDescriptorClasses whether or not to automatically load descriptors when they are requested by
+     *            class names.
      */
     public ClasspathScanDescriptorProvider(final TaskRunner taskRunner,
             final Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate,
@@ -186,13 +170,10 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * Scans a package in the classpath (of the current thread's context
-     * classloader) for annotated components.
+     * Scans a package in the classpath (of the current thread's context classloader) for annotated components.
      *
-     * @param packageName
-     *            the package name to scan
-     * @param recursive
-     *            whether or not to scan subpackages recursively
+     * @param packageName the package name to scan
+     * @param recursive whether or not to scan subpackages recursively
      * @return
      */
     public ClasspathScanDescriptorProvider scanPackage(final String packageName, final boolean recursive) {
@@ -200,15 +181,11 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * Scans a package in the classpath (of a particular classloader) for
-     * annotated components.
+     * Scans a package in the classpath (of a particular classloader) for annotated components.
      *
-     * @param packageName
-     *            the package name to scan
-     * @param recursive
-     *            whether or not to scan subpackages recursively
-     * @param classLoader
-     *            the classloader to use
+     * @param packageName the package name to scan
+     * @param recursive whether or not to scan subpackages recursively
+     * @param classLoader the classloader to use
      * @return
      */
     public ClasspathScanDescriptorProvider scanPackage(final String packageName, final boolean recursive,
@@ -217,21 +194,14 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * Scans a package in the classpath (of a particular classloader) for
-     * annotated components.
+     * Scans a package in the classpath (of a particular classloader) for annotated components.
      *
-     * @param packageName
-     *            the package name to scan
-     * @param recursive
-     *            whether or not to scan subpackages recursively
-     * @param classLoader
-     *            the classloader to use for discovering resources in the
-     *            classpath
-     * @param strictClassLoader
-     *            whether or not classes originating from other classloaders may
-     *            be included in scan (classloaders can sometimes discover
-     *            classes from parent classloaders which may or may not be
-     *            wanted for inclusion).
+     * @param packageName the package name to scan
+     * @param recursive whether or not to scan subpackages recursively
+     * @param classLoader the classloader to use for discovering resources in the classpath
+     * @param strictClassLoader whether or not classes originating from other classloaders may be included in scan
+     *            (classloaders can sometimes discover classes from parent classloaders which may or may not be wanted
+     *            for inclusion).
      * @return
      */
     public ClasspathScanDescriptorProvider scanPackage(final String packageName, final boolean recursive,
@@ -240,26 +210,17 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     /**
-     * Scans a package in the classpath (of a particular classloader) for
-     * annotated components. Optionally restricted by a set of JAR files to look
-     * in.
+     * Scans a package in the classpath (of a particular classloader) for annotated components. Optionally restricted by
+     * a set of JAR files to look in.
      *
-     * @param packageName
-     *            the package name to scan
-     * @param recursive
-     *            whether or not to scan subpackages recursively
-     * @param classLoader
-     *            the classloader to use for discovering resources in the
-     *            classpath
-     * @param strictClassLoader
-     *            whether or not classes originating from other classloaders may
-     *            be included in scan (classloaders can sometimes discover
-     *            classes from parent classloaders which may or may not be
-     *            wanted for inclusion).
-     * @param jarFiles
-     *            optionally (nullable) array of JAR files or class directories
-     *            to scan. Note that if specified, the JAR files are assumed to
-     *            be included in the classloaders available resources.
+     * @param packageName the package name to scan
+     * @param recursive whether or not to scan subpackages recursively
+     * @param classLoader the classloader to use for discovering resources in the classpath
+     * @param strictClassLoader whether or not classes originating from other classloaders may be included in scan
+     *            (classloaders can sometimes discover classes from parent classloaders which may or may not be wanted
+     *            for inclusion).
+     * @param jarFiles optionally (nullable) array of JAR files or class directories to scan. Note that if specified,
+     *            the JAR files are assumed to be included in the classloaders available resources.
      * @return
      */
     public ClasspathScanDescriptorProvider scanPackage(final String packageName, final boolean recursive,
@@ -452,7 +413,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
         while (entries.hasMoreElements()) {
             final JarEntry entry = entries.nextElement();
-            final Ref<InputStream> entryInputStream = () -> {
+            final Supplier<InputStream> entryInputStream = () -> {
                 try {
                     return jarFile.getInputStream(entry);
                 } catch (final IOException e) {
@@ -464,8 +425,8 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     private void scanEntry(final JarEntry entry, final String packagePath, final boolean recursive,
-            final ClassLoader classLoader, final boolean strictClassLoader, final Ref<InputStream> entryInputStream)
-            throws IOException {
+            final ClassLoader classLoader, final boolean strictClassLoader,
+            final Supplier<InputStream> entryInputStream) throws IOException {
         final String entryName = entry.getName();
         if (isClassInPackage(entryName, packagePath, recursive)) {
             logger.debug("Scanning JAR class file entry: {}", entryName);
@@ -536,9 +497,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      * @param strictClassLoader
      * @throws IOException
      *
-     * @{@link deprecated} use
-     *     {@link #scanInputStreamOfClassFile(InputStream, ClassLoader, boolean)}
-     *     instead.
+     * @{@link deprecated} use {@link #scanInputStreamOfClassFile(InputStream, ClassLoader, boolean)} instead.
      */
     @Deprecated
     protected void scanInputStream(final InputStream inputStream, final ClassLoader classLoader,

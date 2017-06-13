@@ -21,6 +21,7 @@ package org.datacleaner.guice;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -28,7 +29,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.MutableRef;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -92,8 +92,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     private static final Logger logger = LoggerFactory.getLogger(DCModuleImpl.class);
 
     private final DataCleanerConfigurationReader _undecoratedConfigurationRef;
-    private final Ref<UserPreferences> _userPreferencesRef;
-    private final Ref<AnalysisJobBuilder> _analysisJobBuilderRef;
+    private final Supplier<UserPreferences> _userPreferencesRef;
+    private final Supplier<AnalysisJobBuilder> _analysisJobBuilderRef;
     private DataCleanerConfiguration _configuration;
     private WindowContext _windowContext;
 
@@ -155,7 +155,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         }
     }
 
-    private Ref<UserPreferences> createUserPreferencesRef(final FileObject dataCleanerHome) {
+    private Supplier<UserPreferences> createUserPreferencesRef(final FileObject dataCleanerHome) {
         try {
             if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
                 return new ImmutableRef<>(new UserPreferencesImpl(null));

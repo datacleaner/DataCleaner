@@ -21,12 +21,12 @@ package org.datacleaner.actions;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.function.Supplier;
 
 import javax.swing.JOptionPane;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
@@ -45,14 +45,14 @@ import com.google.common.base.Strings;
  */
 public class PublishResultToMonitorActionListener extends PublishFileToMonitorActionListener {
 
-    private final Ref<AnalysisResult> _resultRef;
+    private final Supplier<AnalysisResult> _resultRef;
     private final FileObject _jobFilename;
 
     private byte[] _bytes;
     private String _resultFilename;
 
     public PublishResultToMonitorActionListener(final WindowContext windowContext,
-            final UserPreferences userPreferences, final Ref<AnalysisResult> resultRef,
+            final UserPreferences userPreferences, final Supplier<AnalysisResult> resultRef,
             @Nullable @JobFile final FileObject jobFilename) {
         super(windowContext, userPreferences);
         _resultRef = resultRef;

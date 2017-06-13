@@ -40,7 +40,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.metamodel.AbstractDataContext;
+import org.apache.metamodel.DefaultUpdateSummary;
 import org.apache.metamodel.UpdateScript;
+import org.apache.metamodel.UpdateSummary;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
@@ -95,12 +97,13 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     }
 
     @Override
-    public void executeUpdate(final UpdateScript script) {
+    public UpdateSummary executeUpdate(final UpdateScript script) {
         try (DataHubUpdateCallback callback = new DataHubUpdateCallback(this)) {
             script.run(callback);
         } catch (final RuntimeException e) {
             throw e;
         }
+        return DefaultUpdateSummary.unknownUpdates();
     }
 
     @Override
@@ -167,8 +170,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     /**
      * Invokes DataHub REST service to delete a batch of golden records.
      *
-     * @param pendingGoldenRecordDeletes
-     *            The golden records to delete.
+     * @param pendingGoldenRecordDeletes The golden records to delete.
      */
     public void executeGoldenRecordDelete(final List<String> pendingGoldenRecordDeletes) {
         final String uri = _updateConnection.getGoldenRecordBatchUrl();
@@ -183,8 +185,7 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
     /**
      * Invokes DataHub REST service to delete a batch of source records.
      *
-     * @param pendingSourceDeletes
-     *            The batch of sources to delete.
+     * @param pendingSourceDeletes The batch of sources to delete.
      */
     public void executeSourceDelete(final List<SourceRecordIdentifier> pendingSourceDeletes) {
         final String uri = _updateConnection.getSourceRecordBatchUrl();

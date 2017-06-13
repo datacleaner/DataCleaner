@@ -21,16 +21,15 @@ package org.datacleaner.result;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.function.Supplier;
 
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 
 /**
- * Defines the interface for components that write an {@link AnalysisResult},
- * typically to a file or {@link System#out}.
+ * Defines the interface for components that write an {@link AnalysisResult}, typically to a file or {@link System#out}.
  */
 public interface AnalysisResultWriter {
 
-    void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
-            Ref<OutputStream> outputStreamRef) throws Exception;
+    void write(AnalysisResult result, DataCleanerConfiguration configuration, Supplier<Writer> writerRef,
+            Supplier<OutputStream> outputStreamRef) throws Exception;
 }

@@ -37,8 +37,6 @@ import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Key-bindings manager for the {@link JobGraph}.
@@ -75,7 +73,6 @@ public class JobGraphBindingsManager {
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(JobGraphBindingsManager.class);
     private static final int INPUT_MAP_CONDITION = WHEN_IN_FOCUSED_WINDOW;
     private static final String KEY_DELETE = "DELETE";
     private static final String KEY_BACKSPACE = "BACK_SPACE";

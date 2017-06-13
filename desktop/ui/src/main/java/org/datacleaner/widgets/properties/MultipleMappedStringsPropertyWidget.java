@@ -80,7 +80,6 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
     private final WeakHashMap<InputColumn<?>, JXTextField> _mappedTextFields;
     private final ConfiguredPropertyDescriptor _mappedStringsProperty;
     private final MappedStringsPropertyWidget _mappedStringsPropertyWidget;
-    private transient boolean _alreadyUpdating = false;
 
     /**
      * Constructs the property widget

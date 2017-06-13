@@ -25,13 +25,13 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.Writer;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;
@@ -49,11 +49,11 @@ public class ExportResultToHtmlActionListener implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ExportResultToHtmlActionListener.class);
 
-    private final Ref<AnalysisResult> _result;
+    private final Supplier<AnalysisResult> _result;
     private final UserPreferences _userPreferences;
     private final DataCleanerConfiguration _configuration;
 
-    public ExportResultToHtmlActionListener(final Ref<AnalysisResult> result,
+    public ExportResultToHtmlActionListener(final Supplier<AnalysisResult> result,
             final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         _result = result;
         _configuration = configuration;

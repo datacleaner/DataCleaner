@@ -30,11 +30,11 @@ import java.io.OutputStream;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Function;
 
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.repository.AbstractRepositoryNode;
 import org.datacleaner.repository.RepositoryFile;
@@ -131,7 +131,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
     }
 
     @Override
-    public <E> E readFile(final Func<InputStream, E> readCallback) {
+    public <E> E readFile(final Function<InputStream, E> readCallback) {
         final Lock readLock = _lock.readLock();
         readLock.lock();
         try {
@@ -145,7 +145,7 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             }
 
             try {
-                return readCallback.eval(inputStream);
+                return readCallback.apply(inputStream);
             } catch (final Exception e) {
                 if (e instanceof RuntimeException) {
                     throw (RuntimeException) e;

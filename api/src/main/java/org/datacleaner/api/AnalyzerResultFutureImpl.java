@@ -25,9 +25,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +60,7 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
      * @param resultRef
      *            a reference for the result being processed.
      */
-    public AnalyzerResultFutureImpl(final String name, final Ref<? extends R> resultRef) {
+    public AnalyzerResultFutureImpl(final String name, final Supplier<? extends R> resultRef) {
         _name = name;
         _countDownLatch = new CountDownLatch(1);
         _result = null;

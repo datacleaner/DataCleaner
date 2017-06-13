@@ -22,7 +22,7 @@ package org.datacleaner.spark.functions;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.spark.api.java.function.Function;
 
-import au.com.bytecode.opencsv.CSVParser;
+import com.opencsv.CSVParser;
 
 public final class CsvParserFunction implements Function<String, Object[]> {
 

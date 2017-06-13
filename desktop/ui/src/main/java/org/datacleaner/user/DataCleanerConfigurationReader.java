@@ -25,12 +25,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.JaxbConfigurationReader;
@@ -51,10 +51,10 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
 
     private final FileObject _dataCleanerHome;
     private final FileObject _configurationFile;
-    private final Ref<UserPreferences> _userPreferencesRef;
+    private final Supplier<UserPreferences> _userPreferencesRef;
 
     public DataCleanerConfigurationReader(final FileObject dataCleanerHome, final FileObject configurationFile,
-            final Ref<UserPreferences> userPreferencesRef) {
+            final Supplier<UserPreferences> userPreferencesRef) {
         _dataCleanerHome = dataCleanerHome;
         _configurationFile = configurationFile;
         _userPreferencesRef = userPreferencesRef;

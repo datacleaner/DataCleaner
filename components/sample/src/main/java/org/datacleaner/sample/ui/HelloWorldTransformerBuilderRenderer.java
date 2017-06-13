@@ -25,7 +25,7 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
@@ -51,7 +51,7 @@ public class HelloWorldTransformerBuilderRenderer
     DCModule dcModule;
 
     @Inject
-    AnalyzerBeansConfiguration configuration;
+    DataCleanerConfiguration configuration;
 
     @Override
     public RendererPrecedence getPrecedence(final TransformerComponentBuilder<?> renderable) {

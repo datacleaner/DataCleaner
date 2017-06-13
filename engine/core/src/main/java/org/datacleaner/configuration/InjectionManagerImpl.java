@@ -22,10 +22,10 @@ package org.datacleaner.configuration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
@@ -59,7 +59,7 @@ public class InjectionManagerImpl implements InjectionManager {
 
     private final DataCleanerConfiguration _configuration;
     private final AnalysisJob _job;
-    private final Ref<RowAnnotationFactory> _rowAnntationFactoryRef;
+    private final Supplier<RowAnnotationFactory> _rowAnntationFactoryRef;
 
     /**
      * Constructs an {@link InjectionManager} for use within the scope of a job
@@ -85,7 +85,7 @@ public class InjectionManagerImpl implements InjectionManager {
         this(configuration, null);
     }
 
-    private Ref<RowAnnotationFactory> createRowAnnotationFactoryRef() {
+    private Supplier<RowAnnotationFactory> createRowAnnotationFactoryRef() {
         return new LazyRef<RowAnnotationFactory>() {
             @Override
             protected RowAnnotationFactory fetch() {

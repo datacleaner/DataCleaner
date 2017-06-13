@@ -52,9 +52,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 /**
- * A container for for values that need to be passed between Spark workers. All
- * the values need to be {@link Serializable} or loadable from those
- * {@link Serializable} properties.
+ * A container for for values that need to be passed between Spark workers. All the values need to be
+ * {@link Serializable} or loadable from those {@link Serializable} properties.
  */
 public class SparkJobContext implements Serializable {
     private static final String METADATA_PROPERTY_COMPONENT_INDEX = "org.datacleaner.spark.component.index";
@@ -98,7 +97,7 @@ public class SparkJobContext implements Serializable {
             // this is a pretty ugly way to go back to the bytes to read the
             // properties - but works and is quick
             _customProperties =
-                    new InputStreamToPropertiesMapFunc().eval(new ByteArrayInputStream(propertiesString.getBytes()));
+                    new InputStreamToPropertiesMapFunc().apply(new ByteArrayInputStream(propertiesString.getBytes()));
         }
         validateCustomProperties();
     }
@@ -171,9 +170,8 @@ public class SparkJobContext implements Serializable {
     }
 
     /**
-     * Appliesc compopnent indices via the component metadata to enable proper
-     * functioning of the {@link #getComponentByKey(String)} and
-     * {@link #getComponentKey(ComponentJob)} methods.
+     * Appliesc compopnent indices via the component metadata to enable proper functioning of the
+     * {@link #getComponentByKey(String)} and {@link #getComponentKey(ComponentJob)} methods.
      *
      * @param analysisJobBuilder
      * @param currentComponentIndex
@@ -217,8 +215,8 @@ public class SparkJobContext implements Serializable {
     }
 
     private ComponentJob getComponentByKey(final AnalysisJob job, final String queriedKey) {
-        final List<ComponentJob> componentJobs = CollectionUtils
-                .concat(false, job.getTransformerJobs(), job.getTransformerJobs(), job.getAnalyzerJobs());
+        final List<ComponentJob> componentJobs = CollectionUtils.concat(false, job.getTransformerJobs(),
+                job.getTransformerJobs(), job.getAnalyzerJobs());
         for (final ComponentJob componentJob : componentJobs) {
             final String componentKey = getComponentKey(componentJob);
             if (queriedKey.equals(componentKey)) {
@@ -261,17 +259,15 @@ public class SparkJobContext implements Serializable {
     /**
      * Adds a listener for the job life cycle.
      *
-     * @param sparkJobLifeCycleListener
-     *            The listener to add. Must be serializable.
+     * @param sparkJobLifeCycleListener The listener to add. Must be serializable.
      */
     public void addSparkJobLifeCycleListener(final SparkJobLifeCycleListener sparkJobLifeCycleListener) {
         _sparkJobLifeCycleListeners.add(sparkJobLifeCycleListener);
     }
 
     /**
-     * Removes a life cycle listener. Please note that this will _not_ work
-     * globally after job start. If you remove it on a node, it will only be
-     * removed on that node.
+     * Removes a life cycle listener. Please note that this will _not_ work globally after job start. If you remove it
+     * on a node, it will only be removed on that node.
      */
     public void removeSparkJobLifeCycleListener(final SparkJobLifeCycleListener sparkJobLifeCycleListener) {
         _sparkJobLifeCycleListeners.remove(sparkJobLifeCycleListener);

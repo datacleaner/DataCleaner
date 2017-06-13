@@ -65,12 +65,14 @@ public class SampleDataContext extends QueryPostprocessDataContext {
         final SimpleDataSetHeader header = new SimpleDataSetHeader(tableSelectItems);
 
         final List<Row> rows = new ArrayList<>();
+        
+        final SimpleDataSetHeader subSelectionHeader = new SimpleDataSetHeader(selectItems);
 
-        rows.add(new DefaultRow(header, new Object[] { 1, "hello" }).getSubSelection(selectItems));
-        rows.add(new DefaultRow(header, new Object[] { 2, "there" }).getSubSelection(selectItems));
-        rows.add(new DefaultRow(header, new Object[] { 3, "big" }).getSubSelection(selectItems));
-        rows.add(new DefaultRow(header, new Object[] { 4, "wide" }).getSubSelection(selectItems));
-        rows.add(new DefaultRow(header, new Object[] { 5, "world" }).getSubSelection(selectItems));
+        rows.add(new DefaultRow(header, new Object[] { 1, "hello" }).getSubSelection(subSelectionHeader));
+        rows.add(new DefaultRow(header, new Object[] { 2, "there" }).getSubSelection(subSelectionHeader));
+        rows.add(new DefaultRow(header, new Object[] { 3, "big" }).getSubSelection(subSelectionHeader));
+        rows.add(new DefaultRow(header, new Object[] { 4, "wide" }).getSubSelection(subSelectionHeader));
+        rows.add(new DefaultRow(header, new Object[] { 5, "world" }).getSubSelection(subSelectionHeader));
 
         return new InMemoryDataSet(rows);
     }

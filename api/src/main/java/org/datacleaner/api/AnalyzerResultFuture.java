@@ -19,8 +19,9 @@
  */
 package org.datacleaner.api;
 
+import java.util.function.Supplier;
+
 import org.apache.metamodel.util.HasName;
-import org.apache.metamodel.util.Ref;
 
 /**
  * Represents an {@link AnalyzerResult} that is still being produced.
@@ -34,7 +35,7 @@ import org.apache.metamodel.util.Ref;
  * @param <R>
  *            the wrapped {@link AnalyzerResult} type.
  */
-public interface AnalyzerResultFuture<R extends AnalyzerResult> extends AnalyzerResult, HasName, Ref<R> {
+public interface AnalyzerResultFuture<R extends AnalyzerResult> extends AnalyzerResult, HasName, Supplier<R> {
 
     /**
      * Listener interface for objects that want to be notified when the wrapped

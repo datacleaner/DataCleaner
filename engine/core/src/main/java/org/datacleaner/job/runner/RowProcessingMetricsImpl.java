@@ -21,12 +21,12 @@ package org.datacleaner.job.runner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -37,7 +37,7 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
 
     private final RowProcessingPublishers _publishers;
     private final RowProcessingPublisher _publisher;
-    private final Ref<Integer> _expectedRows;
+    private final Supplier<Integer> _expectedRows;
 
     public RowProcessingMetricsImpl(final RowProcessingPublishers publishers, final RowProcessingPublisher publisher) {
         _publishers = publishers;
@@ -94,7 +94,7 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
         return analyzerJobs.toArray(new AnalyzerJob[analyzerJobs.size()]);
     }
 
-    private Ref<Integer> createExpectedRowsRef() {
+    private Supplier<Integer> createExpectedRowsRef() {
         // TODO: This only seems valid for source tables
         return new LazyRef<Integer>() {
 

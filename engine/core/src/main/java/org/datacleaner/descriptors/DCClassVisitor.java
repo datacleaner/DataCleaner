@@ -20,10 +20,10 @@
 package org.datacleaner.descriptors;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Predicate;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.TruePredicate;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
@@ -83,8 +83,8 @@ final class DCClassVisitor extends ClassVisitor {
                     final Class<? extends RenderingFormat<?>> renderingFormatClass;
                     try {
                         @SuppressWarnings("unchecked") final Class<? extends RenderingFormat<?>> cls =
-                                (Class<? extends RenderingFormat<?>>) Class
-                                        .forName(renderingFormatClassName, false, _classLoader);
+                                (Class<? extends RenderingFormat<?>>) Class.forName(renderingFormatClassName, false,
+                                        _classLoader);
                         renderingFormatClass = cls;
                     } catch (final Exception e) {
                         if (logger.isWarnEnabled()) {
@@ -94,7 +94,7 @@ final class DCClassVisitor extends ClassVisitor {
                         return;
                     }
 
-                    final Boolean proceed = _renderingFormatPredicate.eval(renderingFormatClass);
+                    final Boolean proceed = _renderingFormatPredicate.test(renderingFormatClass);
                     if (proceed == null || !proceed.booleanValue()) {
                         logger.info("Skipping renderer because it's format was not accepted by predicate: {}", _name);
                         return;
@@ -115,9 +115,9 @@ final class DCClassVisitor extends ClassVisitor {
 
     @SuppressWarnings("deprecation")
     private boolean isLegacyAnnotation(final String desc) {
-        return isAnnotation(desc, org.eobjects.analyzer.beans.api.AnalyzerBean.class) || isAnnotation(desc,
-                org.eobjects.analyzer.beans.api.TransformerBean.class) || isAnnotation(desc,
-                org.eobjects.analyzer.beans.api.FilterBean.class);
+        return isAnnotation(desc, org.eobjects.analyzer.beans.api.AnalyzerBean.class)
+                || isAnnotation(desc, org.eobjects.analyzer.beans.api.TransformerBean.class)
+                || isAnnotation(desc, org.eobjects.analyzer.beans.api.FilterBean.class);
     }
 
     private boolean isAnnotation(final String annotationDesc, final Class<? extends Annotation> annotationClass) {
@@ -170,8 +170,8 @@ final class DCClassVisitor extends ClassVisitor {
 
     public boolean isRenderer() {
         if (_beanClazz != null) {
-            return ReflectionUtils.isAnnotationPresent(_beanClazz, RendererBean.class) && ReflectionUtils
-                    .is(_beanClazz, Renderer.class);
+            return ReflectionUtils.isAnnotationPresent(_beanClazz, RendererBean.class)
+                    && ReflectionUtils.is(_beanClazz, Renderer.class);
         }
         return false;
     }

@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.AnalyzerResultFuture.Listener;
 
 import junit.framework.TestCase;
@@ -103,7 +103,7 @@ public class AnalyzerResultFutureTest extends TestCase {
             };
         }
 
-        final Ref<NumberResult> resultRef = new LazyRef<NumberResult>() {
+        final Supplier<NumberResult> resultRef = new LazyRef<NumberResult>() {
             @Override
             protected NumberResult fetch() throws Throwable {
                 final long randomSleepTime = (long) (1000 * Math.random());

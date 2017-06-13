@@ -21,9 +21,9 @@ package org.datacleaner.cli;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.AnalysisResultWriter;
@@ -33,7 +33,7 @@ public class SerializedAnalysisResultWriter implements AnalysisResultWriter {
 
     @Override
     public void write(final AnalysisResult result, final DataCleanerConfiguration configuration,
-            final Ref<Writer> writerRef, final Ref<OutputStream> outputStreamRef) {
+            final Supplier<Writer> writerRef, final Supplier<OutputStream> outputStreamRef) {
         final SimpleAnalysisResult simpleAnalysisResult;
 
         if (result instanceof SimpleAnalysisResult) {

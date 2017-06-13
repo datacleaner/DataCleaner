@@ -32,6 +32,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 import javax.swing.AbstractButton;
@@ -49,8 +51,6 @@ import javax.swing.border.MatteBorder;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.actions.ExportResultToHtmlActionListener;
 import org.datacleaner.actions.PublishResultToMonitorActionListener;
 import org.datacleaner.actions.SaveAnalysisResultActionListener;
@@ -104,7 +104,7 @@ import org.slf4j.LoggerFactory;
  * execution is shown.
  */
 public final class ResultWindow extends AbstractWindow implements WindowListener {
-    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(0);
+    public static final List<Function<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(0);
     private static final Logger logger = LoggerFactory.getLogger(ResultWindow.class);
     private static final long serialVersionUID = 1L;
     private static final ImageManager imageManager = ImageManager.get();
@@ -151,7 +151,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
 
-        final Ref<AnalysisResult> resultRef = this::getResult;
+        final Supplier<AnalysisResult> resultRef = this::getResult;
 
         final Border buttonBorder =
                 new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
@@ -221,8 +221,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 imageManager.getImageIcon("images/model/progress_information.png", IconUtils.ICON_SIZE_TAB),
                 _progressInformationPanel);
 
-        for (final Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
-            final JComponent component = pluggableComponent.eval(this);
+        for (final Function<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
+            final JComponent component = pluggableComponent.apply(this);
             if (component != null) {
                 if (component instanceof JMenuItem) {
                     final JMenuItem menuItem = (JMenuItem) component;

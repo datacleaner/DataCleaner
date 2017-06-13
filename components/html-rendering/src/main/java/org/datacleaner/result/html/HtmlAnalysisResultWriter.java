@@ -30,9 +30,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-import org.apache.metamodel.util.Predicate;
-import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.TruePredicate;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
@@ -84,7 +84,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
 
     @Override
     public void write(final AnalysisResult result, final DataCleanerConfiguration configuration,
-            final Ref<Writer> writerRef, final Ref<OutputStream> outputStreamRef) throws IOException {
+            final Supplier<Writer> writerRef, final Supplier<OutputStream> outputStreamRef) throws IOException {
         final Writer writer = writerRef.get();
         write(result, configuration, writer);
     }
@@ -102,7 +102,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
             final ComponentJob componentJob = entry.getKey();
             final AnalyzerResult analyzerResult = entry.getValue();
 
-            if (_jobInclusionPredicate.eval(entry)) {
+            if (_jobInclusionPredicate.test(entry)) {
                 final Renderer<? super AnalyzerResult, ? extends HtmlFragment> renderer =
                         rendererFactory.getRenderer(analyzerResult, HtmlRenderingFormat.class);
                 if (renderer == null) {

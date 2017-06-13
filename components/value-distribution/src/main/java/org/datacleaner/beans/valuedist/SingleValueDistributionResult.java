@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
-import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
@@ -55,7 +55,7 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     private final int _nullCount;
     private final int _totalCount;
     private final int _distinctCount;
-    private final Ref<RowAnnotationFactory> _annotationFactoryRef;
+    private final Supplier<RowAnnotationFactory> _annotationFactoryRef;
 
     public SingleValueDistributionResult(final String groupName, final ValueCountList topValues,
             final ValueCountList bottomValues, final Collection<String> uniqueValues, final int uniqueValueCount,

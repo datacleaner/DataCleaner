@@ -57,13 +57,6 @@
 	<url>https://datacleaner.org</url>
 	<packaging>pom</packaging>
 	
-	<repositories>
-		<repository>
-			<id>metamodel-5.0-RC2-temporary-repository</id>
-			<url>https://repository.apache.org/content/repositories/orgapachemetamodel-1023</url>
-		</repository>
-	</repositories>
-	
 	<profiles>
 		<profile>
 			<!-- Default profile -->

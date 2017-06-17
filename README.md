@@ -13,24 +13,22 @@ Powered by Neopost and Human Inference
 
 The main application modules are:
 
- * api - The public API of DataCleaner. Mostly interfaces and annotations that you should use to build your own extensions.
- * testware - Useful classes for unit testing of DataCleaner and extension code.
- * engine
+* api - The public API of DataCleaner. Mostly interfaces and annotations that you should use to build your own extensions.
+* resources - Static resources in DataCleaner
+* oss-branding - Icons and colors
+* testware - Useful classes for unit testing of DataCleaner and extension code.
+* engine
   * core - The core engine piece which allows execution of jobs and components as per the API.
   * xml-config - Contains utilities for reading and writing job files and configuration files of DataCleaner.
   * env - Different/alternative environments that DataCleaner can run in, for instance Apache Spark or webapp-cluster
- * components
+* components
   * ... - many sub modules containing built-in as well as additional components/extensions to use with DataCleaner.
   * standard-components - a container-project that dependends on all components that are normally bundled in DataCleaner community edition.
- * desktop
+* desktop
   * api - The public API for the DataCleaner desktop application.
   * ui - The Swing-based user interface for desktop users
- * monitor
+* monitor
   * api - the API classes and interfaces of DataCleaner monitor
-  * services - web services and controllers of DataCleaner monitor
-  * widgets - reusable widgets and UI work, based on GWT
-  * ui - the actual web user interface, based primarily on GWT and JSF
- * documentation - end-user reference documentation, published on https://datacleaner.org/docs
 
 ## Code style and formatting
 

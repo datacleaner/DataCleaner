@@ -40,8 +40,8 @@ import org.datacleaner.util.http.MonitorHttpClient;
  */
 public class DataHubRepoConnection {
     private static final String DATASTORES_PATH = "/datastores";
-    private static final String CONTEXT_PATH = "/ui";
-    private static final String REPOSITORY_PATH = "/repository";
+    private static final String CONTEXT_PATH = "/datahub";
+    private static final String REPOSITORY_PATH = "/api/dc-monitor";
     private static final String SCHEMA_EXTENSION = ".schemas";
     private static final String QUERY_EXTENSION = ".query?";
     private static final String USERINFO_PATH = "/_user";

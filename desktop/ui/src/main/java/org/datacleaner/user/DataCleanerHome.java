@@ -64,18 +64,24 @@ public final class DataCleanerHome {
 
     private static final Logger logger;
 
-    private static final FileObject _dataCleanerHome;
+    public static final String HOME_PROPERTY_NAME = "DATACLEANER_HOME";
+
+    private static FileObject _dataCleanerHome;
 
     static {
         // note: Logger is specified using a string. This is because the logger is
         // to be used also in the static initializer and any error in that code
         // would otherwise be swallowed.
         logger = LoggerFactory.getLogger("org.datacleaner.user.DataCleanerHome");
-        logger.info("Initializing DATACLEANER_HOME");
+        reInit();
+    }
+
+    public static void reInit(){
+        logger.info("Initializing {}", HOME_PROPERTY_NAME);
         try {
             _dataCleanerHome = findDataCleanerHome();
         } catch (final Exception e) {
-            logger.error("Failed to initialize DATACLEANER_HOME!", e);
+            logger.error("Failed to initialize {}!", HOME_PROPERTY_NAME, e);
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -88,14 +94,14 @@ public final class DataCleanerHome {
 
         FileObject candidate = null;
 
-        String path = System.getenv("DATACLEANER_HOME");
+        String path = System.getenv(HOME_PROPERTY_NAME);
         if (!StringUtils.isNullOrEmpty(path)) {
-            logger.info("Resolved env. variable DATACLEANER_HOME: {}", path);
+            logger.info("Resolved env. variable {}: {}", HOME_PROPERTY_NAME, path);
         } else {
-            path = System.getProperty("DATACLEANER_HOME");
+            path = System.getProperty(HOME_PROPERTY_NAME);
             if (!StringUtils.isNullOrEmpty(path)) {
                 candidate = manager.resolveFile(path);
-                logger.info("Resolved system property DATACLEANER_HOME: {}", path, candidate);
+                logger.info("Resolved system property {}: {}", HOME_PROPERTY_NAME, path, candidate);
             }
         }
 
@@ -123,13 +129,13 @@ public final class DataCleanerHome {
             // in web start, the default folder will be in user.home
             final String path = getUserHomeCandidatePath();
             candidate = manager.resolveFile(path);
-            logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
+            logger.info("Running in WebStart mode. Attempting to build {} in user.home: {} -> {}", HOME_PROPERTY_NAME, path,
                     candidate);
         } else {
             // in normal mode try to use specified directory first
             logger.info("Running in standard mode.");
             if (isWriteable(candidate)) {
-                logger.info("Attempting to build DATACLEANER_HOME in {}", candidate);
+                logger.info("Attempting to build {} in {}", HOME_PROPERTY_NAME, candidate);
             } else {
                 // Workaround: isWritable is not reliable for a non-existent
                 // directory. Trying to create it, if it does not exist.
@@ -137,8 +143,8 @@ public final class DataCleanerHome {
                     logger.info("Folder {} does not exist. Trying to create it.", candidate);
                     try {
                         candidate.createFolder();
-                        logger.info("Folder {} created successfully. Attempting to build DATACLEANER_HOME here.",
-                                candidate);
+                        logger.info("Folder {} created successfully. Attempting to build {} here.",
+                                candidate, HOME_PROPERTY_NAME);
                     } catch (final FileSystemException e) {
                         logger.info("Unable to create folder {}. No write permission in that location.", candidate);
                         candidate = initializeDataCleanerHomeFallback();
@@ -151,8 +157,8 @@ public final class DataCleanerHome {
         }
 
         if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
-            logger.info("Running in sandbox mode ({}), setting {} as DATACLEANER_HOME", SystemProperties.SANDBOX,
-                    candidate);
+            logger.info("Running in sandbox mode ({}), setting {} as {}", SystemProperties.SANDBOX,
+                    candidate, HOME_PROPERTY_NAME);
             if (!candidate.exists()) {
                 candidate.createFolder();
             }
@@ -164,7 +170,7 @@ public final class DataCleanerHome {
             final boolean upgraded = upgrader.upgrade(candidate);
 
             if (!upgraded) {
-                logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
+                logger.debug("Copying default configuration and examples to {} directory: {}", HOME_PROPERTY_NAME, candidate);
                 copyIfNonExisting(candidate, manager, DataCleanerConfigurationImpl.DEFAULT_FILENAME);
 
                 final List<String> allFilePaths = getAllInitialFiles();
@@ -197,7 +203,7 @@ public final class DataCleanerHome {
         // Fallback to user home directory
         final String path = getUserHomeCandidatePath();
         candidate = manager.resolveFile(path);
-        logger.info("Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path, candidate);
+        logger.info("Attempting to build {} in user.home: {} -> {}", HOME_PROPERTY_NAME,  path, candidate);
         if (!isWriteable(candidate)) {
             // Workaround: isWritable is not reliable for a non-existent
             // directory. Trying to create it, if it does not exist.
@@ -205,8 +211,8 @@ public final class DataCleanerHome {
                 logger.info("Folder {} does not exist. Trying to create it.", candidate);
                 try {
                     candidate.createFolder();
-                    logger.info("Folder {} created successfully. Attempting to build DATACLEANER_HOME here.",
-                            candidate);
+                    logger.info("Folder {} created successfully. Attempting to build {} here.",
+                            candidate, HOME_PROPERTY_NAME);
                 } catch (final FileSystemException e) {
                     logger.info("Unable to create folder {}. No write permission in that location.", candidate);
                     throw new IllegalStateException("User home directory (" + candidate
@@ -257,7 +263,7 @@ public final class DataCleanerHome {
             final String filename) throws FileSystemException {
         final FileObject file = candidate.resolveFile(filename);
         if (file.exists()) {
-            logger.info("File already exists in DATACLEANER_HOME: " + filename);
+            logger.info("File already exists in {}: {}", HOME_PROPERTY_NAME, filename);
             return file;
         }
         final FileObject parentFile = file.getParent();

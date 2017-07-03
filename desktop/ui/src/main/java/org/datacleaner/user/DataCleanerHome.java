@@ -76,7 +76,7 @@ public final class DataCleanerHome {
         reInit();
     }
 
-    public static void reInit(){
+    public static void reInit() {
         logger.info("Initializing {}", HOME_PROPERTY_NAME);
         try {
             _dataCleanerHome = findDataCleanerHome();

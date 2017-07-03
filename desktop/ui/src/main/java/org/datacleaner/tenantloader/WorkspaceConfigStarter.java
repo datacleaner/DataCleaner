@@ -50,17 +50,17 @@ public class WorkspaceConfigStarter {
             DataCleanerHome.reInit();
             return;
         }
-        Object lock = new Object();
+        final Object lock = new Object();
         WidgetUtils.invokeSwingAction(() -> {
-            JFrame frame = new JFrame();
-            WorkspaceConfigDialog workspaceConfigDialog = new WorkspaceConfigDialog(frame, _workspaceManager);
+            final JFrame frame = new JFrame();
+            final WorkspaceConfigDialog workspaceConfigDialog = new WorkspaceConfigDialog(frame, _workspaceManager);
             workspaceConfigDialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
                     try {
                         _workspaceManager.save();
-                    } catch (JAXBException e1) {
-                        e1.printStackTrace();
+                    } catch (JAXBException ex2) {
+                        ex2.printStackTrace();
                     }
                     DataCleanerHome.reInit();
                     synchronized (lock) {

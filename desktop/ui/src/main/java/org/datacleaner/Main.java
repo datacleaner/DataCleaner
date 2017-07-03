@@ -155,7 +155,7 @@ public final class Main {
             final boolean initializeLogging) {
         final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
 
-        if(!bootstrapOptions.isCommandLineMode()) {
+        if (!bootstrapOptions.isCommandLineMode()) {
 
             try {
                 new WorkspaceConfigStarter().start();

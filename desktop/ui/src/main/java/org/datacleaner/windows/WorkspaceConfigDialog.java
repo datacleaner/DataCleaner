@@ -140,12 +140,12 @@ public class WorkspaceConfigDialog extends JDialog {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            JFileChooser jFileChooser = new JFileChooser();
-            jFileChooser.setCurrentDirectory(new java.io.File("."));
-            jFileChooser.setDialogTitle("Select workspace");
-            jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (jFileChooser.showOpenDialog(_parent) == JFileChooser.APPROVE_OPTION) {
-                _parent._workspaceManager.addWorkspacePath(jFileChooser.getSelectedFile().getAbsolutePath());
+            final JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new java.io.File("."));
+            fileChooser.setDialogTitle("Select workspace");
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            if (fileChooser.showOpenDialog(_parent) == JFileChooser.APPROVE_OPTION) {
+                _parent._workspaceManager.addWorkspacePath(fileChooser.getSelectedFile().getAbsolutePath());
                 _parent.loadData();
             }
         }

@@ -56,7 +56,7 @@ public class WorkspaceManager {
             _workspaceConfiguration = new WorkspaceConfiguration();
             _workspaceConfiguration.getWorkspaces().add(basicHomePath);
         } else {
-            Unmarshaller jaxbUnmarshaller = _jaxbContext.createUnmarshaller();
+            final Unmarshaller jaxbUnmarshaller = _jaxbContext.createUnmarshaller();
             _workspaceConfiguration = (WorkspaceConfiguration) jaxbUnmarshaller.unmarshal(confFile);
         }
     }
@@ -151,7 +151,7 @@ public class WorkspaceManager {
      * @throws JAXBException
      */
     public void save() throws JAXBException {
-        Marshaller jaxbMarshaller = _jaxbContext.createMarshaller();
+        final Marshaller jaxbMarshaller = _jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         final File configurationFile = getConfigurationFile();
         if (configurationFile != null) {

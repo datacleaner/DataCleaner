@@ -19,14 +19,9 @@
  */
 package org.datacleaner.tenantloader;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JFrame;
 import javax.xml.bind.JAXBException;
 
 import org.datacleaner.user.DataCleanerHome;
-import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.WorkspaceConfigDialog;
 
 /**
@@ -37,42 +32,32 @@ public class WorkspaceConfigStarter {
     private WorkspaceManager _workspaceManager;
 
     public WorkspaceConfigStarter() throws JAXBException {
-        _workspaceManager = new WorkspaceManager(DataCleanerHome.getAsDataCleanerHomeFolder());
+        _workspaceManager = new WorkspaceManager();
     }
 
     /**
      * Start workspace dialog or set default workspace.
      * @throws InterruptedException
      */
-    public void start() throws InterruptedException {
+    public boolean start() throws InterruptedException {
+        // If "Don't show again" was chosen in the past
         if (!_workspaceManager.showDialog()) {
             _workspaceManager.setWorkspaceToRun(_workspaceManager.getDefaultWorkspace());
             DataCleanerHome.reInit();
-            return;
+            return true;
         }
-        final Object lock = new Object();
-        WidgetUtils.invokeSwingAction(() -> {
-            final JFrame frame = new JFrame();
-            final WorkspaceConfigDialog workspaceConfigDialog = new WorkspaceConfigDialog(frame, _workspaceManager);
-            workspaceConfigDialog.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    try {
-                        _workspaceManager.save();
-                    } catch (JAXBException ex2) {
-                        ex2.printStackTrace();
-                    }
-                    DataCleanerHome.reInit();
-                    synchronized (lock) {
-                        lock.notifyAll();
-                    }
-                    frame.dispose();
-                }
-            });
-
-        });
-        synchronized (lock) {
-            lock.wait();
+        // Show the "workspace chooser" dialog
+        final WorkspaceConfigDialog workspaceConfigDialog = new WorkspaceConfigDialog(null, _workspaceManager);
+        if(workspaceConfigDialog.isShouldStart()) {
+            try {
+                _workspaceManager.save();
+                DataCleanerHome.reInit();
+                return true;
+            } catch (JAXBException ex2) {
+                throw new RuntimeException(ex2);
+            }
+        } else {
+            return false;
         }
     }
 }

@@ -27,9 +27,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.datacleaner.configuration.DataCleanerHomeFolder;
-import org.datacleaner.repository.RepositoryFile;
-import org.datacleaner.repository.file.FileRepositoryFile;
+import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.util.StringUtils;
 
 import static org.datacleaner.user.DataCleanerHome.HOME_PROPERTY_NAME;
@@ -38,23 +37,32 @@ import static org.datacleaner.user.DataCleanerHome.HOME_PROPERTY_NAME;
  * Manager for work with workspace configuration file
  */
 public class WorkspaceManager {
-    private static final String TENANT_CONFIGURATION_FILE_NAME = ".datacleaner_workspace";
+    private static final String GLOBAL_CONFIG_FILE_NAME = "global_config.xml";
 
-    private DataCleanerHomeFolder _defaultHomeFolder;
     private WorkspaceConfiguration _workspaceConfiguration;
     private JAXBContext _jaxbContext;
 
-    public WorkspaceManager(final DataCleanerHomeFolder defaultHomeFolder) throws JAXBException {
-        _defaultHomeFolder = defaultHomeFolder;
+    public WorkspaceManager() throws JAXBException {
         _jaxbContext = JAXBContext.newInstance(WorkspaceConfiguration.class);
-        loadConfiguration(defaultHomeFolder.toFile().getAbsolutePath());
+        loadConfiguration();
     }
 
-    private void loadConfiguration(String basicHomePath) throws JAXBException {
+    private void loadConfiguration() throws JAXBException {
         final File confFile = getConfigurationFile();
-        if (confFile == null) {
+        if (!confFile.isFile()) {
+            String defaultHomePath = DataCleanerHome.getAsDataCleanerHomeFolder().toFile().getAbsolutePath();
             _workspaceConfiguration = new WorkspaceConfiguration();
-            _workspaceConfiguration.getWorkspaces().add(basicHomePath);
+            _workspaceConfiguration.getWorkspaces().add(defaultHomePath);
+            // in previous version, there were sub-folders with version numbers.
+            // Provide them as option to choose from.
+            File homeBase = DataCleanerHome.getDefaultHomeBase();
+            if(homeBase.isDirectory()) {
+                for(File subFolder: homeBase.listFiles()) {
+                    if(subFolder.getName().matches("[0-9\\.]*")) {
+                        _workspaceConfiguration.getWorkspaces().add(subFolder.getAbsolutePath());
+                    }
+                }
+            }
         } else {
             final Unmarshaller jaxbUnmarshaller = _jaxbContext.createUnmarshaller();
             _workspaceConfiguration = (WorkspaceConfiguration) jaxbUnmarshaller.unmarshal(confFile);
@@ -154,20 +162,15 @@ public class WorkspaceManager {
         final Marshaller jaxbMarshaller = _jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         final File configurationFile = getConfigurationFile();
-        if (configurationFile != null) {
+        if (configurationFile.exists()) {
             configurationFile.delete();
         }
-        _defaultHomeFolder.toRepositoryFolder().createFile(TENANT_CONFIGURATION_FILE_NAME, out -> {
+        new FileRepositoryFolder(null, configurationFile.getParentFile()).createFile(GLOBAL_CONFIG_FILE_NAME, out -> {
             jaxbMarshaller.marshal(_workspaceConfiguration, out);
         });
     }
 
     private File getConfigurationFile() {
-        final RepositoryFile conf = _defaultHomeFolder.toRepositoryFolder().getFile(TENANT_CONFIGURATION_FILE_NAME);
-        if (conf == null || !(conf instanceof FileRepositoryFile)) {
-            return null;
-        } else {
-            return ((FileRepositoryFile) conf).getFile();
-        }
+        return new File(DataCleanerHome.getDefaultHomeBase() + File.separator + GLOBAL_CONFIG_FILE_NAME);
     }
 }

@@ -19,24 +19,23 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.FlowLayout;
+import org.apache.commons.lang3.StringUtils;
+import org.datacleaner.tenantloader.WorkspaceManager;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXList;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Vector;
-
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.WindowConstants;
-
-import org.datacleaner.tenantloader.WorkspaceManager;
-import org.datacleaner.util.WidgetFactory;
 
 /**
  * Workspace dialog. User can select workspace for start of DataCleaner
@@ -46,33 +45,143 @@ public class WorkspaceConfigDialog extends JDialog {
     private static final long serialVersionUID = 1L;
     private final WorkspaceManager _workspaceManager;
 
-    private JList<String> _workspaceList;
-    private JButton _buttonRemove;
-    private JButton _buttonSelectFolder;
-    private JButton _buttonStart;
-    private JCheckBox _checkBoxDontShowIt;
+    private JList<String> workspaceList;
+    private JButton buttonRemove;
+    private JButton buttonSelectFolder;
+    private JButton buttonStart;
+    private JCheckBox checkBoxDontShowIt;
+    private boolean shouldStart;
+    private JXLabel label;
 
     public WorkspaceConfigDialog(JFrame owner, final WorkspaceManager workspaceManager) {
-        super(owner);
+        super(owner, "Select Workspace", true);
         _workspaceManager = workspaceManager;
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
 
+        createComponents();
         createLayout();
         loadData();
+        createListeners();
         pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
+    private void createListeners() {
+        buttonRemove.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final String selectedValue = workspaceList.getSelectedValue();
+                _workspaceManager.removeWorkspace(selectedValue);
+                loadData();
+            }
+        });
+        buttonStart.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                start();
+            }
+        });
+        buttonSelectFolder.addActionListener(new FileChooserAction("Workspace selector", this));
+        workspaceList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getClickCount() >= 2) {
+                    start();
+                }
+            }
+        });
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                "EscapeAction");
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+                "EnterAction");
+        getRootPane().getActionMap().put(
+                "EscapeAction",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        dispose();
+                    }
+                });
+        getRootPane().getActionMap().put(
+                "EnterAction",
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        start();
+                    }
+                });
+    }
+
+    private void start() {
+        final String selectedValue = workspaceList.getSelectedValue();
+        _workspaceManager.setWorkspaceToRun(selectedValue);
+        _workspaceManager.setDefaultWorkspace(selectedValue);
+        if (checkBoxDontShowIt.isSelected()) {
+            _workspaceManager.setShowDialog(false);
+        }
+        shouldStart = true;
+        dispose();
+    }
+
+    private void createComponents() {
+        checkBoxDontShowIt = new JCheckBox("Don't show again");
+        buttonRemove = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE_DARK);
+        buttonSelectFolder = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD_DARK);
+        buttonStart = WidgetFactory.createDefaultButton("Start", IconUtils.WEBSITE);
+        workspaceList = new JXList();
+        workspaceList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        workspaceList.setVisibleRowCount(7);
+        label = new JXLabel("Previously selected workspaces");
+
+        checkBoxDontShowIt.setFont(WidgetUtils.FONT_NORMAL);
+        label.setFont(WidgetUtils.FONT_NORMAL);
+        workspaceList.setFont(WidgetUtils.FONT_NORMAL);
+        buttonStart.setFont(WidgetUtils.FONT_BUTTON);
+    }
+
     private void createLayout() {
-        createButtons();
-        setLayout(new FlowLayout());
-        add(new JScrollPane(createList()));
-        add(_buttonSelectFolder);
-        add(_buttonRemove);
-        add(_buttonStart);
-        _checkBoxDontShowIt = new JCheckBox("Don't show it again.");
-        add(_checkBoxDontShowIt);
+        JComponent panel = new JPanel();
+        getRootPane().setLayout(new BorderLayout());
+        getRootPane().add(panel);
+        GroupLayout l = new GroupLayout(panel);
+        panel.setLayout(l);
+        panel.setBackground(Color.WHITE);
+        panel.setOpaque(true);
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        JScrollPane workspaceScroll = new JScrollPane(workspaceList);
+        l.setHorizontalGroup(l.createParallelGroup()
+                .addComponent(label)
+                .addGroup(l.createSequentialGroup()
+                        .addComponent(workspaceScroll, GroupLayout.DEFAULT_SIZE, 450, GroupLayout.DEFAULT_SIZE)
+                        .addGap(4)
+                        .addGroup(l.createParallelGroup()
+                                .addComponent(buttonSelectFolder)
+                                .addComponent(buttonRemove)
+                        )
+                )
+                .addComponent(checkBoxDontShowIt)
+                .addComponent(buttonStart, GroupLayout.Alignment.CENTER)
+
+        );
+        l.setVerticalGroup(l.createSequentialGroup()
+                .addComponent(label)
+                .addGap(4)
+                .addGroup(l.createParallelGroup()
+                        .addComponent(workspaceScroll)
+                        .addGroup(l.createSequentialGroup()
+                                .addComponent(buttonSelectFolder)
+                                .addGap(3)
+                                .addComponent(buttonRemove)
+                        )
+                )
+                .addGap(5)
+                .addComponent(checkBoxDontShowIt)
+                .addGap(10)
+                .addComponent(buttonStart)
+        );
 
     }
 
@@ -80,54 +189,24 @@ public class WorkspaceConfigDialog extends JDialog {
         final List<String> workspacePaths = _workspaceManager.getWorkspacePaths();
         final Vector<String> vector = new Vector<>();
         vector.addAll(workspacePaths);
-        _workspaceList.setListData(vector);
+        workspaceList.setListData(vector);
         if (workspacePaths.isEmpty()) {
-            _buttonRemove.setEnabled(false);
-            _buttonStart.setEnabled(false);
+            buttonRemove.setEnabled(false);
+            buttonStart.setEnabled(false);
         } else {
-            _buttonRemove.setEnabled(true);
-            _buttonStart.setEnabled(true);
-            _workspaceList.setSelectedIndex(0);
+            buttonRemove.setEnabled(true);
+            buttonStart.setEnabled(true);
+            String valueToSelect = _workspaceManager.getDefaultWorkspace();
+            if(StringUtils.isNotBlank(valueToSelect)) {
+                workspaceList.setSelectedValue(valueToSelect, true);
+            } else {
+                workspaceList.setSelectedIndex(0);
+            }
         }
-        _workspaceList.repaint();
     }
 
-    private JList<String> createList() {
-        _workspaceList = new JList<>();
-        _workspaceList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        _workspaceList.setFixedCellHeight(80);
-        _workspaceList.setFixedCellWidth(500);
-        _workspaceList.setVisibleRowCount(10);
-        return _workspaceList;
-    }
-
-    private void createButtons() {
-        _buttonRemove = WidgetFactory.createDefaultButton("remove");
-        _buttonRemove.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String selectedValue = _workspaceList.getSelectedValue();
-                _workspaceManager.removeWorkspace(selectedValue);
-                loadData();
-            }
-        });
-
-        _buttonSelectFolder = WidgetFactory.createDefaultButton("Select new workspace");
-        _buttonSelectFolder.addActionListener(new FileChooserAction("Workspace selector", this));
-
-        _buttonStart = WidgetFactory.createDefaultButton("Start");
-        _buttonStart.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final String selectedValue = _workspaceList.getSelectedValue();
-                _workspaceManager.setWorkspaceToRun(selectedValue);
-                if (_checkBoxDontShowIt.isSelected()) {
-                    _workspaceManager.setDefaultWorkspace(selectedValue);
-                    _workspaceManager.setShowDialog(false);
-                }
-                dispose();
-            }
-        });
+    public boolean isShouldStart() {
+        return shouldStart;
     }
 
     private static class FileChooserAction extends AbstractAction {

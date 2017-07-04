@@ -294,8 +294,12 @@ public final class DataCleanerHome {
     }
 
     private static String getUserHomeCandidatePath() {
+        return getDefaultHomeBase().getPath();
+    }
+
+    public static File getDefaultHomeBase() {
         final String userHomePath = System.getProperty("user.home");
-        return userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar + Version.getVersion();
+        return new File(userHomePath + File.separatorChar + ".datacleaner");
     }
 
     private static boolean isUsable(final FileObject candidate) throws FileSystemException {

@@ -50,6 +50,7 @@ public class DefaultButtonUI extends MetalButtonUI {
         b.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
         b.setForeground(WidgetUtils.BG_COLOR_DARK);
         b.setBorder(WidgetUtils.BORDER_BUTTON_DEFAULT);
+        b.setContentAreaFilled(false);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 

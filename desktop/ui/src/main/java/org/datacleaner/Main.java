@@ -154,26 +154,28 @@ public final class Main {
     public static void main(final String[] args, final boolean initializeSystemProperties,
             final boolean initializeLogging) {
         final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
+        try {
 
-        if (!bootstrapOptions.isCommandLineMode()) {
-
-            try {
-                new WorkspaceConfigStarter().start();
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (!bootstrapOptions.isCommandLineMode()) {
+                if (!new WorkspaceConfigStarter().start()) {
+                    return;
+                }
             }
+
+            if (initializeSystemProperties) {
+                initializeSystemProperties(args);
+            }
+
+            if (initializeLogging) {
+                initializeLogging();
+            }
+
+            final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
+            bootstrap.run();
+
+        } catch (Exception e) {
+            throw (e instanceof RuntimeException) ? ((RuntimeException)e) : new RuntimeException(e);
         }
 
-        if (initializeSystemProperties) {
-            initializeSystemProperties(args);
-        }
-
-        if (initializeLogging) {
-            initializeLogging();
-        }
-
-
-        final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
-        bootstrap.run();
     }
 }

@@ -119,9 +119,7 @@ public class WorkspaceConfigDialog extends JDialog {
         final String selectedValue = workspaceList.getSelectedValue();
         _workspaceManager.setWorkspaceToRun(selectedValue);
         _workspaceManager.setDefaultWorkspace(selectedValue);
-        if (checkBoxDontShowIt.isSelected()) {
-            _workspaceManager.setShowDialog(false);
-        }
+        _workspaceManager.setShowDialog(!checkBoxDontShowIt.isSelected());
         shouldStart = true;
         dispose();
     }
@@ -137,6 +135,7 @@ public class WorkspaceConfigDialog extends JDialog {
         label = new JXLabel("Previously selected workspaces");
 
         checkBoxDontShowIt.setFont(WidgetUtils.FONT_NORMAL);
+        checkBoxDontShowIt.setOpaque(false);
         label.setFont(WidgetUtils.FONT_NORMAL);
         workspaceList.setFont(WidgetUtils.FONT_NORMAL);
         buttonStart.setFont(WidgetUtils.FONT_BUTTON);
@@ -199,10 +198,12 @@ public class WorkspaceConfigDialog extends JDialog {
             String valueToSelect = _workspaceManager.getDefaultWorkspace();
             if(StringUtils.isNotBlank(valueToSelect)) {
                 workspaceList.setSelectedValue(valueToSelect, true);
-            } else {
+            }
+            if(workspaceList.getSelectedIndex() < 0) {
                 workspaceList.setSelectedIndex(0);
             }
         }
+        checkBoxDontShowIt.setSelected(!_workspaceManager.showDialog());
     }
 
     public boolean isShouldStart() {

@@ -21,6 +21,7 @@ package org.datacleaner.tenantloader;
 
 import javax.xml.bind.JAXBException;
 
+import org.datacleaner.cli.CliArguments;
 import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.windows.WorkspaceConfigDialog;
 
@@ -30,9 +31,11 @@ import org.datacleaner.windows.WorkspaceConfigDialog;
 public class WorkspaceConfigStarter {
 
     private WorkspaceManager _workspaceManager;
+    private CliArguments cliArguments;
 
-    public WorkspaceConfigStarter() throws JAXBException {
+    public WorkspaceConfigStarter(CliArguments cliArguments) throws JAXBException {
         _workspaceManager = new WorkspaceManager();
+        this.cliArguments = cliArguments;
     }
 
     /**
@@ -41,7 +44,7 @@ public class WorkspaceConfigStarter {
      */
     public boolean start() throws InterruptedException {
         // If "Don't show again" was chosen in the past
-        if (!_workspaceManager.showDialog()) {
+        if (!_workspaceManager.showDialog() && !cliArguments.isWorkspaceSelection()) {
             _workspaceManager.setWorkspaceToRun(_workspaceManager.getDefaultWorkspace());
             DataCleanerHome.reInit();
             return true;

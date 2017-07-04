@@ -157,7 +157,7 @@ public final class Main {
         try {
 
             if (!bootstrapOptions.isCommandLineMode()) {
-                if (!new WorkspaceConfigStarter().start()) {
+                if (!new WorkspaceConfigStarter(bootstrapOptions.getCommandLineArguments()).start()) {
                     return;
                 }
             }

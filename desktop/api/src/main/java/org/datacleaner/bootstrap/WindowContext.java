@@ -99,7 +99,17 @@ public interface WindowContext {
     boolean showExitDialog();
 
     /**
-     * Requests the application to exit.
+     * Requests the application to exit with exit code 0.
      */
     void exit();
+
+    /**
+     * Requests the application to exit.
+     */
+    void exit(int exitCode);
+
+    /**
+     * Exits without asking
+     */
+    void forceExit(int exitCode);
 }

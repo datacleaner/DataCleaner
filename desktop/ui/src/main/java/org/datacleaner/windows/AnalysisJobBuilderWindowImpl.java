@@ -605,53 +605,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         if (!super.onWindowClosing()) {
             return false;
         }
-
         switch (_currentPanelType) {
-        case WELCOME:
-            final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
-            if (count == 1) {
-                if (getWindowContext().showExitDialog()) {
-                    cleanupForWindowClose();
-                    getWindowContext().exit();
+            case WELCOME:
+                final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
+                if(canClose() && count == 1) {
+                    getWindowContext().forceExit(0);
+                    return true;
                 }
-            } else {
-                cleanupForWindowClose();
-                return true;
-            }
-            break;
-        case EDITING_CONTEXT:
-            // if datastore is set and datastore selection is enabled,
-            // return to datastore selection.
-
-            if (isJobUnsaved(getJobFile(), _analysisJobBuilder) && (_saveButton.isEnabled())) {
-
-                final Object[] buttons = { "Save changes", "Discard changes", "Cancel" };
-                final int unsavedChangesChoice = JOptionPane
-                        .showOptionDialog(this, "The job has unsaved changes. What would you like to do?",
-                                "Unsaved changes detected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                null, buttons, buttons[1]);
-
-                if (unsavedChangesChoice == 0) { // save changes
-                    _saveButton.doClick();
-                    final ActionListener[] actionListeners = _saveButton.getActionListeners();
-                    if (actionListeners[0] instanceof SaveAnalysisJobActionListener) {
-                        final SaveAnalysisJobActionListener saveAnalysisJobActionListener =
-                                (SaveAnalysisJobActionListener) actionListeners[0];
-                        if (!saveAnalysisJobActionListener.isSaved()) {
-                            return false;
-                        }
-                    }
-                } else if (unsavedChangesChoice != 1) { // cancel closing
-                    return false;
-                }
-            }
-
-            resetJob();
-            break;
-        default:
-            changePanel(AnalysisWindowPanelType.WELCOME);
+                break;
+            default:
+                canClose();
         }
-
         return false;
     }
 
@@ -1017,5 +981,53 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
     @Override
     public DCModule getDCModule() {
         return _dcModule;
+    }
+
+    @Override
+    public boolean canClose() {
+        switch (_currentPanelType) {
+            case WELCOME:
+                final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
+                if (count == 1) {
+                    if (!getWindowContext().showExitDialog()) {
+                        return false;
+                    }
+                }
+                cleanupForWindowClose();
+                return true;
+            case EDITING_CONTEXT:
+                // if datastore is set and datastore selection is enabled,
+                // return to datastore selection.
+
+                if (isJobUnsaved(getJobFile(), _analysisJobBuilder) && (_saveButton.isEnabled())) {
+
+                    final Object[] buttons = { "Save changes", "Discard changes", "Cancel" };
+                    final int unsavedChangesChoice = JOptionPane
+                            .showOptionDialog(this, "The job has unsaved changes. What would you like to do?",
+                                    "Unsaved changes detected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                    null, buttons, buttons[1]);
+
+                    if (unsavedChangesChoice == 0) { // save changes
+                        _saveButton.doClick();
+                        final ActionListener[] actionListeners = _saveButton.getActionListeners();
+                        if (actionListeners[0] instanceof SaveAnalysisJobActionListener) {
+                            final SaveAnalysisJobActionListener saveAnalysisJobActionListener =
+                                    (SaveAnalysisJobActionListener) actionListeners[0];
+                            if (!saveAnalysisJobActionListener.isSaved()) {
+                                return false;
+                            }
+                        }
+                    } else if (unsavedChangesChoice != 1) { // cancel closing
+                        return false;
+                    }
+                }
+
+                resetJob();
+                break;
+            default:
+                changePanel(AnalysisWindowPanelType.WELCOME);
+        }
+
+        return true;
     }
 }

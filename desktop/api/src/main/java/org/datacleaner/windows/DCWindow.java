@@ -45,4 +45,6 @@ public interface DCWindow {
     void close();
 
     Component toComponent();
+
+    boolean canClose();
 }

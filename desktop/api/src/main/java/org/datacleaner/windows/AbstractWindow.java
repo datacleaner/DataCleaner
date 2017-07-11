@@ -210,4 +210,8 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
     public Component toComponent() {
         return this;
     }
+
+    public boolean canClose() {
+        return true;
+    }
 }

@@ -68,6 +68,10 @@ public class CliArguments {
     private String outputFile;
     @Option(name = "-v", aliases = { "-var", "--variable" }, multiValued = true)
     private Map<String, String> variableOverrides;
+
+    @Option(name = "-ws", aliases = { "--workspace-selection" })
+    private boolean workspaceSelection;
+
     private boolean usageMode;
     private boolean versionMode;
 
@@ -202,6 +206,10 @@ public class CliArguments {
             return CliRunType.LOCAL;
         }
         return runType;
+    }
+
+    public boolean isWorkspaceSelection() {
+        return workspaceSelection;
     }
 
     /**

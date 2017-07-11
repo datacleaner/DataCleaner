@@ -52,6 +52,7 @@ public class DarkButtonUI extends MetalButtonUI {
         b.setBackground(COLOR_BG_DEFAULT);
         b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         b.setFocusPainted(false);
+        b.setContentAreaFilled(false);
         b.setBorder(WidgetUtils.BORDER_BUTTON_DARK);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }

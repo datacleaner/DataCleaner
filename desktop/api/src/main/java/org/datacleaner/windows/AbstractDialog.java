@@ -285,4 +285,9 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     public Component toComponent() {
         return this;
     }
+
+    @Override
+    public boolean canClose() {
+        return true;
+    }
 }

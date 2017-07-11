@@ -33,6 +33,7 @@ import org.datacleaner.bootstrap.Bootstrap;
 import org.datacleaner.bootstrap.BootstrapOptions;
 import org.datacleaner.bootstrap.DefaultBootstrapOptions;
 import org.datacleaner.extensions.ClassLoaderUtils;
+import org.datacleaner.tenantloader.WorkspaceConfigStarter;
 import org.datacleaner.user.DataCleanerHome;
 
 /**
@@ -152,16 +153,29 @@ public final class Main {
 
     public static void main(final String[] args, final boolean initializeSystemProperties,
             final boolean initializeLogging) {
-        if (initializeSystemProperties) {
-            initializeSystemProperties(args);
-        }
-
-        if (initializeLogging) {
-            initializeLogging();
-        }
-
         final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
-        final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
-        bootstrap.run();
+        try {
+
+            if (!bootstrapOptions.isCommandLineMode()) {
+                if (!new WorkspaceConfigStarter(bootstrapOptions.getCommandLineArguments()).start()) {
+                    return;
+                }
+            }
+
+            if (initializeSystemProperties) {
+                initializeSystemProperties(args);
+            }
+
+            if (initializeLogging) {
+                initializeLogging();
+            }
+
+            final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
+            bootstrap.run();
+
+        } catch (Exception e) {
+            throw (e instanceof RuntimeException) ? ((RuntimeException)e) : new RuntimeException(e);
+        }
+
     }
 }

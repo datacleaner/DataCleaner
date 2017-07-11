@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.user.UsageLogger;
@@ -106,7 +107,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
         if (!_exiting) {
             if (getWindows().isEmpty()) {
                 logger.info("All DataCleaner windows closed");
-                exit();
+                forceExit(0);
             }
         }
     }
@@ -138,13 +139,38 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
     }
 
     @Override
-    public void exit() {
+    public void exit(int exitCode) {
         // ensure that exit actions only occur once.
         if (_exiting) {
             return;
         }
         _exiting = true;
 
+        // Ask existing windows if can exit (Asks to save opened work etc.)
+        final List<DCWindow> windowsCopy = new ArrayList<>(getWindows());
+        for (final DCWindow window : windowsCopy) {
+            if (!window.canClose()) {
+                _exiting = false;
+                return;
+            }
+        }
+
+        doForceExit(exitCode);
+    }
+
+    @Override
+    public void forceExit(int exitCode) {
+        // ensure that exit actions only occur once.
+        if (_exiting) {
+            return;
+        }
+        _exiting = true;
+
+        doForceExit(exitCode);
+    }
+
+    private void doForceExit(int exitCode) {
+        _exiting = true;
         if (_userPreferences != null) {
             _userPreferences.save();
         }
@@ -155,12 +181,18 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
             _configuration.getEnvironment().getTaskRunner().shutdown();
         }
         for (final ExitActionListener actionListener : _exitActionListeners) {
-            actionListener.exit(0);
+            actionListener.exit(exitCode);
         }
 
         final List<DCWindow> windowsCopy = new ArrayList<>(getWindows());
         for (final DCWindow window : windowsCopy) {
             window.close();
+        }
+        if (exitCode != 0) {
+            // system exit after currently planned events
+            SwingUtilities.invokeLater(() -> {
+                System.exit(exitCode);
+            });
         }
     }
 

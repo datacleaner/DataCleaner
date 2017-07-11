@@ -317,6 +317,7 @@ public final class WidgetFactory {
 
         b.setUI(new MetalButtonUI());
         b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
+        b.setContentAreaFilled(false);
 
         final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
         b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));

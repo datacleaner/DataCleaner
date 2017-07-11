@@ -85,6 +85,14 @@ public class SimpleWindowContext implements WindowContext {
 
     @Override
     public void exit() {
+        exit(0);
     }
 
+    @Override
+    public void exit(int exitCode) {
+    }
+
+    @Override
+    public void forceExit(int exitCode) {
+    }
 }

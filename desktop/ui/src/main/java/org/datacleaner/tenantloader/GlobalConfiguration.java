@@ -17,34 +17,22 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.windows;
+package org.datacleaner.tenantloader;
 
-import java.awt.Component;
-import java.awt.Image;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.datacleaner.bootstrap.WindowContext;
+@XmlRootElement(name = "datacleanerConfiguration")
+public class GlobalConfiguration {
 
-/**
- * Defines a common interface for windows in DataCleaner. Windows are registered
- * in the windowContext class.
- *
- * @see WindowContext
- */
-public interface DCWindow {
+    private WorkspaceConfiguration workspaceConfiguration = new WorkspaceConfiguration();
 
-    WindowContext getWindowContext();
+    public WorkspaceConfiguration getWorkspaceConfiguration() {
+        return workspaceConfiguration;
+    }
 
-    String getWindowTitle();
-
-    Image getWindowIcon();
-
-    void toFront();
-
-    void open();
-
-    void close();
-
-    Component toComponent();
-
-    boolean canClose();
+    @XmlElement(name = "workspaceConfiguration")
+    public void setWorkspaceConfiguration(WorkspaceConfiguration workspaceConfiguration) {
+        this.workspaceConfiguration = workspaceConfiguration;
+    }
 }

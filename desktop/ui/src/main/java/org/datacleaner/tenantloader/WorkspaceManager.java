@@ -50,15 +50,15 @@ public class WorkspaceManager {
     private void loadConfiguration() throws JAXBException {
         final File confFile = getConfigurationFile();
         if (!confFile.isFile()) {
-            String defaultHomePath = DataCleanerHome.getAsDataCleanerHomeFolder().toFile().getAbsolutePath();
+            final String defaultHomePath = DataCleanerHome.getAsDataCleanerHomeFolder().toFile().getAbsolutePath();
             _workspaceConfiguration = new WorkspaceConfiguration();
             _workspaceConfiguration.getWorkspaces().add(defaultHomePath);
             // in previous version, there were sub-folders with version numbers.
             // Provide them as option to choose from.
-            File homeBase = DataCleanerHome.getDefaultHomeBase();
-            if(homeBase.isDirectory()) {
-                for(File subFolder: homeBase.listFiles()) {
-                    if(subFolder.getName().matches("[0-9\\.]*")) {
+            final File homeBase = DataCleanerHome.getDefaultHomeBase();
+            if (homeBase.isDirectory()) {
+                for (File subFolder: homeBase.listFiles()) {
+                    if (subFolder.getName().matches("[0-9\\.]*")) {
                         _workspaceConfiguration.getWorkspaces().add(subFolder.getAbsolutePath());
                     }
                 }

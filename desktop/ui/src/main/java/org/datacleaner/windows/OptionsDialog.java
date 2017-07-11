@@ -127,14 +127,16 @@ public class OptionsDialog extends AbstractWindow {
         saveDatastoreDirectoryField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         saveDatastoreDirectoryField.addFileSelectionListener(
                 (filenameTextField, file) -> _userPreferences.setSaveDatastoreDirectory(file));
-        JButton changeWorkspaceBut = WidgetFactory.createDefaultButton("Restart and change workspace", IconUtils.ACTION_RESET);
-        changeWorkspaceBut.addActionListener((e)->{
+        final JButton changeWorkspaceBut = WidgetFactory.createDefaultButton(
+                "Restart and change workspace",
+                IconUtils.ACTION_RESET);
+        changeWorkspaceBut.addActionListener((e) -> {
             getWindowContext().exit(3);
         });
 
         final DCPanel directoriesPanel = new DCPanel().setTitledBorder("Files & directories");
-        DCPanel p1 = new DCPanel();
-        DCPanel p2 = new DCPanel();
+        final DCPanel p1 = new DCPanel();
+        final DCPanel p2 = new DCPanel();
         p1.setLayout(new VerticalLayout(4));
         p2.add(DCLabel.dark("Written datastores:"));
         p2.add(saveDatastoreDirectoryField);

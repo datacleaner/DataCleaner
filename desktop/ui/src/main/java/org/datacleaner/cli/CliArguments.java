@@ -69,7 +69,7 @@ public class CliArguments {
     @Option(name = "-v", aliases = { "-var", "--variable" }, multiValued = true)
     private Map<String, String> variableOverrides;
 
-    @Option(name="-ws", aliases = {"--workspace-selection"})
+    @Option(name = "-ws", aliases = { "--workspace-selection" })
     private boolean workspaceSelection;
 
     private boolean usageMode;

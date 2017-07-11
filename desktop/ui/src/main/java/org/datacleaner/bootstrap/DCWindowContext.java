@@ -149,7 +149,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
         // Ask existing windows if can exit (Asks to save opened work etc.)
         final List<DCWindow> windowsCopy = new ArrayList<>(getWindows());
         for (final DCWindow window : windowsCopy) {
-            if(!window.canClose()) {
+            if (!window.canClose()) {
                 _exiting = false;
                 return;
             }
@@ -161,7 +161,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
     @Override
     public void forceExit(int exitCode) {
         // ensure that exit actions only occur once.
-        if(_exiting) {
+        if (_exiting) {
             return;
         }
         _exiting = true;
@@ -188,7 +188,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
         for (final DCWindow window : windowsCopy) {
             window.close();
         }
-        if(exitCode != 0) {
+        if (exitCode != 0) {
             // system exit after currently planned events
             SwingUtilities.invokeLater(() -> {
                 System.exit(exitCode);

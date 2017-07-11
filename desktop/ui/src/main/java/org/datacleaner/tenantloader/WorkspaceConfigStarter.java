@@ -51,13 +51,13 @@ public class WorkspaceConfigStarter {
         }
         // Show the "workspace chooser" dialog
         final WorkspaceConfigDialog workspaceConfigDialog = new WorkspaceConfigDialog(null, _workspaceManager);
-        if(workspaceConfigDialog.isShouldStart()) {
+        if (workspaceConfigDialog.isShouldStart()) {
             try {
                 _workspaceManager.save();
                 DataCleanerHome.reInit();
                 return true;
-            } catch (JAXBException ex2) {
-                throw new RuntimeException(ex2);
+            } catch (JAXBException e) {
+                throw new RuntimeException(e);
             }
         } else {
             return false;

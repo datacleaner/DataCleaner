@@ -608,7 +608,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         switch (_currentPanelType) {
             case WELCOME:
                 final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
-                if(canClose() && count == 1) {
+                if (canClose() && count == 1) {
                     getWindowContext().forceExit(0);
                     return true;
                 }

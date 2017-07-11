@@ -86,7 +86,7 @@ public class WorkspaceConfigDialog extends JDialog {
         workspaceList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount() >= 2) {
+                if (e.getClickCount() >= 2) {
                     start();
                 }
             }
@@ -142,21 +142,21 @@ public class WorkspaceConfigDialog extends JDialog {
     }
 
     private void createLayout() {
-        JComponent panel = new JPanel();
+        final JComponent panel = new JPanel();
         getRootPane().setLayout(new BorderLayout());
         getRootPane().add(panel);
-        GroupLayout l = new GroupLayout(panel);
-        panel.setLayout(l);
+        final GroupLayout layout = new GroupLayout(panel);
+        panel.setLayout(layout);
         panel.setBackground(Color.WHITE);
         panel.setOpaque(true);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        JScrollPane workspaceScroll = new JScrollPane(workspaceList);
-        l.setHorizontalGroup(l.createParallelGroup()
+        final JScrollPane workspaceScroll = new JScrollPane(workspaceList);
+        layout.setHorizontalGroup(layout.createParallelGroup()
                 .addComponent(label)
-                .addGroup(l.createSequentialGroup()
+                .addGroup(layout.createSequentialGroup()
                         .addComponent(workspaceScroll, GroupLayout.DEFAULT_SIZE, 450, GroupLayout.DEFAULT_SIZE)
                         .addGap(4)
-                        .addGroup(l.createParallelGroup()
+                        .addGroup(layout.createParallelGroup()
                                 .addComponent(buttonSelectFolder)
                                 .addComponent(buttonRemove)
                         )
@@ -165,12 +165,12 @@ public class WorkspaceConfigDialog extends JDialog {
                 .addComponent(buttonStart, GroupLayout.Alignment.CENTER)
 
         );
-        l.setVerticalGroup(l.createSequentialGroup()
+        layout.setVerticalGroup(layout.createSequentialGroup()
                 .addComponent(label)
                 .addGap(4)
-                .addGroup(l.createParallelGroup()
+                .addGroup(layout.createParallelGroup()
                         .addComponent(workspaceScroll)
-                        .addGroup(l.createSequentialGroup()
+                        .addGroup(layout.createSequentialGroup()
                                 .addComponent(buttonSelectFolder)
                                 .addGap(3)
                                 .addComponent(buttonRemove)
@@ -195,11 +195,11 @@ public class WorkspaceConfigDialog extends JDialog {
         } else {
             buttonRemove.setEnabled(true);
             buttonStart.setEnabled(true);
-            String valueToSelect = _workspaceManager.getDefaultWorkspace();
-            if(StringUtils.isNotBlank(valueToSelect)) {
-                workspaceList.setSelectedValue(valueToSelect, true);
+            final String selectedWorkspace = _workspaceManager.getDefaultWorkspace();
+            if (StringUtils.isNotBlank(selectedWorkspace)) {
+                workspaceList.setSelectedValue(selectedWorkspace, true);
             }
-            if(workspaceList.getSelectedIndex() < 0) {
+            if (workspaceList.getSelectedIndex() < 0) {
                 workspaceList.setSelectedIndex(0);
             }
         }

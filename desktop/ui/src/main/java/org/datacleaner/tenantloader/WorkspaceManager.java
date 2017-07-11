@@ -39,11 +39,11 @@ import static org.datacleaner.user.DataCleanerHome.HOME_PROPERTY_NAME;
 public class WorkspaceManager {
     private static final String GLOBAL_CONFIG_FILE_NAME = "global_config.xml";
 
-    private WorkspaceConfiguration _workspaceConfiguration;
+    private GlobalConfiguration globalConfig;
     private JAXBContext _jaxbContext;
 
     public WorkspaceManager() throws JAXBException {
-        _jaxbContext = JAXBContext.newInstance(WorkspaceConfiguration.class);
+        _jaxbContext = JAXBContext.newInstance(GlobalConfiguration.class);
         loadConfiguration();
     }
 
@@ -51,21 +51,21 @@ public class WorkspaceManager {
         final File confFile = getConfigurationFile();
         if (!confFile.isFile()) {
             final String defaultHomePath = DataCleanerHome.getAsDataCleanerHomeFolder().toFile().getAbsolutePath();
-            _workspaceConfiguration = new WorkspaceConfiguration();
-            _workspaceConfiguration.getWorkspaces().add(defaultHomePath);
+            globalConfig = new GlobalConfiguration();
+            globalConfig.getWorkspaceConfiguration().getWorkspaces().add(defaultHomePath);
             // in previous version, there were sub-folders with version numbers.
             // Provide them as option to choose from.
             final File homeBase = DataCleanerHome.getDefaultHomeBase();
             if (homeBase.isDirectory()) {
                 for (File subFolder: homeBase.listFiles()) {
                     if (subFolder.getName().matches("[0-9\\.]*")) {
-                        _workspaceConfiguration.getWorkspaces().add(subFolder.getAbsolutePath());
+                        globalConfig.getWorkspaceConfiguration().getWorkspaces().add(subFolder.getAbsolutePath());
                     }
                 }
             }
         } else {
             final Unmarshaller jaxbUnmarshaller = _jaxbContext.createUnmarshaller();
-            _workspaceConfiguration = (WorkspaceConfiguration) jaxbUnmarshaller.unmarshal(confFile);
+            globalConfig = (GlobalConfiguration) jaxbUnmarshaller.unmarshal(confFile);
         }
     }
 
@@ -75,7 +75,7 @@ public class WorkspaceManager {
      * @return
      */
     public String getDefaultWorkspace() {
-        return _workspaceConfiguration.getDefaultWorkspace();
+        return globalConfig.getWorkspaceConfiguration().getDefaultWorkspace();
     }
 
     /**
@@ -84,7 +84,7 @@ public class WorkspaceManager {
      * @param path
      */
     public void setDefaultWorkspace(String path) {
-        _workspaceConfiguration.setDefaultWorkspace(path);
+        globalConfig.getWorkspaceConfiguration().setDefaultWorkspace(path);
         addWorkspacePath(path);
     }
 
@@ -94,7 +94,7 @@ public class WorkspaceManager {
      * @param path
      */
     public void addWorkspacePath(String path) {
-        final List<String> paths = _workspaceConfiguration.getWorkspaces();
+        final List<String> paths = globalConfig.getWorkspaceConfiguration().getWorkspaces();
         if (!paths.contains(path)) {
             paths.add(path);
         }
@@ -106,7 +106,7 @@ public class WorkspaceManager {
      * @return
      */
     public List<String> getWorkspacePaths() {
-        return _workspaceConfiguration.getWorkspaces();
+        return globalConfig.getWorkspaceConfiguration().getWorkspaces();
     }
 
     /**
@@ -115,7 +115,7 @@ public class WorkspaceManager {
      * @param show
      */
     public void setShowDialog(boolean show) {
-        _workspaceConfiguration.setShowDialog(show);
+        globalConfig.getWorkspaceConfiguration().setShowDialog(show);
     }
 
     /**
@@ -124,7 +124,7 @@ public class WorkspaceManager {
      * @return
      */
     public boolean showDialog() {
-        return _workspaceConfiguration.isShowDialog();
+        return globalConfig.getWorkspaceConfiguration().isShowDialog();
     }
 
     /**
@@ -136,10 +136,10 @@ public class WorkspaceManager {
         if (StringUtils.isNullOrEmpty(path)) {
             return;
         }
-        if (path.equals(_workspaceConfiguration.getDefaultWorkspace())) {
-            _workspaceConfiguration.setDefaultWorkspace(null);
+        if (path.equals(globalConfig.getWorkspaceConfiguration().getDefaultWorkspace())) {
+            globalConfig.getWorkspaceConfiguration().setDefaultWorkspace(null);
         }
-        _workspaceConfiguration.getWorkspaces().remove(path);
+        globalConfig.getWorkspaceConfiguration().getWorkspaces().remove(path);
     }
 
     /**
@@ -166,7 +166,7 @@ public class WorkspaceManager {
             configurationFile.delete();
         }
         new FileRepositoryFolder(null, configurationFile.getParentFile()).createFile(GLOBAL_CONFIG_FILE_NAME, out -> {
-            jaxbMarshaller.marshal(_workspaceConfiguration, out);
+            jaxbMarshaller.marshal(globalConfig, out);
         });
     }
 

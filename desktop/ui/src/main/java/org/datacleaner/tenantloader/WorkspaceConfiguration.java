@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Datacleaner workspaces - file.
  */
-@XmlRootElement
 public class WorkspaceConfiguration {
     List<String> workspaces = new ArrayList<>();
     String defaultWorkspace;

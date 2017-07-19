@@ -69,7 +69,6 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -100,7 +99,6 @@ import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.Dictionary;
@@ -832,8 +830,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 ds = createDatastore(name, (SalesforceDatastoreType) datastoreType);
             } else if (datastoreType instanceof SugarCrmDatastoreType) {
                 ds = createDatastore(name, (SugarCrmDatastoreType) datastoreType);
-            } else if (datastoreType instanceof DatahubDatastoreType) {
-                ds = createDatastore(name, (DatahubDatastoreType) datastoreType);
             } else if (datastoreType instanceof Neo4JDatastoreType) {
                 ds = createDatastore(name, (Neo4JDatastoreType) datastoreType);
             } else if (datastoreType instanceof CompositeDatastoreType) {
@@ -1119,20 +1115,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final String username = getStringVariable("username", datastoreType.getUsername());
         final String password = getPasswordVariable("password", datastoreType.getPassword());
         return new SugarCrmDatastore(name, baseUrl, username, password);
-    }
-
-    private Datastore createDatastore(final String name, final DatahubDatastoreType datastoreType) {
-        final String host = getStringVariable("host", datastoreType.getHost());
-        final Integer port = getIntegerVariable("port", datastoreType.getPort());
-        final String username = getStringVariable("username", datastoreType.getUsername());
-        final String password = getPasswordVariable("password", datastoreType.getPassword());
-        final boolean https = getBooleanVariable("https", datastoreType.isHttps(), true);
-        final boolean acceptUnverifiedSslPeers =
-                getBooleanVariable("acceptunverifiedsslpeers", datastoreType.isAcceptunverifiedsslpeers(), false);
-        final DatahubsecuritymodeEnum jaxbDatahubsecuritymode = datastoreType.getDatahubsecuritymode();
-        final DataHubSecurityMode dataHubSecurityMode = DataHubSecurityMode.valueOf(jaxbDatahubsecuritymode.value());
-        return new DataHubDatastore(name, host, port, username, password, https, acceptUnverifiedSslPeers,
-                dataHubSecurityMode);
     }
 
     private Datastore createDatastore(final String name, final MongodbDatastoreType mongodbDatastoreType) {

@@ -43,7 +43,6 @@ import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
@@ -63,7 +62,6 @@ import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.Dictionary;
@@ -233,7 +231,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
         assertEquals(
                 "[my cassandra db, my couch, my es index, my hbase, my mongo, my_access, my_composite, my_csv, "
-                        + "my_custom, my_datahub, my_dbase, my_dom_xml, my_excel_2003, my_fixed_width_1, "
+                        + "my_custom, my_dbase, my_dom_xml, my_excel_2003, my_fixed_width_1, "
                         + "my_fixed_width_2, my_jdbc_connection, my_jdbc_datasource, my_json, my_odb, my_pojo, "
                         + "my_sas, my_sax_xml, my_sfdc_ds, my_sugarcrm]", Arrays.toString(datastoreNames));
 
@@ -364,22 +362,12 @@ public class JaxbConfigurationReaderTest extends TestCase {
         final JsonDatastore jsonDatastore = (JsonDatastore) datastoreCatalog.getDatastore("my_json");
         assertEquals("JsonDatastore[name=my_json]", jsonDatastore.toString());
 
-        final DataHubDatastore dataHubDatastore = (DataHubDatastore) datastoreCatalog.getDatastore("my_datahub");
-        assertThat(dataHubDatastore.getName(), is("my_datahub"));
-        assertThat(dataHubDatastore.getHost(), is("hostname"));
-        assertThat(dataHubDatastore.getPort(), is(1234));
-        assertThat(dataHubDatastore.getUsername(), is("user"));
-        assertThat(dataHubDatastore.getPassword(), is("SECRET"));
-        assertThat(dataHubDatastore.isHttps(), is(false));
-        assertThat(dataHubDatastore.isAcceptUnverifiedSslPeers(), is(false));
-        assertThat(dataHubDatastore.getSecurityMode(), is(DataHubSecurityMode.DEFAULT));
-
         for (final String name : datastoreNames) {
             // test that all connections, except the JNDI-, MongoDB- and
             // CouchDB-based on will work
             if (!"my_jdbc_datasource".equals(name) && !"my mongo".equals(name) && !"my couch".equals(name)
                     && !"my hbase".equals(name) && !"my_sfdc_ds".equals(name) && !"my_sugarcrm".equals(name)
-                    && !"my es index".equals(name) && !"my_datahub".equals(name)) {
+                    && !"my es index".equals(name)) {
                 final Datastore datastore = datastoreCatalog.getDatastore(name);
                 final DataContext dc;
                 try {

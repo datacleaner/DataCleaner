@@ -36,7 +36,6 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
@@ -70,7 +69,6 @@ import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
-import org.datacleaner.windows.DataHubDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
@@ -355,12 +353,6 @@ public class DatastorePanel extends DCPanel {
                 final Injector injector =
                         getInjectorBuilder().with(SugarCrmDatastore.class, datastore).createInjector();
                 final SugarCrmDatastoreDialog dialog = injector.getInstance(SugarCrmDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof DataHubDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(DataHubDatastore.class, datastore).createInjector();
-                final DataHubDatastoreDialog dialog = injector.getInstance(DataHubDatastoreDialog.class);
                 dialog.open();
             });
         } else if (datastore instanceof Neo4jDatastore) {

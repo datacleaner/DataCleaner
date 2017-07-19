@@ -237,13 +237,6 @@
 						</documentation>
 					</annotation>
 				</element>
-				<element name="datahub-datastore" type="ab:datahubDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on DataHub.
-						</documentation>
-					</annotation>
-				</element>
 				<element name="hbase-datastore" type="ab:hbaseDatastoreType">
 					<annotation>
 						<documentation>
@@ -505,27 +498,6 @@
 		</complexContent>
 	</complexType>
 
-	<complexType name="datahubDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<all>
-					<element name="host" type="string" minOccurs="1"
-						maxOccurs="1" />
-					<element name="port" type="int" minOccurs="1"
-						maxOccurs="1" />
-					<element name="username" type="string" minOccurs="1"
-						maxOccurs="1" />
-					<element name="password" type="string" minOccurs="1"
-						maxOccurs="1" />
-				    <element name="https" minOccurs="1" maxOccurs="1" type="boolean" />
-				    <element name="acceptunverifiedsslpeers" minOccurs="1" maxOccurs="1" type="boolean" />
-				    <element name="datahubsecuritymode" type="ab:datahubsecuritymodeEnum" minOccurs="1"
-						maxOccurs="1" />
-				</all>
-			</extension>
-		</complexContent>
-
-	</complexType>
 		<complexType name="neo4jDatastoreType">
 		<complexContent>
 			<extension base="ab:abstractDatastoreType">
@@ -538,13 +510,6 @@
 			</extension>
 		</complexContent>
 	</complexType>
-
-	<simpleType name="datahubsecuritymodeEnum">
-		<restriction base="string">
-			<enumeration value="CAS" />
-			<enumeration value="DEFAULT" />
-		</restriction>
-	</simpleType>
 
 	<complexType name="pojoDatastoreType">
 		<complexContent>

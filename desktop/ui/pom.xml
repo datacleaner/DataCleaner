@@ -9,6 +9,7 @@
 	<packaging>jar</packaging>
 
 	<build>
+		<finalName>DataCleaner</finalName>
 		<plugins>
 			<plugin>
 				<!-- make the jar file executable when dependencies are available in 
@@ -58,29 +59,26 @@
 					<source>${project.build.directory}/lib</source>
 				</configuration>
 			</plugin>
-
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
+				<artifactId>maven-assembly-plugin</artifactId>
+
+				<configuration>
+					<finalName>DataCleaner</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/assembly/dist.xml</descriptor>
+					</descriptors>
+				</configuration>
 				<executions>
 					<execution>
-						<id>copy-icons</id>
-						<phase>prepare-package</phase>
+						<phase>package</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<target name="copyicons">
-						<copy file="${project.build.directory}/classes/images/actions/add_dark.png" tofile="${project.build.directory}/classes/images/actions/add.png" />
-						<copy file="${project.build.directory}/classes/images/actions/close_dark.png" tofile="${project.build.directory}/classes/images/actions/close.png" />
-						<copy file="${project.build.directory}/classes/images/actions/remove_dark.png" tofile="${project.build.directory}/classes/images/actions/remove.png" />
-						<copy file="${project.build.directory}/classes/images/actions/save_dark.png" tofile="${project.build.directory}/classes/images/actions/save.png" />
-						<copy file="${project.build.directory}/classes/images/actions/scrolldown_dark.png" tofile="${project.build.directory}/classes/images/actions/scrolldown.png" />
-					</target>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

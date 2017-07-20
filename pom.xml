@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<modules>
-		<module>oss-branding</module>
-	</modules>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,7 +51,7 @@
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
 		almost any kind of data, eg. CSV files, databases, Excel spreadsheets, NoSQL databases and more.</description>
-	<url>https://datacleaner.org</url>
+	<url>https://datacleaner.github.io</url>
 	<packaging>pom</packaging>
 	
 	<profiles>
@@ -271,18 +268,6 @@
 		<developerConnection>scm:git:https://github.com/datacleaner/DataCleaner.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
-	<mailingLists>
-		<mailingList>
-			<name>DataCleaner-dev mailing list</name>
-			<archive>http://groups.google.com/group/datacleaner-dev</archive>
-			<post>datacleaner-dev@googlegroups.com</post>
-		</mailingList>
-		<mailingList>
-			<name>DataCleaner-announce mailing list</name>
-			<archive>http://groups.google.com/group/datacleaner-announce</archive>
-			<post>datacleaner-announce@googlegroups.com</post>
-		</mailingList>
-	</mailingLists>
 	<build>
 		<plugins>
 			<plugin>
@@ -649,7 +634,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.4</version>
+					<version>3.0.0</version>
 				</plugin>
 
 				<plugin>

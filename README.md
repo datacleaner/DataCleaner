@@ -2,7 +2,7 @@
 
 [![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner)
 <div>
-<img src="https://datacleaner.org/resources/dc-logo-100.png" alt="DataCleaner logo" />
+<img src="https://datacleaner.github.io/assets/dc-logo-100.png" alt="DataCleaner logo" />
 </div>
 
 The premier Open Source Data Quality solution.
@@ -42,9 +42,9 @@ https://travis-ci.org/datacleaner/DataCleaner
 
 ## Where to go for end-user information?
 
-Please visit the main DataCleaner website https://datacleaner.org for downloads, news, forums etc.
+Please visit the DataCleaner community website https://datacleaner.github.io for downloads, news, documentation etc.
 
-Reference Documentation for users is available at https://datacleaner.org/docs - GitHub wiki and issues are used for developers and technical aspects only.
+GitHub markdown pages and issues are used for developers and technical aspects only.
 
 ## License
 

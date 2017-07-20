@@ -23,9 +23,19 @@ This should be a matter of running:
 > mvn release:perform
 ```
 
+## 'Close' and 'Release' the staging repository
+
+Go to [Sonatype OSS](https://oss.sonatype.org) to close and release the staged repository:
+
+* Log in
+* Click "Staging repositories"
+* Identify the repository that represents the new release (usually has the words orgeobjects in it's name)
+* Click 'Close'
+* When closed, click 'Release'.
+
 ## Upload UI zip file to GitHub
 
-Upload the zip file to the release which you will find on the [list on GitHub](https://github.com/datacleaner/DataCleaner/releases). 
+Upload the zip file (in `desktop/ui/target`) to the release which you will find on the [list on GitHub](https://github.com/datacleaner/DataCleaner/releases). 
 
 ## Update the community edition website
 

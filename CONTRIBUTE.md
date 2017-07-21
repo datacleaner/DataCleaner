@@ -8,10 +8,7 @@ This guide will help you get started with DataCleaner's development environment.
 
 Our issue list is avialable on GitHub: [DataCleaner issues](https://github.com/datacleaner/DataCleaner/issues). It's non-exhaustive and anyone is invited to post their own wishes and requirements as issues.
 
-We generally use these communication tools to discuss features:
-
- * The issue list itself. We want you to comment on it, post new issues etc.
- * The [online DataCleaner discussion forum](https://datacleaner.org/forum). Especially if it is more of a question or a use case issue rather than a bug or technical feature description.
+We generally use the issue tracker as the main communication tool to discuss features. We want you to comment on it, post new issues etc.
 
 ### Build the code
 
@@ -58,3 +55,12 @@ Our code style looks a lot like any other Java coding guidelines. Distinctive ch
 * We often prefix instance variables with an underscore (_). This to easily distinguish between method local and instance variables, as well as avoiding the overuse of the 'this' keyword in e.g. setter methods.
 * We format line wrapping using a desired max line length of 120 characters.
 * When possible, we tend to like the "final" keyword. This makes for more robust code and immutability is especially important in batch processing applications like DataCleaner.
+
+### Acceptance of changes
+
+A few general rules of thumb:
+
+* Only DataCleaner admins and committers can merge Pull Requests.
+* We generally allow for up to 24 hours to pass before merging Pull Requests. This allows for anyone regardless of time zone to participate in the evaluation of the change.
+* We highly encourage actual review of the changes, but admins and committers can merge their own Pull Requests under the "Lazy Concensus" rule: After 24 hours without any activity on the Pull Request, it's allowed to self-merge it.
+* Only under trivial cases (such as changing build file or README updates) may admins push directly to the master branch.

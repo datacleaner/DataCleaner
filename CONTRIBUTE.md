@@ -8,7 +8,7 @@ This guide will help you get started with DataCleaner's development environment.
 
 Our issue list is avialable on GitHub: [DataCleaner issues](https://github.com/datacleaner/DataCleaner/issues). It's non-exhaustive and anyone is invited to post their own wishes and requirements as issues.
 
-We generally use the issue tracker as the main communication tool to discuss features. We want you to comment on it, post new issues etc.
+We use the issue tracker as the primary tool for discussing features. Otherwise it is requested you post a detailed comment for questions on possible issues. Be as descriptive as possible to allow reproducing your experience.
 
 ### Build the code
 

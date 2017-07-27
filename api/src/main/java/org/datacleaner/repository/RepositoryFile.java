@@ -43,7 +43,7 @@ public interface RepositoryFile extends RepositoryNode {
      *
      * @return an {@link InputStream} to read from the file.
      * @deprecated prefer to use {@link #readFile(Action)} or
-     *             {@link #readFile(Func)} instead.
+     *             {@link #readFile(Function)} instead.
      */
     @Deprecated
     InputStream readFile();

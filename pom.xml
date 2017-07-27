@@ -7,7 +7,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Maven plugin versions -->
-		<javadoc.version>2.10.3</javadoc.version>
+		<javadoc.version>2.10.4</javadoc.version>
 
 		<!-- Dependency versions -->
 		<scala.version>2.11.4</scala.version>

@@ -37,5 +37,13 @@
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<outputDirectory>DataCleaner</outputDirectory>
+			<directory>../..</directory>
+			<includes>
+				<include>COPYING.txt</include>
+				<include>NOTICE.txt</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>

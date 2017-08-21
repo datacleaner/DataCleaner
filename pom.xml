@@ -460,6 +460,7 @@
 							<goal>checkstyle</goal>
 						</goals>
 						<configuration>
+							<skip>${skipTests}</skip>
 							<configLocation>checkstyle.xml</configLocation>
 							<suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
 							<consoleOutput>true</consoleOutput>

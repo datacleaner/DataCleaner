@@ -51,7 +51,7 @@ public class CreateExcelSpreadsheetAnalyzerIT {
         jobBuilder.setDatastore(datastore);
 
         final Table datastoreTableDefinition =
-                datastore.openConnection().getDataContext().getDefaultSchema().getTables()[0];
+                datastore.openConnection().getDataContext().getDefaultSchema().getTable(0);
 
         jobBuilder.addSourceColumns(datastoreTableDefinition.getColumns());
 

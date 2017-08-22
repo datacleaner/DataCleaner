@@ -25,7 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -70,7 +69,6 @@ import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 
-
 import junit.framework.TestCase;
 
 @SuppressWarnings("deprecation")
@@ -114,7 +112,7 @@ public class JaxbJobWriterTest extends TestCase {
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf)) {
             jobBuilder.setDatastore(ds);
             final Table table = jobBuilder.getDatastoreConnection().getDataContext().getDefaultSchema().getTable(0);
-            assertEquals("[foo, bar, baz, A]", Arrays.toString(table.getColumnNames()));
+            assertEquals("[foo, bar, baz, A]", table.getColumnNames().toString());
             assertEquals(4, table.getColumnCount());
             jobBuilder.addSourceColumns(table.getColumns());
 

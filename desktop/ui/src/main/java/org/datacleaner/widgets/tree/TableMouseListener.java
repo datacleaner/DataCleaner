@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.JMenuItem;
@@ -86,7 +87,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 boolean enableAddTable = false;
                 boolean enableRemoveTable = false;
 
-                final Column[] columns = table.getColumns();
+                final List<Column> columns = table.getColumns();
                 for (final Column column : columns) {
                     if (_analysisJobBuilder.containsSourceColumn(column)) {
                         enableRemoveTable = true;
@@ -172,7 +173,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
         popup.add(saveAsCsvFileMenuItem);
     }
 
-    private void addPreviewTableMenuItem(final Column[] columns, final JPopupMenu popup) {
+    private void addPreviewTableMenuItem(final List<Column> columns, final JPopupMenu popup) {
         final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table", IconUtils.ACTION_PREVIEW);
         previewMenuItem.addActionListener(
                 new PreviewSourceDataActionListener(_schemaTree.getWindowContext(), _schemaTree.getDatastore(),
@@ -200,7 +201,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
      * toggles whether or not the column is in the source selection
      */
     public void addTable(final Table table) {
-        final Column[] columns = table.getColumns();
+        final List<Column> columns = table.getColumns();
         for (final Column column : columns) {
             if (!_analysisJobBuilder.containsSourceColumn(column)) {
                 _analysisJobBuilder.addSourceColumn(column);
@@ -212,7 +213,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
      * toggles whether or not the column is in the source selection
      */
     public void removeTable(final Table table) {
-        final Column[] columns = table.getColumns();
+        final List<Column> columns = table.getColumns();
         for (final Column column : columns) {
             _analysisJobBuilder.removeSourceColumn(column);
         }

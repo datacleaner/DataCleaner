@@ -473,6 +473,9 @@ public class DataCloudLogInWindow extends AbstractDialog {
     public static void main(final String[] args) {
         final AtomicInteger i = new AtomicInteger();
         final DataCloudLogInWindow w = new DataCloudLogInWindow(null, null, null, null) {
+            
+            private static final long serialVersionUID = 1L;
+
             protected void checkServer() {
                 System.out.println("Check server");
                 if (i.getAndIncrement() < 1) {

@@ -235,9 +235,9 @@ public class DatastorePanel extends DCPanel {
         queryButton.addActionListener(e -> {
             final String queryString;
             try (DatastoreConnection connection = datastore.openConnection()) {
-                final Table[] tables = connection.getSchemaNavigator().getDefaultSchema().getTables();
-                if (tables.length > 0) {
-                    queryString = "SELECT *\nFROM " + tables[0].getQualifiedLabel();
+                final List<Table> tables = connection.getSchemaNavigator().getDefaultSchema().getTables();
+                if (tables.size() > 0) {
+                    queryString = "SELECT *\nFROM " + tables.get(0).getQualifiedLabel();
                 } else {
                     queryString = "SELECT *\nFROM ?";
                 }

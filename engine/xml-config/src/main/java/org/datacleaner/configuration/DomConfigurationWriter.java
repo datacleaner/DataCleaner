@@ -19,8 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -89,8 +87,9 @@ public class DomConfigurationWriter {
     }
 
     public DomConfigurationWriter(final Resource resource) {
-        _document = resource.read(XmlUtils::parseDocument);
-
+        _document = resource.read(is -> {
+            return XmlUtils.parseDocument(is);
+        });
     }
 
     public DomConfigurationWriter(final Document document) {

@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.metamodel.util.HasName;
@@ -45,7 +44,6 @@ import org.datacleaner.components.categories.TextCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.DictionaryConnection;
-import org.datacleaner.reference.ReferenceDataCatalog;
 
 import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.text.BreakIterator;

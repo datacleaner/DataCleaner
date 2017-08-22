@@ -147,6 +147,7 @@ class StreamColumnListPanel extends DCPanel implements ReorderColumnsActionListe
         return getInputColumnCheckBoxes(_availableCheckboxesPanel);
     }
 
+    @SuppressWarnings("unchecked")
     private List<DCCheckBox<InputColumn<?>>> getInputColumnCheckBoxes(final DCPanel panel) {
         final Component[] components = panel.getComponents();
         return CollectionUtils.map(components, component -> (DCCheckBox<InputColumn<?>>) component);

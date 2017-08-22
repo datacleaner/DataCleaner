@@ -19,9 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -140,12 +137,12 @@ public class JaxbConfigurationReaderTest extends TestCase {
         final DataContext dc = con.getDataContext();
         final Table table = dc.getDefaultSchema().getTable(0);
 
-        final Column[] columns = table.getColumns();
+        final List<Column> columns = table.getColumns();
         assertEquals("[Column[name=Foo,columnNumber=0,type=VARCHAR,nullable=true,nativeType=null,columnSize=null], "
                         + "Column[name=Bar,columnNumber=1,type=MAP,nullable=true,nativeType=null,columnSize=null], "
                         + "Column[name=Baz,columnNumber=2,type=LIST,nullable=true,nativeType=null,columnSize=null], "
                         + "Column[name=bytes,columnNumber=3,type=BINARY,nullable=true,nativeType=null,columnSize=null]]",
-                Arrays.toString(columns));
+                columns.toString());
 
         final DataSet ds = dc.query().from(table).select(columns).execute();
 
@@ -284,15 +281,15 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 final Schema schema = dc.getDefaultSchema();
                 assertEquals("my_schema", schema.getName());
                 assertEquals(2, schema.getTableCount());
-                assertEquals("[table1, table2]", Arrays.toString(schema.getTableNames()));
+                assertEquals("[table1, table2]", schema.getTableNames().toString());
 
                 assertEquals(
                         "[Column[name=Foo,columnNumber=0,type=VARCHAR,nullable=true,nativeType=null,columnSize=null], "
                                 + "Column[name=Bar,columnNumber=1,type=INTEGER,nullable=true,nativeType=null,columnSize=null]]",
-                        Arrays.toString(schema.getTable(0).getColumns()));
+                        schema.getTable(0).getColumns());
                 assertEquals(
                         "[Column[name=Baz,columnNumber=0,type=BOOLEAN,nullable=true,nativeType=null,columnSize=null]]",
-                        Arrays.toString(schema.getTable(1).getColumns()));
+                        schema.getTable(1).getColumns());
 
                 try (DataSet ds = dc.query().from("table1").select("Foo", "Bar").execute()) {
                     assertTrue(ds.next());
@@ -384,8 +381,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
         {
             try (DatastoreConnection con = compositeDatastore.openConnection()) {
                 final DataContext dataContext = con.getDataContext();
-                final String[] schemaNames = dataContext.getSchemaNames();
-                assertEquals("[PUBLIC, Spreadsheet2003.xls, developers.mdb, resources]", Arrays.toString(schemaNames));
+                final List<String> schemaNames = dataContext.getSchemaNames();
+                assertEquals("[PUBLIC, Spreadsheet2003.xls, developers.mdb, resources]", schemaNames.toString());
             }
         }
     }

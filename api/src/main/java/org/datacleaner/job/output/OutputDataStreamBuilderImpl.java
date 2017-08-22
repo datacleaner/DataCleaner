@@ -19,6 +19,8 @@
  */
 package org.datacleaner.job.output;
 
+import java.util.List;
+
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.ColumnTypeImpl;
@@ -52,11 +54,11 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
 
     @Override
     public OutputDataStreamBuilder likeTable(final Table table) {
-        final Column[] existingColumns = _table.getColumns();
+        final List<Column> existingColumns = _table.getColumns();
         for (final Column column : existingColumns) {
             _table.removeColumn(column);
         }
-        final Column[] newColumns = table.getColumns();
+        final List<Column> newColumns = table.getColumns();
         for (final Column column : newColumns) {
             withColumn(column.getName(), column.getType());
         }

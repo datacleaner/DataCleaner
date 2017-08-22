@@ -32,9 +32,9 @@ import org.datacleaner.user.UserPreferences;
  */
 public class PublishJobToMonitorActionListener extends PublishFileToMonitorActionListener {
 
-    private final DelegateFileObject _jobFile;
+    private final DelegateFileObject<?> _jobFile;
 
-    public PublishJobToMonitorActionListener(final DelegateFileObject jobFile, final WindowContext windowContext,
+    public PublishJobToMonitorActionListener(final DelegateFileObject<?> jobFile, final WindowContext windowContext,
             final UserPreferences userPreferences) {
         super(windowContext, userPreferences);
         _jobFile = jobFile;

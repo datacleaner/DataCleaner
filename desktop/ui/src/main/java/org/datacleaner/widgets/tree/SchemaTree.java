@@ -116,7 +116,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 return;
             }
             final Schema schema = (Schema) _schemaNode.getUserObject();
-            final Table[] tables = schema.getTables();
+            final List<Table> tables = schema.getTables();
             for (final Table table : tables) {
                 final String name = table.getName();
                 logger.debug("Building table node: {}", name);
@@ -131,7 +131,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         @Override
         protected Void doInBackground() throws Exception {
             final Schema schema = (Schema) _schemaNode.getUserObject();
-            final Table[] tables = schema.getTables();
+            final List<Table> tables = schema.getTables();
             for (final Table table : tables) {
                 final String name = table.getName();
                 logger.debug("Publishing table name: {}", name);
@@ -169,7 +169,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         @Override
         protected Void doInBackground() throws Exception {
             final Table table = (Table) _tableNode.getUserObject();
-            final Column[] columns = table.getColumns();
+            final List<Column> columns = table.getColumns();
             for (final Column column : columns) {
                 final String name = column.getName();
                 logger.debug("Publishing column name: {}", name);

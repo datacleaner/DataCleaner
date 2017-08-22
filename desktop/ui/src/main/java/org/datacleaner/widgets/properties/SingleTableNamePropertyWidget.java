@@ -20,6 +20,7 @@
 package org.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -166,14 +167,14 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         if (schema == null) {
             _comboBox.setModel(new DefaultComboBoxModel<>(new Table[1]));
         } else {
-            Table[] tables = schema.getTables();
-            tables = CollectionUtils.array(new Table[1], tables);
-            _comboBox.setModel(new DefaultComboBoxModel<>(tables));
+            final List<Table> tables = new ArrayList<>(schema.getTables());
+            tables.add(0, null);
+            _comboBox.setModel(new DefaultComboBoxModel<>(tables.toArray(new Table[0])));
 
             if (previousValue == null) {
                 if (schema.getTableCount() == 1) {
                     // if there is only 1 table, select that
-                    final Table table = schema.getTables()[0];
+                    final Table table = schema.getTable(0);
                     _comboBox.setSelectedItem(table);
                 }
             } else {

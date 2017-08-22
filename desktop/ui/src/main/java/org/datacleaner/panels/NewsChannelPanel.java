@@ -48,13 +48,16 @@ import org.jdesktop.swingx.VerticalLayout;
 public class NewsChannelPanel extends JPanel {
 
     private class NewsDCHtmlBox extends DCHtmlBox {
+        
+        private static final long serialVersionUID = 1L;
+        
         private final ShortNews.Item _item;
         private final String divStyles =
                 "padding: 5px; border-bottom: 1px #DCDCDC solid; margin-right: 15px; background-color: ";
         private final String titleStyles = "font-weight: bold;";
         private final String dateStyles = "font-size: 80%; color: grey;";
         private final String msgStyles = "font-size: 90%;";
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         private long _lastCheckTime;
 
         public NewsDCHtmlBox(final long lastCheck, final ShortNews.Item item) {
@@ -110,6 +113,8 @@ public class NewsChannelPanel extends JPanel {
 
     private JComponent createContentPanel() {
         final JPanel p = new JPanel() {
+            private static final long serialVersionUID = 1L;
+
             // this trick effectively makes the panel with fixed width, but flexible height.
             public Dimension getPreferredSize() {
                 final Dimension s = super.getPreferredSize();

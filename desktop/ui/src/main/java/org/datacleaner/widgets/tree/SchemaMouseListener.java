@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -84,7 +85,7 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
                 .createMenuItem("Add all schema tables to source", "images/actions/toggle-source-table.png");
         addTableItem.addActionListener(e -> {
             final TableMouseListener tableMouseListener = _tableMouseListenerProvider.get();
-            final Table[] tables = schema.getTables();
+            final List<Table> tables = schema.getTables();
             for (final Table table : tables) {
                 tableMouseListener.addTable(table);
             }

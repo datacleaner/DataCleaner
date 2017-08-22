@@ -27,6 +27,7 @@ import org.datacleaner.beans.standardize.EmailStandardizerTransformer.EmailPart;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("deprecation")
 public class NamedPatternTest extends TestCase {
 
     public enum ExamplePatternGroup {

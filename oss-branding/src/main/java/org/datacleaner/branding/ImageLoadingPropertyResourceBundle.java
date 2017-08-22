@@ -43,11 +43,13 @@ public class ImageLoadingPropertyResourceBundle extends ResourceBundle {
 
     private final Map<String, String> _paths;
 
-    @SuppressWarnings("unchecked")
     public ImageLoadingPropertyResourceBundle(final URL url) throws IOException {
         final Properties properties = new Properties();
         properties.load(url.openStream());
-        _paths = new HashMap(properties);
+        _paths = new HashMap<>();
+        properties.stringPropertyNames().forEach(key -> {
+            _paths.put(key, properties.getProperty(key));
+        });
     }
 
     @Override

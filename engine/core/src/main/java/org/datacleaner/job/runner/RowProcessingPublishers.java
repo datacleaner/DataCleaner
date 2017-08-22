@@ -20,6 +20,7 @@
 package org.datacleaner.job.runner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -263,7 +264,7 @@ public final class RowProcessingPublishers {
             final Column[] physicalColumns = getPhysicalColumns(sourceColumnFinder, componentJob);
             final Column[] relevantColumns = MetaModelHelper.getTableColumns(dataStream.getTable(), physicalColumns);
 
-            sourceTableRowPublisher.addPhysicalColumns(relevantColumns);
+            sourceTableRowPublisher.addPhysicalColumns(Arrays.asList(relevantColumns));
         }
 
         // find which input columns (both physical or virtual) are needed by

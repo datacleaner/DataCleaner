@@ -20,6 +20,7 @@
 package org.datacleaner.beans;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ import org.datacleaner.result.CharacterSetDistributionResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
+import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
 
 import com.ibm.icu.text.UnicodeSet;
 
@@ -75,7 +76,7 @@ public class CharacterSetDistributionAnalyzerTest extends TestCase {
 
         @SuppressWarnings("unchecked") final InputColumn<String>[] cols = new InputColumn[] { col1, col2 };
         analyzer._columns = cols;
-        analyzer._annotationFactory = new InMemoryRowAnnotationFactory();
+        analyzer._annotationFactory = new InMemoryRowAnnotationFactory2();
         analyzer.init();
 
         analyzer.run(new MockInputRow().put(col1, "foobar").put(col2, "foobar"), 10);
@@ -99,9 +100,9 @@ public class CharacterSetDistributionAnalyzerTest extends TestCase {
         assertEquals("1", cyrillicNavigation.get().toString());
         final AnnotatedRowsResult cyrillicAnnotatedRowsResult =
                 (AnnotatedRowsResult) cyrillicNavigation.explore().getResult();
-        final InputRow[] annotatedRows = cyrillicAnnotatedRowsResult.getRows();
-        assertEquals(1, annotatedRows.length);
-        assertEquals("Данныечистого", annotatedRows[0].getValue(col1));
+        final List<InputRow> annotatedRows = cyrillicAnnotatedRowsResult.getSampleRows();
+        assertEquals(1, annotatedRows.size());
+        assertEquals("Данныечистого", annotatedRows.get(0).getValue(col1));
         assertEquals("12",
                 crosstab.navigate().where("Column", "foo").where("Measures", "Latin, ASCII").get().toString());
         assertEquals("2",

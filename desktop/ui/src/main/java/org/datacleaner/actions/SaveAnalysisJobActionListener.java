@@ -198,7 +198,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
         if (file instanceof DelegateFileObject) {
             // this "file" is probably a HTTP URL resource (often provided by DC
             // monitor)
-            final DelegateFileObject delegateFileObject = (DelegateFileObject) file;
+            final DelegateFileObject<?> delegateFileObject = (DelegateFileObject<?>) file;
             final String scheme = file.getName().getScheme();
 
             if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {

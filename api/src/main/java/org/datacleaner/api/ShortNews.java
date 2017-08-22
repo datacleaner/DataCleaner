@@ -37,7 +37,7 @@ public class ShortNews implements java.io.Serializable {
             return name;
         }
 
-        private void setName(final String name) {
+        public void setName(final String name) {
             this.name = name;
         }
 
@@ -45,7 +45,7 @@ public class ShortNews implements java.io.Serializable {
             return title;
         }
 
-        private void setTitle(final String title) {
+        public void setTitle(final String title) {
             this.title = title;
         }
 
@@ -53,7 +53,7 @@ public class ShortNews implements java.io.Serializable {
             return dateCreated;
         }
 
-        private void setDateCreated(final Date dateCreated) {
+        public void setDateCreated(final Date dateCreated) {
             this.dateCreated = dateCreated;
         }
 
@@ -61,7 +61,7 @@ public class ShortNews implements java.io.Serializable {
             return message;
         }
 
-        private void setMessage(final String message) {
+        public void setMessage(final String message) {
             this.message = message;
         }
 

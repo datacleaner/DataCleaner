@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Set;
 
 import org.apache.metamodel.UpdateableDataContext;
@@ -159,8 +158,8 @@ public class DeleteFromTableAnalyzerTest {
         assertThat(result.getErrorRowCount(), is(0));
         final FileDatastore errorDatastore = result.getErrorDatastore();
         final DatastoreConnection con = errorDatastore.openConnection();
-        final Table table = con.getDataContext().getDefaultSchema().getTables()[0];
-        assertThat(Arrays.toString(table.getColumnNames()), is(equalTo("[foo, bar, update_table_error_message]")));
+        final Table table = con.getDataContext().getDefaultSchema().getTable(0);
+        assertThat(table.getColumnNames().toString(), is(equalTo("[foo, bar, update_table_error_message]")));
 
         final DataSet ds = con.getDataContext().query().from(table).select(table.getColumns()).execute();
         assertThat(ds.next(), is(false));

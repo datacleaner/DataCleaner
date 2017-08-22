@@ -68,6 +68,8 @@ public class Serializator {
      */
     @SuppressWarnings("rawtypes")
     private static class MyInputColumnSerializer extends StdSerializer<InputColumn> {
+        private static final long serialVersionUID = 1L;
+
         protected MyInputColumnSerializer() {
             super(InputColumn.class);
         }
@@ -97,6 +99,8 @@ public class Serializator {
      */
     @SuppressWarnings("rawtypes")
     private static class MyEnumSerializer extends StdSerializer<Enum> {
+        private static final long serialVersionUID = 1L;
+
         protected MyEnumSerializer() {
             super(Enum.class);
         }
@@ -197,6 +201,8 @@ public class Serializator {
 
         //For better deserialize of enumeration in ComponentScope annotation. - We will ignore unknown values.
         objectMapper.registerModule(new SimpleModule() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void setupModule(final SetupContext context) {
                 context.setMixInAnnotations(ComponentScope.ServiceType.class, ComponentScopeServiceTypeMixin.class);

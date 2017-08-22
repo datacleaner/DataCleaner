@@ -20,7 +20,6 @@
 package org.datacleaner.connection;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.metamodel.query.Query;
@@ -38,11 +37,11 @@ public class SasDatastoreTest extends TestCase {
         final SasDatastore ds = new SasDatastore("my sas ds", new File("src/test/resources/sas"));
         try (DatastoreConnection con = ds.openConnection()) {
             final Schema schema = con.getSchemaNavigator().getDefaultSchema();
-            assertEquals("[dummy1, dummy2, pizza]", Arrays.toString(schema.getTableNames()));
+            assertEquals("[dummy1, dummy2, pizza]", schema.getTableNames().toString());
 
             final Table table = schema.getTableByName("pizza");
             assertEquals("[id, mois, prot, fat, ash, sodium, carb, cal, brand]",
-                    Arrays.toString(table.getColumnNames()));
+                    table.getColumnNames().toString());
 
             final Column col = table.getColumnByName("brand");
 

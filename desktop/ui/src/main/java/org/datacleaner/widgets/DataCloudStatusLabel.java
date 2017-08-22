@@ -43,6 +43,9 @@ import org.datacleaner.windows.AbstractWindow;
  * Status Label for DataCloud
  */
 public class DataCloudStatusLabel extends JLabel {
+    
+    private static final long serialVersionUID = 1L;
+
     private class RemoteServerStateListenerImpl implements RemoteServerStateListener {
 
         @Override

@@ -84,7 +84,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
                 }
             }
 
-            addPhysicalColumns(columns.toArray(new Column[columns.size()]));
+            addPhysicalColumns(columns);
         }
     }
 
@@ -103,8 +103,8 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
      * values will be retrieved.
      */
     public void addPrimaryKeysIfSourced() {
-        final Column[] primaryKeyColumns = getTable().getPrimaryKeys();
-        if (primaryKeyColumns == null || primaryKeyColumns.length == 0) {
+        final List<Column> primaryKeyColumns = getTable().getPrimaryKeys();
+        if (primaryKeyColumns == null || primaryKeyColumns.isEmpty()) {
             logger.info("No primary keys defined for table {}, not pre-selecting primary keys", getTable().getName());
             return;
         }
@@ -152,7 +152,7 @@ public final class SourceTableRowProcessingPublisher extends AbstractRowProcessi
         _queryOptimizerRef.requestLoad();
     }
 
-    public void addPhysicalColumns(final Column... columns) {
+    public void addPhysicalColumns(final List<Column> columns) {
         for (final Column column : columns) {
             if (!getTable().equals(column.getTable())) {
                 throw new IllegalArgumentException(

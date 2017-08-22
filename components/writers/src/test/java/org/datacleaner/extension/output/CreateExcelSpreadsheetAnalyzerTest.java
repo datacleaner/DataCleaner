@@ -373,12 +373,12 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         final ExcelDatastore outputDatastore =
                 new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            final String[] columnNames =
+            final List<String> columnNames =
                     outputDatastoreConnection.getSchemaNavigator().getDefaultSchema().getTableByName(analyzer.sheetName)
                             .getColumnNames();
-            assertEquals(2, columnNames.length);
-            assertEquals("CustomNameForStringColumn", columnNames[0]);
-            assertEquals("CustomNameForIntegerColumn", columnNames[1]);
+            assertEquals(2, columnNames.size());
+            assertEquals("CustomNameForStringColumn", columnNames.get(0));
+            assertEquals("CustomNameForIntegerColumn", columnNames.get(1));
         }
     }
 

@@ -20,6 +20,7 @@
 package org.datacleaner.configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -384,7 +385,7 @@ public class JaxbPojoDatastoreAdaptor {
         return columnType;
     }
 
-    public PojoTableType createPojoTable(final DataContext dataContext, final Table table, final Column[] usedColumns,
+    public PojoTableType createPojoTable(final DataContext dataContext, final Table table, final List<Column> usedColumns,
             final int maxRows) {
         final PojoTableType tableType = new PojoTableType();
         tableType.setName(table.getName());
@@ -451,27 +452,27 @@ public class JaxbPojoDatastoreAdaptor {
             final DataContext dataContext = con.getDataContext();
 
             final Schema schema;
-            final Table[] tables;
+            final List<Table> tables;
             if (columns == null || columns.isEmpty()) {
                 schema = dataContext.getDefaultSchema();
                 tables = schema.getTables();
             } else {
-                tables = MetaModelHelper.getTables(columns);
+                tables = Arrays.asList(MetaModelHelper.getTables(columns));
                 // TODO: There's a possibility that tables span multiple
                 // schemas, but we cannot currently support that in a
                 // PojoDatastore, so we just pick the first and cross our
                 // fingers.
-                schema = tables[0].getSchema();
+                schema = tables.get(0).getSchema();
             }
 
             datastoreType.setSchemaName(schema.getName());
 
             for (final Table table : tables) {
-                final Column[] usedColumns;
+                final List<Column> usedColumns;
                 if (columns == null || columns.isEmpty()) {
                     usedColumns = table.getColumns();
                 } else {
-                    usedColumns = MetaModelHelper.getTableColumns(table, columns);
+                    usedColumns = Arrays.asList(MetaModelHelper.getTableColumns(table, columns));
                 }
 
                 final PojoTableType tableType = createPojoTable(dataContext, table, usedColumns, maxRowsToQuery);

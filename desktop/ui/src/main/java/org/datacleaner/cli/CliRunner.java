@@ -248,7 +248,7 @@ public final class CliRunner implements Closeable {
                     if (table == null) {
                         write("No such table: " + tableName);
                     } else {
-                        final String[] columnNames = table.getColumnNames();
+                        final List<String> columnNames = table.getColumnNames();
                         write("Columns:");
                         write("--------");
                         for (final String columnName : columnNames) {
@@ -283,8 +283,8 @@ public final class CliRunner implements Closeable {
                 if (schema == null) {
                     System.err.println("No such schema: " + schemaName);
                 } else {
-                    final String[] tableNames = schema.getTableNames();
-                    if (tableNames == null || tableNames.length == 0) {
+                    final List<String> tableNames = schema.getTableNames();
+                    if (tableNames == null || tableNames.isEmpty()) {
                         System.err.println("No tables in schema!");
                     } else {
                         write("Tables:");
@@ -310,8 +310,8 @@ public final class CliRunner implements Closeable {
                 System.err.println("No such datastore: " + datastoreName);
             } else {
                 final DatastoreConnection con = ds.openConnection();
-                final String[] schemaNames = con.getDataContext().getSchemaNames();
-                if (schemaNames == null || schemaNames.length == 0) {
+                final List<String> schemaNames = con.getDataContext().getSchemaNames();
+                if (schemaNames == null || schemaNames.isEmpty()) {
                     write("No schemas in datastore!");
                 } else {
                     write("Schemas:");

@@ -479,7 +479,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
     private void setSchemaTree(final Datastore datastore, final boolean expandTree, final DatastoreConnection con) {
         if (con != null) {
             final Schema defaultSchema = con.getSchemaNavigator().getDefaultSchema();
-            final int datastoreSize = defaultSchema.getTables().length;
+            final int datastoreSize = defaultSchema.getTableCount();
             if (datastoreSize == 1) {
                 _schemaTreePanel.setDatastore(datastore, true);
             } else {
@@ -491,9 +491,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
     private void addTableToSource(final DatastoreConnection con) {
         if (con != null) {
             final Schema defaultSchema = con.getSchemaNavigator().getDefaultSchema();
-            final int datastoreSize = defaultSchema.getTables().length;
+            final int datastoreSize = defaultSchema.getTableCount();
             if (datastoreSize == 1) {
-                final Column[] columns = defaultSchema.getTable(0).getColumns();
+                final List<Column> columns = defaultSchema.getTable(0).getColumns();
                 _analysisJobBuilder.addSourceColumns(columns);
             }
         }

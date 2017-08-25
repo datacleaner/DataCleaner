@@ -286,10 +286,10 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 assertEquals(
                         "[Column[name=Foo,columnNumber=0,type=VARCHAR,nullable=true,nativeType=null,columnSize=null], "
                                 + "Column[name=Bar,columnNumber=1,type=INTEGER,nullable=true,nativeType=null,columnSize=null]]",
-                        schema.getTable(0).getColumns());
+                        schema.getTable(0).getColumns().toString());
                 assertEquals(
                         "[Column[name=Baz,columnNumber=0,type=BOOLEAN,nullable=true,nativeType=null,columnSize=null]]",
-                        schema.getTable(1).getColumns());
+                        schema.getTable(1).getColumns().toString());
 
                 try (DataSet ds = dc.query().from("table1").select("Foo", "Bar").execute()) {
                     assertTrue(ds.next());

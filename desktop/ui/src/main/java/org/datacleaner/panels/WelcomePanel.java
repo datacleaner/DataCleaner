@@ -141,12 +141,8 @@ public class WelcomePanel extends DCSplashPanel {
 
                 final JButton tryProfessionalButton =
                         WidgetFactory.createDefaultButton("Try professional edition", IconUtils.APPLICATION_ICON);
-                tryProfessionalButton
-                        .addActionListener(new OpenBrowserAction("https://datacleaner.org/get_datacleaner"));
-
-                final JButton readMoreButton =
-                        WidgetFactory.createDefaultButton("Compare the editions", IconUtils.WEBSITE);
-                readMoreButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/editions"));
+                tryProfessionalButton.addActionListener(new OpenBrowserAction(
+                        "https://www.quadient.com/products/quadient-datacleaner#get-started-today"));
 
                 final JButton discussionForumButton =
                         WidgetFactory.createDefaultButton("Visit the discussion forum", "images/menu/forum.png");
@@ -182,7 +178,7 @@ public class WelcomePanel extends DCSplashPanel {
                 innerPanel.setBorder(
                         new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, 20, 0, 0)));
                 innerPanel.add(editorPane);
-                innerPanel.add(DCPanel.flow(tryProfessionalButton, readMoreButton));
+                innerPanel.add(DCPanel.flow(tryProfessionalButton));
                 innerPanel.add(Box.createVerticalStrut(80));
                 innerPanel.add(loveFeedbackAnimation);
                 innerPanel.add(Box.createVerticalStrut(20));

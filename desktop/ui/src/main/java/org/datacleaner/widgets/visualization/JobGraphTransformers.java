@@ -133,7 +133,7 @@ public class JobGraphTransformers {
                 return imageManager.getImageIcon(IconUtils.MODEL_RESULT, IconUtils.ICON_SIZE_LARGE);
             }
         }
-        return imageManager.getImageIcon(IconUtils.STATUS_ERROR);
+        return imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_LARGE);
     };
     private final UserPreferences _userPreferences;
     private final Set<Object> _highlighedVertexes;

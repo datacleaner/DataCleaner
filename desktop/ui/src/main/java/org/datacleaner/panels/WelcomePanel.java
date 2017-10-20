@@ -47,6 +47,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.widgets.PopupButton;
@@ -73,6 +74,7 @@ import com.google.inject.Injector;
 public class WelcomePanel extends DCSplashPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(WelcomePanel.class);
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
 
     private static final long serialVersionUID = 1L;
 
@@ -137,7 +139,7 @@ public class WelcomePanel extends DCSplashPanel {
                 editorPane.setEditable(false);
                 editorPane.setOpaque(false);
                 editorPane.setFont(WidgetUtils.FONT_HEADER2);
-                editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, 120));
+                editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, adjuster.adjust(120)));
 
                 final JButton tryProfessionalButton =
                         WidgetFactory.createDefaultButton("Try professional edition", IconUtils.APPLICATION_ICON);
@@ -180,17 +182,17 @@ public class WelcomePanel extends DCSplashPanel {
                 final DCPanel innerPanel = new DCPanel();
                 innerPanel.setLayout(new VerticalLayout());
                 innerPanel.setBorder(
-                        new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, 20, 0, 0)));
+                        new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, adjuster.adjust(20), 0, 0)));
                 innerPanel.add(editorPane);
                 innerPanel.add(DCPanel.flow(tryProfessionalButton, readMoreButton));
-                innerPanel.add(Box.createVerticalStrut(80));
+                innerPanel.add(Box.createVerticalStrut(adjuster.adjust(80)));
                 innerPanel.add(loveFeedbackAnimation);
-                innerPanel.add(Box.createVerticalStrut(20));
+                innerPanel.add(Box.createVerticalStrut(adjuster.adjust(20)));
                 innerPanel.add(DCPanel.flow(discussionForumButton, twitterButton, linkedInButton));
                 innerPanel.add(Box.createVerticalStrut(5));
 
                 result.setLayout(new VerticalLayout());
-                result.add(Box.createVerticalStrut(100));
+                result.add(Box.createVerticalStrut(adjuster.adjust(100)));
                 result.add(innerPanel);
             }
         }
@@ -218,13 +220,13 @@ public class WelcomePanel extends DCSplashPanel {
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(newJobButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(Box.createHorizontalStrut(adjuster.adjust(10)));
         buttonPanel.add(browseJobsButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(Box.createHorizontalStrut(adjuster.adjust(10)));
         buttonPanel.add(recentJobsButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(Box.createHorizontalStrut(adjuster.adjust(10)));
         buttonPanel.add(manageDatastoresButton);
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
+        buttonPanel.setBorder(new EmptyBorder(0, 0, adjuster.adjust(20), 0));
 
         return wrapContent(buttonPanel);
     }

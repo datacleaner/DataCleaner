@@ -61,6 +61,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.windows.ComponentConfigurationDialog;
@@ -86,6 +87,8 @@ public final class JobGraph {
     public static final String MORE_COLUMNS_VERTEX = "...";
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraph.class);
+    
+    private final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
     private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
     private final Set<Object> _highlighedVertexes;
@@ -253,7 +256,7 @@ public final class JobGraph {
                 g.fillRect(0, 0, visualizationViewer.getWidth(), visualizationViewer.getHeight());
 
                 final Dimension size = _panel.getSize();
-                if (size.height < 300 || size.width < 500) {
+                if (size.height < adjuster.adjust(300) || size.width < adjuster.adjust(500)) {
                     // don't show the background hints - it will be too
                     // disturbing
                     return;
@@ -306,7 +309,7 @@ public final class JobGraph {
                                     "Click the 'Execute' button in the upper-right\ncorner when you're ready to run the job.";
                             imagePath = "images/window/canvas-bg-execute.png";
                             g.drawImage(ImageManager.get().getImage("images/window/canvas-bg-execute-hint.png"),
-                                    size.width - 175, 0, null);
+                                    size.width - adjuster.adjust(175), 0, null);
                         } else {
                             title = "Configure the job ...";
                             subTitle = "Job is not correctly configured";
@@ -333,17 +336,17 @@ public final class JobGraph {
                     }
                 }
 
-                final int yOffset = size.height - 150;
-                final int xOffset = 150;
+                final int yOffset = size.height - adjuster.adjust(150);
+                final int xOffset = adjuster.adjust(150);
 
                 final float titleFontSize;
                 final float subTitleFontSize;
-                if (size.width < 650) {
-                    titleFontSize = 30f;
-                    subTitleFontSize = 17f;
+                if (size.width < adjuster.adjust(650)) {
+                    titleFontSize = adjuster.adjust(30f);
+                    subTitleFontSize = adjuster.adjust(17f);
                 } else {
-                    titleFontSize = 35f;
-                    subTitleFontSize = 20f;
+                    titleFontSize = adjuster.adjust(35f);
+                    subTitleFontSize = adjuster.adjust(20f);
                 }
 
                 if (title != null) {
@@ -354,15 +357,15 @@ public final class JobGraph {
                 if (subTitle != null) {
                     final String[] lines = subTitle.split("\n");
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(subTitleFontSize));
-                    int y = yOffset + 10;
+                    int y = yOffset + adjuster.adjust(10);
                     for (final String line : lines) {
-                        y = y + 30;
+                        y = y + adjuster.adjust(30);
                         g.drawString(line, xOffset, y);
                     }
                 }
 
                 if (imagePath != null) {
-                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - 120, yOffset - 30, null);
+                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - adjuster.adjust(120), yOffset - adjuster.adjust(30), null);
                 }
             }
         });

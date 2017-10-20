@@ -35,7 +35,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -80,7 +79,7 @@ public class SchemaTreePanel extends DCPanel {
         _resetSearchButton = createResetSearchButton();
 
         setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(4, 4, 4, 4));
+        setBorder(WidgetUtils.BORDER_EMPTY);
         setDatastore(null, false);
 
         setFocusable(true);

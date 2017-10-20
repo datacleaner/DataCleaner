@@ -29,6 +29,7 @@ import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 
@@ -43,7 +44,8 @@ public class DCBannerPanel extends JPanel {
     private static final Image DEFAULT_BG_IMAGE = ImageManager.get().getImage("images/window/banner-bg.png");
     private static final Image DEFAULT_RIGHT_IMAGE = ImageManager.get().getImage("images/window/banner-right.png");
 
-    private static final int DEFAULT_HEIGHT = 80;
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
+    private static final int DEFAULT_HEIGHT = adjuster.adjust(80);
 
     private final int _titleIndent;
     private final Image _leftImage;
@@ -69,9 +71,9 @@ public class DCBannerPanel extends JPanel {
     }
 
     public DCBannerPanel(final Image leftImage, final Image bgImage, final Image rightImage, final String title) {
-        _leftImage = leftImage;
-        _bgImage = bgImage;
-        _rightImage = rightImage;
+        _leftImage = adjuster.scale(leftImage);
+        _bgImage = adjuster.scale(bgImage);
+        _rightImage = adjuster.scale(rightImage);
         if (title == null) {
             _title1 = null;
             _title2 = null;
@@ -88,7 +90,7 @@ public class DCBannerPanel extends JPanel {
         if (leftImage == null) {
             _titleIndent = 0;
         } else {
-            _titleIndent = leftImage.getWidth(this);
+            _titleIndent = _leftImage.getWidth(this);
         }
         setOpaque(false);
 
@@ -125,7 +127,7 @@ public class DCBannerPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(400, getHeight());
+        return new Dimension(adjuster.adjust(400), getHeight());
     }
 
     @Override
@@ -143,7 +145,7 @@ public class DCBannerPanel extends JPanel {
         if (_leftImage != null) {
             final int imageHeight = _leftImage.getHeight(this);
             final int imageY = (getHeight() - imageHeight) / 2;
-            g.drawImage(_leftImage, x + 5, imageY, this);
+            g.drawImage(_leftImage, x + adjuster.adjust(5), imageY, this);
         }
 
         if (_rightImage != null) {
@@ -154,16 +156,16 @@ public class DCBannerPanel extends JPanel {
         super.paintComponent(g);
 
         if (_title1 != null) {
-            int titleY = 45;
+            int titleY = adjuster.adjust(45);
             if (_title2 != null) {
-                titleY = 33;
+                titleY = adjuster.adjust(33);
             }
 
             if (g instanceof Graphics2D) {
                 ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             }
 
-            final int titleX = _titleIndent + 15;
+            final int titleX = _titleIndent + adjuster.adjust(15);
 
             // draw title 1
             g.setFont(WidgetUtils.FONT_BANNER);
@@ -171,7 +173,7 @@ public class DCBannerPanel extends JPanel {
             g.drawString(_title1, titleX, titleY);
 
             if (_title2 != null) {
-                titleY += 26;
+                titleY += adjuster.adjust(26);
                 g.setFont(WidgetUtils.FONT_HEADER1);
                 g.setColor(WidgetUtils.BG_COLOR_GREEN_MEDIUM);
                 g.drawString(_title2, titleX, titleY);

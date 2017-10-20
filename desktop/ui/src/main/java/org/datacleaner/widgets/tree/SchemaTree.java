@@ -77,6 +77,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.SchemaComparator;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
@@ -92,6 +93,8 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Injector;
 
 public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer, DescriptorProviderListener {
+    
+    private final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
 
     class LoadTablesSwingWorker extends SwingWorker<Void, Table> {
 
@@ -232,7 +235,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         setCellRenderer(this);
         setOpaque(false);
         setRootVisible(false);
-        setRowHeight(22);
+        setRowHeight(adjuster.adjust(22));
         addTreeWillExpandListener(this);
         setDragEnabled(true);
         setTransferHandler(DragDropUtils.createSourceTransferHandler());

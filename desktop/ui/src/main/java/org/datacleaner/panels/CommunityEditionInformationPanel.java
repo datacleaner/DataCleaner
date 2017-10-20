@@ -64,13 +64,9 @@ public class CommunityEditionInformationPanel extends JPanel {
 
         final JButton tryProfessionalButton =
                 WidgetFactory.createDefaultButton("Try professional edition", IconUtils.APPLICATION_ICON);
-        tryProfessionalButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/get_datacleaner"));
+        tryProfessionalButton.addActionListener(
+                new OpenBrowserAction("https://www.quadient.com/products/quadient-datacleaner#get-started-today"));
         add(DCPanel.around(tryProfessionalButton));
-
-        final JButton compareEditionsButton =
-                WidgetFactory.createDefaultButton("Compare the editions", IconUtils.WEBSITE);
-        compareEditionsButton.addActionListener(new OpenBrowserAction("https://datacleaner.org/editions"));
-        add(DCPanel.around(compareEditionsButton));
     }
 
     @Override

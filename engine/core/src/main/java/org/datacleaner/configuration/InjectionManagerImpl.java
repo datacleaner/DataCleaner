@@ -135,12 +135,6 @@ public class InjectionManagerImpl implements InjectionManager {
             return _rowAnntationFactoryRef.get();
         } else if (baseType == RowAnnotation.class) {
             return _rowAnntationFactoryRef.get().createAnnotation();
-        } else if (baseType == AnalyzerBeansConfiguration.class) {
-            if (getConfiguration() instanceof AnalyzerBeansConfiguration) {
-                return getConfiguration();
-            } else {
-                return null;
-            }
         } else if (baseType == DataCleanerConfiguration.class) {
             return getConfiguration();
         } else if (baseType == DataCleanerEnvironment.class) {

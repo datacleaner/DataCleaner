@@ -34,7 +34,6 @@ import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DomConfigurationWriter;
-import org.datacleaner.configuration.RemoteServerData;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.FixedWidthDatastore;
@@ -173,23 +172,9 @@ public class HadoopJobExecutionUtils {
         synonymCatalogs.stream().filter(configurationWriter::isExternalizable)
                 .forEach(configurationWriter::externalize);
 
-        addRemoteServersConfiguration(configuration, configurationWriter);
-
         XmlUtils.writeDocument(configurationWriter.getDocument(), new FileOutputStream(temporaryConfigurationFile));
 
         return temporaryConfigurationFile;
-    }
-
-    private static void addRemoteServersConfiguration(final DataCleanerConfiguration configuration,
-            final DomConfigurationWriter configurationWriter) {
-        final List<RemoteServerData> serverList =
-                configuration.getEnvironment().getRemoteServerConfiguration().getServerList();
-        if (serverList != null) {
-            for (final RemoteServerData remoteServer : serverList) {
-                configurationWriter.addRemoteServer(remoteServer.getServerName(), remoteServer.getUrl(),
-                        remoteServer.getUsername(), remoteServer.getPassword());
-            }
-        }
     }
 
     private static void addJobConfigurations(final AnalysisJob job, final Set<Datastore> datastores,

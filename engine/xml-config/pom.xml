@@ -161,15 +161,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-remote-components</artifactId>
-			<version>${project.version}</version>
-			<!-- Pure xml-config module will not support remote components, to keep 
-				transitive deps as small as possible. But if on runtime classpath, it will 
-				work. Thus the scope 'provided'. -->
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-testware</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>

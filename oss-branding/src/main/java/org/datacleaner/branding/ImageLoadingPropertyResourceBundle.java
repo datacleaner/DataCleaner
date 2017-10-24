@@ -43,7 +43,7 @@ public class ImageLoadingPropertyResourceBundle extends ResourceBundle {
 
     private final Map<String, String> _paths;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public ImageLoadingPropertyResourceBundle(final URL url) throws IOException {
         final Properties properties = new Properties();
         properties.load(url.openStream());

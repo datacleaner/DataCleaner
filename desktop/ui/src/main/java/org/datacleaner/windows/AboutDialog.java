@@ -353,6 +353,6 @@ public class AboutDialog extends AbstractDialog {
     }
 
     public static void main(final String[] args) {
-        new AboutDialog(new DCWindowContext(null, null, null)).setVisible(true);
+        new AboutDialog(new DCWindowContext(null, null)).setVisible(true);
     }
 }

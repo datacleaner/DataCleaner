@@ -147,13 +147,6 @@
                     </documentation>
                 </annotation>
             </element>
-            <element name="remote-components" type="ab:remoteComponentsType" minOccurs="0" maxOccurs="1">
-                <annotation>
-                    <documentation>
-                        Defines connection to DC monitor which provides DataCleaner components remotely over network.
-                    </documentation>
-                </annotation>
-            </element>
         </choice>
     </complexType>
 
@@ -170,28 +163,6 @@
 					</simpleContent>
 				</complexType>
 			</element>
-		</sequence>
-	</complexType>
-
-    <complexType name="remoteComponentsType">
-        <sequence>
-            <element name="server" type="ab:remoteComponentServerType" minOccurs="1" maxOccurs="unbounded"/>
-        </sequence>
-    </complexType>
-
-    <complexType name="remoteComponentServerType">
-        <sequence>
-            <element name="name" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="url" type="string" minOccurs="0" maxOccurs="1">
-                <annotation>
-                    <documentation>
-                        Defines base URL to the DataCleaner monitor server
-                    </documentation>
-                </annotation>
-            </element>
-            <element name="security-mode" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
 		</sequence>
 	</complexType>
 

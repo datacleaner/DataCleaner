@@ -52,8 +52,6 @@ import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.VFSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,8 +89,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private File saveDatastoreDirectory;
     private File saveDownloadedFilesDirectory;
     private File extensionsDirectory;
-
-    private MonitorConnection monitorConnection;
 
     /**
      * Creates a new {@link UserPreferencesImpl} object which refers to a file,
@@ -455,29 +451,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             additionalProperties = new HashMap<>();
         }
         return additionalProperties;
-    }
-
-    @Override
-    public MonitorConnection getMonitorConnection() {
-        if (monitorConnection == null) {
-            final String hostname = System.getProperty(SystemProperties.MONITOR_HOSTNAME);
-            if (!StringUtils.isNullOrEmpty(hostname)) {
-                final int port = Integer.parseInt(System.getProperty(SystemProperties.MONITOR_PORT));
-                final String contextPath = System.getProperty(SystemProperties.MONITOR_CONTEXT);
-                final String tenant = System.getProperty(SystemProperties.MONITOR_TENANT);
-                final boolean isHttps = "true".equals(System.getProperty(SystemProperties.MONITOR_HTTPS));
-                final String username = System.getProperty(SystemProperties.MONITOR_USERNAME);
-                final String encodedPassword = null;
-                return new MonitorConnection(this, hostname, port, contextPath, isHttps, tenant, username,
-                        encodedPassword);
-            }
-        }
-        return monitorConnection;
-    }
-
-    @Override
-    public void setMonitorConnection(final MonitorConnection connection) {
-        this.monitorConnection = connection;
     }
 
     @Override

@@ -41,8 +41,8 @@ public class RendererFactoryTest extends TestCase {
         final ClasspathScanDescriptorProvider descriptorProvider =
                 new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.result.renderer", true);
 
-        @SuppressWarnings("deprecation") final RendererFactory rendererFactory = new RendererFactory(
-                new org.datacleaner.configuration.AnalyzerBeansConfigurationImpl().replace(descriptorProvider));
+        final RendererFactory rendererFactory = new RendererFactory(new DataCleanerConfigurationImpl()
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider)));
         Renderer<?, ? extends CharSequence> renderer;
 
         renderer = rendererFactory.getRenderer(new NumberResult(1), TextRenderingFormat.class);

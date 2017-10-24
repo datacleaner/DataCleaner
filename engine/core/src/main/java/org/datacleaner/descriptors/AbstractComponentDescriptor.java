@@ -23,7 +23,6 @@ import javax.inject.Named;
 
 import org.datacleaner.api.Component;
 import org.datacleaner.api.ComponentSuperCategory;
-import org.datacleaner.util.ReflectionUtils;
 
 /**
  * Abstract implementation of the {@link ComponentDescriptor} interface.
@@ -48,24 +47,15 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
     private String determineDisplayName() {
         final Class<B> componentClass = getComponentClass();
         final Named named = getAnnotation(Named.class);
-        String displayName;
+        final String displayName;
         if (named == null) {
-            displayName = getDisplayNameIfNotNamed(componentClass);
+            displayName = componentClass.getSimpleName();
         } else {
             displayName = named.value();
         }
 
-        if (displayName == null) {
-            displayName = "";
-        }
-        displayName = displayName.trim();
-        if ("".equals(displayName)) {
-            displayName = ReflectionUtils.explodeCamelCase(componentClass.getSimpleName(), false);
-        }
-        return displayName;
+        return displayName.trim();
     }
-
-    protected abstract String getDisplayNameIfNotNamed(Class<?> componentClass);
 
     public final String getDisplayName() {
         if (_displayName == null) {

@@ -25,18 +25,25 @@ import java.awt.Image;
 public class WidgetScreenResolutionAdjuster {
 
     private static final float MAX_ADJUSTMENT = 3f;
+    
+    private static final WidgetScreenResolutionAdjuster INSTANCE = new WidgetScreenResolutionAdjuster();
 
     public static WidgetScreenResolutionAdjuster get() {
-        return new WidgetScreenResolutionAdjuster();
+        return INSTANCE;
     }
 
     // threshold in screen width above which we'll start scaling the UI
-    private final int highDpiThreshold = SystemProperties.getInt("datacleaner.highdpi.threshold", 1200);
+    private final int highDpiThreshold;
     private final int width;
 
     private WidgetScreenResolutionAdjuster() {
-        final GraphicsEnvironment graphicsEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        width = (int) graphicsEnv.getMaximumWindowBounds().getWidth();
+        highDpiThreshold = SystemProperties.getInt("datacleaner.highdpi.threshold", 1200);
+        if (GraphicsEnvironment.isHeadless()) {
+            width = highDpiThreshold;
+        } else {
+            final GraphicsEnvironment graphicsEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            width = (int) graphicsEnv.getMaximumWindowBounds().getWidth();
+        }
     }
 
     public int adjust(int size) {
@@ -53,7 +60,7 @@ public class WidgetScreenResolutionAdjuster {
 
     public float getSizeAdjustment() {
 
-        if (width < highDpiThreshold) {
+        if (width <= highDpiThreshold) {
             return 1;
         }
 

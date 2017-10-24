@@ -125,20 +125,6 @@ public final class CollectionUtils2 {
     }
 
     /**
-     *
-     * @return
-     *
-     * @deprecated use Google Guava's {@link CacheBuilder},
-     *             {@link #createCache(int, long)} or something similar if
-     *             needed.
-     */
-    @Deprecated
-    public static <K, V> ConcurrentMap<K, V> createCacheMap() {
-        final Cache<K, V> cache = CacheBuilder.newBuilder().maximumSize(10000).build();
-        return cache.asMap();
-    }
-
-    /**
      * Creates a typical Google Guava cache
      *
      * @param maximumSize

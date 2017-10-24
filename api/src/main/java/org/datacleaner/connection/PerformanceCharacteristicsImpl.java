@@ -29,18 +29,6 @@ public final class PerformanceCharacteristicsImpl implements PerformanceCharacte
     private final boolean _queryOptimizationPreferred;
     private final boolean _naturalRecordOrderConsistent;
 
-    /**
-     *
-     * @param queryOptimizationPreferred
-     *
-     * @deprecated use {@link #PerformanceCharacteristicsImpl(boolean, boolean)}
-     *             instead.
-     */
-    @Deprecated
-    public PerformanceCharacteristicsImpl(final boolean queryOptimizationPreferred) {
-        this(queryOptimizationPreferred, true);
-    }
-
     public PerformanceCharacteristicsImpl(final boolean queryOptimizationPreferred,
             final boolean naturalRecordOrderConsistent) {
         _queryOptimizationPreferred = queryOptimizationPreferred;

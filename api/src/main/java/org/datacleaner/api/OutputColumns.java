@@ -47,20 +47,6 @@ public class OutputColumns implements Serializable {
 
     /**
      * Constructs an OutputColumns object with a variable amount of anonymous
-     * columns.
-     *
-     * @param columns
-     *            the amount of columns.
-     *
-     * @deprecated use {@link #OutputColumns(int, Class)} instead.
-     */
-    @Deprecated
-    public OutputColumns(final int columns) {
-        this(columns, Object.class);
-    }
-
-    /**
-     * Constructs an OutputColumns object with a variable amount of anonymous
      * columns of the same type.
      *
      * @param columns
@@ -77,32 +63,6 @@ public class OutputColumns implements Serializable {
         for (int i = 0; i < columnTypes.length; i++) {
             columnTypes[i] = columnType;
         }
-    }
-
-    /**
-     * Constructs an OutputColumns object with named columns.
-     *
-     * @param columnNames
-     *            the names of the output columns.
-     * @deprecated use {@link #OutputColumns(String[], Class[])} instead.
-     */
-    @Deprecated
-    public OutputColumns(final String[] columnNames) {
-        this(columnNames, null);
-    }
-
-    /**
-     * Constructs an OutputColumns object with named columns.
-     *
-     * @param firstColumnName
-     *            the first column name
-     * @param additionalColumnNames
-     *            the additional column names (varargs)
-     *
-     * @deprecated use {@link #OutputColumns(String[], Class[])} instead
-     */
-    public OutputColumns(final String firstColumnName, final String... additionalColumnNames) {
-        this(Object.class, firstColumnName, additionalColumnNames);
     }
 
     public OutputColumns(final Class<?> columnType, final String firstColumnName,

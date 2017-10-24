@@ -23,43 +23,7 @@ import org.datacleaner.api.OutputColumns;
 
 import junit.framework.TestCase;
 
-@SuppressWarnings("deprecation")
 public class OutputColumnsTest extends TestCase {
-
-    public void testTooFewColumnsInt() throws Exception {
-        try {
-            new OutputColumns(0);
-            fail("Exception expected");
-        } catch (final IllegalArgumentException e) {
-            assertEquals("columns must be 1 or higher", e.getMessage());
-        }
-    }
-
-    public void testSingleOutputColumn() throws Exception {
-        final OutputColumns oc = new OutputColumns(1);
-        assertEquals(1, oc.getColumnCount());
-        assertNull(oc.getColumnName(0));
-        assertEquals(Object.class, oc.getColumnType(0));
-        assertEquals("OutputColumns[null]", oc.toString());
-    }
-
-    public void testNullColumns() throws Exception {
-        try {
-            new OutputColumns(null);
-            fail("Exception expected");
-        } catch (final IllegalArgumentException e) {
-            assertEquals("Arguments cannot be null", e.getMessage());
-        }
-    }
-
-    public void testTooFewColumnsStringArray() throws Exception {
-        try {
-            new OutputColumns(new String[0]);
-            fail("Exception expected");
-        } catch (final IllegalArgumentException e) {
-            assertEquals("Column names length must be 1 or greater", e.getMessage());
-        }
-    }
 
     public void testConstructWithTypes() throws Exception {
         final OutputColumns oc =
@@ -74,7 +38,7 @@ public class OutputColumnsTest extends TestCase {
     }
 
     public void testConstructVarArgNames() throws Exception {
-        final OutputColumns oc = new OutputColumns("first", "second", "third");
+        final OutputColumns oc = new OutputColumns(Object.class, "first", "second", "third");
         assertEquals(3, oc.getColumnCount());
         assertEquals("first", oc.getColumnName(0));
         assertEquals("second", oc.getColumnName(1));
@@ -103,7 +67,7 @@ public class OutputColumnsTest extends TestCase {
     }
 
     public void testSetColumnType() throws Exception {
-        final OutputColumns oc = new OutputColumns("first", "second", "third");
+        final OutputColumns oc = new OutputColumns(Object.class, "first", "second", "third");
         oc.setColumnType(1, String.class);
         assertEquals(Object.class, oc.getColumnType(0));
         assertEquals(String.class, oc.getColumnType(1));

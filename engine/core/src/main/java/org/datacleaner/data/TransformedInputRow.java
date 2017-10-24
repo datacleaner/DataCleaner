@@ -48,18 +48,6 @@ public final class TransformedInputRow extends AbstractLegacyAwareInputRow {
     private final long _id;
 
     /**
-     * Constructs a {@link TransformedInputRow} based on another row.
-     *
-     * @param delegate
-     *
-     * @deprecated use {@link TransformedInputRow#of(InputRow)} instead
-     */
-    @Deprecated
-    public TransformedInputRow(final InputRow delegate) {
-        this(delegate, null);
-    }
-
-    /**
      * Constructs a {@link TransformedInputRow} based on another row and a row
      * ID.
      *

@@ -48,11 +48,11 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         assertEquals(0, provider.getAnalyzerDescriptors().size());
 
         transformerComponentDescriptors = provider.getTransformerDescriptors();
-        assertEquals(23, transformerComponentDescriptors.size());
+        assertEquals(11, transformerComponentDescriptors.size());
 
         transformerComponentDescriptors = new TreeSet<>(transformerComponentDescriptors);
 
-        assertEquals("org.datacleaner.beans.transform.ConcatenatorTransformer",
+        assertEquals("org.datacleaner.beans.transform.DateDiffTransformer",
                 transformerComponentDescriptors.iterator().next().getComponentClass().getName());
     }
 
@@ -112,17 +112,17 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         assertEquals(0, provider.getTransformerDescriptors().size());
 
         provider = provider.scanPackage("org.datacleaner", true, classLoader, true);
-        assertEquals(23, provider.getTransformerDescriptors().size());
+        assertEquals(11, provider.getTransformerDescriptors().size());
 
-        boolean foundXmlDecoderTransformer = false;
+        boolean foundRoundNumberTransformer = false;
         for (final TransformerDescriptor<?> transformerComponentDescriptor : provider.getTransformerDescriptors()) {
             if (transformerComponentDescriptor.getComponentClass().getName()
-                    .equals("org.datacleaner.beans.codec.XmlDecoderTransformer")) {
-                foundXmlDecoderTransformer = true;
+                    .equals("org.datacleaner.beans.numbers.RoundNumberTransformer")) {
+                foundRoundNumberTransformer = true;
                 break;
             }
         }
-        assertTrue(foundXmlDecoderTransformer);
+        assertTrue(foundRoundNumberTransformer);
     }
 
     public void testIsClassInPackageNonRecursive() throws Exception {

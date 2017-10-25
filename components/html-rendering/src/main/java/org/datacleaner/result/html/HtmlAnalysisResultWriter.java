@@ -45,7 +45,6 @@ import org.datacleaner.result.AnalysisResultWriter;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.util.ComponentJobComparator;
-import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
@@ -237,7 +236,7 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
                     final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
                     if (!descriptor.equals(lastDescriptor)) {
                         final ComponentDocumentationWrapper wrapper = new ComponentDocumentationWrapper(descriptor);
-                        final String iconSrc = wrapper.getIconSrc(IconUtils.ICON_SIZE_MEDIUM);
+                        final String iconSrc = wrapper.getIconSrc(22);
                         final String styleName = toStyleName(descriptor.getDisplayName());
                         writer.write("<li style=\"background-image: url(" + iconSrc
                                 + ")\"><a href=\"#analysisResultDescriptorGroup_" + styleName + "\">");

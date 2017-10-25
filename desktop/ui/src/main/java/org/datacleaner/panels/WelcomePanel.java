@@ -65,11 +65,9 @@ import com.google.common.net.UrlEscapers;
 import com.google.inject.Injector;
 
 /**
- * The initial panel that is shown to the user when starting the application.
- * This panel features a pluggable content part (see
- * {@link SystemProperties#UI_DESKTOP_WELCOME_PANEL} and a button panels where a
- * new job can be started, an existing job can be opened and datastores can be
- * managed.
+ * The initial panel that is shown to the user when starting the application. This panel features a pluggable content
+ * part (see {@link SystemProperties#UI_DESKTOP_WELCOME_PANEL} and a button panels where a new job can be started, an
+ * existing job can be opened and datastores can be managed.
  */
 public class WelcomePanel extends DCSplashPanel {
 
@@ -155,10 +153,9 @@ public class WelcomePanel extends DCSplashPanel {
 
                 final JButton twitterButton = WidgetFactory.createDefaultButton(null, "images/menu/twitter.png");
                 twitterButton.setToolTipText("Spread the message about #DataCleaner on Twitter");
-                twitterButton.addActionListener(new OpenBrowserAction(
-                        "https://twitter.com/intent/tweet?text=" + UrlEscapers.urlFormParameterEscaper()
-                                .escape("I'm using @DataCleaner (v. " + Version.getVersion()
-                                        + ") for some really fancy #dataquality stuff!")));
+                twitterButton.addActionListener(new OpenBrowserAction("https://twitter.com/intent/tweet?text="
+                        + UrlEscapers.urlFormParameterEscaper().escape("I'm using @DataCleaner (v. "
+                                + Version.getVersion() + ") for some really fancy #dataquality stuff!")));
 
                 final JButton linkedInButton = WidgetFactory.createDefaultButton(null, "images/menu/linkedin.png");
                 linkedInButton.setToolTipText("Join our LinkedIn group of users and professionals");
@@ -177,8 +174,8 @@ public class WelcomePanel extends DCSplashPanel {
 
                 final DCPanel innerPanel = new DCPanel();
                 innerPanel.setLayout(new VerticalLayout());
-                innerPanel.setBorder(
-                        new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, adjuster.adjust(20), 0, 0)));
+                innerPanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY,
+                        new EmptyBorder(0, adjuster.adjust(20), 0, 0)));
                 innerPanel.add(editorPane);
                 innerPanel.add(DCPanel.flow(tryProfessionalButton));
                 innerPanel.add(Box.createVerticalStrut(adjuster.adjust(80)));
@@ -231,8 +228,8 @@ public class WelcomePanel extends DCSplashPanel {
         final List<FileObject> recentJobFiles = getRecentJobFiles();
         final JPopupMenu recentJobsMenu = recentJobsButton.getMenu();
         /*
-         * The menu is rebuild every time the user clicks on the menu, so the
-         * content is removed so that we do not have duplicates
+         * The menu is rebuild every time the user clicks on the menu, so the content is removed so that we do not have
+         * duplicates
          */
         recentJobsMenu.removeAll();
 

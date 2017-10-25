@@ -79,15 +79,14 @@ import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 
 /**
- * Class capable of creating graphs that visualize {@link AnalysisJob}s or parts
- * of them as a graph.
+ * Class capable of creating graphs that visualize {@link AnalysisJob}s or parts of them as a graph.
  */
 public final class JobGraph {
 
     public static final String MORE_COLUMNS_VERTEX = "...";
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraph.class);
-    
+
     private final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
     private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
@@ -244,9 +243,8 @@ public final class JobGraph {
 
             @Override
             public void paint(final Graphics g) {
-                final GradientPaint paint =
-                        new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0, visualizationViewer.getHeight(),
-                                WidgetUtils.BG_COLOR_BRIGHTEST);
+                final GradientPaint paint = new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0,
+                        visualizationViewer.getHeight(), WidgetUtils.BG_COLOR_BRIGHTEST);
                 if (g instanceof Graphics2D) {
                     final Graphics2D g2d = (Graphics2D) g;
                     g2d.setPaint(paint);
@@ -365,7 +363,8 @@ public final class JobGraph {
                 }
 
                 if (imagePath != null) {
-                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - adjuster.adjust(120), yOffset - adjuster.adjust(30), null);
+                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - adjuster.adjust(120),
+                            yOffset - adjuster.adjust(30), null);
                 }
             }
         });

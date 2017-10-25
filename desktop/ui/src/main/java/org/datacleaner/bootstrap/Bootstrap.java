@@ -294,7 +294,7 @@ public final class Bootstrap {
 
                     final WindowContext windowContext = new SimpleWindowContext();
 
-                    try (final SimpleWebServiceHttpClient httpClient = new SimpleWebServiceHttpClient()) {
+                    try (SimpleWebServiceHttpClient httpClient = new SimpleWebServiceHttpClient()) {
 
                         final String[] urls = new String[] { userRequestedFilename };
                         final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);

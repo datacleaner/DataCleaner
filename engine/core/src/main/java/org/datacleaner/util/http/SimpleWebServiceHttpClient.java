@@ -32,7 +32,7 @@ import org.datacleaner.user.UserPreferences;
  * to a wrapped {@link HttpClient}. Can be used for non-secured connection or
  * wrapping {@link UserPreferences#createHttpClient()}.
  */
-public class SimpleWebServiceHttpClient implements WebServiceHttpClient, MonitorHttpClient {
+public class SimpleWebServiceHttpClient implements WebServiceHttpClient {
 
     private final CloseableHttpClient _httpClient;
 

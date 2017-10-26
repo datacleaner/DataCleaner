@@ -53,7 +53,6 @@ import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DragDropUtils;
 import org.datacleaner.util.GraphUtils;
@@ -93,25 +92,22 @@ public final class JobGraph {
     private final RendererFactory _presenterRendererFactory;
     private final DCPanel _panel;
     private final WindowContext _windowContext;
-    private final UsageLogger _usageLogger;
     private final UserPreferences _userPreferences;
 
     private int _scrollHorizontal;
     private int _scrollVertical;
 
     public JobGraph(final WindowContext windowContext, final UserPreferences userPreferences,
-            final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger) {
-        this(windowContext, userPreferences, analysisJobBuilder, null, usageLogger);
+            final AnalysisJobBuilder analysisJobBuilder) {
+        this(windowContext, userPreferences, analysisJobBuilder, null);
     }
 
     public JobGraph(final WindowContext windowContext, final UserPreferences userPreferences,
-            final AnalysisJobBuilder analysisJobBuilder, final RendererFactory presenterRendererFactory,
-            final UsageLogger usageLogger) {
+            final AnalysisJobBuilder analysisJobBuilder, final RendererFactory presenterRendererFactory) {
         _highlighedVertexes = new HashSet<>();
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
         _windowContext = windowContext;
-        _usageLogger = usageLogger;
         _componentConfigurationDialogs = new IdentityHashMap<>();
         _tableConfigurationDialogs = new IdentityHashMap<>();
 
@@ -382,7 +378,7 @@ public final class JobGraph {
         }
 
         final JobGraphMouseListener graphMouseListener =
-                new JobGraphMouseListener(graphContext, linkPainter, actions, _windowContext, _usageLogger);
+                new JobGraphMouseListener(graphContext, linkPainter, actions, _windowContext);
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);

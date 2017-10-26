@@ -41,17 +41,6 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    protected String getDisplayNameIfNotNamed(final Class<?> cls) {
-        final org.eobjects.analyzer.beans.api.TransformerBean annotation =
-                ReflectionUtils.getAnnotation(cls, org.eobjects.analyzer.beans.api.TransformerBean.class);
-        if (annotation == null) {
-            return null;
-        }
-        return annotation.value();
-    }
-
-    @Override
     protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
         return TransformSuperCategory.class;
     }

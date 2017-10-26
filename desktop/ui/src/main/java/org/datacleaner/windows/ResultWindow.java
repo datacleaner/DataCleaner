@@ -52,7 +52,6 @@ import javax.swing.border.MatteBorder;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.actions.ExportResultToHtmlActionListener;
-import org.datacleaner.actions.PublishResultToMonitorActionListener;
 import org.datacleaner.actions.SaveAnalysisResultActionListener;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentMessage;
@@ -176,14 +175,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
         exportToHtmlItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(exportToHtmlItem);
-
-        final JMenuItem publishToServerItem =
-                WidgetFactory.createMenuItem("Publish to server", IconUtils.MENU_DQ_MONITOR);
-        publishToServerItem.addActionListener(
-                new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences, resultRef,
-                        _jobFilename));
-        publishToServerItem.setBorder(buttonBorder);
-        _saveResultsPopupButton.getMenu().add(publishToServerItem);
 
         _tabbedPane = new VerticalTabbedPane() {
             private static final long serialVersionUID = 1L;

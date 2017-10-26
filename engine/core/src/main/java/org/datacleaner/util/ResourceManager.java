@@ -54,17 +54,6 @@ public final class ResourceManager {
         return instance;
     }
 
-    /**
-     * Gets the singleton instance of {@link ResourceManager}.
-     *
-     * @return
-     * @deprecated use {@link #get()} instead
-     */
-    @Deprecated
-    public static ResourceManager getInstance() {
-        return get();
-    }
-
     public List<URL> getUrls(final String path, ClassLoader... classLoaders) {
         if (classLoaders == null || classLoaders.length == 0) {
             if (ClassLoaderUtils.getParentClassLoader().equals(getClass().getClassLoader())) {

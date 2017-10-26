@@ -34,23 +34,12 @@ final class TemporaryMutableDataCleanerEnvironment implements DataCleanerEnviron
     private StorageProvider _storageProvider;
     private DescriptorProvider _descriptorProvider;
     private TaskRunner _taskRunner;
-    private RemoteServerConfiguration _remoteServerConfiguration;
 
     public TemporaryMutableDataCleanerEnvironment(final DataCleanerEnvironment baseEnvironment) {
         _injectionManagerFactory = baseEnvironment.getInjectionManagerFactory();
         _storageProvider = baseEnvironment.getStorageProvider();
         _descriptorProvider = baseEnvironment.getDescriptorProvider();
         _taskRunner = baseEnvironment.getTaskRunner();
-        _remoteServerConfiguration = baseEnvironment.getRemoteServerConfiguration();
-    }
-
-    @Override
-    public RemoteServerConfiguration getRemoteServerConfiguration() {
-        return _remoteServerConfiguration;
-    }
-
-    public void setRemoteServerConfiguration(final RemoteServerConfiguration remoteServerConfiguration) {
-        this._remoteServerConfiguration = remoteServerConfiguration;
     }
 
     @Override

@@ -87,10 +87,6 @@ public class ExtensionPackagesPanel extends DCPanel {
                 WidgetFactory.createDefaultPopupButton("Add extension package", IconUtils.ACTION_ADD_DARK);
         final JPopupMenu addExtensionMenu = addExtensionButton.getMenu();
 
-        final JMenuItem extensionSwapMenuItem =
-                new JMenuItem("Browse the ExtensionSwap", imageManager.getImageIcon("images/actions/website.png"));
-        extensionSwapMenuItem.addActionListener(new OpenBrowserAction("https://datacleaner.org/extensions"));
-
         final JMenuItem manualInstallMenuItem =
                 new JMenuItem("Manually install JAR file", imageManager.getImageIcon("images/filetypes/archive.png"));
         manualInstallMenuItem.addActionListener(e -> {
@@ -112,7 +108,6 @@ public class ExtensionPackagesPanel extends DCPanel {
             }
         });
 
-        addExtensionMenu.add(extensionSwapMenuItem);
         addExtensionMenu.add(manualInstallMenuItem);
 
         final DCPanel listPanel = new DCPanel();

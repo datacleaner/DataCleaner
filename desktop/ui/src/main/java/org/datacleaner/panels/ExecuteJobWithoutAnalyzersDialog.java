@@ -190,7 +190,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         LookAndFeelManager.get().init();
 
         final DCWindowContext windowContext =
-                new DCWindowContext(new DataCleanerConfigurationImpl(), new UserPreferencesImpl(null), null);
+                new DCWindowContext(new DataCleanerConfigurationImpl(), new UserPreferencesImpl(null));
 
         final UserPreferences userPreferences = new UserPreferencesImpl(null);
         final ExecuteJobWithoutAnalyzersDialog dialog =

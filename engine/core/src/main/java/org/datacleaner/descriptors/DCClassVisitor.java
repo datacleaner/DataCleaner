@@ -106,18 +106,8 @@ final class DCClassVisitor extends ClassVisitor {
 
         if (isAnnotation(desc, Named.class)) {
             initializeClass();
-        } else if (isLegacyAnnotation(desc)) {
-            logger.info("Initializing class with legacy annotation: {}", desc);
-            initializeClass();
         }
         return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    private boolean isLegacyAnnotation(final String desc) {
-        return isAnnotation(desc, org.eobjects.analyzer.beans.api.AnalyzerBean.class)
-                || isAnnotation(desc, org.eobjects.analyzer.beans.api.TransformerBean.class)
-                || isAnnotation(desc, org.eobjects.analyzer.beans.api.FilterBean.class);
     }
 
     private boolean isAnnotation(final String annotationDesc, final Class<? extends Annotation> annotationClass) {

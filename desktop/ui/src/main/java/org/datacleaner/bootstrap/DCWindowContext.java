@@ -28,7 +28,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.AbstractWindow;
@@ -55,13 +54,9 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
     private final UserPreferences _userPreferences;
     private boolean _exiting;
 
-    private UsageLogger _usageLogger;
-
-    public DCWindowContext(final DataCleanerConfiguration configuration, final UserPreferences userPreferences,
-            final UsageLogger usageLogger) {
+    public DCWindowContext(final DataCleanerConfiguration configuration, final UserPreferences userPreferences) {
         _configuration = configuration;
         _userPreferences = userPreferences;
-        _usageLogger = usageLogger;
         _allWindowContexts.add(new WeakReference<>(this));
         _exiting = false;
     }
@@ -147,9 +142,6 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
 
         if (_userPreferences != null) {
             _userPreferences.save();
-        }
-        if (_usageLogger != null) {
-            _usageLogger.logApplicationShutdown();
         }
         if (_configuration != null) {
             _configuration.getEnvironment().getTaskRunner().shutdown();

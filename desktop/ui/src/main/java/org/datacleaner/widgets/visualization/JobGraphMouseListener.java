@@ -44,14 +44,12 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
-import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
@@ -79,7 +77,6 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     private final JobGraphLinkPainter _linkPainter;
     private final JobGraphActions _actions;
     private final WindowContext _windowContext;
-    private final UsageLogger _usageLogger;
 
     // this is ugly, but a hack to make the graph mouse listener and the
     // regular mouse listener aware of each other's actions.
@@ -88,12 +85,11 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     private Point _pressedPoint;
 
     public JobGraphMouseListener(final JobGraphContext graphContext, final JobGraphLinkPainter linkPainter,
-            final JobGraphActions actions, final WindowContext windowContext, final UsageLogger usageLogger) {
+            final JobGraphActions actions, final WindowContext windowContext) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         _actions = actions;
         _windowContext = windowContext;
-        _usageLogger = usageLogger;
     }
 
     /**
@@ -176,12 +172,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;
             final JMenuItem previewMenuItem = new JMenuItem("Preview data",
                     ImageManager.get().getImageIcon(IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
-            if (tjb.getDescriptor() instanceof RemoteTransformerDescriptor) {
-                previewMenuItem
-                        .addActionListener(new PreviewTransformedDataActionListener(_windowContext, null, tjb, 10));
-            } else {
-                previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
-            }
+            previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
             previewMenuItem.setEnabled(componentBuilder.isConfigured());
             popup.add(previewMenuItem);
         }
@@ -233,7 +224,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 configuration.getEnvironment().getDescriptorProvider().getComponentSuperCategories();
         for (final ComponentSuperCategory superCategory : superCategories) {
             final DescriptorMenuBuilder menuBuilder =
-                    new DescriptorMenuBuilder(analysisJobBuilder, _usageLogger, superCategory, point);
+                    new DescriptorMenuBuilder(analysisJobBuilder, superCategory, point);
 
             final JMenu menu = new JMenu(superCategory.getName());
             menu.setIcon(IconUtils.getComponentSuperCategoryIcon(superCategory, IconUtils.ICON_SIZE_MENU_ITEM));

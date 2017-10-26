@@ -19,9 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -529,40 +526,6 @@ public class JaxbConfigurationReaderTest extends TestCase {
 
     private DataCleanerConfiguration getConfigurationFromXMLFile() {
         return reader.create(new File("src/test/resources/example-configuration-all-reference-data-types.xml"));
-    }
-
-    public void testRemoteServerConfiguration() throws Exception {
-        final DataCleanerConfiguration configuration =
-                reader.create(new File("src/test/resources/example-configuration-remote-servers.xml"));
-        final RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
-        Assert.assertEquals(false, remoteConf.getServerList().isEmpty());
-        Assert.assertEquals(3, remoteConf.getServerList().size());
-
-        final RemoteServerData server0 = remoteConf.getServerList().get(0);
-        Assert.assertEquals("server1", server0.getServerName());
-        Assert.assertEquals("http://host1:8888", server0.getUrl());
-        Assert.assertEquals("totoro", server0.getUsername());
-        Assert.assertEquals("admin", server0.getPassword());
-
-        final RemoteServerData server1 = remoteConf.getServerList().get(1);
-        Assert.assertEquals("serverHost2", server1.getServerName());
-        Assert.assertEquals("http://host2:8888", server1.getUrl());
-        Assert.assertEquals("momo", server1.getUsername());
-        Assert.assertEquals("admin", server1.getPassword());
-
-        final RemoteServerData server2 = remoteConf.getServerList().get(2);
-        Assert.assertEquals("serverHost3", server2.getServerName());
-        Assert.assertEquals("http://host3:8888", server2.getUrl());
-        Assert.assertEquals("momo", server2.getUsername());
-        Assert.assertEquals("admin", server2.getPassword());
-    }
-
-    public void testRemoteServerConfigurationDefault() throws Exception {
-        final DataCleanerConfiguration configuration =
-                reader.create(new File("src/test/resources/example-configuration-remote-servers-empty.xml"));
-        final RemoteServerConfiguration remoteConf = configuration.getEnvironment().getRemoteServerConfiguration();
-        Assert.assertEquals(true, remoteConf.getServerList().isEmpty());
-        Assert.assertEquals(0, remoteConf.getServerList().size());
     }
 
     public void testServerConfigurations() {

@@ -99,7 +99,6 @@ import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.ReferenceDataChangeListener;
-import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -112,11 +111,9 @@ import org.datacleaner.widgets.CollapsibleTreePanel;
 import org.datacleaner.widgets.CommunityEditionStatusLabel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
-import org.datacleaner.widgets.DataCloudStatusLabel;
 import org.datacleaner.widgets.ExecuteButtonBuilder;
 import org.datacleaner.widgets.InformationPanelDescriptor;
 import org.datacleaner.widgets.InformationPanelLabel;
-import org.datacleaner.widgets.NewsChannelStatusLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
@@ -281,7 +278,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
     private final Provider<NewAnalysisJobActionListener> _newAnalysisJobActionListenerProvider;
     private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
     private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
-    private final Provider<MonitorConnectionDialog> _monitorConnectionDialogProvider;
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final DCGlassPane _glassPane;
     private final WelcomePanel _welcomePanel;
@@ -317,9 +313,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
             final Provider<NewAnalysisJobActionListener> newAnalysisJobActionListenerProvider,
             final Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
             final Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
-            final Provider<ReferenceDataDialog> referenceDataDialogProvider, final UsageLogger usageLogger,
+            final Provider<ReferenceDataDialog> referenceDataDialogProvider,
             final Provider<OptionsDialog> optionsDialogProvider,
-            final Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
             final OpenAnalysisJobActionListener openAnalysisJobActionListener,
             final DatabaseDriverCatalog databaseDriverCatalog,
             final MutableReferenceDataCatalog mutableReferenceCatalog) {
@@ -331,7 +326,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _saveAnalysisJobActionListenerProvider = saveAnalysisJobActionListenerProvider;
         _referenceDataDialogProvider = referenceDataDialogProvider;
-        _monitorConnectionDialogProvider = monitorConnectionDialogProvider;
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
         _mutableReferenceCatalog = mutableReferenceCatalog;
@@ -356,8 +350,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         _presenterRendererFactory = new RendererFactory(configuration);
         _glassPane = new DCGlassPane(this);
 
-        _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory,
-                usageLogger);
+        _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory);
 
         _analysisJobChangeListener.onActivation(_analysisJobBuilder);
         //Add listeners for ReferenceData classes 
@@ -804,17 +797,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
         final RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
 
-        final DataCloudStatusLabel dataCloudStatusLabel =
-                new DataCloudStatusLabel(rightInformationPanel, _configuration, _userPreferences, getWindowContext(),
-                        this);
-        statusBar.add(dataCloudStatusLabel);
-        statusBar.add(Box.createHorizontalStrut(20));
-
-        final NewsChannelStatusLabel newChannelStatusLabel =
-                new NewsChannelStatusLabel(rightInformationPanel, _userPreferences);
-        statusBar.add(newChannelStatusLabel);
-        statusBar.add(Box.createHorizontalStrut(20));
-
         if (Version.isCommunityEdition()) {
             final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel(rightInformationPanel);
             statusBar.add(statusLabel);
@@ -858,13 +840,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
             final OptionsDialog optionsDialog = _optionsDialogProvider.get();
             optionsDialog.getTabbedPane().setSelectedIndex(0);
             optionsDialog.open();
-        });
-
-        final JMenuItem monitorMenuItem =
-                WidgetFactory.createMenuItem("DataCleaner monitor", IconUtils.MENU_DQ_MONITOR);
-        monitorMenuItem.addActionListener(e -> {
-            final MonitorConnectionDialog dialog = _monitorConnectionDialogProvider.get();
-            dialog.open();
         });
 
         final JMenuItem dictionariesMenuItem =
@@ -939,7 +914,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         popupButton.getMenu().add(new JSeparator());
         popupButton.getMenu().add(windowsMenuItem);
         popupButton.getMenu().add(new JSeparator());
-        popupButton.getMenu().add(monitorMenuItem);
         popupButton.getMenu().add(optionsMenuItem);
 
         return popupButton;

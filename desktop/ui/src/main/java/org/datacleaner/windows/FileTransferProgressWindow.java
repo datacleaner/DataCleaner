@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
  * download and file handling.
  *
  * @see DownloadFilesActionListener
- * @see PublishResultToMonitorActionListener
  */
 public class FileTransferProgressWindow extends AbstractDialog {
 

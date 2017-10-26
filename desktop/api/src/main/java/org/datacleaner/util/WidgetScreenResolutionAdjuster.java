@@ -22,10 +22,15 @@ package org.datacleaner.util;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 
+/**
+ * Class responsible for adjusting/scaling widgets according to the screen resolution. This is to provide a good user
+ * experience for users with high DPI screens - ensuring that what is normally just 1 pixel may take up more when a
+ * pixel is extraordinarily small on the physical screen.
+ */
 public class WidgetScreenResolutionAdjuster {
 
     private static final float MAX_ADJUSTMENT = 3f;
-    
+
     private static final WidgetScreenResolutionAdjuster INSTANCE = new WidgetScreenResolutionAdjuster();
 
     public static WidgetScreenResolutionAdjuster get() {

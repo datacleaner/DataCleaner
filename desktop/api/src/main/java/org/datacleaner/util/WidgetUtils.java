@@ -76,15 +76,6 @@ public final class WidgetUtils {
     private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
 
     private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
-
-    private static final int PIX_1 = adjuster.adjust(1);
-    private static final int PIX_2 = adjuster.adjust(2);
-    private static final int PIX_3 = adjuster.adjust(3);
-    private static final int PIX_4 = adjuster.adjust(4);
-    private static final int PIX_6 = adjuster.adjust(6);
-    private static final int PIX_9 = adjuster.adjust(9);
-    private static final int PIX_10 = adjuster.adjust(10);
-    private static final int PIX_17 = adjuster.adjust(17);
     
     public static final float FONT_SIZE_SMALL = adjuster.adjust(11f);
 
@@ -188,10 +179,10 @@ public final class WidgetUtils {
     // Cyan: #24d1d3
     public static final Color ADDITIONAL_COLOR_CYAN_BRIGHT = new ColorUIResource(36, 209, 211);
 
-    public static final int BORDER_WIDE_WIDTH = PIX_4;
+    public static final int BORDER_WIDE_WIDTH = pix(4);
 
     public static final Border BORDER_SHADOW =
-            new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, PIX_6);
+            new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, pix(6));
 
     public static final Border BORDER_WIDE_ALTERNATIVE =
             new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
@@ -206,51 +197,51 @@ public final class WidgetUtils {
 
     public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
             WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
-    public static Border BORDER_TOP_PADDING = new EmptyBorder(PIX_10, 0, 0, 0);
+    public static Border BORDER_TOP_PADDING = new EmptyBorder(pix(10), 0, 0, 0);
 
     public static final Border BORDER_THIN = new LineBorder(BG_COLOR_LESS_BRIGHT);
     public static final Border BORDER_THIN_DARK = new LineBorder(BG_COLOR_DARK);
 
     public static final Border BORDER_LIST_ITEM =
-            new CompoundBorder(new MatteBorder(0, PIX_3, 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, PIX_1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
+            new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
+                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
 
     public static final Border BORDER_LIST_ITEM_LEFT_ONLY =
-            new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM), new EmptyBorder(0, 0, PIX_1, 0));
+            new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM), new EmptyBorder(0, 0, pix(1), 0));
 
     public static final Border BORDER_LIST_ITEM_HIGHLIGHTED =
-            new CompoundBorder(new MatteBorder(0, PIX_3, 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, PIX_1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+            new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
+                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
 
     public static final Border BORDER_LIST_ITEM_SUBTLE =
-            new CompoundBorder(new MatteBorder(0, PIX_3, 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, PIX_1, 0, WidgetUtils.BG_COLOR_MEDIUM));
+            new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
+                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_MEDIUM));
 
-    public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, PIX_2, false);
+    public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, pix(2), false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
-    public static final Border BORDER_TABLE_PANEL = new MatteBorder(PIX_1, PIX_1, 0, 0, BG_COLOR_LESS_BRIGHT);
+    public static final Border BORDER_TABLE_PANEL = new MatteBorder(pix(1), pix(1), 0, 0, BG_COLOR_LESS_BRIGHT);
 
     /**
      * Border for indented button panels where the content has to align with check boxes above or below.
      */
     public static final Border BORDER_CHECKBOX_LIST_INDENTATION =
-            new EmptyBorder(PIX_1, PIX_17, 0, 1);
+            new EmptyBorder(pix(1), pix(17), 0, pix(1));
 
     public static final Border BORDER_BUTTON_DARK =
-            new EmptyBorder(BORDER_WIDE_WIDTH, PIX_10, BORDER_WIDE_WIDTH, PIX_10);
+            new EmptyBorder(BORDER_WIDE_WIDTH, pix(10), BORDER_WIDE_WIDTH, pix(10));
 
     public static final Border BORDER_BUTTON_DARK_WITH_LINE =
-            new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, PIX_1, false),
-                    new EmptyBorder(BORDER_WIDE_WIDTH - PIX_1, PIX_9, BORDER_WIDE_WIDTH - PIX_1, PIX_9));
+            new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, pix(1), false),
+                    new EmptyBorder(BORDER_WIDE_WIDTH - pix(1), pix(9), BORDER_WIDE_WIDTH - pix(1), pix(9)));
 
     public static final Border BORDER_BUTTON_DEFAULT =
-            new CompoundBorder(new LineBorder(BG_COLOR_LESS_BRIGHT, PIX_1, false),
-                    new EmptyBorder(BORDER_WIDE_WIDTH - PIX_1, PIX_9, BORDER_WIDE_WIDTH - PIX_1, PIX_9));
+            new CompoundBorder(new LineBorder(BG_COLOR_LESS_BRIGHT, pix(1), false),
+                    new EmptyBorder(BORDER_WIDE_WIDTH - pix(1), pix(9), BORDER_WIDE_WIDTH - pix(1), pix(9)));
     public static final Border BORDER_BUTTON_PRIMARY =
-            new EmptyBorder(BORDER_WIDE_WIDTH, PIX_10, BORDER_WIDE_WIDTH, PIX_10);
+            new EmptyBorder(BORDER_WIDE_WIDTH, pix(10), BORDER_WIDE_WIDTH, pix(10));
 
-    public static final Object BORDER_MENU_ITEM = new EmptyBorder(PIX_2, PIX_2, PIX_2, PIX_2);
+    public static final Object BORDER_MENU_ITEM = new EmptyBorder(pix(2), pix(2), pix(2), pix(2));
 
     /**
      * A highlighter for coloring odd/even rows in a table
@@ -264,7 +255,7 @@ public final class WidgetUtils {
     private static final double COLOR_SCALE_FACTOR = 0.9;
 
     // grid bag contraint defaults
-    public static final int DEFAULT_PADDING = PIX_2;
+    public static final int DEFAULT_PADDING = pix(2);
     public static final int DEFAULT_ANCHOR = GridBagConstraints.WEST;
 
     /**
@@ -701,4 +692,7 @@ public final class WidgetUtils {
         }
     }
 
+    private static int pix(int p) {
+        return adjuster.adjust(p);
+    }
 }

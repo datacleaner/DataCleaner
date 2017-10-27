@@ -692,7 +692,7 @@ public final class WidgetUtils {
         }
     }
 
-    private static int pix(int p) {
-        return adjuster.adjust(p);
+    private static int pix(final int size) {
+        return adjuster.adjust(size);
     }
 }

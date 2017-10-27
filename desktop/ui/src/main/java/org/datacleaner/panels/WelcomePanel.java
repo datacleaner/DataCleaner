@@ -47,6 +47,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.widgets.PopupButton;
@@ -64,15 +65,14 @@ import com.google.common.net.UrlEscapers;
 import com.google.inject.Injector;
 
 /**
- * The initial panel that is shown to the user when starting the application.
- * This panel features a pluggable content part (see
- * {@link SystemProperties#UI_DESKTOP_WELCOME_PANEL} and a button panels where a
- * new job can be started, an existing job can be opened and datastores can be
- * managed.
+ * The initial panel that is shown to the user when starting the application. This panel features a pluggable content
+ * part (see {@link SystemProperties#UI_DESKTOP_WELCOME_PANEL} and a button panels where a new job can be started, an
+ * existing job can be opened and datastores can be managed.
  */
 public class WelcomePanel extends DCSplashPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(WelcomePanel.class);
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
 
     private static final long serialVersionUID = 1L;
 
@@ -137,7 +137,7 @@ public class WelcomePanel extends DCSplashPanel {
                 editorPane.setEditable(false);
                 editorPane.setOpaque(false);
                 editorPane.setFont(WidgetUtils.FONT_HEADER2);
-                editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, 120));
+                editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, adjuster.adjust(120)));
 
                 final JButton tryProfessionalButton =
                         WidgetFactory.createDefaultButton("Try professional edition", IconUtils.APPLICATION_ICON);
@@ -153,10 +153,9 @@ public class WelcomePanel extends DCSplashPanel {
 
                 final JButton twitterButton = WidgetFactory.createDefaultButton(null, "images/menu/twitter.png");
                 twitterButton.setToolTipText("Spread the message about #DataCleaner on Twitter");
-                twitterButton.addActionListener(new OpenBrowserAction(
-                        "https://twitter.com/intent/tweet?text=" + UrlEscapers.urlFormParameterEscaper()
-                                .escape("I'm using @DataCleaner (v. " + Version.getVersion()
-                                        + ") for some really fancy #dataquality stuff!")));
+                twitterButton.addActionListener(new OpenBrowserAction("https://twitter.com/intent/tweet?text="
+                        + UrlEscapers.urlFormParameterEscaper().escape("I'm using @DataCleaner (v. "
+                                + Version.getVersion() + ") for some really fancy #dataquality stuff!")));
 
                 final JButton linkedInButton = WidgetFactory.createDefaultButton(null, "images/menu/linkedin.png");
                 linkedInButton.setToolTipText("Join our LinkedIn group of users and professionals");
@@ -175,18 +174,18 @@ public class WelcomePanel extends DCSplashPanel {
 
                 final DCPanel innerPanel = new DCPanel();
                 innerPanel.setLayout(new VerticalLayout());
-                innerPanel.setBorder(
-                        new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, 20, 0, 0)));
+                innerPanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY,
+                        new EmptyBorder(0, adjuster.adjust(20), 0, 0)));
                 innerPanel.add(editorPane);
                 innerPanel.add(DCPanel.flow(tryProfessionalButton));
-                innerPanel.add(Box.createVerticalStrut(80));
+                innerPanel.add(Box.createVerticalStrut(adjuster.adjust(80)));
                 innerPanel.add(loveFeedbackAnimation);
-                innerPanel.add(Box.createVerticalStrut(20));
+                innerPanel.add(Box.createVerticalStrut(adjuster.adjust(20)));
                 innerPanel.add(DCPanel.flow(discussionForumButton, twitterButton, linkedInButton));
                 innerPanel.add(Box.createVerticalStrut(5));
 
                 result.setLayout(new VerticalLayout());
-                result.add(Box.createVerticalStrut(100));
+                result.add(Box.createVerticalStrut(adjuster.adjust(100)));
                 result.add(innerPanel);
             }
         }
@@ -214,13 +213,13 @@ public class WelcomePanel extends DCSplashPanel {
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(newJobButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(Box.createHorizontalStrut(adjuster.adjust(10)));
         buttonPanel.add(browseJobsButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(Box.createHorizontalStrut(adjuster.adjust(10)));
         buttonPanel.add(recentJobsButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(Box.createHorizontalStrut(adjuster.adjust(10)));
         buttonPanel.add(manageDatastoresButton);
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
+        buttonPanel.setBorder(new EmptyBorder(0, 0, adjuster.adjust(20), 0));
 
         return wrapContent(buttonPanel);
     }
@@ -229,8 +228,8 @@ public class WelcomePanel extends DCSplashPanel {
         final List<FileObject> recentJobFiles = getRecentJobFiles();
         final JPopupMenu recentJobsMenu = recentJobsButton.getMenu();
         /*
-         * The menu is rebuild every time the user clicks on the menu, so the
-         * content is removed so that we do not have duplicates
+         * The menu is rebuild every time the user clicks on the menu, so the content is removed so that we do not have
+         * duplicates
          */
         recentJobsMenu.removeAll();
 

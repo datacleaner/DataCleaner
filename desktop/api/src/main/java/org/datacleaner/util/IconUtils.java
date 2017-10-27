@@ -66,8 +66,7 @@ import org.datacleaner.descriptors.HasIcon;
 import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
- * Contains utility methods concerned with icons, primarily datastore and
- * component icons.
+ * Contains utility methods concerned with icons, primarily datastore and component icons.
  */
 public final class IconUtils {
 
@@ -97,9 +96,10 @@ public final class IconUtils {
         }
     }
 
-    public static final int ICON_SIZE_LARGE = 32;
-    public static final int ICON_SIZE_MEDIUM = 22;
-    public static final int ICON_SIZE_SMALL = 16;
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
+    public static final int ICON_SIZE_LARGE = adjuster.adjust(32);
+    public static final int ICON_SIZE_MEDIUM = adjuster.adjust(22);
+    public static final int ICON_SIZE_SMALL = adjuster.adjust(16);
     public static final int ICON_SIZE_MENU_ITEM = ICON_SIZE_SMALL;
     public static final int ICON_SIZE_BUTTON = ICON_SIZE_MEDIUM;
     public static final int ICON_SIZE_TAB = ICON_SIZE_MEDIUM;
@@ -134,8 +134,7 @@ public final class IconUtils {
     public static final String ACTION_SAVE_BRIGHT = "images/actions/save_bright.png";
     public static final String ACTION_SAVE_DARK = "images/actions/save_dark.png";
     /**
-     * @deprecated use {@link #ACTION_SAVE_BRIGHT} or {@link #ACTION_SAVE_DARK}
-     *             instead
+     * @deprecated use {@link #ACTION_SAVE_BRIGHT} or {@link #ACTION_SAVE_DARK} instead
      */
     @Deprecated
     public static final String ACTION_SAVE = ACTION_SAVE_DARK;
@@ -259,7 +258,7 @@ public final class IconUtils {
     }
 
     public static ImageIcon addErrorOverlay(final ImageIcon imageIcon) {
-        final int offset = 4;
+        final int offset = adjuster.adjust(4);
         final int iconWidth = imageIcon.getIconWidth();
         final int decorationSize = iconWidth / 2;
         final Image errorImage = _imageManager.getImage(STATUS_ERROR, decorationSize);
@@ -287,10 +286,8 @@ public final class IconUtils {
      *
      * @param descriptor
      * @param newWidth
-     * @param allowTransparentForUnspecific
-     *            whether or not to use a transparent icon in case only a
-     *            generic icon could be found. This is useful for menu items
-     *            where the icon is not a requirement.
+     * @param allowTransparentForUnspecific whether or not to use a transparent icon in case only a generic icon could
+     *            be found. This is useful for menu items where the icon is not a requirement.
      * @return
      */
     public static ImageIcon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final int newWidth,
@@ -342,16 +339,16 @@ public final class IconUtils {
     }
 
     public static ImageIcon getTransparentIcon(final int width) {
-        switch (width) {
-        case ICON_SIZE_SMALL:
+        if (width == ICON_SIZE_SMALL) {
             return ICON_TRANSPARENT_SMALL;
-        case ICON_SIZE_MEDIUM:
-            return ICON_TRANSPARENT_MEDIUM;
-        case ICON_SIZE_LARGE:
-            return ICON_TRANSPARENT_LARGE;
-        default:
-            return createTransparentIcon(width);
         }
+        if (width == ICON_SIZE_MEDIUM) {
+            return ICON_TRANSPARENT_MEDIUM;
+        }
+        if (width == ICON_SIZE_LARGE) {
+            return ICON_TRANSPARENT_LARGE;
+        }
+        return createTransparentIcon(width);
     }
 
     private static ImageIcon createTransparentIcon(final int width) {
@@ -437,8 +434,8 @@ public final class IconUtils {
 
         final BufferedImage bufferedImage = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(jobIcon, 0, 0, null);
-        bufferedImage.getGraphics()
-                .drawImage(datastoreIcon, totalWidth - decorationSize, totalHeight - decorationSize, null);
+        bufferedImage.getGraphics().drawImage(datastoreIcon, totalWidth - decorationSize, totalHeight - decorationSize,
+                null);
         return new ImageIcon(bufferedImage);
     }
 
@@ -487,9 +484,8 @@ public final class IconUtils {
             return ANALYZER_IMAGEPATH;
         }
         /*
-         * DC monitor can run Custom jobs and therefore do not have a
-         * descriptor. We want to be able to render the results, therefore we
-         * return a image
+         * DC monitor can run Custom jobs and therefore do not have a descriptor. We want to be able to render the
+         * results, therefore we return a image
          */
         return FILE_FILE;
     }
@@ -515,8 +511,8 @@ public final class IconUtils {
             return imagePath;
         } else if (datastore instanceof JdbcDatastore) {
             final JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
-            if (considerOrderdbSpecialization && "jdbc:hsqldb:res:orderdb;readonly=true"
-                    .equals(jdbcDatastore.getJdbcUrl())) {
+            if (considerOrderdbSpecialization
+                    && "jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
                 imagePath = "images/datastore-types/orderdb.png";
             } else {
                 final String driverClass = jdbcDatastore.getDriverClass();

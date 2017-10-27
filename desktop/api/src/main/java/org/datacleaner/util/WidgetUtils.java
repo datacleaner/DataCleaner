@@ -75,34 +75,15 @@ public final class WidgetUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
 
-    public static final float FONT_SIZE_SMALL = 11f;
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
+    
+    public static final float FONT_SIZE_SMALL = adjuster.adjust(11f);
 
     private static final Map<String, Font> fonts;
-
-    @Deprecated
-    public static final Font FONT_UBUNTU_PLAIN;
-    @Deprecated
-    public static final Font FONT_UBUNTU_BOLD;
-    @Deprecated
-    public static final Font FONT_UBUNTU_ITALIC;
-    @Deprecated
-    public static final Font FONT_UBUNTU_BOLD_ITALIC;
-
-    @Deprecated
-    public static final Font FONT_OPENSANS_PLAIN;
-    @Deprecated
-    public static final Font FONT_OPENSANS_BOLD;
-    @Deprecated
-    public static final Font FONT_OPENSANS_ITALIC;
-    @Deprecated
-    public static final Font FONT_OPENSANS_BOLD_ITALIC;
 
     private static final Font FONT_MULI_PLAIN;
     private static final Font FONT_MULI_BOLD;
     private static final Font FONT_MULI_LIGHT;
-    private static final Font FONT_MULI_LIGHT_ITALIC;
-    private static final Font FONT_LATO_BOLD;
-    private static final Font FONT_LATO_BOLD_ITALIC;
 
     public static final Font FONT_FONTAWESOME;
 
@@ -119,36 +100,23 @@ public final class WidgetUtils {
         FONT_MULI_PLAIN = createFont("fonts/Muli.ttf");
         FONT_MULI_BOLD = createFont("fonts/Muli-Bold.ttf");
         FONT_MULI_LIGHT = createFont("fonts/Muli-Light.ttf");
-        FONT_MULI_LIGHT_ITALIC = createFont("fonts/Muli-LightItalic.ttf");
-        FONT_LATO_BOLD = createFont("fonts/Lato-Bold.ttf");
-        FONT_LATO_BOLD_ITALIC = createFont("fonts/Lato-BoldItalic.ttf");
-
-        FONT_UBUNTU_PLAIN = FONT_MULI_PLAIN;
-        FONT_UBUNTU_ITALIC = FONT_MULI_LIGHT_ITALIC;
-        FONT_UBUNTU_BOLD = FONT_LATO_BOLD;
-        FONT_UBUNTU_BOLD_ITALIC = FONT_LATO_BOLD_ITALIC;
-
-        FONT_OPENSANS_PLAIN = FONT_MULI_PLAIN;
-        FONT_OPENSANS_ITALIC = FONT_MULI_LIGHT_ITALIC;
-        FONT_OPENSANS_BOLD = FONT_LATO_BOLD;
-        FONT_OPENSANS_BOLD_ITALIC = FONT_LATO_BOLD_ITALIC;
 
         FONT_FONTAWESOME = createFont("fonts/FontAwesome-4.3.0.ttf").deriveFont(14f);
 
         fonts.put(FONT_MULI_PLAIN.getName(), FONT_MULI_PLAIN);
     }
 
-    public static final Font FONT_BANNER = FONT_MULI_LIGHT.deriveFont(21f);
-    public static final Font FONT_HEADER1 = FONT_MULI_LIGHT.deriveFont(18f);
-    public static final Font FONT_HEADER2 = FONT_MULI_LIGHT.deriveFont(16f);
-    public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
-    public static final Font FONT_BUTTON = FONT_MULI_PLAIN.deriveFont(14f);
-    public static final Font FONT_NORMAL = FONT_MULI_PLAIN.deriveFont(13f);
-    public static final Font FONT_BOLD = FONT_MULI_BOLD.deriveFont(13f);
+    public static final Font FONT_BANNER = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(21f));
+    public static final Font FONT_HEADER1 = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(18f));
+    public static final Font FONT_HEADER2 = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(16f));
+    public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, adjuster.adjust(14));
+    public static final Font FONT_BUTTON = FONT_MULI_PLAIN.deriveFont(adjuster.adjust(14f));
+    public static final Font FONT_NORMAL = FONT_MULI_PLAIN.deriveFont(adjuster.adjust(13f));
+    public static final Font FONT_BOLD = FONT_MULI_BOLD.deriveFont(adjuster.adjust(13f));
     public static final Font FONT_SMALL = FONT_MULI_PLAIN.deriveFont(FONT_SIZE_SMALL);
     public static final Font FONT_TABLE_HEADER = FONT_NORMAL.deriveFont(Font.BOLD);
 
-    public static final int SCROLL_UNIT_INCREMENT = 20;
+    public static final int SCROLL_UNIT_INCREMENT = adjuster.adjust(20);
 
     // blue base color of DC styling (#05b9f0)
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(5, 185, 240);
@@ -211,9 +179,10 @@ public final class WidgetUtils {
     // Cyan: #24d1d3
     public static final Color ADDITIONAL_COLOR_CYAN_BRIGHT = new ColorUIResource(36, 209, 211);
 
-    public static final int BORDER_WIDE_WIDTH = 4;
+    public static final int BORDER_WIDE_WIDTH = pix(4);
 
-    public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
+    public static final Border BORDER_SHADOW =
+            new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, pix(6));
 
     public static final Border BORDER_WIDE_ALTERNATIVE =
             new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
@@ -226,51 +195,53 @@ public final class WidgetUtils {
     @Deprecated
     public static final Border BORDER_WIDE_BRIGHTEST = BORDER_WIDE_DEFAULT;
 
-    public static final Border BORDER_EMPTY =
-            new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH,
-                    WidgetUtils.BORDER_WIDE_WIDTH);
-    public static Border BORDER_TOP_PADDING = new EmptyBorder(10, 0, 0, 0);
+    public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
+            WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
+    public static Border BORDER_TOP_PADDING = new EmptyBorder(pix(10), 0, 0, 0);
 
     public static final Border BORDER_THIN = new LineBorder(BG_COLOR_LESS_BRIGHT);
     public static final Border BORDER_THIN_DARK = new LineBorder(BG_COLOR_DARK);
 
-    public static final Border BORDER_LIST_ITEM = new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
-            new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
+    public static final Border BORDER_LIST_ITEM =
+            new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
+                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
 
     public static final Border BORDER_LIST_ITEM_LEFT_ONLY =
-            new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM), new EmptyBorder(0, 0, 1, 0));
+            new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM), new EmptyBorder(0, 0, pix(1), 0));
 
     public static final Border BORDER_LIST_ITEM_HIGHLIGHTED =
-            new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+            new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
+                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
 
     public static final Border BORDER_LIST_ITEM_SUBTLE =
-            new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
+            new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
+                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_MEDIUM));
 
-    public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
+    public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, pix(2), false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
-    public static final Border BORDER_TABLE_PANEL = new MatteBorder(1, 1, 0, 0, BG_COLOR_LESS_BRIGHT);
+    public static final Border BORDER_TABLE_PANEL = new MatteBorder(pix(1), pix(1), 0, 0, BG_COLOR_LESS_BRIGHT);
 
     /**
-     * Border for indented button panels where the content has to align with
-     * check boxes above or below.
+     * Border for indented button panels where the content has to align with check boxes above or below.
      */
-    public static final Border BORDER_CHECKBOX_LIST_INDENTATION = new EmptyBorder(1, 17, 0, 1);
+    public static final Border BORDER_CHECKBOX_LIST_INDENTATION =
+            new EmptyBorder(pix(1), pix(17), 0, pix(1));
 
-    public static final Border BORDER_BUTTON_DARK = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
+    public static final Border BORDER_BUTTON_DARK =
+            new EmptyBorder(BORDER_WIDE_WIDTH, pix(10), BORDER_WIDE_WIDTH, pix(10));
 
     public static final Border BORDER_BUTTON_DARK_WITH_LINE =
-            new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, 1, false),
-                    new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
+            new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, pix(1), false),
+                    new EmptyBorder(BORDER_WIDE_WIDTH - pix(1), pix(9), BORDER_WIDE_WIDTH - pix(1), pix(9)));
 
     public static final Border BORDER_BUTTON_DEFAULT =
-            new CompoundBorder(new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false),
-                    new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
-    public static final Border BORDER_BUTTON_PRIMARY = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
+            new CompoundBorder(new LineBorder(BG_COLOR_LESS_BRIGHT, pix(1), false),
+                    new EmptyBorder(BORDER_WIDE_WIDTH - pix(1), pix(9), BORDER_WIDE_WIDTH - pix(1), pix(9)));
+    public static final Border BORDER_BUTTON_PRIMARY =
+            new EmptyBorder(BORDER_WIDE_WIDTH, pix(10), BORDER_WIDE_WIDTH, pix(10));
 
-    public static final Object BORDER_MENU_ITEM = new EmptyBorder(2, 2, 2, 2);
+    public static final Object BORDER_MENU_ITEM = new EmptyBorder(pix(2), pix(2), pix(2), pix(2));
 
     /**
      * A highlighter for coloring odd/even rows in a table
@@ -284,7 +255,7 @@ public final class WidgetUtils {
     private static final double COLOR_SCALE_FACTOR = 0.9;
 
     // grid bag contraint defaults
-    public static final int DEFAULT_PADDING = 2;
+    public static final int DEFAULT_PADDING = pix(2);
     public static final int DEFAULT_ANCHOR = GridBagConstraints.WEST;
 
     /**
@@ -293,8 +264,7 @@ public final class WidgetUtils {
     public static final Insets INSETS_EMPTY = new Insets(0, 0, 0, 0);
 
     /**
-     * The 'caret' character used for "more options" symbol with the
-     * {@link #FONT_FONTAWESOME} font.
+     * The 'caret' character used for "more options" symbol with the {@link #FONT_FONTAWESOME} font.
      */
     @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
     public static final String CHAR_CARET_DOWN = "\uf0d7";
@@ -304,9 +274,8 @@ public final class WidgetUtils {
     }
 
     /**
-     * Invokes a {@link Runnable} as soon as possible. If this is the swing
-     * event dispatch thread, it will be run now, or else later using
-     * {@link SwingUtilities#invokeLater(Runnable)}
+     * Invokes a {@link Runnable} as soon as possible. If this is the swing event dispatch thread, it will be run now,
+     * or else later using {@link SwingUtilities#invokeLater(Runnable)}
      *
      * @param runnable
      */
@@ -576,9 +545,8 @@ public final class WidgetUtils {
         int b = color.getBlue();
 
         /*
-         * From 2D group: 1. black.brighter() should return grey 2. applying
-         * brighter to blue will always return blue, brighter 3. non pure color
-         * (non zero rgb) will eventually return white
+         * From 2D group: 1. black.brighter() should return grey 2. applying brighter to blue will always return blue,
+         * brighter 3. non pure color (non zero rgb) will eventually return white
          */
         final int i = (int) (1.0 / (1.0 - COLOR_SCALE_FACTOR));
         if (r == 0 && g == 0 && b == 0) {
@@ -636,9 +604,8 @@ public final class WidgetUtils {
     }
 
     /**
-     * Decorates a JComponent with a nice shadow border. Since not all
-     * JComponents handle opacity correctly, they will be wrapped inside a
-     * DCPanel, which actually has the border.
+     * Decorates a JComponent with a nice shadow border. Since not all JComponents handle opacity correctly, they will
+     * be wrapped inside a DCPanel, which actually has the border.
      *
      * @param comp
      * @param outline
@@ -663,16 +630,13 @@ public final class WidgetUtils {
     /**
      * Finds a font that is capable of displaying the provided text.
      *
-     * @param text
-     *            the text to display.
-     * @param fallbackFont
-     *            the font to fall back to in case no capable font was found
+     * @param text the text to display.
+     * @param fallbackFont the font to fall back to in case no capable font was found
      * @return a font suitable for displaying the text
      */
     public static Font findCompatibleFont(final String text, final Font fallbackFont) {
-        final String[] searchFonts =
-                new String[] { Font.SANS_SERIF, Font.SERIF, "Verdana", "Arial Unicode MS", "MS UI Gothic", "MS Mincho",
-                        "MS Gothic", "Osaka" };
+        final String[] searchFonts = new String[] { Font.SANS_SERIF, Font.SERIF, "Verdana", "Arial Unicode MS",
+                "MS UI Gothic", "MS Mincho", "MS Gothic", "Osaka" };
         for (final String fontName : searchFonts) {
             Font font = fonts.get(fontName);
             if (font == null) {
@@ -728,4 +692,7 @@ public final class WidgetUtils {
         }
     }
 
+    private static int pix(final int size) {
+        return adjuster.adjust(size);
+    }
 }

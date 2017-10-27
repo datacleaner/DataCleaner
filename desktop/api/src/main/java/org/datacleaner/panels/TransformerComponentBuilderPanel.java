@@ -38,7 +38,6 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.IconUtils;
@@ -155,9 +154,6 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     }
 
     protected int getPreviewRows() {
-        if (_componentBuilder.getDescriptor() instanceof RemoteTransformerDescriptor) {
-            return 10;
-        }
         return PreviewTransformedDataActionListener.DEFAULT_PREVIEW_ROWS;
     }
 

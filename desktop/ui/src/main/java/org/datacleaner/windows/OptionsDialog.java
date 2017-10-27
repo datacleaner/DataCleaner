@@ -59,7 +59,6 @@ import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HelpIcon;
-import org.datacleaner.widgets.options.DataCloudOptionsPanel;
 import org.datacleaner.widgets.options.MemoryOptionsPanel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.JXTextField;
@@ -90,8 +89,6 @@ public class OptionsDialog extends AbstractWindow {
 
         _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_TAB),
                 getGeneralTab());
-        _tabbedPane.addTab("DataCloud", imageManager.getImageIcon(IconUtils.MENU_DATACLOUD, IconUtils.ICON_SIZE_TAB),
-                new DataCloudOptionsPanel(configuration));
         _tabbedPane.addTab("Database drivers",
                 imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_TAB),
                 databaseDriversPanel);

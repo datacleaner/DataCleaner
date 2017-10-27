@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
@@ -122,20 +121,6 @@ public final class CollectionUtils2 {
         final List<E> list = new ArrayList<>(col);
         Collections.sort(list);
         return list;
-    }
-
-    /**
-     *
-     * @return
-     *
-     * @deprecated use Google Guava's {@link CacheBuilder},
-     *             {@link #createCache(int, long)} or something similar if
-     *             needed.
-     */
-    @Deprecated
-    public static <K, V> ConcurrentMap<K, V> createCacheMap() {
-        final Cache<K, V> cache = CacheBuilder.newBuilder().maximumSize(10000).build();
-        return cache.asMap();
     }
 
     /**

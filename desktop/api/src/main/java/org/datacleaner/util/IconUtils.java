@@ -37,7 +37,6 @@ import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
-import org.datacleaner.configuration.RemoteServerState;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
@@ -60,12 +59,10 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
-import org.datacleaner.descriptors.Allowable;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.HasIcon;
-import org.datacleaner.descriptors.RemoteTransformerDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
@@ -131,8 +128,6 @@ public final class IconUtils {
     public static final String MENU_EXECUTE = "images/menu/execute.png";
     public static final String MENU_REFRESH = "images/menu/refresh.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
-    public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
-    public static final String MENU_DATACLOUD = "images/menu/datacloud.png";
     public static final String MENU_DOCUMENTATION = "images/menu/documentation.png";
     public static final String ACTION_EXECUTE = "images/menu/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
@@ -189,10 +184,6 @@ public final class IconUtils {
     public static final String CHART_BAR = "images/chart-types/bar.png";
     public static final String CHART_LINE = "images/chart-types/line.png";
     public static final String CHART_SCATTER = "images/chart-types/scatter.png";
-    public static final String CLOUD_GREY = "images/datacloud/cloudGrey.png";
-    public static final String CLOUD_ORANGE = "images/datacloud/cloudOrange.png";
-    public static final String CLOUD_GREEN = "images/datacloud/cloudGreen.png";
-    public static final String CLOUD_RED = "images/datacloud/cloudRed.png";
     public static final String DICTIONARY_IMAGEPATH = "images/model/dictionary.png";
     public static final String DICTIONARY_SIMPLE_IMAGEPATH = "images/model/dictionary_simple.png";
     public static final String DICTIONARY_TEXTFILE_IMAGEPATH = "images/model/dictionary_textfile.png";
@@ -235,8 +226,6 @@ public final class IconUtils {
     public static final String FILE_HOME_FOLDER = "images/filetypes/home-folder.png";
     public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";
     public static final String FILE_SEARCH = "images/filetypes/search-folder.png";
-    public static final String REMOTE_ICON_OVERLAY = "images/remote-icon-overlay.png";
-    public static final String REMOTE_ICON_OVERLAY_SMALL = "images/remote-icon-overlay-small.png";
     public static final String PASSWORD_INPUT = "images/widgets/PasswordInput.png";
     public static final String USERNAME_INPUT = "images/widgets/UsernameInput.png";
     public static final String COMPONENT_TYPE_WRITE_DATA = "images/component-types/type_output_writer.png";
@@ -251,27 +240,18 @@ public final class IconUtils {
 
     public static Icon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final boolean configured,
             final int iconWidth) {
-        boolean serverDown = false;
-
-        if (descriptor instanceof RemoteTransformerDescriptor) {
-            if (((RemoteTransformerDescriptor<?>) descriptor).getRemoteDescriptorProvider().getServerState()
-                    .getActualState().equals(RemoteServerState.State.ERROR)) {
-                serverDown = true;
-            }
-        }
-
         if (descriptor instanceof HasIcon) {
             final ImageIcon imageIcon = getIconFromData(descriptor, iconWidth);
 
             if (imageIcon != null) {
-                return serverDown ? addErrorOverlay(imageIcon) : imageIcon;
+                return imageIcon;
             }
         }
 
         final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
 
         if (configured) {
-            return serverDown ? addErrorOverlay(descriptorIcon) : descriptorIcon;
+            return descriptorIcon;
         }
 
         return addErrorOverlay(descriptorIcon);
@@ -350,35 +330,12 @@ public final class IconUtils {
             final BufferedImage bufferedImage = new BufferedImage(width, width, BufferedImage.TYPE_INT_ARGB);
             bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, 0, width, width, null);
             imageIcon = new ImageIcon(bufferedImage);
-            if (componentDescriptor instanceof Allowable && !((Allowable) componentDescriptor).isAllowed()) {
-                imageIcon = getDisabledIcon(imageIcon);
-            }
-            imageIcon = addRemoteOverlay(imageIcon);
             _imageManager.storeImageIntoCache(cacheKey, imageIcon.getImage());
         } else {
             imageIcon = new ImageIcon(image);
         }
 
         return imageIcon;
-    }
-
-    public static ImageIcon addRemoteOverlay(final ImageIcon imageIcon) {
-        final BufferedImage bufferedImage;
-        final int offset;
-        final Image remoteIndicatorImage;
-        final int iconWidth = imageIcon.getIconWidth();
-        if (iconWidth >= ICON_SIZE_LARGE) {
-            offset = 8;
-            remoteIndicatorImage = _imageManager.getImage(REMOTE_ICON_OVERLAY);
-        } else {
-            offset = 4;
-            remoteIndicatorImage = _imageManager.getImage(REMOTE_ICON_OVERLAY_SMALL);
-        }
-        bufferedImage = new BufferedImage(iconWidth + offset, iconWidth + offset, BufferedImage.TYPE_INT_ARGB);
-        bufferedImage.getGraphics().drawImage(imageIcon.getImage(), 0, offset, null);
-        bufferedImage.getGraphics().drawImage(remoteIndicatorImage,
-                iconWidth - remoteIndicatorImage.getWidth(null) + offset, 0, null);
-        return new ImageIcon(bufferedImage);
     }
 
     public static ImageIcon getTransparentIcon(final int width) {

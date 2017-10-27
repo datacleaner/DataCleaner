@@ -35,11 +35,9 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
-import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DomConfigurationWriter;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.configuration.RemoteServerConfiguration;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -60,10 +58,8 @@ import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.MutableServerInformationCatalog;
-import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
-import org.datacleaner.util.MutableRemoteServerConfigurationImpl;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
@@ -188,11 +184,11 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
     @Provides
     public final WindowContext getWindowContext(final DataCleanerConfiguration configuration,
-            final UserPreferences userPreferences, final UsageLogger usageLogger) {
+            final UserPreferences userPreferences) {
         if (_windowContext == null) {
             synchronized (DCModuleImpl.class) {
                 if (_windowContext == null) {
-                    _windowContext = new DCWindowContext(configuration, userPreferences, usageLogger);
+                    _windowContext = new DCWindowContext(configuration, userPreferences);
                 }
             }
         }
@@ -252,23 +248,6 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         return _undecoratedConfigurationRef.get();
     }
 
-    @Deprecated
-    @Provides
-    public final org.datacleaner.configuration.AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(
-            @Undecorated final DataCleanerConfiguration undecoratedConfiguration, final UserPreferences userPreferences,
-            final InjectionManagerFactory injectionManagerFactory) {
-        final DataCleanerConfiguration c =
-                getDataCleanerConfiguration(undecoratedConfiguration, userPreferences, injectionManagerFactory);
-        final DatastoreCatalog datastoreCatalog = c.getDatastoreCatalog();
-        final ReferenceDataCatalog referenceDataCatalog = c.getReferenceDataCatalog();
-        final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
-        final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
-        final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
-        final DataCleanerHomeFolder homeFolder = c.getHomeFolder();
-        return new org.datacleaner.configuration.AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog,
-                descriptorProvider, taskRunner, storageProvider, injectionManagerFactory, homeFolder);
-    }
-
     @Provides
     public final DataCleanerConfiguration getDataCleanerConfiguration(@Undecorated final DataCleanerConfiguration c,
             final UserPreferences userPreferences, final InjectionManagerFactory injectionManagerFactory) {
@@ -301,15 +280,10 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
 
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
-                    RemoteServerConfiguration remoteServerConfiguration =
-                            c.getEnvironment().getRemoteServerConfiguration();
-                    remoteServerConfiguration =
-                            new MutableRemoteServerConfigurationImpl(remoteServerConfiguration, taskRunner,
-                                    configurationWriter);
 
                     final DataCleanerEnvironment environment =
                             new DataCleanerEnvironmentImpl(taskRunner, descriptorProvider, storageProvider,
-                                    injectionManagerFactory, remoteServerConfiguration);
+                                    injectionManagerFactory);
 
                     _configuration =
                             new DataCleanerConfigurationImpl(environment, DataCleanerHome.getAsDataCleanerHomeFolder(),

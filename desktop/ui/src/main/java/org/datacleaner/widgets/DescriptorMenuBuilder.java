@@ -39,7 +39,6 @@ import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.DeprecatedComponentPredicate;
 import org.datacleaner.util.DisplayNameComparator;
@@ -78,11 +77,10 @@ public final class DescriptorMenuBuilder {
     private static final Logger logger = LoggerFactory.getLogger(DescriptorMenuBuilder.class);
 
     private final AnalysisJobBuilder _analysisJobBuilder;
-    private final UsageLogger _usageLogger;
     private final Collection<? extends ComponentDescriptor<?>> _componentDescriptors;
     private final Point2D _coordinate;
 
-    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
+    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder,
             final Collection<? extends ComponentDescriptor<?>> descriptors, final Point2D coordinate) {
         final Collection<? extends ComponentDescriptor<?>> filteredDescriptors =
                 CollectionUtils.filter(descriptors, new DeprecatedComponentPredicate());
@@ -90,15 +88,13 @@ public final class DescriptorMenuBuilder {
         Collections.sort(componentDescriptors, new DisplayNameComparator());
 
         _analysisJobBuilder = analysisJobBuilder;
-        _usageLogger = usageLogger;
         _coordinate = coordinate;
         _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);
     }
 
-    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
+    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder,
             final ComponentSuperCategory superCategory, final Point2D coordinate) {
         _analysisJobBuilder = analysisJobBuilder;
-        _usageLogger = usageLogger;
         _coordinate = coordinate;
 
         final DescriptorProvider descriptorProvider =
@@ -197,8 +193,6 @@ public final class DescriptorMenuBuilder {
     }
 
     private JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {
-        final DescriptorMenuItem menuItem = new DescriptorMenuItem(_analysisJobBuilder, _coordinate, descriptor);
-        menuItem.addActionListener(e -> _usageLogger.logComponentUsage(descriptor));
-        return menuItem;
+        return new DescriptorMenuItem(_analysisJobBuilder, _coordinate, descriptor);
     }
 }

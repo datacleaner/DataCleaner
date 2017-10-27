@@ -22,10 +22,6 @@ package org.datacleaner.descriptors;
 /**
  * Listener interface for objects that wish to listen in on changes to
  * descriptor providers.
- *
- * Note that descriptor providers rarely change. In the case of remote
- * descriptors they may change due to updates on the server. In case of local
- * descriptors they may change due to installed or removed extensions etc.
  */
 public interface DescriptorProviderListener {
 

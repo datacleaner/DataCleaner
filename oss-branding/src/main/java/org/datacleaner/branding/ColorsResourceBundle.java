@@ -39,6 +39,7 @@ public class ColorsResourceBundle extends ResourceBundle {
     private static final Logger logger = LoggerFactory.getLogger(ImageLoadingPropertyResourceBundle.class);
     private final Map<String, String> _colors;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public ColorsResourceBundle(final URL url) throws IOException {
         final Properties properties = new Properties();
         properties.load(url.openStream());

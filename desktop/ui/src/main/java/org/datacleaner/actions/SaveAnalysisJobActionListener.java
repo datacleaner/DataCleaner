@@ -31,7 +31,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.provider.DelegateFileObject;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -41,14 +40,12 @@ import org.datacleaner.job.JaxbJobMetadataFactoryImpl;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.NoResultProducingComponentsException;
-import org.datacleaner.user.MonitorConnection;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCFileChooser;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.datacleaner.windows.MonitorConnectionDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,37 +191,8 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
         } finally {
             FileHelper.safeClose(outputStream);
         }
-
-        if (file instanceof DelegateFileObject) {
-            // this "file" is probably a HTTP URL resource (often provided by DC
-            // monitor)
-            final DelegateFileObject delegateFileObject = (DelegateFileObject) file;
-            final String scheme = file.getName().getScheme();
-
-            if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
-                final String uri = delegateFileObject.getName().getURI();
-                final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
-                if (monitorConnection.matchesURI(uri) && monitorConnection.isAuthenticationEnabled()
-                        && monitorConnection.getEncodedPassword() == null) {
-                    // password is not configured, ask for it.
-                    final MonitorConnectionDialog dialog =
-                            new MonitorConnectionDialog(_window.getWindowContext(), _userPreferences);
-                    dialog.openBlocking();
-                }
-
-                final PublishJobToMonitorActionListener publisher =
-                        new PublishJobToMonitorActionListener(delegateFileObject, _window.getWindowContext(),
-                                _userPreferences);
-                publisher.actionPerformed(event);
-            } else {
-                throw new UnsupportedOperationException(
-                        "Unexpected delegate file object: " + delegateFileObject + " (delegate: " + delegateFileObject
-                                .getDelegateFile() + ")");
-            }
-        } else {
-            _userPreferences.addRecentJobFile(file);
-        }
-
+        
+        _userPreferences.addRecentJobFile(file);
         _window.setJobFile(file);
 
         _window.setStatusLabelNotice();

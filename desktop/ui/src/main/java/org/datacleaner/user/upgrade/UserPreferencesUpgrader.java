@@ -54,7 +54,6 @@ class UserPreferencesUpgrader {
 
         // copy the relevant parts of the user prefs
         newUserPreferences.getAdditionalProperties().putAll(oldUserPreferences.getAdditionalProperties());
-        newUserPreferences.setMonitorConnection(oldUserPreferences.getMonitorConnection());
         newUserPreferences.setProxyAuthenticationEnabled(oldUserPreferences.isProxyAuthenticationEnabled());
         newUserPreferences.setProxyEnabled(oldUserPreferences.isProxyEnabled());
         newUserPreferences.setProxyHostname(oldUserPreferences.getProxyHostname());

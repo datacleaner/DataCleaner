@@ -44,16 +44,6 @@ public class Version {
         DISTRIBUTION_VERSION = determineDistributionVersion();
     }
 
-    /**
-     * @return
-     *
-     * @deprecated use {@link #getVersion()} instead
-     */
-    @Deprecated
-    public static String get() {
-        return getVersion();
-    }
-
     public static String getVersion() {
         return VERSION;
     }

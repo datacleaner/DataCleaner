@@ -44,7 +44,7 @@ public class FixedWidthDatastoreDialogTest {
         final UserPreferences userPreferences = new UserPreferencesImpl(null);
         final MutableDatastoreCatalog mutableDatastoreCatalog =
                 new MutableDatastoreCatalog(configuration.getDatastoreCatalog(), configurationWriter, userPreferences);
-        final WindowContext windowContext = new DCWindowContext(configuration, userPreferences, null);
+        final WindowContext windowContext = new DCWindowContext(configuration, userPreferences);
 
         final int[] valueWidths = { 6, 4, 12, 12 };
         final List<String> customColumnNames = Arrays.asList("Entry ID", "Period", "Post date", "Account number");

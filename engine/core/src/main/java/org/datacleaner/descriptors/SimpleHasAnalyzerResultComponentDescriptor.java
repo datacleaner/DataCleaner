@@ -40,11 +40,6 @@ public class SimpleHasAnalyzerResultComponentDescriptor<C extends HasAnalyzerRes
     }
 
     @Override
-    protected String getDisplayNameIfNotNamed(final Class<?> componentClass) {
-        return componentClass.getSimpleName();
-    }
-
-    @Override
     protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
         return AnalyzeSuperCategory.class;
     }

@@ -69,7 +69,6 @@
 				<module>engine</module>
 				<module>components</module>
 				<module>desktop</module>
-				<module>monitor</module>
 			</modules>
 		</profile>
 		<profile>
@@ -83,7 +82,6 @@
 				<module>engine</module>
 				<module>components</module>
 				<module>desktop</module>
-				<module>monitor</module>
 			</modules>
 		</profile>
 		<profile>
@@ -96,18 +94,6 @@
 				<module>engine</module>
 				<module>components</module>
 				<module>desktop</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>monitor</id>
-			<modules>
-				<module>api</module>
-				<module>oss-branding</module>
-				<module>resources</module>
-				<module>testware</module>
-				<module>engine</module>
-				<module>components</module>
-				<module>monitor</module>
 			</modules>
 		</profile>
 		<profile>

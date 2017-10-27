@@ -105,10 +105,6 @@ public interface UserPreferences {
      */
     CloseableHttpClient createHttpClient();
 
-    MonitorConnection getMonitorConnection();
-
-    void setMonitorConnection(MonitorConnection connection);
-
     List<ExtensionPackage> getExtensionPackages();
 
     void setExtensionPackages(List<ExtensionPackage> extensionPackages);

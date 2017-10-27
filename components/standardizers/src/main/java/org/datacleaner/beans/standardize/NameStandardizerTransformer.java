@@ -33,7 +33,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
+import org.datacleaner.components.categories.ContactDataCategory;
 import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
 import org.datacleaner.util.NamedPatternMatch;
@@ -44,7 +44,7 @@ import org.datacleaner.util.NamedPatternMatch;
  */
 @Named("Name standardizer")
 @Description("Identify the various parts of a full name column and turn it into separate, standardized tokens.")
-@Categorized({ MatchingAndStandardizationCategory.class })
+@Categorized({ ContactDataCategory.class })
 @Deprecated
 public class NameStandardizerTransformer implements Transformer {
 

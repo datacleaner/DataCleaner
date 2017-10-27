@@ -40,7 +40,7 @@
                     </transformation>
                     <analysis>
                         <analyzer>
-                            <descriptor ref="Preview transformed data analyzer"/>
+                            <descriptor ref="PreviewTransformedDataAnalyzer"/>
                             <properties/>
                             <input ref="col_email2"/>
                             <input ref="col_mockoutput"/>

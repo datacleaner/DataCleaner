@@ -22,7 +22,6 @@ package org.datacleaner.bootstrap;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.SplashScreen;
-import java.io.Closeable;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -31,7 +30,6 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.swing.JOptionPane;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -51,28 +49,20 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.extensionswap.ExtensionSwapClient;
-import org.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.macos.MacOSManager;
 import org.datacleaner.user.DataCleanerHome;
-import org.datacleaner.user.MonitorConnection;
-import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.util.DCUncaughtExceptionHandler;
 import org.datacleaner.util.LookAndFeelManager;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.util.http.SimpleWebServiceHttpClient;
-import org.datacleaner.windows.AbstractWindow;
+import org.datacleaner.util.http.WebServiceHttpClient;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.datacleaner.windows.DataCloudLogInWindow;
-import org.datacleaner.windows.MonitorConnectionDialog;
 import org.datacleaner.windows.WelcomeDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,10 +176,6 @@ public final class Bootstrap {
         // configuration loading can be multithreaded, so begin early
         final DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
 
-        // log usage
-        final UsageLogger usageLogger = injector.getInstance(UsageLogger.class);
-        usageLogger.logApplicationStartup();
-
         if (cliMode) {
             runCli(arguments, configuration);
         } else {
@@ -207,7 +193,6 @@ public final class Bootstrap {
                 injector = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
             }
 
-            final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
             final WindowContext windowContext = injector.getInstance(WindowContext.class);
             analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
@@ -248,18 +233,6 @@ public final class Bootstrap {
                     welcomeDialog.setVisible(true);
                 });
             }
-
-            WidgetUtils.invokeSwingAction(() -> {
-                if (DataCloudLogInWindow.isRelevantToShow(userPreferences, configuration, true)) {
-                    final DataCloudLogInWindow dataCloudLogInWindow =
-                            new DataCloudLogInWindow(configuration, userPreferences, windowContext,
-                                    (AbstractWindow) analysisJobBuilderWindow);
-                    dataCloudLogInWindow.open();
-                }
-            });
-
-            // set up HTTP service for ExtensionSwap installation
-            loadExtensionSwapService(userPreferences, windowContext, configuration, usageLogger);
 
             final ExitActionListener exitActionListener = _options.getExitActionListener();
             if (exitActionListener != null) {
@@ -321,32 +294,13 @@ public final class Bootstrap {
 
                     final WindowContext windowContext = new SimpleWindowContext();
 
-                    MonitorConnection monitorConnection = null;
-
-                    // check if URI points to DC monitor. If so, make sure
-                    // credentials are entered.
-                    if (userPreferences != null && userPreferences.getMonitorConnection() != null) {
-                        monitorConnection = userPreferences.getMonitorConnection();
-                        if (monitorConnection.matchesURI(uri)) {
-                            if (monitorConnection.isAuthenticationEnabled()) {
-                                if (monitorConnection.getEncodedPassword() == null) {
-                                    final MonitorConnectionDialog dialog =
-                                            new MonitorConnectionDialog(windowContext, userPreferences);
-                                    dialog.openBlocking();
-                                }
-                                monitorConnection = userPreferences.getMonitorConnection();
-                            }
-                        }
-                    }
-
-                    try (MonitorHttpClient httpClient = getHttpClient(monitorConnection)) {
+                    try (SimpleWebServiceHttpClient httpClient = new SimpleWebServiceHttpClient()) {
 
                         final String[] urls = new String[] { userRequestedFilename };
                         final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
 
                         final FileObject[] files =
-                                downloadFiles(urls, targetDirectory, targetFilenames, windowContext, httpClient,
-                                        monitorConnection);
+                                downloadFiles(urls, targetDirectory, targetFilenames, windowContext, httpClient);
 
                         assert files.length == 1;
 
@@ -376,11 +330,8 @@ public final class Bootstrap {
                                         uri.getPath(), FileType.FILE, uri.getQuery());
 
                         final AbstractFileSystem fileSystem = (AbstractFileSystem) VFSUtils.getBaseFileSystem();
-                        return new DelegateFileObject(fileName, fileSystem, ramFile);
-                    } finally {
-                        userPreferences.setMonitorConnection(monitorConnection);
+                        return new DelegateFileObject<AbstractFileSystem>(fileName, fileSystem, ramFile);
                     }
-
                 }
             }
 
@@ -388,17 +339,8 @@ public final class Bootstrap {
         }
     }
 
-    private MonitorHttpClient getHttpClient(final MonitorConnection monitorConnection) {
-        if (monitorConnection == null) {
-            return new SimpleWebServiceHttpClient();
-        } else {
-            return monitorConnection.getHttpClient();
-        }
-    }
-
     private FileObject[] downloadFiles(final String[] urls, final FileObject targetDirectory,
-            final String[] targetFilenames, final WindowContext windowContext, MonitorHttpClient httpClient,
-            final MonitorConnection monitorConnection) {
+            final String[] targetFilenames, final WindowContext windowContext, WebServiceHttpClient httpClient) {
         final DownloadFilesActionListener downloadAction =
                 new DownloadFilesActionListener(urls, targetDirectory, targetFilenames, null, windowContext,
                         httpClient);
@@ -411,24 +353,7 @@ public final class Bootstrap {
             return files;
         } catch (final SSLPeerUnverifiedException e) {
             downloadAction.cancelDownload(true);
-            if (monitorConnection == null || monitorConnection.isAcceptUnverifiedSslPeers()) {
-                throw new IllegalStateException("Failed to verify SSL peer", e);
-            }
-            if (logger.isInfoEnabled()) {
-                logger.info("SSL peer not verified. Asking user for confirmation to accept urls: {}",
-                        Arrays.toString(urls));
-            }
-            final int confirmation = JOptionPane.showConfirmDialog(null,
-                    "Unverified SSL peer.\n\n" + "The certificate presented by the server could not be verified.\n\n"
-                            + "Do you want to continue, accepting the unverified certificate?", "Unverified SSL peer",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-            if (confirmation != JOptionPane.YES_OPTION) {
-                throw new IllegalStateException(e);
-            }
-            monitorConnection.setAcceptUnverifiedSslPeers(true);
-            httpClient = monitorConnection.getHttpClient();
-
-            return downloadFiles(urls, targetDirectory, targetFilenames, windowContext, httpClient, monitorConnection);
+            throw new IllegalStateException("Failed to verify SSL peer", e);
         }
     }
 
@@ -444,31 +369,6 @@ public final class Bootstrap {
         final ExitActionListener exitActionListener = _options.getExitActionListener();
         if (exitActionListener != null) {
             exitActionListener.exit(statusCode);
-        }
-    }
-
-    private void loadExtensionSwapService(final UserPreferences userPreferences, final WindowContext windowContext,
-            final DataCleanerConfiguration configuration, final UsageLogger usageLogger) {
-        String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
-        if (StringUtils.isNullOrEmpty(websiteHostname)) {
-            websiteHostname = System.getProperty("extensionswap.hostname");
-        }
-
-        final ExtensionSwapClient extensionSwapClient;
-        if (StringUtils.isNullOrEmpty(websiteHostname)) {
-            logger.info("Using default ExtensionSwap website hostname");
-            extensionSwapClient = new ExtensionSwapClient(windowContext, userPreferences, configuration);
-        } else {
-            logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
-            extensionSwapClient =
-                    new ExtensionSwapClient(websiteHostname, windowContext, userPreferences, configuration);
-        }
-        final ExtensionSwapInstallationHttpContainer container =
-                new ExtensionSwapInstallationHttpContainer(extensionSwapClient, usageLogger);
-
-        final Closeable closeableConnection = container.initialize();
-        if (closeableConnection != null) {
-            windowContext.addExitActionListener(statusCode -> FileHelper.safeClose(closeableConnection));
         }
     }
 }

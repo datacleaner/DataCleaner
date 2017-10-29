@@ -36,6 +36,14 @@ public class BooleanAnalyzerResultHtmlRenderer implements Renderer<BooleanAnalyz
     @Provided
     RendererFactory rendererFactory;
 
+    public BooleanAnalyzerResultHtmlRenderer() {
+        this(null);
+    }
+
+    public BooleanAnalyzerResultHtmlRenderer(RendererFactory rendererFactory) {
+        this.rendererFactory = rendererFactory;
+    }
+
     @Override
     public RendererPrecedence getPrecedence(BooleanAnalyzerResult renderable) {
         return RendererPrecedence.HIGH;

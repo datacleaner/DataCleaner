@@ -156,17 +156,6 @@
 					<groupId>org.scala-lang</groupId>
 					<artifactId>scala-library</artifactId>
 				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-html-rendering</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.scala-lang</groupId>
-					<artifactId>scala-library</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>org.scala-lang.modules</groupId>
 					<artifactId>scala-xml_2.11</artifactId>

@@ -46,14 +46,14 @@ public class BooleanAnalyzerHtmlFragment implements HtmlFragment {
     @Override
     public void initialize(HtmlRenderingContext context) {
         // render the two crosstabs in this result
-        CrosstabHtmlRenderer crosstabRenderer = new CrosstabHtmlRenderer(rendererFactory);
+        final CrosstabHtmlRenderer crosstabRenderer = new CrosstabHtmlRenderer(rendererFactory);
 
-        Crosstab<Number> columnStatisticsCrosstab = result.getColumnStatisticsCrosstab();
-        HtmlFragment columnStatisticsHtmlFragment =
+        final Crosstab<Number> columnStatisticsCrosstab = result.getColumnStatisticsCrosstab();
+        final HtmlFragment columnStatisticsHtmlFragment =
                 columnStatisticsCrosstab == null ? null : crosstabRenderer.render(columnStatisticsCrosstab);
 
-        Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();
-        HtmlFragment valueCombinationHtmlFragment =
+        final Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();
+        final HtmlFragment valueCombinationHtmlFragment =
                 valueCombinationCrosstab == null ? null : crosstabRenderer.render(valueCombinationCrosstab);
 
         // add all head elements to the html fragment
@@ -67,14 +67,14 @@ public class BooleanAnalyzerHtmlFragment implements HtmlFragment {
         }
 
         // make a composite body element
-        List<BodyElement> bodyElements = new ArrayList<BodyElement>();
+        final List<BodyElement> bodyElements = new ArrayList<BodyElement>();
         if (columnStatisticsHtmlFragment != null) {
             bodyElements.addAll(columnStatisticsHtmlFragment.getBodyElements());
         }
         if (valueCombinationHtmlFragment != null) {
             bodyElements.addAll(valueCombinationHtmlFragment.getBodyElements());
         }
-        CompositeBodyElement composite = new CompositeBodyElement("booleanAnalyzerResult", bodyElements);
+        final CompositeBodyElement composite = new CompositeBodyElement("booleanAnalyzerResult", bodyElements);
         frag.addBodyElement(composite);
     }
 

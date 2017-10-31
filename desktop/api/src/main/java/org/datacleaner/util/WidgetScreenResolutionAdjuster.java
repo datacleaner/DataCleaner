@@ -42,7 +42,7 @@ public class WidgetScreenResolutionAdjuster {
     private final int width;
 
     private WidgetScreenResolutionAdjuster() {
-        highDpiThreshold = SystemProperties.getInt("datacleaner.highdpi.threshold", 1200);
+        highDpiThreshold = SystemProperties.getInt("datacleaner.highdpi.threshold", 1600);
         if (GraphicsEnvironment.isHeadless()) {
             width = highDpiThreshold;
         } else {
@@ -69,7 +69,7 @@ public class WidgetScreenResolutionAdjuster {
             return 1;
         }
 
-        return Math.max(MAX_ADJUSTMENT, 1.0f * width / highDpiThreshold);
+        return Math.min(MAX_ADJUSTMENT, 1.0f * width / highDpiThreshold);
     }
 
     public Image scale(Image image) {

@@ -111,6 +111,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-groovy</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-writers</artifactId>
 			<version>${project.version}</version>
 		</dependency>

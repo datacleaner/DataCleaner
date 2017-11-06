@@ -58,7 +58,8 @@ public enum InspectionType implements HasName {
                 return LabelUtils.BLANK_LABEL;
             }
             return value;
+        default:
+            throw new UnsupportedOperationException("Unsupported inspection type: " + this);
         }
-        throw new UnsupportedOperationException("Unsupported inspection type: " + this);
     }
 }

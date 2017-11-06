@@ -55,12 +55,12 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.decorator.Highlighter;
 
-public class FillPatternGroupTabelPanel extends JPanel {
+public class FillPatternGroupTablePanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public FillPatternGroupTabelPanel(WindowContext windowContext, RendererFactory rendererFactory, FillPatternResult result,
-            FillPatternGroup group) {
+    public FillPatternGroupTablePanel(WindowContext windowContext, RendererFactory rendererFactory,
+            FillPatternResult result, FillPatternGroup group) {
 
         final List<InputColumn<?>> inspectedColumns = result.getInspectedColumns();
         final String[] headers = new String[1 + inspectedColumns.size()];
@@ -76,8 +76,8 @@ public class FillPatternGroupTabelPanel extends JPanel {
             int column = 0;
 
             final int observationCount = fillPattern.getObservationCount();
-            final Object observationCountValue = createObservationCountValue(windowContext, rendererFactory, result,
-                    fillPattern, observationCount);
+            final Object observationCountValue =
+                    createObservationCountValue(windowContext, rendererFactory, result, fillPattern, observationCount);
             tableModel.setValueAt(observationCountValue, row, column);
             column++;
 
@@ -114,12 +114,12 @@ public class FillPatternGroupTabelPanel extends JPanel {
                     WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_DARKEST);
             _filledHighlighter = new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BLUE_DARK,
                     WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BLUE_DARK);
-            _blankHighlighter = new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHT,
-                    WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT,
-                    WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
-            _nullHighlighter = new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHT,
-                    WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT,
-                    WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT);
+            _blankHighlighter =
+                    new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT,
+                            WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
+            _nullHighlighter =
+                    new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT,
+                            WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT);
         }
 
         @Override
@@ -179,6 +179,8 @@ public class FillPatternGroupTabelPanel extends JPanel {
                         component.setForeground(WidgetUtils.BG_COLOR_DARKEST);
                         component.setOpaque(true);
                         break;
+                    default:
+                        break;
                     }
                 }
                 return component;
@@ -195,11 +197,11 @@ public class FillPatternGroupTabelPanel extends JPanel {
 
         ActionListener actionListener = (e) -> {
             final InputColumn<?>[] highlightedColumns = result.getInspectedColumns().toArray(new InputColumn[0]);
-            final AnalyzerResult analyzerResult = new AnnotatedRowsResult(fillPattern.getRowAnnotation(),
-                    rowAnnotationFactory, highlightedColumns);
+            final AnalyzerResult analyzerResult =
+                    new AnnotatedRowsResult(fillPattern.getRowAnnotation(), rowAnnotationFactory, highlightedColumns);
             final String windowTitle = "Details for " + fillPattern.getFillOutcomes();
-            final DetailsResultWindow window = new DetailsResultWindow(windowTitle, Arrays.asList(analyzerResult),
-                    windowContext, rendererFactory);
+            final DetailsResultWindow window =
+                    new DetailsResultWindow(windowTitle, Arrays.asList(analyzerResult), windowContext, rendererFactory);
             window.open();
         };
         final DCPanel observationCountPanel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(

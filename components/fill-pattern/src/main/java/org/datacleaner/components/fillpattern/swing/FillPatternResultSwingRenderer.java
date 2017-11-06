@@ -130,7 +130,7 @@ public class FillPatternResultSwingRenderer extends AbstractRenderer<FillPattern
                 final String text = group.getGroupName() + " (" + (patternCount == 1 ? "1 pattern"
                         : patternCount + " patterns") + ", " + (recordCount == 1 ? "1 record"
                                 : recordCount + " records") + ")";
-                final Supplier<? extends JComponent> componentRef = () -> new FillPatternGroupTabelPanel(windowContext,
+                final Supplier<? extends JComponent> componentRef = () -> new FillPatternGroupTablePanel(windowContext,
                         rendererFactory, fillPatternResult, group);
                 final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(text, text, patternCount < 2,
                         componentRef);
@@ -138,7 +138,7 @@ public class FillPatternResultSwingRenderer extends AbstractRenderer<FillPattern
             }
             return panel;
         } else {
-            return new FillPatternGroupTabelPanel(windowContext, rendererFactory, fillPatternResult, fillPatternResult
+            return new FillPatternGroupTablePanel(windowContext, rendererFactory, fillPatternResult, fillPatternResult
                     .getFillPatternGroups().get(0));
         }
 

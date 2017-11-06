@@ -70,8 +70,8 @@ public class FillPatternGroupListPanel extends JPanel {
         int row = 0;
         for (FillPattern fillPattern : group) {
             final int observationCount = fillPattern.getObservationCount();
-            final Object observationCountValue = createObservationCountValue(windowContext, rendererFactory, result,
-                    fillPattern, observationCount);
+            final Object observationCountValue =
+                    createObservationCountValue(windowContext, rendererFactory, result, fillPattern, observationCount);
             tableModel.setValueAt(observationCountValue, row, 0);
 
             final List<InputColumn<?>> inspectedColumns = result.getInspectedColumns();
@@ -87,6 +87,8 @@ public class FillPatternGroupListPanel extends JPanel {
                     case LabelUtils.BLANK_LABEL:
                         // skip this - not listed
                         continue;
+                    default:
+                        break;
                     }
                 }
                 columnListPanel.add(createColumnLabel(inspectedColumns.get(i)));
@@ -107,8 +109,9 @@ public class FillPatternGroupListPanel extends JPanel {
     }
 
     private JComponent createColumnLabel(InputColumn<?> inputColumn) {
-        final JLabel label = new JLabel(inputColumn.getName(), ImageManager.get().getImageIcon(IconUtils.MODEL_COLUMN,
-                IconUtils.ICON_SIZE_SMALL), Alignment.LEFT.getLabelAlignment());
+        final JLabel label = new JLabel(inputColumn.getName(),
+                ImageManager.get().getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL),
+                Alignment.LEFT.getLabelAlignment());
         return label;
     }
 
@@ -137,6 +140,8 @@ public class FillPatternGroupListPanel extends JPanel {
                         component.setForeground(WidgetUtils.BG_COLOR_DARKEST);
                         component.setOpaque(true);
                         break;
+                    default:
+                        break;
                     }
                 }
                 return component;
@@ -153,11 +158,11 @@ public class FillPatternGroupListPanel extends JPanel {
 
         ActionListener actionListener = (e) -> {
             final InputColumn<?>[] highlightedColumns = result.getInspectedColumns().toArray(new InputColumn[0]);
-            final AnalyzerResult analyzerResult = new AnnotatedRowsResult(fillPattern.getRowAnnotation(),
-                    rowAnnotationFactory, highlightedColumns);
+            final AnalyzerResult analyzerResult =
+                    new AnnotatedRowsResult(fillPattern.getRowAnnotation(), rowAnnotationFactory, highlightedColumns);
             final String windowTitle = "Details for " + fillPattern.getFillOutcomes();
-            final DetailsResultWindow window = new DetailsResultWindow(windowTitle, Arrays.asList(analyzerResult),
-                    windowContext, rendererFactory);
+            final DetailsResultWindow window =
+                    new DetailsResultWindow(windowTitle, Arrays.asList(analyzerResult), windowContext, rendererFactory);
             window.open();
         };
         final DCPanel observationCountPanel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(

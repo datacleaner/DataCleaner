@@ -70,7 +70,8 @@ public class FillPatternAnalyzer implements Analyzer<FillPatternResult> {
     @Provided
     RowAnnotationFactory rowAnnotationFactory;
 
-    private final ConcurrentMap<String, FillPatternsBuilder> _buildersByGroup = new ConcurrentHashMap<String, FillPatternsBuilder>();
+    private final ConcurrentMap<String, FillPatternsBuilder> _buildersByGroup =
+            new ConcurrentHashMap<String, FillPatternsBuilder>();
 
     public void run(InputRow row, int count) {
         final String group;

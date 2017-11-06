@@ -1,3 +1,22 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.datacleaner.components.groovy;
 
 import groovy.lang.GroovyClassLoader;
@@ -36,14 +55,17 @@ public class GroovySimpleTransformer implements Transformer {
 
     @Configured(order = 3)
     @StringProperty(multiline = true, mimeType = { "application/x-groovy", "text/x-groovy", "text/groovy" })
-    String code = "class Transformer {\n\tString transform(map) {\n\t\t// Example: Finds the first value of a column with the word 'NAME' in it\n\t\treturn \"Hello \" + map.find{\n\t\t\tit.key.toUpperCase().indexOf(\"NAME\")!=-1\n\t\t}?.value\n\t}\n}";
+    String code = "class Transformer {\n\tString transform(map) {\n"
+            + "\t\t// Example: Finds the first value of a column with the word 'NAME' in it\n"
+            + "\t\treturn \"Hello \" + map.find{\n\t\t\tit.key.toUpperCase().indexOf(\"NAME\")!=-1\n"
+            + "\t\t}?.value\n\t}\n}";
 
     private GroovyObject _groovyObject;
     private GroovyClassLoader _groovyClassLoader;
 
     @Initialize
     public void init() {
-        ClassLoader parent = getClass().getClassLoader();
+        final ClassLoader parent = getClass().getClassLoader();
         _groovyClassLoader = new GroovyClassLoader(parent);
         logger.debug("Compiling Groovy code:\n{}", code);
         final Class<?> groovyClass = _groovyClassLoader.parseClass(code);
@@ -61,7 +83,7 @@ public class GroovySimpleTransformer implements Transformer {
         return new OutputColumns(String.class, "Groovy output");
     }
 
-    public String[] transform(InputRow inputRow) {
+    public String[] transform(final InputRow inputRow) {
         final Map<String, Object> map = new LinkedHashMap<String, Object>();
         for (InputColumn<?> input : inputs) {
             map.put(input.getName(), inputRow.getValue(input));

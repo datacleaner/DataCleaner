@@ -21,6 +21,7 @@ package org.datacleaner.beans.standardize;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("deprecation")
 public class EmailStandardizerTransformerTest extends TestCase {
 
     public void testNull() throws Exception {

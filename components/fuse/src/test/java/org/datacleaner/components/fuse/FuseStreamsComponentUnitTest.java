@@ -60,7 +60,7 @@ public class FuseStreamsComponentUnitTest extends TestCase {
         assertEquals(1, streams.length);
 
         final OutputDataStream stream = streams[0];
-        assertEquals("[name1, city1]", Arrays.toString(stream.getTable().getColumnNames()));
+        assertEquals("[name1, city1]", stream.getTable().getColumnNames().toString());
 
         final MockOutputRowCollector outputRowCollector = new MockOutputRowCollector();
         component.initializeOutputDataStream(stream, null, outputRowCollector);

@@ -59,9 +59,9 @@ public class SampleDataContext extends QueryPostprocessDataContext {
     }
 
     @Override
-    protected DataSet materializeMainSchemaTable(final Table table, final Column[] columns, final int maxRows) {
-        final SelectItem[] tableSelectItems = MetaModelHelper.createSelectItems(table.getColumns());
-        final SelectItem[] selectItems = MetaModelHelper.createSelectItems(columns);
+    protected DataSet materializeMainSchemaTable(final Table table, final List<Column> columns, final int maxRows) {
+        final SelectItem[] tableSelectItems = MetaModelHelper.createSelectItems(table.getColumns().toArray(new Column[0]));
+        final SelectItem[] selectItems = MetaModelHelper.createSelectItems(columns.toArray(new Column[0]));
         final SimpleDataSetHeader header = new SimpleDataSetHeader(tableSelectItems);
 
         final List<Row> rows = new ArrayList<>();

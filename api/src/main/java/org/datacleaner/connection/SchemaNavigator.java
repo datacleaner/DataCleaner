@@ -19,8 +19,6 @@
  */
 package org.datacleaner.connection;
 
-import java.util.Arrays;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
@@ -49,7 +47,7 @@ public final class SchemaNavigator {
     }
 
     public Schema[] getSchemas() {
-        return dataContext.getSchemas();
+        return dataContext.getSchemas().toArray(new Schema[0]);
     }
 
     public Schema getDefaultSchema() {
@@ -70,18 +68,16 @@ public final class SchemaNavigator {
 
         if (schema == null) {
             throw new IllegalArgumentException(
-                    "Schema " + schemaName + " not found. Available schema names are: " + Arrays
-                            .toString(dataContext.getSchemaNames()));
+                    "Schema " + schemaName + " not found. Available schema names are: " +dataContext.getSchemaNames());
         }
 
         final Table table;
         if (tableName == null) {
             if (schema.getTableCount() == 1) {
-                table = schema.getTables()[0];
+                table = schema.getTable(0);
             } else {
                 throw new IllegalArgumentException(
-                        "No table name specified, and multiple options exist. Available table names are: " + Arrays
-                                .toString(schema.getTableNames()));
+                        "No table name specified, and multiple options exist. Available table names are: " + schema.getTableNames());
             }
         } else {
             table = schema.getTableByName(tableName);
@@ -89,7 +85,7 @@ public final class SchemaNavigator {
 
         if (table == null) {
             throw new IllegalArgumentException(
-                    "Table not found. Available table names are: " + Arrays.toString(schema.getTableNames()));
+                    "Table not found. Available table names are: " + schema.getTableNames());
         }
 
         return table;

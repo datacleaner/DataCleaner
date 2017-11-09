@@ -19,7 +19,9 @@
  */
 package org.datacleaner.data;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelException;
@@ -27,6 +29,7 @@ import org.apache.metamodel.QueryPostprocessDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.EmptyDataSet;
 import org.apache.metamodel.query.FilterItem;
+import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.AbstractSchema;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
@@ -56,8 +59,8 @@ public class OutputDataStreamDataContext extends QueryPostprocessDataContext {
             }
 
             @Override
-            public Table[] getTables() {
-                return new Table[] { _outputDataStream.getTable() };
+            public List<Table> getTables() {
+                return Collections.singletonList(_outputDataStream.getTable());
             }
 
             @Override
@@ -73,8 +76,9 @@ public class OutputDataStreamDataContext extends QueryPostprocessDataContext {
     }
 
     @Override
-    protected DataSet materializeMainSchemaTable(final Table table, final Column[] columns, final int maxRows) {
-        return new EmptyDataSet(columns);
+    protected DataSet materializeMainSchemaTable(final Table table, final List<Column> columns, final int maxRows) {
+        final  List<SelectItem> selectItems = columns.stream().map(c -> new SelectItem(c)).collect(Collectors.toList());
+        return new EmptyDataSet(selectItems);
     }
 
     @Override

@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.swing.JMenuItem;
@@ -112,7 +113,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
                         WidgetFactory.createMenuItem("Preview column", IconUtils.ACTION_PREVIEW);
                 previewMenuItem.addActionListener(
                         new PreviewSourceDataActionListener(_schemaTree.getWindowContext(), _schemaTree.getDatastore(),
-                                column));
+                                Arrays.asList(column)));
 
                 final JPopupMenu popup = new JPopupMenu();
                 popup.setLabel(column.getName());

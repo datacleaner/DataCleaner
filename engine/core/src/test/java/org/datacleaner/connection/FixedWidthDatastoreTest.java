@@ -19,8 +19,6 @@
  */
 package org.datacleaner.connection;
 
-import java.util.Arrays;
-
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileResource;
@@ -53,10 +51,10 @@ public class FixedWidthDatastoreTest extends TestCase {
             final Schema schema = con.getDataContext().getDefaultSchema();
             assertEquals("resources", schema.getName());
 
-            final Table table = schema.getTables()[0];
+            final Table table = schema.getTable(0);
             assertEquals("employees-fixed-width.txt", table.getName());
 
-            assertEquals("[name, email]", Arrays.toString(table.getColumnNames()));
+            assertEquals("[name, email]", table.getColumnNames().toString());
         }
     }
 

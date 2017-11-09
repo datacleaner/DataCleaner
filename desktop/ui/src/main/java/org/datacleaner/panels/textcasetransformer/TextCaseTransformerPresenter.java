@@ -46,7 +46,9 @@ import org.jdesktop.swingx.JXTaskPane;
 
 public class TextCaseTransformerPresenter extends TransformerComponentBuilderPanel
         implements TransformerComponentBuilderPresenter {
-
+    
+    private static final long serialVersionUID = 1L;
+    
     private static final String TASK_PANE_TITLE_DICTIONARIES = "Dictionaries";
     private final ConfiguredPropertyDescriptor _valueProperty;
     private final ConfiguredPropertyDescriptor _modeProperty;

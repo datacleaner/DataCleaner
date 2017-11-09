@@ -101,7 +101,7 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
             final List<Column> comboBoxList = new ArrayList<>();
             comboBoxList.add(null);
 
-            final Column[] columns = table.getColumns();
+            final List<Column> columns = table.getColumns();
             for (final Column column : columns) {
                 comboBoxList.add(column);
                 if (column.getName().equals(previousColumnName)) {
@@ -145,11 +145,11 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
             for (final Schema schema : schemas) {
                 comboBoxList.add(schema);
                 if (!MetaModelHelper.isInformationSchema(schema)) {
-                    final Table[] tables = schema.getTables();
+                    final List<Table> tables = schema.getTables();
                     for (final Table table : tables) {
                         try {
-                            final Column[] columns = table.getColumns();
-                            if (columns != null && columns.length > 0) {
+                            final List<Column> columns = table.getColumns();
+                            if (columns != null && !columns.isEmpty()) {
                                 comboBoxList.add(table);
                                 for (final Column column : columns) {
                                     comboBoxList.add(column);

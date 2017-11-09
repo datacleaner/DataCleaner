@@ -93,7 +93,7 @@ public class AboutDialog extends AbstractDialog {
         }
         try {
             final DataContext dc = DataContextFactory.createCsvDataContext(url.openStream(), ',', '"');
-            final Table table = dc.getDefaultSchema().getTables()[0];
+            final Table table = dc.getDefaultSchema().getTable(0);
             final Column projectColumn = table.getColumnByName("Project");
             final Column websiteColumn = table.getColumnByName("Website");
             final Column licenseColumn = table.getColumnByName("License");

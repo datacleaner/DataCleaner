@@ -65,7 +65,7 @@ public class QuickAnalysisActionListener implements ActionListener {
 
     public Column[] getColumns() {
         if (_columns == null) {
-            return _table.getColumns();
+            return _table.getColumns().toArray(new Column[0]);
         }
         return _columns;
     }

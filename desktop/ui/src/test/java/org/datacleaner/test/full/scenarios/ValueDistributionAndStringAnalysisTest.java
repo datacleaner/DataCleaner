@@ -77,7 +77,7 @@ public class ValueDistributionAndStringAnalysisTest extends TestCase {
         final Table table = dc.getDefaultSchema().getTableByName("EMPLOYEES");
         assertNotNull(table);
 
-        final Column[] columns = table.getColumns();
+        final List<Column> columns = table.getColumns();
 
         analysisJobBuilder.addSourceColumns(columns);
 

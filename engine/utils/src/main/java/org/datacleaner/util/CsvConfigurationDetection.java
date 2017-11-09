@@ -239,7 +239,7 @@ public class CsvConfigurationDetection {
                             multiLineConfiguration);
             final Table table = testDataContext.getDefaultSchema().getTable(0);
             if (_columnNames == null) {
-                _columnNames = Arrays.asList(testDataContext.getDefaultSchema().getTable(0).getColumnNames());
+                _columnNames = testDataContext.getDefaultSchema().getTable(0).getColumnNames();
             }
             try (DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
                 while (dataSet.next()) {

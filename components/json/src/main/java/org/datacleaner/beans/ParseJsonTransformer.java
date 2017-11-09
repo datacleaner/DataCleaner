@@ -68,7 +68,7 @@ public class ParseJsonTransformer implements Transformer {
             return null;
         }
 
-        final ObjectReader reader = objectMapper.reader().withType(dataType);
+        final ObjectReader reader = objectMapper.reader().forType(dataType);
         return parse(jsonString, dataType, reader);
     }
 
@@ -90,7 +90,7 @@ public class ParseJsonTransformer implements Transformer {
     @Initialize
     public void init() {
         this.mapper = new ObjectMapper();
-        this.reader = mapper.reader().withType(dataType);
+        this.reader = mapper.reader().forType(dataType);
     }
 
     @Override

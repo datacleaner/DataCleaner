@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -303,10 +304,10 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             final DataContext dc = con.getDataContext();
             final Table table = getPreviewTable(dc);
 
-            Column[] columns = table.getColumns();
-            if (columns.length > getPreviewColumns()) {
+            List<Column> columns = table.getColumns();
+            if (columns.size() > getPreviewColumns()) {
                 // include max 10 columns
-                columns = Arrays.copyOf(columns, getPreviewColumns());
+                columns = columns.stream().limit(getPreviewColumns()).collect(Collectors.toList());
             }
             final Query q = dc.query().from(table).select(columns).toQuery();
             q.setMaxRows(7);
@@ -373,7 +374,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     }
 
     protected Table getPreviewTable(final DataContext dc) {
-        return dc.getDefaultSchema().getTables()[0];
+        return dc.getDefaultSchema().getTable(0);
     }
 
     protected int getPreviewColumns() {

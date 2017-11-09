@@ -140,9 +140,9 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             final Datastore datastore =
                     new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
             try (DatastoreConnection connection = datastore.openConnection()) {
-                final String[] tableNames = connection.getDataContext().getDefaultSchema().getTableNames();
-                for (int i = 0; i < tableNames.length; i++) {
-                    if (tableNames[i].equals(sheetName)) {
+                final List<String> tableNames = connection.getDataContext().getDefaultSchema().getTableNames();
+                for (String tableName : tableNames) {
+                    if (tableName.equals(sheetName)) {
                         throw new IllegalStateException(
                                 "The sheet '" + sheetName + "' already exists. Please select another sheet name.");
                     }
@@ -188,9 +188,9 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                     new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
             try (UpdateableDatastoreConnection connection = datastore.openConnection()) {
                 final DataContext dataContext = connection.getDataContext();
-                final String[] tableNames = dataContext.getDefaultSchema().getTableNames();
-                for (int i = 0; i < tableNames.length; i++) {
-                    if (tableNames[i].equals(sheetName)) {
+                final List<String> tableNames = dataContext.getDefaultSchema().getTableNames();
+                for (String tableName : tableNames) {
+                    if (tableName.equals(sheetName)) {
                         if (overwriteSheetIfExists) {
                             final Table tableSheet = dataContext.getTableByQualifiedLabel(sheetName);
                             final UpdateableDataContext updateableDataContext = connection.getUpdateableDataContext();
@@ -289,7 +289,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
                     @Override
                     protected void writeHeader(final ExcelDataContextWriter writer) throws IOException {
-                        final List<String> headers = new ArrayList<>(Arrays.asList(table.getColumnNames()));
+                        final List<String> headers = new ArrayList<>(table.getColumnNames());
                         if (!isColumnToBeSortedOnPresentInInput) {
                             headers.remove(columnToBeSortedOn.getName());
                         }

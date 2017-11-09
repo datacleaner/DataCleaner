@@ -28,6 +28,7 @@ import org.datacleaner.data.MetaModelInputColumn;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("deprecation")
 public class NameStandardizerTransformerTest extends TestCase {
 
     public void testSimpleScenario() throws Exception {

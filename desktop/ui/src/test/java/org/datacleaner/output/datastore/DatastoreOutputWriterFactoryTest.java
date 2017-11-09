@@ -20,8 +20,9 @@
 package org.datacleaner.output.datastore;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
@@ -106,11 +107,10 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
         try (DatastoreConnection connection = _datastore.openConnection()) {
             final DataContext dc = connection.getDataContext();
             dc.refreshSchemas();
-            final String[] tableNames = dc.getDefaultSchema().getTableNames();
-            Arrays.sort(tableNames);
+            final List<String> tableNames = dc.getDefaultSchema().getTableNames();
 
             assertEquals("[TAB_1, TAB_2, TAB_3, TAB_4, TAB_5, TAB_6, TAB_7, TAB_8, TAB_9]",
-                    Arrays.toString(tableNames));
+                    tableNames.stream().sorted().collect(Collectors.toList()).toString());
         }
     }
 
@@ -124,7 +124,7 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
             try (DatastoreConnection con = datastore.openConnection()) {
                 final DataContext dc = con.getDataContext();
 
-                final Table table = dc.getDefaultSchema().getTables()[0];
+                final Table table = dc.getDefaultSchema().getTable(0);
                 final Query q = dc.query().from(table).select(table.getColumns()).toQuery();
                 final DataSet dataSet = dc.executeQuery(q);
 

@@ -268,6 +268,7 @@ public final class Bootstrap {
      * @return
      * @throws FileSystemException
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private FileObject resolveFile(final String userRequestedFilename, final String localFilename,
             final UserPreferences userPreferences) throws FileSystemException {
         final File dataCleanerHome = DataCleanerHome.getAsFile();

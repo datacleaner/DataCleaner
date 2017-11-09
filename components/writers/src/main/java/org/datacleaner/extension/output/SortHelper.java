@@ -58,7 +58,7 @@ public class SortHelper {
                 // exactly the same. Now look at other values of all the
                 // columns to
                 // find if the two rows are same.
-                final int numberOfSelectItems = row1.getSelectItems().length;
+                final int numberOfSelectItems = row1.getSelectItems().size();
                 for (int i = 0; i < numberOfSelectItems; i++) {
                     final String rowValue1 = (String) row1.getValue(i);
                     final String rowValue2 = (String) row2.getValue(i);

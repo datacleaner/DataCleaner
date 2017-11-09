@@ -20,7 +20,6 @@
 package org.datacleaner.cluster;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.metamodel.schema.Column;
@@ -278,9 +277,9 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         final Table sourceTable = jobBuilder.getSourceTables().get(0);
 
         // preferred strategy: Use the primary key
-        final Column[] primaryKeys = sourceTable.getPrimaryKeys();
-        if (primaryKeys.length == 1) {
-            final Column primaryKey = primaryKeys[0];
+        final List<Column> primaryKeys = sourceTable.getPrimaryKeys();
+        if (primaryKeys.size() == 1) {
+            final Column primaryKey = primaryKeys.get(0);
             final InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName(primaryKey.getName());
             if (sourceColumn == null) {
                 jobBuilder.addSourceColumn(primaryKey);
@@ -293,7 +292,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
         } else {
             if (logger.isDebugEnabled()) {
                 logger.debug("Found {} primary keys, cannot select a single for ORDER BY clause on slave jobs: {}",
-                        primaryKeys.length, Arrays.toString(primaryKeys));
+                        primaryKeys.size(), primaryKeys.size());
             }
         }
 

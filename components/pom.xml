@@ -30,6 +30,7 @@
 		<module>el</module>
 		<module>http</module>
 		<module>javascript</module>
+		<module>groovy</module>
 		<module>i18n</module>
 		<module>standard-components</module>
 	</modules>

@@ -134,5 +134,10 @@
 			<artifactId>DataCleaner-data-structures</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-fill-pattern</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

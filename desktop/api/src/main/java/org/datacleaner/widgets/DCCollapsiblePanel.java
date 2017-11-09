@@ -41,8 +41,6 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 /**
  * A panel that has a title, a small collapse/expand button and a label, which
  * is used to show/hide a panel underneath it.
- *
- * @author Kasper Sørensen
  */
 public class DCCollapsiblePanel {
 

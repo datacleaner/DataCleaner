@@ -37,8 +37,6 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
  *
  * These components can be accessed using {@link #getDisplayChartCallback()} and
  * {@link #getTable()}.
- *
- * @author Kasper Sørensen
  */
 public class CrosstabPanel extends DCPanel {
 

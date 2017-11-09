@@ -85,7 +85,7 @@ public class SchemaNavigatorTest extends TestCase {
             sn.convertToColumns("resources", "not-existing", new String[] { "email", "not-existing", "name" });
             fail("Exception expected");
         } catch (final Exception e) {
-            assertEquals("Table not found. Available table names are: [employees.csv]", e.getMessage());
+            assertEquals("Table not found. Available table names are: [employees.csv, default_table]", e.getMessage());
         }
 
         // tables

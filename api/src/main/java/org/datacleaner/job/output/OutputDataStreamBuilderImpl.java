@@ -28,6 +28,7 @@ import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableSchema;
 import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.schema.TableType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 
@@ -40,7 +41,7 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
         _name = name;
         final MutableSchema schema = new MutableSchema();
         schema.setName(null);
-        _table = new MutableTable(name, schema);
+        _table = new MutableTable(name, TableType.TABLE, schema);
         schema.addTable(_table);
     }
 

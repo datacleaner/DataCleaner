@@ -38,6 +38,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.TableType;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
@@ -273,7 +274,9 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             }
 
             if (realSchemas == 1) {
-                if (singleSchema.getTableCount() == 1) {
+                final long tableCount =
+                        singleSchema.getTables().stream().filter(t -> t.getType() == TableType.TABLE).count();
+                if (tableCount == 1L) {
                     return COLUMN_PATH_QUALIFICATION_COLUMN;
                 }
                 return COLUMN_PATH_QUALIFICATION_TABLE;

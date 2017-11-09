@@ -30,6 +30,7 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.InputColumn;
@@ -240,7 +241,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
 
         final DatastoreConnection errorCon = errorDatastore.openConnection();
         final Schema errorSchema = errorCon.getDataContext().getDefaultSchema();
-        assertEquals(1, errorSchema.getTableCount());
+        assertEquals(1, errorSchema.getTables().stream().filter(t -> t.getType() == TableType.TABLE).count());
         final Table errorTable = errorSchema.getTable(0);
         assertEquals("[foo, bar, insert_into_table_error_message]", errorTable.getColumnNames().toString());
         final DataSet ds = errorCon.getDataContext().query().from(errorTable).select("foo").and("bar")

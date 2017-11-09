@@ -23,6 +23,7 @@ import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.schema.TableType;
 
 /**
  * A convenient component used for exploring/navigating the schema of a
@@ -68,16 +69,17 @@ public final class SchemaNavigator {
 
         if (schema == null) {
             throw new IllegalArgumentException(
-                    "Schema " + schemaName + " not found. Available schema names are: " +dataContext.getSchemaNames());
+                    "Schema " + schemaName + " not found. Available schema names are: " + dataContext.getSchemaNames());
         }
 
         final Table table;
         if (tableName == null) {
-            if (schema.getTableCount() == 1) {
-                table = schema.getTable(0);
+            if (schema.getTables().stream().filter(t -> t.getType() == TableType.TABLE).count() == 1) {
+                table = schema.getTables().stream().filter(t -> t.getType() == TableType.TABLE).findFirst().get();
             } else {
                 throw new IllegalArgumentException(
-                        "No table name specified, and multiple options exist. Available table names are: " + schema.getTableNames());
+                        "No table name specified, and multiple options exist. Available table names are: "
+                                + schema.getTableNames());
             }
         } else {
             table = schema.getTableByName(tableName);

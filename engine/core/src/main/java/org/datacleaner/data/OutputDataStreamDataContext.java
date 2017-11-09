@@ -45,6 +45,7 @@ public class OutputDataStreamDataContext extends QueryPostprocessDataContext {
     private final OutputDataStream _outputDataStream;
 
     public OutputDataStreamDataContext(final OutputDataStream outputDataStream) {
+        super(false);
         _outputDataStream = outputDataStream;
     }
 

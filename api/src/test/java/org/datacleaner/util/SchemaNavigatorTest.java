@@ -85,7 +85,7 @@ public class SchemaNavigatorTest extends TestCase {
             sn.convertToColumns("resources", "not-existing", new String[] { "email", "not-existing", "name" });
             fail("Exception expected");
         } catch (final Exception e) {
-            assertEquals("Table not found. Available table names are: [employees.csv]", e.getMessage());
+            assertEquals("Table not found. Available table names are: [employees.csv, default_table]", e.getMessage());
         }
 
         // tables
@@ -125,7 +125,7 @@ public class SchemaNavigatorTest extends TestCase {
         final DataContext dc =
                 DataContextFactory.createCsvDataContext(new File("src/test/resources/employees.csv"), ',', '\"');
 
-        assertEquals(2, dc.getDefaultSchema().getTables()[0].getColumnCount());
+        assertEquals(2, dc.getDefaultSchema().getTable(0).getColumnCount());
 
         final SchemaNavigator sn = new SchemaNavigator(dc);
 
@@ -147,7 +147,7 @@ public class SchemaNavigatorTest extends TestCase {
 
         final DataContext dataContext = new QueryPostprocessDataContext() {
             @Override
-            protected DataSet materializeMainSchemaTable(final Table table, final Column[] columns, final int maxRows) {
+            protected DataSet materializeMainSchemaTable(final Table table, final List<Column> columns, final int maxRows) {
                 throw new UnsupportedOperationException();
             }
 

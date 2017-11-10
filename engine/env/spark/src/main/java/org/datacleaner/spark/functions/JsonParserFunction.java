@@ -19,6 +19,8 @@
  */
 package org.datacleaner.spark.functions;
 
+import java.util.List;
+
 import org.apache.metamodel.schema.Column;
 import org.apache.spark.api.java.function.Function;
 import org.datacleaner.connection.DatastoreConnection;
@@ -31,7 +33,7 @@ public class JsonParserFunction implements Function<String, Object[]> {
 
     private static final long serialVersionUID = 1L;
     private final JsonDatastore _jsonDatastore;
-    private Column[] _columns;
+    private List<Column> _columns;
 
     public JsonParserFunction(final JsonDatastore jsonDatastore) {
         _jsonDatastore = jsonDatastore;
@@ -45,17 +47,17 @@ public class JsonParserFunction implements Function<String, Object[]> {
     }
 
     private Object[] getValues(final JsonNode readTree) {
-        final Column[] columns = getColumns();
-        final Object[] list = new Object[columns.length];
-        for (int i = 0; i < columns.length; i++) {
-            final JsonNode node = readTree.findValue(columns[i].getName());
+        final List<Column> columns = getColumns();
+        final Object[] list = new Object[columns.size()];
+        for (int i = 0; i < columns.size(); i++) {
+            final JsonNode node = readTree.findValue(columns.get(i).getName());
             final String value = node.asText();
             list[i] = value;
         }
         return list;
     }
 
-    public Column[] getColumns() {
+    public List<Column> getColumns() {
         if (_columns == null) {
             try (DatastoreConnection openConnection = _jsonDatastore.openConnection()) {
                 _columns = openConnection.getDataContext().getDefaultSchema().getTable(0).getColumns();

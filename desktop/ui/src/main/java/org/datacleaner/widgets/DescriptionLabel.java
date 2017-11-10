@@ -37,6 +37,7 @@ public class DescriptionLabel extends DCLabel {
         this(null);
     }
 
+    @SuppressWarnings("deprecation")
     public DescriptionLabel(final String text) {
         super(true, text, WidgetUtils.BG_COLOR_DARK, null);
         setFont(WidgetUtils.FONT_SMALL);

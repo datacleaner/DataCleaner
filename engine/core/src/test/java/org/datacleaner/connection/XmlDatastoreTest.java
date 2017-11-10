@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang.SerializationUtils;
 
@@ -36,8 +36,8 @@ public class XmlDatastoreTest extends TestCase {
 
     public void testGetDatastoreConnection() throws Exception {
         try (DatastoreConnection con = ds.openConnection()) {
-            final String[] tableNames = con.getDataContext().getDefaultSchema().getTableNames();
-            assertEquals("[greeting]", Arrays.toString(tableNames));
+            final List<String> tableNames = con.getDataContext().getDefaultSchema().getTableNames();
+            assertEquals("[greeting]", tableNames.toString());
         }
     }
 

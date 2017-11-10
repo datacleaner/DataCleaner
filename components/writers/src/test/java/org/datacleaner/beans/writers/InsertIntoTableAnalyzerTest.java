@@ -20,7 +20,7 @@
 package org.datacleaner.beans.writers;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.metamodel.UpdateableDataContext;
@@ -30,6 +30,7 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.InputColumn;
@@ -180,9 +181,9 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         assertEquals(1, result.getErrorRowCount());
         final FileDatastore errorDatastore = result.getErrorDatastore();
         final DatastoreConnection con = errorDatastore.openConnection();
-        final Table table = con.getDataContext().getDefaultSchema().getTables()[0];
+        final Table table = con.getDataContext().getDefaultSchema().getTable(0);
         assertEquals("[foo, bar, in3, foo_add, insert_into_table_error_message]",
-                Arrays.toString(table.getColumnNames()));
+                table.getColumnNames().toString());
 
         final DataSet ds = con.getDataContext().query().from(table).select(table.getColumns()).execute();
         assertTrue(ds.next());
@@ -240,9 +241,9 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
 
         final DatastoreConnection errorCon = errorDatastore.openConnection();
         final Schema errorSchema = errorCon.getDataContext().getDefaultSchema();
-        assertEquals(1, errorSchema.getTableCount());
-        final Table errorTable = errorSchema.getTables()[0];
-        assertEquals("[foo, bar, insert_into_table_error_message]", Arrays.toString(errorTable.getColumnNames()));
+        assertEquals(1, errorSchema.getTables().stream().filter(t -> t.getType() == TableType.TABLE).count());
+        final Table errorTable = errorSchema.getTable(0);
+        assertEquals("[foo, bar, insert_into_table_error_message]", errorTable.getColumnNames().toString());
         final DataSet ds = errorCon.getDataContext().query().from(errorTable).select("foo").and("bar")
                 .and("insert_into_table_error_message").execute();
         assertTrue(ds.next());
@@ -265,11 +266,11 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         }
 
         // count input lines and get columns
-        final Column[] columns;
+        final List<Column> columns;
         final Number countIn;
         {
             final DatastoreConnection con = datastoreIn.openConnection();
-            final Table table = con.getDataContext().getDefaultSchema().getTables()[0];
+            final Table table = con.getDataContext().getDefaultSchema().getTable(0);
 
             columns = table.getColumns();
 
@@ -332,7 +333,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         final Number countOut;
         {
             final DatastoreConnection con = datastoreOut.openConnection();
-            final DataSet ds = con.getDataContext().query().from(con.getDataContext().getDefaultSchema().getTables()[0])
+            final DataSet ds = con.getDataContext().query().from(con.getDataContext().getDefaultSchema().getTable(0))
                     .selectCount().execute();
             assertTrue(ds.next());
             countOut = (Number) ds.getRow().getValue(0);

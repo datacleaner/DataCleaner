@@ -19,6 +19,8 @@
  */
 package org.datacleaner.job.output;
 
+import java.util.List;
+
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.ColumnTypeImpl;
@@ -26,6 +28,7 @@ import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableSchema;
 import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.schema.TableType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 
@@ -38,7 +41,7 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
         _name = name;
         final MutableSchema schema = new MutableSchema();
         schema.setName(null);
-        _table = new MutableTable(name, schema);
+        _table = new MutableTable(name, TableType.TABLE, schema);
         schema.addTable(_table);
     }
 
@@ -52,11 +55,11 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
 
     @Override
     public OutputDataStreamBuilder likeTable(final Table table) {
-        final Column[] existingColumns = _table.getColumns();
+        final List<Column> existingColumns = _table.getColumns();
         for (final Column column : existingColumns) {
             _table.removeColumn(column);
         }
-        final Column[] newColumns = table.getColumns();
+        final List<Column> newColumns = table.getColumns();
         for (final Column column : newColumns) {
             withColumn(column.getName(), column.getType());
         }

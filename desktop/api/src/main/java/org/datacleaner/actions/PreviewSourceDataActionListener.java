@@ -39,12 +39,12 @@ public class PreviewSourceDataActionListener implements ActionListener {
 
     private static final int PAGE_SIZE = 35;
     private final Datastore _datastore;
-    private final Column[] _columns;
+    private final List<Column> _columns;
     private final Collection<? extends InputColumn<?>> _inputColumns;
     private final WindowContext _windowContext;
 
     public PreviewSourceDataActionListener(final WindowContext windowContext, final Datastore datastore,
-            final Column... columns) {
+            final List<Column> columns) {
         _windowContext = windowContext;
         _datastore = datastore;
         _columns = columns;
@@ -66,24 +66,24 @@ public class PreviewSourceDataActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        Column[] columns = _columns;
-        if (columns == null) {
+        List<Column> columns = _columns;
+        if (_columns == null) {
             final List<Column> cols = new ArrayList<>();
             for (final InputColumn<?> col : _inputColumns) {
                 if (col.isPhysicalColumn()) {
                     cols.add(col.getPhysicalColumn());
                 }
             }
-            columns = cols.toArray(new Column[cols.size()]);
+            columns = cols;
         }
 
-        if (columns.length == 0) {
+        if (columns.isEmpty()) {
             throw new IllegalStateException("No columns found - could not determine which columns to query");
         }
 
         try (DatastoreConnection con = _datastore.openConnection()) {
             final DataContext dc = con.getDataContext();
-            final Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
+            final Query q = dc.query().from(columns.get(0).getTable()).select(columns).toQuery();
 
             final DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
             window.open();

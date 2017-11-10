@@ -64,7 +64,7 @@ public class OpenAnalysisJobAsTemplateDialogTest {
     @Test
     public void testCreateLoadingIcon() throws Exception {
         if (!GraphicsEnvironment.isHeadless()) {
-            assertTrue(getDialog().createLoadingIcon() instanceof LoadingIcon);
+            assertTrue(OpenAnalysisJobAsTemplateDialog.createLoadingIcon() instanceof LoadingIcon);
         }
     }
 

@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.UpdateableDataContext;
@@ -82,7 +83,7 @@ final class DatastoreOutputWriter implements OutputWriter {
             final UpdateableDataContext dc = DataContextFactory.createJdbcDataContext(_connection);
             dc.refreshSchemas();
             final Schema schema = dc.getDefaultSchema();
-            final String[] tableNames = schema.getTableNames();
+            final List<String> tableNames = schema.getTableNames();
 
             if (truncateExisting) {
                 _tableName = tableName;

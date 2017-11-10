@@ -301,12 +301,12 @@ public class CreateCsvFileAnalyzerTest {
 
         final CsvDatastore outputDatastore = new CsvDatastore("csvtest-customcolumnheaders", analyzer.file);
         try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
-            final String[] columnNames =
+            final List<String> columnNames =
                     outputDatastoreConnection.getSchemaNavigator().getDefaultSchema().getTableByName(targetFilename)
                             .getColumnNames();
-            assertEquals(2, columnNames.length);
-            assertEquals("CustomNameForStringColumn", columnNames[0]);
-            assertEquals("CustomNameForIntegerColumn", columnNames[1]);
+            assertEquals(2, columnNames.size());
+            assertEquals("CustomNameForStringColumn", columnNames.get(0));
+            assertEquals("CustomNameForIntegerColumn", columnNames.get(1));
         }
     }
 

@@ -282,7 +282,7 @@ public final class AnalysisJobBuilder implements Closeable {
      * @param table
      */
     public AnalysisJobBuilder removeSourceTable(final Table table) {
-        final Column[] cols = table.getColumns();
+        final List<Column> cols = table.getColumns();
         for (final Column col : cols) {
             removeSourceColumn(col);
         }

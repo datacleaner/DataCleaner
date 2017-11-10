@@ -259,7 +259,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
 
                 @Override
                 protected void writeHeader(final Writer writer) throws IOException {
-                    final List<String> headers = new ArrayList<>(Arrays.asList(table.getColumnNames()));
+                    final List<String> headers = new ArrayList<>(table.getColumnNames());
                     if (!_isColumnToBeSortedOnPresentInInput) {
                         headers.remove(columnToBeSortedOn.getName());
                     }

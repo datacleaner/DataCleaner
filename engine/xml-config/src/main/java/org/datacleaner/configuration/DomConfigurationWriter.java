@@ -86,8 +86,9 @@ public class DomConfigurationWriter {
     }
 
     public DomConfigurationWriter(final Resource resource) {
-        _document = resource.read(XmlUtils::parseDocument);
-
+        _document = resource.read(is -> {
+            return XmlUtils.parseDocument(is);
+        });
     }
 
     public DomConfigurationWriter(final Document document) {

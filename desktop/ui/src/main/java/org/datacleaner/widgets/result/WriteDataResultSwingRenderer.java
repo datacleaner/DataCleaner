@@ -166,7 +166,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                             JOptionPane.showMessageDialog(editorPane, "Saved datastore: " + errorDatastore.getName());
                         } else if ("https://datacleaner.org/preview_datastore".equals(href)) {
                             try (DatastoreConnection errorCon = errorDatastore.openConnection()) {
-                                final Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
+                                final Table table = errorCon.getDataContext().getDefaultSchema().getTable(0);
                                 final PreviewSourceDataActionListener actionListener =
                                         new PreviewSourceDataActionListener(windowContext, errorDatastore, table);
                                 actionListener.actionPerformed(null);

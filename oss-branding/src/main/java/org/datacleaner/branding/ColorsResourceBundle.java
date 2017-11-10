@@ -43,7 +43,10 @@ public class ColorsResourceBundle extends ResourceBundle {
     public ColorsResourceBundle(final URL url) throws IOException {
         final Properties properties = new Properties();
         properties.load(url.openStream());
-        _colors = new HashMap(properties);
+        _colors = new HashMap<>();
+        properties.stringPropertyNames().forEach(key -> {
+            _colors.put(key, properties.getProperty(key));
+        });
     }
 
     @Override

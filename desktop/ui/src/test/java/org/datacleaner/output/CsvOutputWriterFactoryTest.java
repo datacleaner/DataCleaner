@@ -42,7 +42,7 @@ public class CsvOutputWriterFactoryTest extends TestCase {
         writer.close();
 
         final DataContext dc = DataContextFactory.createCsvDataContext(new File(filename));
-        final Table table = dc.getDefaultSchema().getTables()[0];
+        final Table table = dc.getDefaultSchema().getTable(0);
         final Query q = dc.query().from(table).select(table.getColumns()).toQuery();
         final DataSet dataSet = dc.executeQuery(q);
 

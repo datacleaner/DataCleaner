@@ -64,7 +64,7 @@ public class NameAndEmailPartEqualityTest extends TestCase {
 
         final DatastoreConnection con = ds.openConnection();
         final Schema schema = con.getDataContext().getDefaultSchema();
-        final Table table = schema.getTables()[0];
+        final Table table = schema.getTable(0);
         assertNotNull(table);
 
         final Column nameColumn = table.getColumnByName("name");

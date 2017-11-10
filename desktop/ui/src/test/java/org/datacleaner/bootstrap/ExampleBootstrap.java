@@ -72,7 +72,7 @@ public class ExampleBootstrap {
                 analysisJobBuilder.addSourceColumns("PUBLIC.EMPLOYEES.EMAIL");
 
                 // add all columns of a table
-                final Column[] customerColumns = dataContext.getTableByQualifiedLabel("PUBLIC.CUSTOMERS").getColumns();
+                final List<Column> customerColumns = dataContext.getTableByQualifiedLabel("PUBLIC.CUSTOMERS").getColumns();
                 analysisJobBuilder.addSourceColumns(customerColumns);
 
                 final List<InputColumn<?>> numberColumns = analysisJobBuilder.getAvailableInputColumns(Number.class);

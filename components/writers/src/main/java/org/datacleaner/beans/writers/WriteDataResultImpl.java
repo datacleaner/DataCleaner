@@ -19,8 +19,9 @@
  */
 package org.datacleaner.beans.writers;
 
+import java.util.function.Function;
+
 import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
@@ -42,7 +43,7 @@ public final class WriteDataResultImpl implements WriteDataResult {
     private final String _tableName;
     private final int _errorRowCount;
 
-    private final transient Func<DatastoreCatalog, Datastore> _datastoreFunc;
+    private final transient Function<DatastoreCatalog, Datastore> _datastoreFunc;
     private final transient FileDatastore _errorDatastore;
 
     public WriteDataResultImpl(final int writtenRowCount, final int updatesCount, final int errorRowCount) {
@@ -117,7 +118,7 @@ public final class WriteDataResultImpl implements WriteDataResult {
             }
             return datastoreCatalog.getDatastore(_datastoreName);
         }
-        return _datastoreFunc.eval(datastoreCatalog);
+        return _datastoreFunc.apply(datastoreCatalog);
     }
 
     @Override

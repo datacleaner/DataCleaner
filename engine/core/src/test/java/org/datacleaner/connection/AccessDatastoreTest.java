@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.apache.metamodel.DataContext;
 
@@ -34,8 +34,8 @@ public class AccessDatastoreTest extends TestCase {
         final DatastoreConnection con = ds.openConnection();
         final DataContext dataContext = con.getDataContext();
 
-        assertEquals("[information_schema, developers.mdb]", Arrays.toString(dataContext.getSchemaNames()));
-        final String[] tableNames = dataContext.getDefaultSchema().getTableNames();
-        assertEquals("[developer, product]", Arrays.toString(tableNames));
+        assertEquals("[information_schema, developers.mdb]", dataContext.getSchemaNames().toString());
+        final List<String> tableNames = dataContext.getDefaultSchema().getTableNames();
+        assertEquals("[developer, product]", tableNames.toString());
     }
 }

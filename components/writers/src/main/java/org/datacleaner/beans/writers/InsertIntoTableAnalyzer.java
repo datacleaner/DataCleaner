@@ -239,7 +239,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
             // nothing to worry about, we will create the table ourselves
             return;
         }
-        final Table table = schema.getTables()[0];
+        final Table table = schema.getTable(0);
 
         // verify that table names correspond to what we need!
 
@@ -437,7 +437,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
         } else {
             logger.warn("Error occurred while inserting record. Writing to error stream", e);
             _errorDataContext.executeUpdate(cb -> {
-                RowInsertionBuilder insertBuilder = cb.insertInto(_errorDataContext.getDefaultSchema().getTables()[0]);
+                RowInsertionBuilder insertBuilder = cb.insertInto(_errorDataContext.getDefaultSchema().getTable(0));
                 for (int i = 0; i < columnNames.length; i++) {
                     insertBuilder = insertBuilder.value(columnNames[i], rowData[i]);
                 }

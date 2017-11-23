@@ -231,20 +231,11 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
     }
 
     /**
-     * @deprecated use {@link #renderInternal(CrosstabResult)} instead.
-     */
-    @Deprecated
-    protected CrosstabPanel renderInternal(final R result, final boolean allowAnimations) {
-        return renderInternal(result);
-    }
-
-    /**
      * Alternative render method, provided to have a more precise return type
      * (while still allowing this class to be extended and only have a
      * {@link JComponent} return type.
      *
      * @param result
-     * @param allowAnimations
      * @return
      */
     protected CrosstabPanel renderInternal(final R result) {

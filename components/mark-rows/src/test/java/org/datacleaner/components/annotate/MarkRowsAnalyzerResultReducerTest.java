@@ -39,7 +39,7 @@ public class MarkRowsAnalyzerResultReducerTest {
 
     @Test
     public void testReduceNone() throws Exception {
-        final MarkRowsAnalyzerResult result = reducer.reduce(Collections.<MarkRowsAnalyzerResult> emptyList());
+        final MarkRowsAnalyzerResult result = reducer.reduce(Collections.emptyList());
         assertEquals(0, result.getTotalRowCount());
         assertTrue(result.getSampleRows().isEmpty());
     }

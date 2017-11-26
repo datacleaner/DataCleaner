@@ -36,8 +36,10 @@ import com.google.common.base.Strings;
 
 @Named("Mark rows")
 @Concurrent(true)
-@Description("Allows the user to mark records with a given description, label, tag or annotation. Each record will be collected and counted, but not written to any external store.\n"
-        + "This analyzer is particularly useful in combination with other transformations and filtering components - unlocking scenarios where complicated validation logic can be implemented and measured.")
+@Description("Allows the user to mark records with a given description, label, tag or annotation. "
+        + "Each record will be collected and counted, but not written to any external store.\n"
+        + "This analyzer is particularly useful in combination with other transformations and filtering "
+        + "components - unlocking scenarios where complicated validation logic can be implemented " + "and measured.")
 public class MarkRowsAnalyzer implements Analyzer<MarkRowsAnalyzerResult>, HasLabelAdvice {
 
     @Configured

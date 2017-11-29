@@ -18,6 +18,7 @@
 		<module>uniqueness</module>
 		<module>referential-integrity</module>
 		<module>json</module>
+		<module>mark-rows</module>
 		<module>standardizers</module>
 		<module>pattern-finder</module>
 		<module>fill-pattern</module>

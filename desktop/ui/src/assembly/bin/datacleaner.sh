@@ -21,4 +21,4 @@ if $macos; then
 fi
 echo "Using DATACLEANER_JAVA_OPTS: $DATACLEANER_JAVA_OPTS"
 
-exec java $DATACLEANER_JAVA_OPTS -jar $DATACLEANER_LIB_HOME/DataCleaner.jar
+exec java $DATACLEANER_JAVA_OPTS -jar $DATACLEANER_LIB_HOME/DataCleaner.jar $@

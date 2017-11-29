@@ -74,6 +74,7 @@ public class QueryWindow extends AbstractWindow {
         super(windowContext);
         _datastore = datastore;
         _queryTextArea = new RSyntaxTextArea(5, 17);
+        _queryTextArea.setFont(WidgetUtils.FONT_MONOSPACE);
         _queryTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_SQL);
         _queryTextArea.setText(query);
 

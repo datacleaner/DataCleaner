@@ -148,7 +148,7 @@ public class WelcomePanel extends DCSplashPanel {
                         WidgetFactory.createDefaultButton("Visit the discussion forum", "images/menu/forum.png");
                 discussionForumButton
                         .setToolTipText("Visit the online discussion forum for questions and answers in the community");
-                final OpenBrowserAction forumActionListener = new OpenBrowserAction("https://datacleaner.org/forum");
+                final OpenBrowserAction forumActionListener = new OpenBrowserAction("https://datacleaner.github.io/discuss");
                 discussionForumButton.addActionListener(forumActionListener);
 
                 final JButton twitterButton = WidgetFactory.createDefaultButton(null, "images/menu/twitter.png");

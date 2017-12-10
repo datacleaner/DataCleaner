@@ -60,7 +60,7 @@ public final class RegexStringPatternDialog extends AbstractDialog {
     private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
     private static final Icon ICON_SUCCESS =
             imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
-    final JButton _saveButton;
+    private final JButton _saveButton;
     private final MutableReferenceDataCatalog _catalog;
     private final JXTextField _expressionField;
     private final JXTextField _expressionNameField;

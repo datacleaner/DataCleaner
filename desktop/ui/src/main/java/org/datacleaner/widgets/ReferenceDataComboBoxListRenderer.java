@@ -35,7 +35,6 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 
@@ -79,8 +78,6 @@ public class ReferenceDataComboBoxListRenderer extends DCListCellRenderer {
                     iconPath = IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH;
                 } else if (value instanceof RegexStringPattern) {
                     iconPath = IconUtils.STRING_PATTERN_REGEX_IMAGEPATH;
-                } else if (value instanceof RegexSwapStringPattern) {
-                    iconPath = IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH;
                 }
             }
 

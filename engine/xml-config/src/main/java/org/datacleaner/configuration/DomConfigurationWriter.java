@@ -53,9 +53,6 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.reference.regexswap.Category;
-import org.datacleaner.reference.regexswap.Regex;
-import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
@@ -411,8 +408,6 @@ public class DomConfigurationWriter {
             elem = toElement((SimpleStringPattern) sp);
         } else if (sp instanceof RegexStringPattern) {
             elem = toElement((RegexStringPattern) sp);
-        } else if (sp instanceof RegexSwapStringPattern) {
-            elem = toElement((RegexSwapStringPattern) sp);
         } else {
             throw new UnsupportedOperationException("Non-supported string pattern: " + sp);
         }
@@ -436,38 +431,6 @@ public class DomConfigurationWriter {
         appendElement(elem, "match-entire-string", sp.isMatchEntireString());
 
         return elem;
-    }
-
-    private Element toElement(final RegexSwapStringPattern regexSwapStringPattern) {
-        final Element patternElement = getDocument().createElement("regex-swap-pattern");
-        final Regex regex = regexSwapStringPattern.getRegex();
-        patternElement.setAttribute("name", regex.getName());
-        patternElement.setAttribute("description", regex.getDescription());
-        appendElement(patternElement, "expression", regex.getExpression());
-        appendElement(patternElement, "author", regex.getAuthor());
-        appendElement(patternElement, "detailsUrl", regex.getDetailsUrl());
-        appendElement(patternElement, "negativeVotes", regex.getNegativeVotes());
-        appendElement(patternElement, "positiveVotes", regex.getPositiveVotes());
-        appendElement(patternElement, "timestamp", regex.getTimestamp());
-        appendElement(patternElement, "categories", getCSVCategoryList(regex.getCategories()));
-
-        return patternElement;
-    }
-
-    private String getCSVCategoryList(final List<Category> categories) {
-        if (categories == null || categories.size() <= 0) {
-            return "";
-        }
-
-        final StringBuilder builder = new StringBuilder();
-
-        for (final Category category : categories) {
-            builder.append(category.getName()).append(",");
-        }
-
-        final String csvList = builder.toString();
-
-        return csvList.substring(0, csvList.length() - 1); // remove last comma
     }
 
     private Element toElement(final SimpleStringPattern sp) {

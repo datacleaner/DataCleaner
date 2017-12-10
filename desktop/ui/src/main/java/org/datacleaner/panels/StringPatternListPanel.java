@@ -35,8 +35,6 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.StringPattern;
-import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
-import org.datacleaner.regexswap.RegexSwapDialog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.ReferenceDataChangeListener;
 import org.datacleaner.user.UserPreferences;
@@ -100,9 +98,7 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
             return stringPattern.getDescription();
         }
         final String description;
-        if (stringPattern instanceof RegexSwapStringPattern) {
-            description = ((RegexSwapStringPattern) stringPattern).getRegex().getExpression();
-        } else if (stringPattern instanceof RegexStringPattern) {
+        if (stringPattern instanceof RegexStringPattern) {
             description = ((RegexStringPattern) stringPattern).getExpression();
         } else if (stringPattern instanceof SimpleStringPattern) {
             description = ((SimpleStringPattern) stringPattern).getExpression();
@@ -132,18 +128,13 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
         regexStringPatternButton
                 .addActionListener(e -> new RegexStringPatternDialog(_catalog, _windowContext).setVisible(true));
 
-        final JButton regexSwapStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH,
-                "<html><b>Browse the RegexSwap</b><br/>Download patterns from DataCleaner's online RegexSwap.</html>");
-        regexSwapStringPatternButton.addActionListener(
-                e -> new RegexSwapDialog(_catalog, _windowContext, _userPreferences).setVisible(true));
-
         final HelpIcon helpIcon = new HelpIcon("<b>String patterns</b><br>String pattern provides a way to match "
                 + "string values against patterns. This is often useful for validation or categorization of "
                 + "values in semi- or unstructured columns.");
 
         final DCPanel panel =
-                DCPanel.flow(simpleStringPatternButton, regexStringPatternButton, regexSwapStringPatternButton,
-                        Box.createHorizontalStrut(100), helpIcon);
+                DCPanel.flow(simpleStringPatternButton, regexStringPatternButton, Box.createHorizontalStrut(100), 
+                        helpIcon);
         panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
         return panel;
     }

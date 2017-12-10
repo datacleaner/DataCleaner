@@ -111,9 +111,6 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.reference.regexswap.Category;
-import org.datacleaner.reference.regexswap.Regex;
-import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
 import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
 import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
@@ -659,7 +656,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
             final StringPatterns stringPatternTypes = referenceDataCatalog.getStringPatterns();
             if (stringPatternTypes != null) {
-                for (final Object obj : stringPatternTypes.getRegexPatternOrRegexSwapPatternOrSimplePattern()) {
+                for (final Object obj : stringPatternTypes.getRegexPatternOrSimplePattern()) {
                     if (obj instanceof RegexPatternType) {
                         final RegexPatternType regexPatternType = (RegexPatternType) obj;
 
@@ -675,30 +672,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         sp.setDescription(regexPatternType.getDescription());
                         stringPatterns.add(sp);
 
-                        removeVariablePath();
-                    } else if (obj instanceof RegexSwapPatternType) {
-                        final RegexSwapPatternType regexSwapPatternType = (RegexSwapPatternType) obj;
-                        final String name = regexSwapPatternType.getName();
-                        checkName(name, StringPattern.class, stringPatterns);
-
-                        final String categories = getStringVariable("categories", regexSwapPatternType.getCategories());
-                        final List<Category> categoryList = new ArrayList<>();
-
-                        for (final String categoryName : categories.split(",")) {
-                            categoryList.add(new Category(categoryName, "", ""));
-                        }
-
-                        addVariablePath(name);
-                        final Regex regex = new Regex(getStringVariable("name", regexSwapPatternType.getName()),
-                                getStringVariable("description", regexSwapPatternType.getDescription()),
-                                getStringVariable("expression", regexSwapPatternType.getExpression()),
-                                getStringVariable("author", regexSwapPatternType.getAuthor()),
-                                getLongVariable("timestamp", regexSwapPatternType.getTimestamp()),
-                                getIntegerVariable("positiveVotes", regexSwapPatternType.getPositiveVotes()),
-                                getIntegerVariable("negativeVotes", regexSwapPatternType.getNegativeVotes()),
-                                getStringVariable("detailsUrl", regexSwapPatternType.getDetailsUrl()), categoryList);
-                        final RegexSwapStringPattern sp = new RegexSwapStringPattern(regex);
-                        stringPatterns.add(sp);
                         removeVariablePath();
                     } else if (obj instanceof SimplePatternType) {
                         final SimplePatternType simplePatternType = (SimplePatternType) obj;

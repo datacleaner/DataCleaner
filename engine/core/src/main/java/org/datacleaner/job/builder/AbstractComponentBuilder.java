@@ -1045,7 +1045,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
         if (jobBuilder != null) {
             // notify job builder of removed source columns
-            for (final Column column : existingTable.getColumns()) {
+            final List<Column> currentColumns = new ArrayList<>(existingTable.getColumns());
+			for (final Column column : currentColumns) {
                 jobBuilder.removeSourceColumn(column);
             }
             // notify the job builder of added source columns

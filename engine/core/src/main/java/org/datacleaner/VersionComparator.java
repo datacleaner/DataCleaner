@@ -30,6 +30,10 @@ import java.util.Comparator;
  */
 public class VersionComparator implements Comparator<String> {
 
+    public boolean isComparable(String str) {
+        return str.matches("\\d+\\.\\d+(\\.\\d+)?(\\-[A-Z0-9]+)?");
+    }
+    
     @Override
     public int compare(final String o1, final String o2) {
         final String[] o1Split = o1.split("\\.");

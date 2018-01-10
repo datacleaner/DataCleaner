@@ -117,7 +117,7 @@ public class CommunityEditionStatusLabel extends JLabel {
                 } catch (Exception e) {
                     logger.warn("Failed to retrieve and compare latest version: {}", e.getMessage());
                 }
-            };
+            }
         }.execute();
     }
 

@@ -20,6 +20,7 @@
 package org.datacleaner.widgets;
 
 import java.awt.Cursor;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Map;
@@ -36,11 +37,11 @@ import org.apache.http.util.EntityUtils;
 import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.Version;
 import org.datacleaner.VersionComparator;
+import org.datacleaner.actions.OpenDataCleanerWebsiteActionListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.ws.NaiveHostnameVerifier;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,7 @@ public class CommunityEditionStatusLabel extends JLabel {
             @Override
             protected String doInBackground() throws Exception {
                 final HttpUriRequest req =
-                        RequestBuilder.get("https://datacleaner.github.io/meta/versions.json").build();
+                        RequestBuilder.get(OpenDataCleanerWebsiteActionListener.createUrl("/meta/versions.json")).build();
 
                 final CloseableHttpClient client = HttpClients.custom()
                         // because the HTTPS cert for datacleaner.github.io is registered for github.com, the hostname
@@ -122,12 +123,12 @@ public class CommunityEditionStatusLabel extends JLabel {
     }
 
     protected void onMouseClick() {
-        final OpenBrowserAction openBrowserAction;
+        final ActionListener action;
         if (_updateAvailable) {
-            openBrowserAction = new OpenBrowserAction("https://datacleaner.github.io/downloads");
+            action = new OpenDataCleanerWebsiteActionListener("/downloads");
         } else {
-            openBrowserAction = new OpenBrowserAction("https://datacleaner.github.io");
+            action = new OpenDataCleanerWebsiteActionListener();
         }
-        openBrowserAction.actionPerformed(null);
+        action.actionPerformed(null);
     }
 }

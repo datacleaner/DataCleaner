@@ -20,6 +20,8 @@
 package org.datacleaner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +31,21 @@ import java.util.List;
 import org.junit.Test;
 
 public class VersionComparatorTest {
+    
+    @Test
+    public void testIsComparable() {
+        final VersionComparator comparator = new VersionComparator();
+        assertTrue(comparator.isComparable("1.2.3"));
+        assertTrue(comparator.isComparable("423423.43252.3432"));
+        assertTrue(comparator.isComparable("1.2"));
+        assertTrue(comparator.isComparable("1.2.3-FOO"));
+        assertTrue(comparator.isComparable("311.242-FOO"));
+        assertTrue(comparator.isComparable("5.2-RC1"));
+        
+        assertFalse(comparator.isComparable("UNKNOWN"));
+        assertFalse(comparator.isComparable("a.b.c"));
+        assertFalse(comparator.isComparable("5.2RC1"));
+    }
 
     @Test
     public void testSameMajors() {

@@ -798,7 +798,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         final RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
 
         if (Version.isCommunityEdition()) {
-            final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel(rightInformationPanel);
+            final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel();
             statusBar.add(statusLabel);
             statusBar.add(Box.createHorizontalStrut(20));
         } else {

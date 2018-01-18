@@ -96,7 +96,10 @@ public class Version {
     }
 
     private static String determineVersion() {
-        return determineVersionFromMavenProperties("org.eobjects.datacleaner", "DataCleaner-api", UNKNOWN_VERSION);
+        final String version =
+                determineVersionFromMavenProperties("org.eobjects.datacleaner", "DataCleaner-api", UNKNOWN_VERSION);
+        // allow overriding version for testing
+        return SystemProperties.getString("org.datacleaner.version.override", version);
     }
 
     private static String determineVersionFromMavenProperties(final String groupId, final String artifactId,

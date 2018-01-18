@@ -41,6 +41,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.datacleaner.Version;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.actions.OpenDataCleanerWebsiteActionListener;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -148,7 +149,8 @@ public class WelcomePanel extends DCSplashPanel {
                         WidgetFactory.createDefaultButton("Visit the discussion forum", "images/menu/forum.png");
                 discussionForumButton
                         .setToolTipText("Visit the online discussion forum for questions and answers in the community");
-                final OpenBrowserAction forumActionListener = new OpenBrowserAction("https://datacleaner.github.io/discuss");
+                final OpenDataCleanerWebsiteActionListener forumActionListener =
+                        new OpenDataCleanerWebsiteActionListener("/discuss");
                 discussionForumButton.addActionListener(forumActionListener);
 
                 final JButton twitterButton = WidgetFactory.createDefaultButton(null, "images/menu/twitter.png");

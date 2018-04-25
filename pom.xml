@@ -24,10 +24,10 @@
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
+		<scala.version>2.11.12</scala.version>
 		
 		<!-- TODO: The following (inter-dependent) dependencies are due for upgrades before Java 11 -->
-		<jersey.version>1.19</jersey.version>
-		<scala.version>2.11.4</scala.version>
+		<jersey.version>1.19.4</jersey.version>
 		<hadoop.version>2.7.1</hadoop.version>
 		<spark.version>1.6.1</spark.version>
 		<guava.version>16.0.1</guava.version>

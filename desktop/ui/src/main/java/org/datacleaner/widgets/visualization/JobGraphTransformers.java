@@ -59,8 +59,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
- * Collection of {@link Function} (and {@link Predicate} and so on) instances
- * to use in the {@link JobGraph}.
+ * Collection of {@link Function} (and {@link Predicate} and so on) instances to use in the {@link JobGraph}.
  */
 public class JobGraphTransformers {
 
@@ -71,14 +70,14 @@ public class JobGraphTransformers {
     public static final String EDGE_STYLE_NAME_STRAIGHT = "straight";
     public static final String EDGE_STYLE_NAME_CURVED = "curved";
     public static final String EDGE_STYLE_NAME_ORTOGHONAL = "orthogonal";
-    
+
     public static final Predicate<Context<Graph<Object, JobGraphLink>, JobGraphLink>> EDGE_ARROW_PREDICATE =
-    		(c -> true);
+            (c -> true);
     public static final Function<JobGraphLink, String> EDGE_LABEL_TRANSFORMER = JobGraphLink::getLinkLabel;
     public static final Function<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> EDGE_ARROW_TRANSFORMER =
             input -> GraphUtils.ARROW_SHAPE;
-    public static final Function<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Number>
-            EDGE_LABEL_CLOSENESS_TRANSFORMER = input -> 0.4d;
+    public static final Function<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Number> EDGE_LABEL_CLOSENESS_TRANSFORMER =
+            input -> 0.4d;
     public static final Function<Object, String> VERTEX_LABEL_TRANSFORMER = obj -> {
         if (obj instanceof InputColumn) {
             return ((InputColumn<?>) obj).getName();
@@ -142,8 +141,9 @@ public class JobGraphTransformers {
     private final Font _normalFont;
     private final Font _boldFont;
 
-    public JobGraphTransformers(DirectedGraph<Object, JobGraphLink> graph, final UserPreferences userPreferences, final Set<Object> highlighedVertexes) {
-    	_graph = graph;
+    public JobGraphTransformers(DirectedGraph<Object, JobGraphLink> graph, final UserPreferences userPreferences,
+            final Set<Object> highlighedVertexes) {
+        _graph = graph;
         _userPreferences = userPreferences;
         _highlighedVertexes = highlighedVertexes;
 
@@ -169,8 +169,7 @@ public class JobGraphTransformers {
 
     public Function<? super JobGraphLink, Shape> getEdgeShapeTransformer() {
         final String edgeStyle = _userPreferences.getAdditionalProperties().get(USER_PREFERENCES_PROPERTY_EDGE_STYLE);
-        final Function<? super JobGraphLink, Shape> baseTransformer =
-                getBaseEdgeShapeTransformer(edgeStyle);
+        final Function<? super JobGraphLink, Shape> baseTransformer = getBaseEdgeShapeTransformer(edgeStyle);
 
         return input -> {
             final Shape result = baseTransformer.apply(input);
@@ -178,7 +177,7 @@ public class JobGraphTransformers {
                 // make a double link (actually a wedge, but close
                 // enough) to show that there are more than one filter
                 // outcome coming from this source
-            	return EdgeShape.wedge(_graph, 10).apply(input);
+                return EdgeShape.wedge(_graph, 10).apply(input);
             }
             return result;
         };
@@ -196,8 +195,7 @@ public class JobGraphTransformers {
         return false;
     }
 
-    private Function<? super JobGraphLink, Shape> getBaseEdgeShapeTransformer(
-            final String edgeStyle) {
+    private Function<? super JobGraphLink, Shape> getBaseEdgeShapeTransformer(final String edgeStyle) {
         if (edgeStyle == null) {
             return EdgeShape.quadCurve(_graph);
         }

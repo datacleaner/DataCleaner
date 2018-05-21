@@ -51,11 +51,11 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin
         _linkPainter = linkPainter;
         cursor = Cursor.getDefaultCursor();
     }
-    
+
     @Override
     public boolean checkModifiers(MouseEvent e) {
-    	// overrides the parent's call to deprecated e.getModifiers() method 
-    	return e.getModifiersEx() == modifiers;
+        // overrides the parent's call to deprecated e.getModifiers() method
+        return e.getModifiersEx() == modifiers;
     }
 
     @Override

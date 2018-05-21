@@ -457,7 +457,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         if (displayName.contains(searchTerm)) {
             return true;
         }
-        
+
         final String description = normalizeStringForMatching(componentDescriptor.getDescription());
         if (description.contains(searchTerm)) {
             return true;

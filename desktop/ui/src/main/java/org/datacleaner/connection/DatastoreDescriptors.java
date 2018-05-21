@@ -276,7 +276,7 @@ public class DatastoreDescriptors {
         }
 
         // composite datastore
-        if (!alreadyAddedDatabaseNames.contains(COMPOSITE_DATASTORE_DESCRIPTOR)) {
+        if (!alreadyAddedDatabaseNames.contains(COMPOSITE_DATASTORE_DESCRIPTOR.getName())) {
             datastoreDescriptors.add(COMPOSITE_DATASTORE_DESCRIPTOR);
         }
 

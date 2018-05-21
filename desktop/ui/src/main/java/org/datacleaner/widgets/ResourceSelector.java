@@ -82,11 +82,11 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
 
         setScheme("file");
 
-		setLayout(new GridBagLayout());
-		WidgetUtils.addToGridBag(_resourceTypeComboBox, this, 0, 0, 0.2d, 1d);
-		for (final ResourceTypePresenter<?> presenter : getResourceTypePresenters()) {
-			WidgetUtils.addToGridBag(presenter.getWidget(), this, 1, 0, 0.8d, 1d);
-		}
+        setLayout(new GridBagLayout());
+        WidgetUtils.addToGridBag(_resourceTypeComboBox, this, 0, 0, 0.2d, 1d);
+        for (final ResourceTypePresenter<?> presenter : getResourceTypePresenters()) {
+            WidgetUtils.addToGridBag(presenter.getWidget(), this, 1, 0, 0.8d, 1d);
+        }
     }
 
     protected ResourceTypePresenter<?> createResourceTypePresenter(final String scheme,

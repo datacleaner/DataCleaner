@@ -33,8 +33,8 @@ public class SortedDefaultMutableTreeModel extends DefaultMutableTreeNode {
     private static final long serialVersionUID = 1L;
 
     private static final Comparator<? super TreeNode> comp = (o1, o2) -> {
-    	final DefaultMutableTreeNode node1 = (DefaultMutableTreeNode) o1;
-    	final DefaultMutableTreeNode node2 = (DefaultMutableTreeNode) o2;
+        final DefaultMutableTreeNode node1 = (DefaultMutableTreeNode) o1;
+        final DefaultMutableTreeNode node2 = (DefaultMutableTreeNode) o2;
         final ComponentDescriptor<?> descriptor1 = (ComponentDescriptor<?>) node1.getUserObject();
         final ComponentDescriptor<?> descriptor2 = (ComponentDescriptor<?>) node2.getUserObject();
         return descriptor1.getDisplayName().compareTo(descriptor2.getDisplayName());
@@ -44,7 +44,6 @@ public class SortedDefaultMutableTreeModel extends DefaultMutableTreeNode {
         super(object);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void insert(final MutableTreeNode newChild, final int childIndex) {
         super.insert(newChild, childIndex);

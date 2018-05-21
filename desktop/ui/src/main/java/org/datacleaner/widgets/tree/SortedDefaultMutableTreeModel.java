@@ -24,6 +24,7 @@ import java.util.Comparator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
 
@@ -31,9 +32,11 @@ public class SortedDefaultMutableTreeModel extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Comparator<DefaultMutableTreeNode> comp = (o1, o2) -> {
-        final ComponentDescriptor<?> descriptor1 = (ComponentDescriptor<?>) o1.getUserObject();
-        final ComponentDescriptor<?> descriptor2 = (ComponentDescriptor<?>) o2.getUserObject();
+    private static final Comparator<? super TreeNode> comp = (o1, o2) -> {
+    	final DefaultMutableTreeNode node1 = (DefaultMutableTreeNode) o1;
+    	final DefaultMutableTreeNode node2 = (DefaultMutableTreeNode) o2;
+        final ComponentDescriptor<?> descriptor1 = (ComponentDescriptor<?>) node1.getUserObject();
+        final ComponentDescriptor<?> descriptor2 = (ComponentDescriptor<?>) node2.getUserObject();
         return descriptor1.getDisplayName().compareTo(descriptor2.getDisplayName());
     };
 

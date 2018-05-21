@@ -19,14 +19,13 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 
@@ -35,6 +34,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceStructure;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
@@ -82,12 +82,11 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
 
         setScheme("file");
 
-        setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 0));
-        add(_resourceTypeComboBox);
-        add(Box.createHorizontalStrut(4));
-        for (final ResourceTypePresenter<?> presenter : getResourceTypePresenters()) {
-            add(presenter.getWidget());
-        }
+		setLayout(new GridBagLayout());
+		WidgetUtils.addToGridBag(_resourceTypeComboBox, this, 0, 0, 0.2d, 1d);
+		for (final ResourceTypePresenter<?> presenter : getResourceTypePresenters()) {
+			WidgetUtils.addToGridBag(presenter.getWidget(), this, 1, 0, 0.8d, 1d);
+		}
     }
 
     protected ResourceTypePresenter<?> createResourceTypePresenter(final String scheme,

@@ -458,6 +458,11 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             return true;
         }
 
+        final String description = normalizeStringForMatching(componentDescriptor.getDescription());
+        if (description.contains(searchTerm)) {
+            return true;
+        }
+
         final String[] aliases = componentDescriptor.getAliases();
         for (String alias : aliases) {
             alias = normalizeStringForMatching(alias);

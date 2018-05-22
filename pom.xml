@@ -24,6 +24,7 @@
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<scala.version>2.11.12</scala.version>
+		<jung.version>2.1.1</jung.version>
 		
 		<!-- TODO: The following (inter-dependent) dependencies are due for upgrades before Java 11 -->
 		<jersey.version>1.19.4</jersey.version>
@@ -1207,6 +1208,27 @@
 				<groupId>com.ibm.icu</groupId>
 				<artifactId>icu4j</artifactId>
 				<version>${icu4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-visualization</artifactId>
+				<version>${jung.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-graph-impl</artifactId>
+				<version>${jung.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jung</groupId>
+				<artifactId>jung-io</artifactId>
+				<version>${jung.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>stax</groupId>
+						<artifactId>stax-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang</groupId>

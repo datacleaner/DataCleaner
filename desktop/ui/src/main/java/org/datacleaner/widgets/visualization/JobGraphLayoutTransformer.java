@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections15.Transformer;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -41,6 +40,7 @@ import org.datacleaner.util.IconUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
 import edu.uci.ics.jung.graph.DirectedGraph;
@@ -48,7 +48,7 @@ import edu.uci.ics.jung.graph.DirectedGraph;
 /**
  * Transformer that makes 2D points for each vertex in the graph.
  */
-public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
+public class JobGraphLayoutTransformer implements Function<Object, Point2D> {
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLayoutTransformer.class);
     private static final int X_STEP = 160;
@@ -204,9 +204,9 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         }
         return new Point(x * X_STEP + X_OFFSET, y * Y_STEP + Y_OFFSET);
     }
-
+    
     @Override
-    public Point2D transform(final Object vertex) {
+    public Point2D apply(final Object vertex) {
         Point point = _points.get(vertex);
         if (point == null) {
             logger.warn("Vertex {} has no assigned coordinate!", vertex);

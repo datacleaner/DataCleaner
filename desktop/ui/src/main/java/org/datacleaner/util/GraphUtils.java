@@ -25,8 +25,9 @@ import java.awt.Shape;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
-import org.apache.commons.collections15.Transformer;
 import org.apache.metamodel.util.HasName;
+
+import com.google.common.base.Function;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -71,7 +72,7 @@ public class GraphUtils {
         visualizationViewer.setGraphMouse(graphMouse);
     }
 
-    private static <E> Transformer<E, Font> createFontTransformer() {
+    private static <E> Function<E, Font> createFontTransformer() {
         return input -> {
             final Font defaultFont = WidgetUtils.FONT_SMALL;
             if (input == null) {

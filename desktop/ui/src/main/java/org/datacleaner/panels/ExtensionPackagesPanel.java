@@ -22,6 +22,7 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.io.File;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.swing.Box;
@@ -49,8 +50,6 @@ import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import cern.colt.Arrays;
 
 /**
  * Panel for configuring extension packages.

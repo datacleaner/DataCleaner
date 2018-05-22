@@ -46,10 +46,16 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin
     private final JobGraphContext _graphContext;
 
     public JobGraphLinkPainterMousePlugin(final JobGraphLinkPainter linkPainter, final JobGraphContext graphContext) {
-        super(MouseEvent.BUTTON1_MASK + MouseEvent.SHIFT_MASK);
+        super(MouseEvent.BUTTON1_DOWN_MASK + MouseEvent.SHIFT_DOWN_MASK);
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         cursor = Cursor.getDefaultCursor();
+    }
+
+    @Override
+    public boolean checkModifiers(MouseEvent e) {
+        // overrides the parent's call to deprecated e.getModifiers() method
+        return e.getModifiersEx() == modifiers;
     }
 
     @Override

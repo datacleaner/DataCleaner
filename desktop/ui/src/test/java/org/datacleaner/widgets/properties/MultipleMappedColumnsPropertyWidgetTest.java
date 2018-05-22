@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets.properties;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +39,6 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.SourceColumnComboBox;
 
-import cern.colt.Arrays;
 import junit.framework.TestCase;
 
 public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {

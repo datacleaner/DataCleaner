@@ -66,9 +66,7 @@ public class JobGraphPreferencesPanel extends DCPanel {
         add(createLineStyleButton("images/menu/edge-straight.png", JobGraphTransformers.EDGE_STYLE_NAME_STRAIGHT));
         add(createLineStyleButton("images/menu/edge-curved.png", JobGraphTransformers.EDGE_STYLE_NAME_CURVED));
 
-        // the orthogonal line style does not work well enough for inclusion
-        // yet.
-
+        // the orthogonal line style does not work well enough for inclusion yet.
         // add(createLineStyleButton("images/menu/edge-orthogonal.png",
         // JobGraphTransformers.EDGE_STYLE_NAME_ORTOGHONAL));
 

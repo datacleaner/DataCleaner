@@ -19,13 +19,14 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 
@@ -40,8 +41,7 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceStructure;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
 /**
- * A widget which allows the user to select/enter a {@link Resource} to use for
- * some file-like operation.
+ * A widget which allows the user to select/enter a {@link Resource} to use for some file-like operation.
  */
 public class ResourceSelector extends DCPanel implements ResourceTypePresenter<Resource> {
     private static final long serialVersionUID = 1L;
@@ -82,10 +82,11 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
 
         setScheme("file");
 
-        setLayout(new GridBagLayout());
-        WidgetUtils.addToGridBag(_resourceTypeComboBox, this, 0, 0, 0.2d, 1d);
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(_resourceTypeComboBox);
+        add(Box.createHorizontalStrut(WidgetUtils.DEFAULT_PADDING));
         for (final ResourceTypePresenter<?> presenter : getResourceTypePresenters()) {
-            WidgetUtils.addToGridBag(presenter.getWidget(), this, 1, 0, 0.8d, 1d);
+            add(presenter.getWidget());
         }
     }
 

@@ -19,10 +19,11 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -52,9 +53,10 @@ public abstract class AbstractResourceTextField<R extends Resource> extends DCPa
     protected int _fileSelectionMode = JFileChooser.FILES_ONLY;
 
     public AbstractResourceTextField() {
-        setLayout(new GridBagLayout());
-        WidgetUtils.addToGridBag(_textField, this, 0, 0, 0.75d, 1d);
-        WidgetUtils.addToGridBag(_browseButton, this, 1, 0, 0.25d, 1d);
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(_textField);
+        add(Box.createHorizontalStrut(WidgetUtils.DEFAULT_PADDING));
+        add(_browseButton);
 
         _textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override

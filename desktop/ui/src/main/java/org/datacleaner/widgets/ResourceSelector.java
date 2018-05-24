@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 
@@ -35,13 +35,13 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceStructure;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
 /**
- * A widget which allows the user to select/enter a {@link Resource} to use for
- * some file-like operation.
+ * A widget which allows the user to select/enter a {@link Resource} to use for some file-like operation.
  */
 public class ResourceSelector extends DCPanel implements ResourceTypePresenter<Resource> {
     private static final long serialVersionUID = 1L;
@@ -82,9 +82,9 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
 
         setScheme("file");
 
-        setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 0));
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         add(_resourceTypeComboBox);
-        add(Box.createHorizontalStrut(4));
+        add(Box.createHorizontalStrut(WidgetUtils.DEFAULT_PADDING));
         for (final ResourceTypePresenter<?> presenter : getResourceTypePresenters()) {
             add(presenter.getWidget());
         }

@@ -39,6 +39,7 @@ import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.JsonDatastoreDialog;
+import org.datacleaner.windows.KafkaDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.Neo4jDatastoreDialog;
 import org.datacleaner.windows.SalesforceDatastoreDialog;
@@ -97,6 +98,10 @@ public class DatastoreDescriptors {
     private static final DatastoreDescriptor COUCHDB_DATASTORE_DESCRIPTOR =
             new DatastoreDescriptorImpl("CouchDB database", "Connect to an Apache CouchDB database",
                     CouchDbDatastore.class, CouchDbDatastoreDialog.class, IconUtils.COUCHDB_IMAGEPATH, true);
+    
+    private static final DatastoreDescriptor KAFKA_DATASTORE_DESCRIPTOR =
+            new DatastoreDescriptorImpl("Kafka stream", "Connect to an Apache Kafka stream",
+                    KafkaDatastore.class, KafkaDatastoreDialog.class, IconUtils.KAFKA_IMAGEPATH, true);
 
     private static final DatastoreDescriptor ELASTICSEARCH_DATASTORE_DESCRIPTOR =
             new DatastoreDescriptorImpl("ElasticSearch index", "Connect to an ElasticSearch index",
@@ -201,6 +206,7 @@ public class DatastoreDescriptors {
         availableCloudBasedDatabaseDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
+        availableCloudBasedDatabaseDescriptors.add(KAFKA_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(NEO4J_DATASTORE_DESCRIPTOR);
 
         return availableCloudBasedDatabaseDescriptors;
@@ -221,6 +227,7 @@ public class DatastoreDescriptors {
         datastoreDescriptors.add(SUGARCRM_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(KAFKA_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(ELASTICSEARCH_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(HBASE_DATASTORE_DESCRIPTOR);

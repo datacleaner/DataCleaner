@@ -35,7 +35,7 @@ public class KafkaDatastore extends UsageAwareDatastore<KafkaDataContext<?, ?>> 
     private static final long serialVersionUID = 1L;
 
     // present type as enum to make selection easy with combo box for user
-    public static enum KeyValueType implements HasName {
+    public enum KeyValueType implements HasName {
         
         STRING("String", String.class),
         BYTE_ARRAY("Byte array", byte[].class),

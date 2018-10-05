@@ -141,7 +141,8 @@ public class KafkaDatastoreDialog extends AbstractDatastoreDialog<KafkaDatastore
     protected KafkaDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String bootstrapServers = _bootstrapServersTextField.getText();
-        final Collection<String> topics = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(_topicsTextField.getText());
+        final String topicsText = _topicsTextField.getText();
+        final Collection<String> topics = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(topicsText);
         final KeyValueType keyType = _keyTypeCombo.getSelectedItem();
         final KeyValueType valueType = _valueTypeCombo.getSelectedItem();
         return new KafkaDatastore(name, bootstrapServers, topics, keyType, valueType);

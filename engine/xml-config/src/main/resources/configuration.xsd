@@ -309,6 +309,13 @@
 						</documentation>
 					</annotation>
 				</element>
+				<element name="kafka-datastore" type="ab:kafkaDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on Apache Kafka.
+						</documentation>
+					</annotation>
+				</element>
 				<element name="pojo-datastore" type="ab:pojoDatastoreType">
 					<annotation>
 						<documentation>
@@ -798,6 +805,19 @@
 							</sequence>
 						</complexType>
 					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+		<complexType name="kafkaDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="bootstrap-servers" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="topic" minOccurs="1" maxOccurs="unbounded" type="string" />
+					<element name="key-type" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="value-type" minOccurs="1" maxOccurs="1" type="string" />
 				</sequence>
 			</extension>
 		</complexContent>

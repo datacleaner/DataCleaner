@@ -100,7 +100,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         _cancelButton.addActionListener(e -> AbstractDatastoreDialog.this.close());
 
         if (!DEFAULT_BANNER_IMAGE.equals(getDatastoreIconPath())) {
-            final Image image = imageManager.getImage(getDatastoreIconPath());
+            final Image image = imageManager.getImage(getDatastoreIconPath(), IconUtils.ICON_SIZE_LARGE);
             setBannerImage(image);
         }
 

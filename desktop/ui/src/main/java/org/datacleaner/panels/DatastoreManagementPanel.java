@@ -340,7 +340,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private <D extends Datastore> JButton createNewDatastoreButton(final String title, final String description,
             final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDialog> dialogClass,
             final DCPopupBubble.Position popupPosition) {
-        final ImageIcon icon = imageManager.getImageIcon(imagePath);
+        final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_LARGE);
         final JButton button = WidgetFactory.createImageButton(icon);
 
         final DCPopupBubble popupBubble =

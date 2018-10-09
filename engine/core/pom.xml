@@ -25,6 +25,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-kafka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
 			<artifactId>MetaModel-hbase</artifactId>
 		</dependency>
 		<dependency>

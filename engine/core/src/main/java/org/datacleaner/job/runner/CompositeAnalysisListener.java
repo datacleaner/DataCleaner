@@ -21,6 +21,7 @@ package org.datacleaner.job.runner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentMessage;
@@ -31,15 +32,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link AnalysisListener} that wraps a list of inner listeners. Makes life
- * easier for the invokers of the listeners.
+ * {@link AnalysisListener} that wraps a list of inner listeners. Makes life easier for the invokers of the listeners.
  */
 public final class CompositeAnalysisListener implements AnalysisListener {
+
     private static final Logger logger = LoggerFactory.getLogger(CompositeAnalysisListener.class);
 
     private final List<AnalysisListener> _delegates;
+    private final AtomicBoolean _anythingFailed;
 
     public CompositeAnalysisListener(final AnalysisListener[] delegates) {
+        _anythingFailed = new AtomicBoolean(false);
         _delegates = new ArrayList<>(delegates.length);
         for (final AnalysisListener analysisListener : delegates) {
             addDelegate(analysisListener);
@@ -47,6 +50,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
     }
 
     public CompositeAnalysisListener(final AnalysisListener firstDelegate, final AnalysisListener... delegates) {
+        _anythingFailed = new AtomicBoolean(false);
         _delegates = new ArrayList<>(1 + delegates.length);
         addDelegate(firstDelegate);
         for (final AnalysisListener analysisListener : delegates) {
@@ -67,8 +71,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
     }
 
     /**
-     * Determines if this {@link CompositeAnalysisListener} is empty (i.e. has
-     * no delegates)
+     * Determines if this {@link CompositeAnalysisListener} is empty (i.e. has no delegates)
      *
      * @return
      */
@@ -91,8 +94,20 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.jobBegin(job, metrics);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
+        }
+    }
+
+    private void logFailure(AnalysisListener delegate, Exception e) {
+        final boolean anythingFailedBefore = _anythingFailed.getAndSet(true);
+        if (anythingFailedBefore) {
+            // moderate the logged output by only keeping the exception message
+            logger.warn("Listener {} failed. {}: {}", delegate.getClass().getName(), e.getClass().getSimpleName(),
+                    e.getMessage());
+        } else {
+            logger.warn("Listener {} failed. {}: {}", delegate.getClass().getName(), e.getClass().getSimpleName(),
+                    e.getMessage(), e);
         }
     }
 
@@ -103,7 +118,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.onComponentMessage(job, componentJob, message);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }
@@ -114,7 +129,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.jobSuccess(job, metrics);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }
@@ -125,7 +140,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.rowProcessingBegin(job, metrics);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }
@@ -137,7 +152,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.rowProcessingProgress(job, metrics, row, currentRow);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }
@@ -148,7 +163,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.rowProcessingSuccess(job, metrics);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }
@@ -159,7 +174,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.componentBegin(job, componentJob, metrics);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }
@@ -170,7 +185,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.componentSuccess(job, componentJob, result);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }
@@ -182,7 +197,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.errorInComponent(job, componentJob, row, throwable);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }
@@ -193,7 +208,7 @@ public final class CompositeAnalysisListener implements AnalysisListener {
             try {
                 delegate.errorUnknown(job, throwable);
             } catch (final Exception e) {
-                logger.warn("Listener {} failed", delegate.getClass().getName(), e);
+                logFailure(delegate, e);
             }
         }
     }

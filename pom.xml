@@ -425,6 +425,8 @@
 
 										<!-- org.apache.geronimo.bundles:json is overlapping with org.json:json -->
 										<exclude>org.apache.geronimo.bundles:json:*</exclude>
+										
+										<exclude>com.sun.xml.ws:jaxws-rt:*</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -720,6 +722,10 @@
 					<exclusion>
 						<groupId>org.elasticsearch</groupId>
 						<artifactId>elasticsearch</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.sun.xml.ws</groupId>
+    					<artifactId>jaxws-rt</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

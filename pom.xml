@@ -14,8 +14,8 @@
 		<junit.version>4.12</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.5</httpcomponents.version>
-		<metamodel.version>5.1.1</metamodel.version>
-		<metamodel.extras.version>5.0.0</metamodel.extras.version>
+		<metamodel.version>5.1.2-SNAPSHOT</metamodel.version>
+		<metamodel.extras.version>5.0.1-SNAPSHOT</metamodel.extras.version>
 		<spring.core.version>4.3.16.RELEASE</spring.core.version>
 		<freemarker.version>2.3.28</freemarker.version>
 		<icu4j.version>61.1</icu4j.version>
@@ -25,12 +25,12 @@
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<scala.version>2.11.12</scala.version>
 		<jung.version>2.1.1</jung.version>
+		<guava.version>27.0.1-jre</guava.version>
+		<hadoop.version>3.1.1</hadoop.version>
 		
 		<!-- TODO: The following (inter-dependent) dependencies are due for upgrades before Java 11 -->
 		<jersey.version>1.19.4</jersey.version>
-		<hadoop.version>2.7.1</hadoop.version>
 		<spark.version>1.6.1</spark.version>
-		<guava.version>16.0.1</guava.version>
 		<curator.version>2.6.0</curator.version>
 	</properties>
 	<parent>
@@ -1144,6 +1144,12 @@
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
 				<version>1.9.2</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>commons-pool</groupId>

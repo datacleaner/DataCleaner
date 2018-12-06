@@ -64,8 +64,6 @@
     <descriptor-providers>
         <classpath-scanner>
             <package recursive="true">org.datacleaner</package>
-            <package recursive="true">com.hi</package>
-            <package recursive="true">com.neopost</package>
         </classpath-scanner>
         <remote-components>
             <server>

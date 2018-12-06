@@ -8,8 +8,6 @@
 
 The premier Open Source Data Quality solution.
 
-Powered by Neopost and Human Inference
-
 ## Module structure
 
 The main application modules are:

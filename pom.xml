@@ -366,10 +366,15 @@
 										<exclude>commons-logging:commons-logging</exclude>
 										<exclude>com.google.collections:google-collections</exclude>
 										<exclude>javax.servlet:servlet-api:*:jar:compile</exclude>
+										<exclude>org.eclipse.jetty.orbit:javax.servlet</exclude>
 										
 										<!-- The proper artifact for JSP API is javax.servlet.jsp:javax.servlet.jsp-api, so we're banning the rest -->
 										<exclude>javax.servlet:jsp-api:*</exclude>
 										<exclude>javax.servlet.jsp:jsp-api:*</exclude>
+										<exclude>org.mortbay.jetty:jsp-api-2.1:*</exclude>
+										
+										<!-- The propert artifact for JDO is javax.jdo:jdo-api, so we're banning the rest -->
+										<exclude>org.datanucleaus:javax.jdo</exclude>
 
 										<exclude>org.mortbay.jetty:servlet-api:*:*:compile</exclude>
 										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
@@ -1087,6 +1092,18 @@
 					<exclusion>
 						<groupId>javax.servlet.jsp</groupId>
 						<artifactId>jsp-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>jsp-api-2.1</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.datanucleaus</groupId>
+						<artifactId>javax.jdo</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.eclipse.jetty.orbit</groupId>
+						<artifactId>javax.servlet</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>commons-logging</groupId>

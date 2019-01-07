@@ -366,6 +366,7 @@
 										<exclude>commons-logging:commons-logging</exclude>
 										<exclude>com.google.collections:google-collections</exclude>
 										<exclude>javax.servlet:servlet-api:*:jar:compile</exclude>
+										<exclude>org.glassfish:javax.servlet</exclude>
 										<exclude>org.eclipse.jetty.orbit:javax.servlet</exclude>
 										
 										<!-- The proper artifact for JSP API is javax.servlet.jsp:javax.servlet.jsp-api, so we're banning the rest -->
@@ -921,6 +922,14 @@
 					<exclusion>
 						<groupId>asm</groupId>
 						<artifactId>asm</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.glassfish</groupId>
+						<artifactId>javax.servlet</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.eclipse.jetty.orbit</groupId>
+						<artifactId>javax.servlet</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 
 import edu.uci.ics.jung.graph.DirectedGraph;
 
@@ -233,7 +232,7 @@ public class JobGraphLayoutTransformer implements Function<Object, Point2D> {
     }
 
     private int getAccumulatedPrerequisiteCount(final Object obj) {
-        final Set<JobGraphLink> visitedEdges = Sets.newSetFromMap(new IdentityHashMap<>());
+        final Set<JobGraphLink> visitedEdges = Collections.newSetFromMap(new IdentityHashMap<>());
         return getAccumulatedPrerequisiteCount(obj, visitedEdges);
     }
 

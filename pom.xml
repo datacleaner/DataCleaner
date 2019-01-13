@@ -741,7 +741,7 @@
 					</exclusion>
 					<exclusion>
 						<groupId>com.sun.xml.ws</groupId>
-    					<artifactId>jaxws-rt</artifactId>
+						<artifactId>jaxws-rt</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

@@ -7,7 +7,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Maven plugin versions -->
-		<javadoc.version>3.0.0</javadoc.version>
+		<javadoc.version>3.0.1</javadoc.version>
 
 		<!-- Dependency versions -->
 		<slf4j.version>1.7.25</slf4j.version>
@@ -29,9 +29,8 @@
 		<hadoop.version>3.1.1</hadoop.version>
 		
 		<!-- TODO: The following (inter-dependent) dependencies are due for upgrades before Java 11 -->
-		<jersey.version>1.19.4</jersey.version>
-		<spark.version>1.6.1</spark.version>
-		<curator.version>2.6.0</curator.version>
+		<spark.version>1.6.3</spark.version>
+		<curator.version>2.13.0</curator.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -410,10 +409,6 @@
 											frameworks as it is -->
 										<exclude>org.glassfish.hk2.*</exclude>
 										<exclude>org.glassfish.hk2.external:*</exclude>
-
-										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is 
-											required by Hadoop) -->
-										<exclude>org.glassfish.jersey:*</exclude>
 
 										<!-- asm groupId is conflicting with org.ow2.asm groupId -->
 										<exclude>asm:asm:*</exclude>
@@ -1433,16 +1428,6 @@
 				<groupId>com.fasterxml.jackson.module</groupId>
 				<artifactId>jackson-module-scala_2.11</artifactId>
 				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-core</artifactId>
-				<version>${jersey.version}</version>
 			</dependency>
 
 			<!-- logging dependencies -->

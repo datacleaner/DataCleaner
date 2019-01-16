@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
@@ -370,7 +372,7 @@
 										<exclude>org.mortbay.jetty:servlet-api-2.5:*</exclude>
 										<exclude>org.eclipse.jetty.orbit:javax.servlet:*</exclude>
 										<exclude>ant:ant:*</exclude>
-										
+
 										<exclude>org.datanucleus:javax.jdo:*</exclude>
 										
 										<!-- Prefer javax.transaction:javax.transaction-api over javax.transaction:jta -->
@@ -418,6 +420,7 @@
 
 										<!-- jcip-annotations is overlapping with annotations -->
 										<exclude>net.jcip:jcip-annotations:*</exclude>
+										<exclude>com.github.stephenc.jcip:jcip-annotations:*</exclude>
 										
 										<!-- xml-apis is shipped with the JRE -->
 										<exclude>xml-apis:xml-apis:*</exclude>
@@ -436,7 +439,7 @@
 
 										<!-- org.apache.geronimo.bundles:json is overlapping with org.json:json -->
 										<exclude>org.apache.geronimo.bundles:json:*</exclude>
-										
+
 										<exclude>com.sun.xml.ws:jaxws-rt:*</exclude>
 									</excludes>
 								</bannedDependencies>
@@ -1111,6 +1114,10 @@
 						<artifactId>findbugs-annotations</artifactId>
 					</exclusion>
 					<exclusion>
+						<groupId>com.github.stephenc.jcip</groupId>
+						<artifactId>jcip-annotations</artifactId>
+					</exclusion>
+					<exclusion>
 						<groupId>javax.servlet</groupId>
 						<artifactId>jsp-api</artifactId>
 					</exclusion>
@@ -1129,6 +1136,10 @@
 					<exclusion>
 						<groupId>org.datanucleus</groupId>
 						<artifactId>javax.jdo</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.zaxxer</groupId>
+						<artifactId>HikariCP-java7</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>javax.transaction</groupId>

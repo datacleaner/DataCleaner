@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
@@ -7,15 +9,15 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Maven plugin versions -->
-		<javadoc.version>3.0.0</javadoc.version>
+		<javadoc.version>3.0.1</javadoc.version>
 
 		<!-- Dependency versions -->
 		<slf4j.version>1.7.25</slf4j.version>
 		<junit.version>4.12</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.5</httpcomponents.version>
-		<metamodel.version>5.1.1</metamodel.version>
-		<metamodel.extras.version>5.0.0</metamodel.extras.version>
+		<metamodel.version>5.2.0</metamodel.version>
+		<metamodel.extras.version>5.2.0</metamodel.extras.version>
 		<spring.core.version>4.3.16.RELEASE</spring.core.version>
 		<freemarker.version>2.3.28</freemarker.version>
 		<icu4j.version>61.1</icu4j.version>
@@ -25,13 +27,12 @@
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<scala.version>2.11.12</scala.version>
 		<jung.version>2.1.1</jung.version>
+		<guava.version>27.0.1-jre</guava.version>
+		<hadoop.version>3.1.1</hadoop.version>
 		
 		<!-- TODO: The following (inter-dependent) dependencies are due for upgrades before Java 11 -->
-		<jersey.version>1.19.4</jersey.version>
-		<hadoop.version>2.7.1</hadoop.version>
-		<spark.version>1.6.1</spark.version>
-		<guava.version>16.0.1</guava.version>
-		<curator.version>2.6.0</curator.version>
+		<spark.version>1.6.3</spark.version>
+		<curator.version>2.13.0</curator.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -371,7 +372,7 @@
 										<exclude>org.mortbay.jetty:servlet-api-2.5:*</exclude>
 										<exclude>org.eclipse.jetty.orbit:javax.servlet:*</exclude>
 										<exclude>ant:ant:*</exclude>
-										
+
 										<exclude>org.datanucleus:javax.jdo:*</exclude>
 										
 										<!-- Prefer javax.transaction:javax.transaction-api over javax.transaction:jta -->
@@ -411,10 +412,6 @@
 										<exclude>org.glassfish.hk2.*</exclude>
 										<exclude>org.glassfish.hk2.external:*</exclude>
 
-										<!-- Jersey 2 excluded due to conflicts with Jersey 1 (which is 
-											required by Hadoop) -->
-										<exclude>org.glassfish.jersey:*</exclude>
-
 										<!-- asm groupId is conflicting with org.ow2.asm groupId -->
 										<exclude>asm:asm:*</exclude>
 
@@ -423,6 +420,7 @@
 
 										<!-- jcip-annotations is overlapping with annotations -->
 										<exclude>net.jcip:jcip-annotations:*</exclude>
+										<exclude>com.github.stephenc.jcip:jcip-annotations:*</exclude>
 										
 										<!-- xml-apis is shipped with the JRE -->
 										<exclude>xml-apis:xml-apis:*</exclude>
@@ -441,6 +439,8 @@
 
 										<!-- org.apache.geronimo.bundles:json is overlapping with org.json:json -->
 										<exclude>org.apache.geronimo.bundles:json:*</exclude>
+
+										<exclude>com.sun.xml.ws:jaxws-rt:*</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -737,6 +737,10 @@
 						<groupId>org.elasticsearch</groupId>
 						<artifactId>elasticsearch</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>com.sun.xml.ws</groupId>
+						<artifactId>jaxws-rt</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -880,6 +884,17 @@
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-auth</artifactId>
+				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.github.stephenc.jcip</groupId>
+						<artifactId>jcip-annotations</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-registry</artifactId>
 				<version>${hadoop.version}</version>
 			</dependency>
 			<dependency>
@@ -1110,6 +1125,10 @@
 						<artifactId>findbugs-annotations</artifactId>
 					</exclusion>
 					<exclusion>
+						<groupId>com.github.stephenc.jcip</groupId>
+						<artifactId>jcip-annotations</artifactId>
+					</exclusion>
+					<exclusion>
 						<groupId>javax.servlet</groupId>
 						<artifactId>jsp-api</artifactId>
 					</exclusion>
@@ -1128,6 +1147,10 @@
 					<exclusion>
 						<groupId>org.datanucleus</groupId>
 						<artifactId>javax.jdo</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.zaxxer</groupId>
+						<artifactId>HikariCP-java7</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>javax.transaction</groupId>
@@ -1231,6 +1254,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-all</artifactId>
+				<version>4.0.56.Final</version>
+			</dependency>
 
 			<dependency>
 				<groupId>commons-lang</groupId>
@@ -1241,6 +1269,12 @@
 				<groupId>commons-beanutils</groupId>
 				<artifactId>commons-beanutils</artifactId>
 				<version>1.9.2</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>commons-pool</groupId>
@@ -1421,16 +1455,6 @@
 				<groupId>com.fasterxml.jackson.module</groupId>
 				<artifactId>jackson-module-scala_2.11</artifactId>
 				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-core</artifactId>
-				<version>${jersey.version}</version>
 			</dependency>
 
 			<!-- logging dependencies -->

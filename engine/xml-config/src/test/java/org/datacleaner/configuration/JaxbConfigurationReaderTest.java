@@ -256,7 +256,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         final ElasticSearchDatastore esDatastore =
                 (ElasticSearchDatastore) datastoreCatalog.getDatastore("my es index");
         assertEquals("localhost", esDatastore.getHostname());
-        assertEquals(new Integer(9300), esDatastore.getPort());
+        assertEquals(9300, esDatastore.getPort().intValue());
         assertEquals("my_es_cluster", esDatastore.getClusterName());
         assertEquals("my_index", esDatastore.getIndexName());
         assertNull(esDatastore.getTableDefs());

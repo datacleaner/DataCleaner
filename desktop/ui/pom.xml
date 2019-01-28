@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-desktop</artifactId>
-		<version>5.5.1-SNAPSHOT</version>
+		<version>5.6.0</version>
 	</parent>
 	<artifactId>DataCleaner-desktop-ui</artifactId>
 	<packaging>jar</packaging>
@@ -262,7 +262,7 @@
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-oss-branding</artifactId>
-			<version>5.5.1-SNAPSHOT</version>
+			<version>5.6.0</version>
 		</dependency>
 	</dependencies>
 </project>

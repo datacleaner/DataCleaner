@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-components</artifactId>
-		<version>5.5.1-SNAPSHOT</version>
+		<version>5.6.0</version>
 	</parent>
 	<artifactId>DataCleaner-json</artifactId>
 </project>

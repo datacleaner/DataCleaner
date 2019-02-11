@@ -242,6 +242,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     private static String normalizeStringForMatching(final String str) {
+        if (str == null) {
+            return "";
+        }
         return StringUtils.replaceWhitespaces(str, "").toLowerCase();
     }
 

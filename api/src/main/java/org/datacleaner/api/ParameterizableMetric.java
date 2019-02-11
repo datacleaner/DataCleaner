@@ -30,8 +30,6 @@ import java.util.Collection;
  * metric value.
  *
  * @see Metric
- *
- * @since AnalyzerBeans 0.16
  */
 public interface ParameterizableMetric {
 

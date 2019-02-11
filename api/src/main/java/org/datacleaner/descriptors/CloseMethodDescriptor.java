@@ -69,9 +69,9 @@ public interface CloseMethodDescriptor extends Serializable {
     /**
      * Invokes the close method
      *
-     * @param bean
+     * @param component
      */
-    void close(Object bean);
+    void close(Object component);
 
     /**
      * Gets the annotations of the method

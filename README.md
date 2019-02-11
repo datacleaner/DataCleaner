@@ -4,6 +4,7 @@
 <div>
 <img src="https://datacleaner.github.io/assets/dc-logo-100.png" alt="DataCleaner logo" />
 </div>
+[![Gitter chat](https://badges.gitter.im/datacleaner/community.png)](https://gitter.im/datacleaner/community)
 
 The premier Open Source Data Quality solution.
 

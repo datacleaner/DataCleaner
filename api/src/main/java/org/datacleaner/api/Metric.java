@@ -48,8 +48,6 @@ import java.lang.annotation.Target;
  * <li>Except for the above mentioned exceptions, the method must not have any
  * parameters.</li>
  * </ul>
- *
- * @since AnalyzerBeans 0.16
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })

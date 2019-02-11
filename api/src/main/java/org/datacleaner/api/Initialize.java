@@ -28,16 +28,16 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation that marks method as an initializing method. Use this annotation
- * if you need to initialize the state of a bean before it starts executing a
+ * if you need to initialize the state of a component before it starts executing a
  * job.
  *
  * The @Initialize annotation can be used on methods in the following component
  * types:
  *
  * <ul>
- * <li>AnalyzerBeans</li>
- * <li>TransformerBeans</li>
- * <li>FilterBeans</li>
+ * <li>Analyzer</li>
+ * <li>Transformer</li>
+ * <li>Filter</li>
  * <li>Dictionary</li>
  * <li>SynonymCatalog</li>
  * <li>StringPattern</li>

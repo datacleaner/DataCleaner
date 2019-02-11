@@ -23,7 +23,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.HasAnalyzerResult;
 
 /**
- * Descriptor interface for beans that produce {@link AnalyzerResult}s.
+ * Descriptor interface for components that produce {@link AnalyzerResult}s.
  *
  * @param <B>
  */

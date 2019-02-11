@@ -30,8 +30,6 @@ import org.datacleaner.api.InputColumn;
 
 /**
  * Descriptor class for {@link AnalyzerResult} metrics.
- *
- * @since AnalyzerBeans 0.16
  */
 public interface MetricDescriptor extends Serializable, HasName, Comparable<MetricDescriptor> {
 

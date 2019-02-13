@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("Pattern finder")
-@Description( "The Pattern Finder will inspect your String values and generate and match string patterns that suit "
+@Description("The Pattern Finder will inspect your String values and generate and match string patterns that suit "
         + "your data.\nIt can be used for a lot of purposes but is excellent for verifying or getting ideas about "
         + "the format of the string-values in a column.")
 @ExternalDocumentation(value = { @DocumentationLink(title = "Kasper's Source: Pattern Finder 2.0",
@@ -118,13 +118,14 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
     String[] predefinedTokenPatterns;
 
     @Configured(required = false, order = 12)
-    Character decimalSeparator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    Character decimalSeparator = '.';
 
     @Configured(required = false, order = 13)
-    Character thousandsSeparator = DecimalFormatSymbols.getInstance().getGroupingSeparator();
+    Character thousandsSeparator = ',';
 
     @Configured(required = false, order = 14)
-    Character minusSign = DecimalFormatSymbols.getInstance().getMinusSign();
+    Character minusSign = '-';
+
     @Provided
     RowAnnotationFactory _rowAnnotationFactory;
     private Map<String, DefaultPatternFinder> _patternFinders;

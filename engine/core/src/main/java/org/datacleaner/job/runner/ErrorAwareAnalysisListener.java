@@ -52,7 +52,7 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
             _cancelled.set(true);
         }
 
-        final boolean needsLogging = !cancellation && !(throwable instanceof PreviousErrorsExistException));
+        final boolean needsLogging = !cancellation && !(throwable instanceof PreviousErrorsExistException);
         synchronized (_errors) {
             if (needsLogging) {
                 if (_errors.isEmpty()) {

@@ -28,7 +28,11 @@ import java.util.List;
 public class TokenizerConfiguration implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
+    public static final char DEFAULT_THOUSANDS_SEPARATOR = ',';
+    public static final char DEFAULT_DECIMAL_SEPARATOR = '.';
+    public static final char DEFAULT_MINUS_SIGN = '-';
+
     private EnumSet<TokenType> _tokenTypes;
     private EnumMap<TokenType, Boolean> _discriminateTokenLength;
 
@@ -49,7 +53,7 @@ public class TokenizerConfiguration implements Serializable {
     }
 
     public TokenizerConfiguration(final boolean enableMixedTokens) {
-        this(enableMixedTokens, '.', ',', '-');
+        this(enableMixedTokens, DEFAULT_DECIMAL_SEPARATOR, DEFAULT_THOUSANDS_SEPARATOR, DEFAULT_MINUS_SIGN);
     }
 
     public TokenizerConfiguration(final boolean enableMixed, final Character decimalSeparator,

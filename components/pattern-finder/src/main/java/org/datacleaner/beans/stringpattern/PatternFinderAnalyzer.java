@@ -118,13 +118,13 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
     String[] predefinedTokenPatterns;
 
     @Configured(required = false, order = 12)
-    Character decimalSeparator = '.';
+    Character decimalSeparator = TokenizerConfiguration.DEFAULT_DECIMAL_SEPARATOR;
 
     @Configured(required = false, order = 13)
-    Character thousandsSeparator = ',';
+    Character thousandsSeparator = TokenizerConfiguration.DEFAULT_THOUSANDS_SEPARATOR;
 
     @Configured(required = false, order = 14)
-    Character minusSign = '-';
+    Character minusSign = TokenizerConfiguration.DEFAULT_MINUS_SIGN;
 
     @Provided
     RowAnnotationFactory _rowAnnotationFactory;

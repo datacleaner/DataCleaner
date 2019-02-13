@@ -53,7 +53,7 @@ public class HdfsHelper {
 
     public HdfsHelper(final Configuration configuration) {
         if (configuration == null) {
-            logger.warn("Hadoop Configuration is null!", new Throwable());
+            logger.warn("Hadoop Configuration is null!");
         } else {
             _lastKnownConfiguration = configuration;
         }

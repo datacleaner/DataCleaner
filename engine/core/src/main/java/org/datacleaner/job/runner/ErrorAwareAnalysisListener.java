@@ -52,11 +52,17 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
             _cancelled.set(true);
         }
 
-        if (!cancellation && !(throwable instanceof PreviousErrorsExistException)) {
-            logger.warn("Exception stack trace:", throwable);
-        }
-
+        final boolean needsLogging = !cancellation && !(throwable instanceof PreviousErrorsExistException));
         synchronized (_errors) {
+            if (needsLogging) {
+                if (_errors.isEmpty()) {
+                    // first error logged with stack trace
+                    logger.warn("Exception stack trace:", throwable);
+                } else {
+                    // remaining errors just logged with message to avoid flooding the logs
+                    logger.warn("Exception message:", throwable.getMessage());
+                }
+            }
             if (!_errors.contains(throwable)) {
                 _errors.add(throwable);
             }

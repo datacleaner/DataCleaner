@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -53,7 +53,6 @@ import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
 import org.datacleaner.widgets.table.DCEditableTable;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
 public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatastoreDialog<FixedWidthDatastore> {
@@ -277,8 +276,13 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
         final List<String> list = new ArrayList<>(rowCount);
         final AlphabeticSequence sequence = new AlphabeticSequence();
         for (int i = 0; i < rowCount; i++) {
-            final String nameStr = (String) _columnsTable.getValueAt(i, 0);
-            list.add(Objects.firstNonNull(Strings.emptyToNull(nameStr), sequence.next()));
+            final String namedStr = (String) _columnsTable.getValueAt(i, 0);
+            final String generatedStr = sequence.next();
+            if (Strings.isNullOrEmpty(namedStr)) {
+                list.add(generatedStr);
+            } else {
+                list.add(namedStr);
+            }
         }
         return list;
     }

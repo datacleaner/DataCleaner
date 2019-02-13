@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-desktop</artifactId>
-		<version>5.4.2-SNAPSHOT</version>
+		<version>5.6.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-desktop-ui</artifactId>
 	<packaging>jar</packaging>
@@ -181,23 +181,14 @@
 		<dependency>
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-visualization</artifactId>
-			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-graph-impl</artifactId>
-			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-io</artifactId>
-			<version>2.0.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>stax</groupId>
-					<artifactId>stax-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleframework</groupId>
@@ -271,7 +262,7 @@
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-oss-branding</artifactId>
-			<version>5.4.2-SNAPSHOT</version>
+			<version>5.6.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -211,6 +211,7 @@ public final class IconUtils {
     public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
     public static final String MONGODB_IMAGEPATH = "images/datastore-types/mongodb.png";
     public static final String COUCHDB_IMAGEPATH = "images/datastore-types/couchdb.png";
+    public static final String KAFKA_IMAGEPATH = "images/datastore-types/kafka.png";
     public static final String SALESFORCE_IMAGEPATH = "images/datastore-types/salesforce.png";
     public static final String SUGAR_CRM_IMAGEPATH = "images/datastore-types/sugarcrm.png";
     public static final String JSON_IMAGEPATH = "images/datastore-types/json.png";

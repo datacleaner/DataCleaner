@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -19,29 +19,23 @@
  */
 package org.datacleaner.connection;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
 import java.util.List;
 
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.elasticsearch.nativeclient.ElasticSearchDataContext;
+import org.apache.metamodel.elasticsearch.rest.ElasticSearchRestClient;
 import org.apache.metamodel.elasticsearch.rest.ElasticSearchRestDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
-import org.datacleaner.util.StringUtils;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.node.Node;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 
 import com.google.common.base.Strings;
-
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.HttpClientConfig;
 
 /**
  * Datastore providing access to an ElasticSearch index.
@@ -49,7 +43,11 @@ import io.searchbox.client.config.HttpClientConfig;
 public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataContext> implements UpdateableDatastore {
 
     public enum ClientType {
-        NODE("Join cluster as a node"), TRANSPORT("Connect via Transport protocol"), REST("Connect via REST protocol");
+        @Deprecated
+        NODE("Join cluster as a node"), @Deprecated
+        TRANSPORT("Connect via Transport protocol"),
+        // the only currently supported client type
+        REST("Connect via REST protocol");
 
         private String _humanReadableName;
 
@@ -64,25 +62,33 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
     }
 
     public static final int DEFAULT_PORT = 9200;
+    @Deprecated
     public static final int TRANSPORT_PORT = 9300;
+
     private static final long serialVersionUID = 1L;
+
     private final SimpleTableDef[] _tableDefs;
     private final ClientType _clientType;
     private final String _indexName;
     private final String _hostname;
     private final Integer _port;
+    @Deprecated
     private final String _clusterName;
     private final String _username;
     private final String _password;
     private final boolean _ssl;
+    @Deprecated
     private final String _keystorePath;
+    @Deprecated
     private final String _keystorePassword;
 
+    @Deprecated
     public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
             final Integer port, final String clusterName, final String indexName) {
         this(name, clientType, hostname, port, clusterName, indexName, null, null, null, false, null, null);
     }
 
+    @Deprecated
     public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
             final Integer port, final String clusterName, final String indexName, final String username,
             final String password, final boolean ssl, final String keystorePath, final String keystorePassword) {
@@ -90,6 +96,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
                 keystorePassword);
     }
 
+    @Deprecated
     public ElasticSearchDatastore(final String name, final ClientType clientType, final String hostname,
             final Integer port, final String clusterName, final String indexName, final SimpleTableDef[] tableDefs,
             final String username, final String password, final boolean ssl, final String keystorePath,
@@ -108,6 +115,22 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         _keystorePassword = keystorePassword;
     }
 
+    public ElasticSearchDatastore(final String name, final String hostname, final Integer port, final String indexName,
+            final SimpleTableDef[] tableDefs, final String username, final String password, final boolean ssl) {
+        super(name);
+        _hostname = hostname;
+        _port = port;
+        _clusterName = null;
+        _indexName = indexName;
+        _tableDefs = tableDefs;
+        _username = username;
+        _password = password;
+        _ssl = ssl;
+        _clientType = ClientType.REST;
+        _keystorePath = null;
+        _keystorePassword = null;
+    }
+
     @Override
     public PerformanceCharacteristics getPerformanceCharacteristics() {
         return new PerformanceCharacteristicsImpl(true, false);
@@ -115,100 +138,41 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
 
     @Override
     protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
-        final DataContext dataContext;
-        if (_tableDefs == null || _tableDefs.length == 0) {
-            if (_clientType.equals(ClientType.NODE) || _clientType.equals(ClientType.TRANSPORT)) {
-                final Client client = getClientForNodeAndTransportProtocol();
-                dataContext = new ElasticSearchDataContext(client, _indexName);
-                return createConnection(dataContext, client);
-            } else {
+        switch (_clientType) {
+        case NODE:
+        case TRANSPORT:
+            throw new UnsupportedOperationException(
+                    "Support for ElasticSearch 'node' or 'transport' clients has been dropped. "
+                            + "Please reconfigure datastore to use HTTP connection.");
+        default:
+            final DataContext dataContext;
+            if (_tableDefs == null || _tableDefs.length == 0) {
                 dataContext = new ElasticSearchRestDataContext(getClientForRestProtocol(), _indexName);
-                return createConnection(dataContext, null);
-            }
-        } else {
-            if (_clientType.equals(ClientType.NODE) || _clientType.equals(ClientType.TRANSPORT)) {
-                final Client client = getClientForNodeAndTransportProtocol();
-                dataContext = new ElasticSearchDataContext(client, _indexName, _tableDefs);
-                return createConnection(dataContext, client);
             } else {
                 dataContext = new ElasticSearchRestDataContext(getClientForRestProtocol(), _indexName, _tableDefs);
-                return createConnection(dataContext, null);
             }
-        }
-
-    }
-
-    private UsageAwareDatastoreConnection<UpdateableDataContext> createConnection(final DataContext dataContext,
-            final Client simpleclient) {
-        switch (_clientType) {
-        case NODE:
-        case TRANSPORT:
-            return new UpdateableDatastoreConnectionImpl<>((ElasticSearchDataContext) dataContext, this, simpleclient);
-        case REST:
             return new UpdateableDatastoreConnectionImpl<>((ElasticSearchRestDataContext) dataContext, this);
-        default:
-            //do nothing
         }
-        return null;
     }
 
-    private Client getClientForNodeAndTransportProtocol() {
-        switch (_clientType) {
-        case NODE:
-            return getClientForJoiningClusterAsNode();
-        case TRANSPORT:
-            return getClientForTransportProtocol();
-        default:
-            //do nothing
-        }
-        return null;
-    }
+    private ElasticSearchRestClient getClientForRestProtocol() {
+        final String scheme = _ssl ? "https" : "http";
+        final HttpHost hosts = new HttpHost(_hostname, _port, scheme);
+        final RestClientBuilder restClientBuilder = RestClient.builder(hosts);
 
-    private JestClient getClientForRestProtocol() {
-        final JestClientFactory factory = new JestClientFactory();
-        HttpClientConfig.Builder builder =
-                new HttpClientConfig.Builder("http://" + _hostname + ":" + _port).multiThreaded(true);
         if (!Strings.isNullOrEmpty(_username)) {
-            builder = builder.defaultCredentials(_username, _password);
-        }
-        factory.setHttpClientConfig(builder.build());
-
-        return factory.getObject();
-    }
-
-    private Client getClientForJoiningClusterAsNode() {
-        final Client client;
-        final Builder settingsBuilder = ImmutableSettings.builder();
-        settingsBuilder.put("name", "DataCleaner");
-        settingsBuilder.put("shield.enabled", false);
-        final Settings settings = settingsBuilder.build();
-
-        // .client(true) means no shards are stored on this node
-        final Node node = nodeBuilder().clusterName(_clusterName).client(true).settings(settings).node();
-        client = node.client();
-        return client;
-    }
-
-    private Client getClientForTransportProtocol() {
-        final Client client;
-        final Builder settingsBuilder = ImmutableSettings.builder();
-        settingsBuilder.put("name", "DataCleaner");
-        settingsBuilder.put("cluster.name", _clusterName);
-        if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
-            settingsBuilder.put("shield.user", _username + ":" + _password);
-            if (_ssl) {
-                if (!Strings.isNullOrEmpty(_keystorePath)) {
-                    settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
-                    settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
+            final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(_username, _password));
+            restClientBuilder.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+                @Override
+                public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
+                    return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
                 }
-                settingsBuilder.put("shield.transport.ssl", "true");
-            }
+            });
         }
-        final Settings settings = settingsBuilder.build();
 
-        client = new TransportClient(settings);
-        ((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
-        return client;
+        final ElasticSearchRestClient elasticSearchRestClient = new ElasticSearchRestClient(restClientBuilder.build());
+        return elasticSearchRestClient;
     }
 
     @Override
@@ -233,6 +197,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         return _port;
     }
 
+    @Deprecated
     public String getClusterName() {
         return _clusterName;
     }
@@ -253,10 +218,12 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
         return _ssl;
     }
 
+    @Deprecated
     public String getKeystorePath() {
         return _keystorePath;
     }
 
+    @Deprecated
     public String getKeystorePassword() {
         return _keystorePassword;
     }
@@ -269,7 +236,6 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<UpdateableDataCo
     @Override
     protected void decorateIdentity(final List<Object> identifiers) {
         super.decorateIdentity(identifiers);
-        identifiers.add(_clusterName);
         identifiers.add(_hostname);
         identifiers.add(_indexName);
         identifiers.add(_tableDefs);

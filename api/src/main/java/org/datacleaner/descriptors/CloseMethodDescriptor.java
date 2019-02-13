@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -69,9 +69,9 @@ public interface CloseMethodDescriptor extends Serializable {
     /**
      * Invokes the close method
      *
-     * @param bean
+     * @param component
      */
-    void close(Object bean);
+    void close(Object component);
 
     /**
      * Gets the annotations of the method

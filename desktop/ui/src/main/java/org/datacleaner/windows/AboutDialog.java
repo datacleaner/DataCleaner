@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -60,7 +60,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCListCellRenderer;
-import org.datacleaner.widgets.NeopostToolbarButton;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
@@ -309,16 +308,12 @@ public class AboutDialog extends AbstractDialog {
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(linkedInButton);
 
-        final NeopostToolbarButton neopostButton =
-                new NeopostToolbarButton(imageManager.getImageIcon("images/powered-by-neopost-bright.png"));
-
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
         contentPanel.add(headerLabel);
         contentPanel.add(DCLabel.dark("Core version " + Version.getVersion()));
-        contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Neopost"));
+        contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR)));
         contentPanel.add(Box.createVerticalStrut(20));
-        contentPanel.add(DCPanel.around(neopostButton));
 
         if (Version.isCommunityEdition()) {
             contentPanel.add(Box.createVerticalStrut(20));

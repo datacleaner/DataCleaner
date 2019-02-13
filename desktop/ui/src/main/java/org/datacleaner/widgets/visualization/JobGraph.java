@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -167,7 +167,7 @@ public final class JobGraph {
         final Collection<Object> vertices = graph.getVertices();
         for (final Object vertex : vertices) {
             // manually initialize all vertices
-            layout.transform(vertex);
+            layout.apply(vertex);
         }
 
         if (!vertices.isEmpty() && !layoutTransformer.isTransformed()) {
@@ -387,7 +387,7 @@ public final class JobGraph {
 
         final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 
-        final JobGraphTransformers transformers = new JobGraphTransformers(_userPreferences, _highlighedVertexes);
+        final JobGraphTransformers transformers = new JobGraphTransformers(graph, _userPreferences, _highlighedVertexes);
 
         // instrument the render context with all our transformers and stuff
         renderContext.setVertexFontTransformer(transformers.getVertexFontTransformer());

@@ -1,13 +1,12 @@
 # DataCleaner
 
-[![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner)
+[![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner) [![Gitter chat](https://badges.gitter.im/datacleaner/community.png)](https://gitter.im/datacleaner/community)
+
 <div>
 <img src="https://datacleaner.github.io/assets/dc-logo-100.png" alt="DataCleaner logo" />
 </div>
 
 The premier Open Source Data Quality solution.
-
-Powered by Neopost and Human Inference
 
 ## Module structure
 

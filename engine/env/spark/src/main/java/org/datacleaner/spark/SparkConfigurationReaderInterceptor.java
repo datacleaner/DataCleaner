@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -53,7 +53,7 @@ public class SparkConfigurationReaderInterceptor extends DefaultConfigurationRea
             Arrays.asList(SwingRenderingFormat.class, ComponentBuilderPresenterRenderingFormat.class);
     private static final DescriptorProvider DESCRIPTOR_PROVIDER =
             new ClasspathScanDescriptorProvider(TASK_RUNNER, EXCLUDED_RENDERER_FORMATS)
-                    .scanPackage("org.datacleaner", true).scanPackage("com.hi", true).scanPackage("com.neopost", true);
+                    .scanPackage("org.datacleaner", true);
     private static final StorageProvider STORAGE_PROVIDER = new InMemoryStorageProvider(500, 20);
 
     private static final DataCleanerEnvironment BASE_ENVIRONMENT =

@@ -20,7 +20,6 @@
 package org.datacleaner.beans.stringpattern;
 
 import java.io.Serializable;
-import java.text.DecimalFormatSymbols;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -29,6 +28,10 @@ import java.util.List;
 public class TokenizerConfiguration implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static final char DEFAULT_THOUSANDS_SEPARATOR = ',';
+    public static final char DEFAULT_DECIMAL_SEPARATOR = '.';
+    public static final char DEFAULT_MINUS_SIGN = '-';
 
     private EnumSet<TokenType> _tokenTypes;
     private EnumMap<TokenType, Boolean> _discriminateTokenLength;
@@ -50,9 +53,7 @@ public class TokenizerConfiguration implements Serializable {
     }
 
     public TokenizerConfiguration(final boolean enableMixedTokens) {
-        this(enableMixedTokens, DecimalFormatSymbols.getInstance().getDecimalSeparator(),
-                DecimalFormatSymbols.getInstance().getGroupingSeparator(),
-                DecimalFormatSymbols.getInstance().getMinusSign());
+        this(enableMixedTokens, DEFAULT_DECIMAL_SEPARATOR, DEFAULT_THOUSANDS_SEPARATOR, DEFAULT_MINUS_SIGN);
     }
 
     public TokenizerConfiguration(final boolean enableMixed, final Character decimalSeparator,

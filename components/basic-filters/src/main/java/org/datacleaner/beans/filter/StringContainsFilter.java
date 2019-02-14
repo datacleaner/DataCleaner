@@ -58,19 +58,15 @@ public class StringContainsFilter implements Filter<StringContainsFilter.Categor
         return categorize(value);
     }
 
-    protected Category categorize(String value) {
+    private Category categorize(final String value) {
         if (value == null) {
             return Category.UNMATCHED;
         }
-        if (!caseSensitive) {
-            value = value.toLowerCase();
-        }
+        final String str = caseSensitive ? value : value.toLowerCase();
 
-        for (String substring : substrings) {
-            if (!caseSensitive) {
-                substring = substring.toLowerCase();
-            }
-            if (value.contains(substring)) {
+        for (final String substring : substrings) {
+            final String containedPart = caseSensitive ? substring : substring.toLowerCase();
+            if (str.contains(containedPart)) {
                 return Category.MATCHED;
             }
         }

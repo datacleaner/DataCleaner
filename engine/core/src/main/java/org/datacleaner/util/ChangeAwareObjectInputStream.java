@@ -59,14 +59,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link ObjectInputStream} implementation that is aware of changes such as
- * class or package renaming. This can be used to deserialize classes with
- * historic/legacy class names.
+ * {@link ObjectInputStream} implementation that is aware of changes such as class or package renaming. This can be used
+ * to deserialize classes with historic/legacy class names.
  *
- * Furthermore the deserialization mechanism is aware of multiple
- * {@link ClassLoader}s. This means that if the object being deserialized
- * pertains to a different {@link ClassLoader}, then this classloader can be
- * added using the {@link #addClassLoader(ClassLoader)} method.
+ * Furthermore the deserialization mechanism is aware of multiple {@link ClassLoader}s. This means that if the object
+ * being deserialized pertains to a different {@link ClassLoader}, then this classloader can be added using the
+ * {@link #addClassLoader(ClassLoader)} method.
  *
  *
  */
@@ -75,15 +73,13 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
     private static final Logger logger = LoggerFactory.getLogger(ChangeAwareObjectInputStream.class);
 
     /**
-     * Table mapping primitive type names to corresponding class objects. As
-     * defined in {@link ObjectInputStream}.
+     * Table mapping primitive type names to corresponding class objects. As defined in {@link ObjectInputStream}.
      */
     private static final Map<String, Class<?>> PRIMITIVE_CLASSES = new HashMap<>(8, 1.0F);
 
     /**
-     * Since the change from eobjects.org MetaModel to Apache MetaModel, a lot
-     * of interfaces (especially those that extend {@link HasName}) have
-     * transparently changed their serialization IDs.
+     * Since the change from eobjects.org MetaModel to Apache MetaModel, a lot of interfaces (especially those that
+     * extend {@link HasName}) have transparently changed their serialization IDs.
      */
     private static final Set<String> INTERFACES_WITH_SERIAL_ID_CHANGES = new HashSet<>();
     private static final Comparator<String> packageNameComparator = (o1, o2) -> {
@@ -247,8 +243,19 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
             return getClassDescriptor(className, false, resultClassDescriptor);
         }
 
-        if (INTERFACES_WITH_SERIAL_ID_CHANGES.contains(originalClassName)) {
-            return ObjectStreamClass.lookup(resolveClass(originalClassName, false));
+        final ObjectStreamClass localClassDescriptor = ObjectStreamClass.lookup(resolveClass(originalClassName, false));
+        if (localClassDescriptor != null) {
+            if (INTERFACES_WITH_SERIAL_ID_CHANGES.contains(originalClassName)) {
+                return localClassDescriptor;
+            }
+            final long localSUID = localClassDescriptor.getSerialVersionUID();
+            final long streamSUID = resultClassDescriptor.getSerialVersionUID();
+            if (streamSUID != localSUID) {
+                logger.warn(
+                        "Mismatching class serialVersionUID for '{}': Local={}, Stream={}. Returning local class descriptor.",
+                        originalClassName, localSUID, streamSUID);
+                return localClassDescriptor;
+            }
         }
 
         return resultClassDescriptor;

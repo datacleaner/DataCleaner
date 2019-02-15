@@ -62,11 +62,11 @@ public class StringContainsFilter implements Filter<StringContainsFilter.Categor
         if (value == null) {
             return Category.UNMATCHED;
         }
-        final String str = caseSensitive ? value : value.toLowerCase();
+        final String normalizedValue = caseSensitive ? value : value.toLowerCase();
 
         for (final String substring : substrings) {
             final String containedPart = caseSensitive ? substring : substring.toLowerCase();
-            if (str.contains(containedPart)) {
+            if (normalizedValue.contains(containedPart)) {
                 return Category.MATCHED;
             }
         }

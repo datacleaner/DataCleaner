@@ -26,13 +26,14 @@ import org.apache.metamodel.util.HasName;
 import org.datacleaner.util.ReflectionUtils;
 
 /**
- * Represents the types of functions can be applied to columns for transforming them into features. The functions are
- * applied to the values of the raw data and transforms it to a set of numeric features.
+ * Represents the types of functions can be applied to columns for transforming
+ * them into features. The functions are applied to the values of the raw data
+ * and transforms it to a set of numeric features.
  */
 public enum MLFeatureModifierType implements HasName {
 
     SCALED_MIN_MAX("Scaled (Min-Max)", Number.class),
-    
+
     DIRECT_NUMERIC("Direct (0.0 to 1.0)", Number.class),
 
     DIRECT_BOOL("Direct (1 or 0)", Boolean.class),
@@ -66,8 +67,8 @@ public enum MLFeatureModifierType implements HasName {
         return name;
     }
 
-    public static MLFeatureModifierType getNGramType(int n) {
-        switch (n) {
+    public static MLFeatureModifierType getNGramType(int gramLength) {
+        switch (gramLength) {
         case 2:
             return MLFeatureModifierType.VECTOR_2_GRAM;
         case 3:
@@ -76,8 +77,9 @@ public enum MLFeatureModifierType implements HasName {
             return MLFeatureModifierType.VECTOR_4_GRAM;
         case 5:
             return MLFeatureModifierType.VECTOR_5_GRAM;
+        default:
+            throw new UnsupportedOperationException("No n-gram vector defined for n=" + gramLength);
         }
-        throw new UnsupportedOperationException("No n-gram vector defined for n=" + n);
     }
 
     public static List<MLFeatureModifierType> getApplicableValues(Class<?> dataType) {

@@ -33,8 +33,8 @@ public class MLFeatureUtils {
      * @param scaled
      * @return
      */
-    public static double ensureFeatureInRange(double v) {
-        return Math.max(0d, Math.min(1d, v));
+    public static double ensureFeatureInRange(double value) {
+        return Math.max(0d, Math.min(1d, value));
     }
 
     public static double[] generateFeatureValues(MLClassificationRecord record,

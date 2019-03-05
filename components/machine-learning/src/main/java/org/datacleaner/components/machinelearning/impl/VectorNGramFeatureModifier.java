@@ -48,10 +48,10 @@ public class VectorNGramFeatureModifier implements MLFeatureModifier {
     }
 
     private final String[] grams;
-    private final int n;
+    private final int gramLength;
 
-    public VectorNGramFeatureModifier(int n, Collection<String> grams) {
-        this.n = n;
+    public VectorNGramFeatureModifier(int gramLength, Collection<String> grams) {
+        this.gramLength = gramLength;
         this.grams = grams.toArray(new String[grams.size()]);
     }
 
@@ -60,7 +60,7 @@ public class VectorNGramFeatureModifier implements MLFeatureModifier {
         final double[] result = new double[getFeatureCount()];
         final Iterable<String> parts = split(value);
         for (String part : parts) {
-            if (part.length() >= n) {
+            if (part.length() >= gramLength) {
                 for (int i = 0; i < grams.length; i++) {
                     final String gram = grams[i];
                     if (part.contains(gram)) {
@@ -79,6 +79,6 @@ public class VectorNGramFeatureModifier implements MLFeatureModifier {
 
     @Override
     public MLFeatureModifierType getType() {
-        return MLFeatureModifierType.getNGramType(n);
+        return MLFeatureModifierType.getNGramType(gramLength);
     }
 }

@@ -92,7 +92,7 @@ public class VectorOneHotEncodingFeatureModifierBuilder implements MLFeatureModi
         if (!includeFeaturesForUniqueValues) {
             // remove uniques in "values" from "resultSet".
             for (Iterator<String> it = resultSet.iterator(); it.hasNext();) {
-                String value = it.next();
+                final String value = it.next();
                 if (values.count(value) == 1) {
                     it.remove();
                 }

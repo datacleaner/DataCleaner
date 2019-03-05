@@ -27,11 +27,11 @@ import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilder;
 
 public class VectorNGramFeatureModifierBuilder implements MLFeatureModifierBuilder {
 
-    private final int n;
+    private final int gramLength;
     private final Set<String> grams;
 
-    public VectorNGramFeatureModifierBuilder(int n) {
-        this.n = n;
+    public VectorNGramFeatureModifierBuilder(int gramLength) {
+        this.gramLength = gramLength;
         this.grams = new HashSet<>();
     }
 
@@ -39,8 +39,8 @@ public class VectorNGramFeatureModifierBuilder implements MLFeatureModifierBuild
     public void addRecordValue(Object value) {
         final Iterable<String> parts = VectorNGramFeatureModifier.split(value);
         for (String part : parts) {
-            for (int index = 0; index + n <= part.length(); index++) {
-                final String gram = part.substring(index, index + n);
+            for (int index = 0; index + gramLength <= part.length(); index++) {
+                final String gram = part.substring(index, index + gramLength);
                 synchronized (this) {
                     grams.add(gram);
                 }
@@ -50,7 +50,7 @@ public class VectorNGramFeatureModifierBuilder implements MLFeatureModifierBuild
 
     @Override
     public MLFeatureModifier build() {
-        return new VectorNGramFeatureModifier(n, grams);
+        return new VectorNGramFeatureModifier(gramLength, grams);
     }
 
     protected Set<String> getGrams() {

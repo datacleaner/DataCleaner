@@ -48,7 +48,7 @@ import com.google.common.io.Files;
 @Categorized(MachineLearningCategory.class)
 public class MLClassificationTransformer implements Transformer {
 
-    public static enum OutputFormat {
+    public enum OutputFormat {
         WINNER_CLASS_AND_CONFIDENCE,
         CONFIDENCE_MATRIX
     }

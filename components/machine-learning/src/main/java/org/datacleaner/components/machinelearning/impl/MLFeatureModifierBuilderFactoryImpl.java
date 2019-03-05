@@ -47,8 +47,9 @@ public class MLFeatureModifierBuilderFactoryImpl implements MLFeatureModifierBui
             return new VectorNGramFeatureModifierBuilder(4);
         case VECTOR_5_GRAM:
             return new VectorNGramFeatureModifierBuilder(5);
+        default:
+            throw new UnsupportedOperationException("Unsupported feature modifier type: " + type);
         }
-        throw new UnsupportedOperationException("Unsupported feature modifier type: " + type);
     }
 
 }

@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -31,9 +31,6 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.apache.commons.collections15.Predicate;
-import org.apache.commons.collections15.Transformer;
-import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
@@ -51,16 +48,18 @@ import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetUtils;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
+import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
- * Collection of {@link Transformer} (and {@link Predicate} and so on) instances
- * to use in the {@link JobGraph}.
+ * Collection of {@link Function} (and {@link Predicate} and so on) instances to use in the {@link JobGraph}.
  */
 public class JobGraphTransformers {
 
@@ -71,14 +70,15 @@ public class JobGraphTransformers {
     public static final String EDGE_STYLE_NAME_STRAIGHT = "straight";
     public static final String EDGE_STYLE_NAME_CURVED = "curved";
     public static final String EDGE_STYLE_NAME_ORTOGHONAL = "orthogonal";
+
     public static final Predicate<Context<Graph<Object, JobGraphLink>, JobGraphLink>> EDGE_ARROW_PREDICATE =
-            TruePredicate.getInstance();
-    public static final Transformer<JobGraphLink, String> EDGE_LABEL_TRANSFORMER = JobGraphLink::getLinkLabel;
-    public static final Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> EDGE_ARROW_TRANSFORMER =
+            (c -> true);
+    public static final Function<JobGraphLink, String> EDGE_LABEL_TRANSFORMER = JobGraphLink::getLinkLabel;
+    public static final Function<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> EDGE_ARROW_TRANSFORMER =
             input -> GraphUtils.ARROW_SHAPE;
-    public static final Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Number>
-            EDGE_LABEL_CLOSENESS_TRANSFORMER = input -> 0.4d;
-    public static final Transformer<Object, String> VERTEX_LABEL_TRANSFORMER = obj -> {
+    public static final Function<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Number> EDGE_LABEL_CLOSENESS_TRANSFORMER =
+            input -> 0.4d;
+    public static final Function<Object, String> VERTEX_LABEL_TRANSFORMER = obj -> {
         if (obj instanceof InputColumn) {
             return ((InputColumn<?>) obj).getName();
         }
@@ -100,13 +100,13 @@ public class JobGraphTransformers {
         }
         return obj.toString();
     };
-    public static final Transformer<Object, Shape> VERTEX_SHAPE_TRANSFORMER = input -> {
+    public static final Function<Object, Shape> VERTEX_SHAPE_TRANSFORMER = input -> {
         final int size = IconUtils.ICON_SIZE_LARGE;
         final int offset = -size / 2;
         return new Rectangle(new Point(offset, offset), new Dimension(size, size));
     };
     private static final ImageManager imageManager = ImageManager.get();
-    public static final Transformer<Object, Icon> VERTEX_ICON_TRANSFORMER = obj -> {
+    public static final Function<Object, Icon> VERTEX_ICON_TRANSFORMER = obj -> {
         if (obj == JobGraph.MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
             return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
         }
@@ -137,10 +137,13 @@ public class JobGraphTransformers {
     };
     private final UserPreferences _userPreferences;
     private final Set<Object> _highlighedVertexes;
+    private final DirectedGraph<Object, JobGraphLink> _graph;
     private final Font _normalFont;
     private final Font _boldFont;
 
-    public JobGraphTransformers(final UserPreferences userPreferences, final Set<Object> highlighedVertexes) {
+    public JobGraphTransformers(DirectedGraph<Object, JobGraphLink> graph, final UserPreferences userPreferences,
+            final Set<Object> highlighedVertexes) {
+        _graph = graph;
         _userPreferences = userPreferences;
         _highlighedVertexes = highlighedVertexes;
 
@@ -164,19 +167,17 @@ public class JobGraphTransformers {
         return font.deriveFont(font.getSize() * fontFactor);
     }
 
-    public Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> getEdgeShapeTransformer() {
+    public Function<? super JobGraphLink, Shape> getEdgeShapeTransformer() {
         final String edgeStyle = _userPreferences.getAdditionalProperties().get(USER_PREFERENCES_PROPERTY_EDGE_STYLE);
-        final Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> baseTransformer =
-                getBaseEdgeShapeTransformer(edgeStyle);
+        final Function<? super JobGraphLink, Shape> baseTransformer = getBaseEdgeShapeTransformer(edgeStyle);
 
         return input -> {
-            final Shape result = baseTransformer.transform(input);
-            final JobGraphLink link = input.element;
-            if (isCompoundRequirementLink(link)) {
+            final Shape result = baseTransformer.apply(input);
+            if (isCompoundRequirementLink(input)) {
                 // make a double link (actually a wedge, but close
                 // enough) to show that there are more than one filter
                 // outcome coming from this source
-                return new EdgeShape.Wedge<Object, JobGraphLink>(10).transform(input);
+                return EdgeShape.wedge(_graph, 10).apply(input);
             }
             return result;
         };
@@ -194,20 +195,19 @@ public class JobGraphTransformers {
         return false;
     }
 
-    private Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> getBaseEdgeShapeTransformer(
-            final String edgeStyle) {
+    private Function<? super JobGraphLink, Shape> getBaseEdgeShapeTransformer(final String edgeStyle) {
         if (edgeStyle == null) {
-            return new EdgeShape.QuadCurve<>();
+            return EdgeShape.quadCurve(_graph);
         }
         switch (edgeStyle) {
         case EDGE_STYLE_NAME_STRAIGHT:
-            return new EdgeShape.Line<>();
+            return EdgeShape.line(_graph);
         case EDGE_STYLE_NAME_CURVED:
-            return new EdgeShape.QuadCurve<>();
+            return EdgeShape.quadCurve(_graph);
         case EDGE_STYLE_NAME_ORTOGHONAL:
-            return new EdgeShape.Orthogonal<>();
+            return EdgeShape.orthogonal(_graph);
         default:
-            return new EdgeShape.QuadCurve<>();
+            return EdgeShape.quadCurve(_graph);
         }
     }
 
@@ -256,7 +256,7 @@ public class JobGraphTransformers {
         };
     }
 
-    public Transformer<Object, Font> getVertexFontTransformer() {
+    public Function<Object, Font> getVertexFontTransformer() {
         return vertex -> {
             if (_highlighedVertexes.contains(vertex)) {
                 return _boldFont;

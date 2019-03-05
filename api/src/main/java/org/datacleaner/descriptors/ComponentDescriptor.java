@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -44,7 +44,7 @@ import org.datacleaner.util.HasAliases;
  */
 public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?>>, Serializable, HasAliases {
     /**
-     * @return a humanly readable display name for this bean.
+     * @return a humanly readable display name for this component.
      */
     String getDisplayName();
 
@@ -72,7 +72,7 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
     Set<ConfiguredPropertyDescriptor> getConfiguredProperties();
 
     /**
-     * Determines if the bean is a distributable component or not.
+     * Determines if the component is a distributable component or not.
      *
      * @return true if the component can be distributed.
      *
@@ -93,7 +93,7 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
      * Gets the configured properties that have {@link InputColumn} type.
      *
      * @return a set containing all configured property descriptors of
-     *         {@link InputColumn}s in the bean.
+     *         {@link InputColumn}s in the component.
      */
     Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput();
 
@@ -104,7 +104,7 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
      *            a boolean indicating if optional properties should be
      *            returned. If false, only required properties will be included.
      * @return a set containing all configured property descriptors of
-     *         {@link InputColumn}s in the bean.
+     *         {@link InputColumn}s in the component.
      */
     Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(boolean includeOptional);
 

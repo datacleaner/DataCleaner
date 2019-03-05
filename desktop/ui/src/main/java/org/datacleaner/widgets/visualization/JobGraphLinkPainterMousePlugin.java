@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -46,10 +46,16 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin
     private final JobGraphContext _graphContext;
 
     public JobGraphLinkPainterMousePlugin(final JobGraphLinkPainter linkPainter, final JobGraphContext graphContext) {
-        super(MouseEvent.BUTTON1_MASK + MouseEvent.SHIFT_MASK);
+        super(MouseEvent.BUTTON1_DOWN_MASK + MouseEvent.SHIFT_DOWN_MASK);
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         cursor = Cursor.getDefaultCursor();
+    }
+
+    @Override
+    public boolean checkModifiers(MouseEvent e) {
+        // overrides the parent's call to deprecated e.getModifiers() method
+        return e.getModifiersEx() == modifiers;
     }
 
     @Override

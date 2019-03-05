@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -40,6 +40,7 @@ import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
+import org.datacleaner.connection.KafkaDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.reference.DatastoreDictionary;
@@ -177,6 +178,9 @@ public class DomConfigurationWriter {
             return true;
         }
 
+        if (datastore instanceof KafkaDatastore) {
+            return true;
+        }
         return false;
     }
 
@@ -338,6 +342,8 @@ public class DomConfigurationWriter {
             final Resource resource = ((FixedWidthDatastore) datastore).getResource();
             final String filename = toFilename(resource);
             elem = toElement((FixedWidthDatastore) datastore, filename);
+        } else if (datastore instanceof KafkaDatastore) {
+            elem = toElement((KafkaDatastore) datastore);
         } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
@@ -770,6 +776,21 @@ public class DomConfigurationWriter {
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "ssl", datastore.isSslEnabled());
 
+        return ds;
+    }
+    
+    public Element toElement(KafkaDatastore datastore) {
+        final Element ds = getDocument().createElement("kafka-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+        appendElement(ds, "bootstrap-servers", datastore.getBootstrapServers());
+        for (String topic : datastore.getTopics()) {
+            appendElement(ds, "topic", topic);
+        }
+        appendElement(ds, "key-type", datastore.getKeyType().name());
+        appendElement(ds, "value-type", datastore.getValueType().name());
         return ds;
     }
 

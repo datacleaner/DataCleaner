@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -52,11 +52,17 @@ public final class ErrorAwareAnalysisListener extends AnalysisListenerAdaptor im
             _cancelled.set(true);
         }
 
-        if (!cancellation && !(throwable instanceof PreviousErrorsExistException)) {
-            logger.warn("Exception stack trace:", throwable);
-        }
-
+        final boolean needsLogging = !cancellation && !(throwable instanceof PreviousErrorsExistException);
         synchronized (_errors) {
+            if (needsLogging) {
+                if (_errors.isEmpty()) {
+                    // first error logged with stack trace
+                    logger.warn("Exception stack trace:", throwable);
+                } else {
+                    // remaining errors just logged with message to avoid flooding the logs
+                    logger.warn("Exception message:", throwable.getMessage());
+                }
+            }
             if (!_errors.contains(throwable)) {
                 _errors.add(throwable);
             }

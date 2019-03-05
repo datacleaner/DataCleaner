@@ -1,13 +1,22 @@
 # DataCleaner
 
-[![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner)
+[![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner) [![Gitter chat](https://badges.gitter.im/datacleaner/community.png)](https://gitter.im/datacleaner/community)
+
 <div>
 <img src="https://datacleaner.github.io/assets/dc-logo-100.png" alt="DataCleaner logo" />
 </div>
 
 The premier Open Source Data Quality solution.
 
-Powered by Neopost and Human Inference
+DataCleaner is a Data Quality toolkit that allows you to profile, correct and enrich your data. People use it for ad-hoc analysis, recurring cleansing as well as a swiss-army knife in matching and Master Data Management solutions.
+
+## Where to go for end-user information?
+
+Please visit the DataCleaner community website https://datacleaner.github.io for downloads, news, documentation etc.
+
+Visit our Gitter chat channel https://gitter.im/datacleaner/community for asking questions or discussions.
+
+GitHub markdown pages and issues are used for developers and technical aspects only.
 
 ## Module structure
 
@@ -39,12 +48,6 @@ In the root of the project you can find 'Formatter-[IDE].xml' files which enable
 There's a public build of DataCleaner that can be found on Travis CI:
 
 https://travis-ci.org/datacleaner/DataCleaner
-
-## Where to go for end-user information?
-
-Please visit the DataCleaner community website https://datacleaner.github.io for downloads, news, documentation etc.
-
-GitHub markdown pages and issues are used for developers and technical aspects only.
 
 ## License
 

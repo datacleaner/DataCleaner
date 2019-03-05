@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -242,6 +242,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     private static String normalizeStringForMatching(final String str) {
+        if (str == null) {
+            return "";
+        }
         return StringUtils.replaceWhitespaces(str, "").toLowerCase();
     }
 
@@ -455,6 +458,11 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
         final String displayName = normalizeStringForMatching(componentDescriptor.getDisplayName());
         if (displayName.contains(searchTerm)) {
+            return true;
+        }
+
+        final String description = normalizeStringForMatching(componentDescriptor.getDescription());
+        if (description.contains(searchTerm)) {
             return true;
         }
 

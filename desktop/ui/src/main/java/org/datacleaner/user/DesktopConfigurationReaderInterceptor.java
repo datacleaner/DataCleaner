@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -51,8 +51,7 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
 
     private static final TaskRunner TASK_RUNNER = new MultiThreadedTaskRunner();
     private static final DescriptorProvider DESCRIPTOR_PROVIDER =
-            new ClasspathScanDescriptorProvider(TASK_RUNNER).scanPackage("org.datacleaner", true)
-                    .scanPackage("com.hi", true).scanPackage("com.neopost", true);
+            new ClasspathScanDescriptorProvider(TASK_RUNNER).scanPackage("org.datacleaner", true);
     private static final DataCleanerEnvironment BASE_ENVIRONMENT =
             new DataCleanerEnvironmentImpl().withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER);
 

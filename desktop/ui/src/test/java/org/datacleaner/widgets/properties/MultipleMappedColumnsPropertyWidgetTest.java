@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets.properties;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +39,6 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.SourceColumnComboBox;
 
-import cern.colt.Arrays;
 import junit.framework.TestCase;
 
 public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {

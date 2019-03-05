@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -29,15 +29,19 @@ import java.lang.annotation.Target;
 /**
  * Annotation that marks method as a validation method. Use this annotation if
  * you want to validate property values before initialization.
+ * 
+ * If any property/configuration of the component is badly configured, any
+ * exception can be thrown by the method, which will then be propagated to
+ * the user.
  *
- * The @Initialize annotation can be used on methods in the following component
+ * The @Validate annotation can be used on methods in the following component
  * types:
  *
  * <ul>
- * <li>AnalyzerBeans</li>
- * <li>TransformerBeans</li>
- * <li>FilterBeans</li>
- * <li>Dictionaries</li>
+ * <li>Analyzer</li>
+ * <li>Transformer</li>
+ * <li>Filter</li>
+ * <li>Dictionary</li>
  * <li>SynonymCatalog</li>
  * <li>StringPattern</li>
  * <li>... and custom configuration elements, such as custom datastores and

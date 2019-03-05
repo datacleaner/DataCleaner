@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -21,8 +21,6 @@ package org.datacleaner.util.ws;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.xml.ws.WebServiceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +45,7 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
             final R result = callable.call();
             return new ServiceResult<>(result);
         } catch (Throwable e) {
-            if (e instanceof WebServiceException && e.getCause() != null) {
+            if (isWrappedByJaxWsException(e)) {
                 logger.info("Exception thrown was a WebServiceException. Handling cause exception instead.", e);
                 e = e.getCause();
             }
@@ -55,6 +53,15 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
         } finally {
             _activeRequestsCount.decrementAndGet();
         }
+    }
+
+    private boolean isWrappedByJaxWsException(Throwable e) {
+        if (e.getCause() == null) {
+            return false;
+        }
+        // special exception name comparison to avoid dependency on JAX-WS directly
+        final String exceptionName = e.getClass().getName();
+        return exceptionName.startsWith("javax.xml.ws.");
     }
 
     /**
@@ -81,7 +88,7 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
         try {
             return callable.call();
         } catch (Throwable e) {
-            if (e instanceof WebServiceException && e.getCause() != null) {
+            if (isWrappedByJaxWsException(e)) {
                 logger.info("Exception thrown was a WebServiceException. Throwing cause exception instead.", e);
                 e = e.getCause();
             }

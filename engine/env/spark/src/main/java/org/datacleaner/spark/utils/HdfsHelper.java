@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -53,7 +53,7 @@ public class HdfsHelper {
 
     public HdfsHelper(final Configuration configuration) {
         if (configuration == null) {
-            logger.warn("Hadoop Configuration is null!", new Throwable());
+            logger.warn("Hadoop Configuration is null!");
         } else {
             _lastKnownConfiguration = configuration;
         }

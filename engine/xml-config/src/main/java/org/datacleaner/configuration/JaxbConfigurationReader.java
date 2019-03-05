@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -80,6 +80,8 @@ import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
+import org.datacleaner.connection.KafkaDatastore;
+import org.datacleaner.connection.KafkaDatastore.KeyValueType;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.OdbDatastore;
@@ -765,6 +767,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 ds = createDatastore(name, (PojoDatastoreType) datastoreType, temporaryConfiguration);
             } else if (datastoreType instanceof CouchdbDatastoreType) {
                 ds = createDatastore(name, (CouchdbDatastoreType) datastoreType);
+            } else if (datastoreType instanceof KafkaDatastoreType) {
+                ds = createDatastore(name, (KafkaDatastoreType) datastoreType);
             } else if (datastoreType instanceof MongodbDatastoreType) {
                 ds = createDatastore(name, (MongodbDatastoreType) datastoreType);
             } else if (datastoreType instanceof ElasticSearchDatastoreType) {
@@ -1103,6 +1107,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         return new MongoDbDatastore(name, hostname, port, databaseName, username, password, tableDefs);
+    }
+    
+    private Datastore createDatastore(final String name, final KafkaDatastoreType kafkaDatastoreType) {
+        final String bootstrapServers = kafkaDatastoreType.getBootstrapServers();
+        final Collection<String> topics = kafkaDatastoreType.getTopic();
+        final KeyValueType keyType = KeyValueType.valueOf(kafkaDatastoreType.getKeyType());
+        final KeyValueType valueType = KeyValueType.valueOf(kafkaDatastoreType.getValueType());
+        return new KafkaDatastore(name, bootstrapServers, topics, keyType, valueType);
     }
 
     private Datastore createDatastore(final String name, final CouchdbDatastoreType couchdbDatastoreType) {

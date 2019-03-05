@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -340,7 +340,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private <D extends Datastore> JButton createNewDatastoreButton(final String title, final String description,
             final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDialog> dialogClass,
             final DCPopupBubble.Position popupPosition) {
-        final ImageIcon icon = imageManager.getImageIcon(imagePath);
+        final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_LARGE);
         final JButton button = WidgetFactory.createImageButton(icon);
 
         final DCPopupBubble popupBubble =

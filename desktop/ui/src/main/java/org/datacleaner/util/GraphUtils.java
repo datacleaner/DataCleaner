@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -25,8 +25,9 @@ import java.awt.Shape;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
-import org.apache.commons.collections15.Transformer;
 import org.apache.metamodel.util.HasName;
+
+import com.google.common.base.Function;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -71,7 +72,7 @@ public class GraphUtils {
         visualizationViewer.setGraphMouse(graphMouse);
     }
 
-    private static <E> Transformer<E, Font> createFontTransformer() {
+    private static <E> Function<E, Font> createFontTransformer() {
         return input -> {
             final Font defaultFont = WidgetUtils.FONT_SMALL;
             if (input == null) {

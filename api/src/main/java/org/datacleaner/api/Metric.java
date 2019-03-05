@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2014 Neopost - Customer Information Management
+ * Copyright (C) 2014 Free Software Foundation, Inc.
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -48,8 +48,6 @@ import java.lang.annotation.Target;
  * <li>Except for the above mentioned exceptions, the method must not have any
  * parameters.</li>
  * </ul>
- *
- * @since AnalyzerBeans 0.16
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })

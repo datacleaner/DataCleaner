@@ -23,6 +23,7 @@
 		<module>pattern-finder</module>
 		<module>fill-pattern</module>
 		<module>value-distribution</module>
+		<module>machine-learning</module>
 		<module>date-gap</module>
 		<module>reference-data</module>
 		<module>sample</module>

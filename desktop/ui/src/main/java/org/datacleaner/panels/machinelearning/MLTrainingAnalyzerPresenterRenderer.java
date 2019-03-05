@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.components.machinelearning.ui;
+package org.datacleaner.panels.machinelearning;
 
 import javax.inject.Inject;
 

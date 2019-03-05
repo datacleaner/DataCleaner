@@ -23,5 +23,13 @@
 			<artifactId>smile-core</artifactId>
 			<version>1.5.1</version>
 		</dependency>
+		
+		<!-- Testware -->
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-testware</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

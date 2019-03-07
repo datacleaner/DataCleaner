@@ -371,7 +371,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
             // CouchDB-based on will work
             if (!"my_jdbc_datasource".equals(name) && !"my mongo".equals(name) && !"my couch".equals(name)
                     && !"my hbase".equals(name) && !"my_sfdc_ds".equals(name) && !"my_sugarcrm".equals(name)
-                    && !"my es index".equals(name)) {
+                    && !"my es index".equals(name) && !"my_dynamo".equals(name)) {
                 final Datastore datastore = datastoreCatalog.getDatastore(name);
                 final DataContext dc;
                 try {

@@ -18,39 +18,17 @@
 			<artifactId>DataCleaner-engine-utils</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-full</artifactId>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-basic-datastores</artifactId>
+			<version>${project.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-kafka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-dynamodb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-hbase</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-sas</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-dbase</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-access</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -62,10 +40,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -85,10 +59,6 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.gentyref</groupId>
-			<artifactId>gentyref</artifactId>
 		</dependency>
 
 		<!-- Used for classpath scanning. Required if the ClasspathScanDescriptorProvider 

@@ -59,6 +59,7 @@
 			</activation>
 			<modules>
 				<module>api</module>
+				<module>datastores</module>
 				<module>oss-branding</module>
 				<module>resources</module>
 				<module>testware</module>
@@ -72,6 +73,7 @@
 			<id>quick</id>
 			<modules>
 				<module>api</module>
+				<module>datastores</module>
 				<module>oss-branding</module>
 				<module>resources</module>
 				<module>testware</module>
@@ -84,6 +86,7 @@
 			<id>desktop</id>
 			<modules>
 				<module>api</module>
+				<module>datastores</module>
 				<module>oss-branding</module>
 				<module>resources</module>
 				<module>testware</module>

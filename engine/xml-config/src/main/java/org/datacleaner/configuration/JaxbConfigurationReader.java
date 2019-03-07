@@ -53,16 +53,64 @@ import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.apache.metamodel.xml.XmlSaxTableDef;
 import org.datacleaner.api.RenderingFormat;
-import org.datacleaner.configuration.jaxb.*;
+import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
+import org.datacleaner.configuration.jaxb.AccessDatastoreType;
+import org.datacleaner.configuration.jaxb.BerkeleyDbStorageProviderType;
+import org.datacleaner.configuration.jaxb.CassandraDatastoreType;
+import org.datacleaner.configuration.jaxb.ClasspathScannerType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType.Package;
+import org.datacleaner.configuration.jaxb.CombinedStorageProviderType;
+import org.datacleaner.configuration.jaxb.CompositeDatastoreType;
+import org.datacleaner.configuration.jaxb.Configuration;
+import org.datacleaner.configuration.jaxb.ConfigurationMetadataType;
+import org.datacleaner.configuration.jaxb.CouchdbDatastoreType;
+import org.datacleaner.configuration.jaxb.CsvDatastoreType;
+import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.CustomElementType.Property;
+import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
+import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
+import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.DbaseDatastoreType;
+import org.datacleaner.configuration.jaxb.DescriptorProvidersType;
+import org.datacleaner.configuration.jaxb.DynamoDbDatastoreType;
+import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType;
 import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef.Field;
+import org.datacleaner.configuration.jaxb.ExcelDatastoreType;
+import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
+import org.datacleaner.configuration.jaxb.HadoopClusterType;
+import org.datacleaner.configuration.jaxb.HbaseDatastoreType;
 import org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column;
+import org.datacleaner.configuration.jaxb.InMemoryStorageProviderType;
+import org.datacleaner.configuration.jaxb.JdbcDatastoreType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType.TableTypes;
+import org.datacleaner.configuration.jaxb.JsonDatastoreType;
+import org.datacleaner.configuration.jaxb.KafkaDatastoreType;
+import org.datacleaner.configuration.jaxb.MongodbDatastoreType;
+import org.datacleaner.configuration.jaxb.MultithreadedTaskrunnerType;
+import org.datacleaner.configuration.jaxb.Neo4JDatastoreType;
+import org.datacleaner.configuration.jaxb.ObjectFactory;
+import org.datacleaner.configuration.jaxb.OpenOfficeDatabaseDatastoreType;
+import org.datacleaner.configuration.jaxb.PojoDatastoreType;
+import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
+import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.RegexSwapPatternType;
+import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
+import org.datacleaner.configuration.jaxb.SasDatastoreType;
+import org.datacleaner.configuration.jaxb.ServersType;
+import org.datacleaner.configuration.jaxb.SimplePatternType;
+import org.datacleaner.configuration.jaxb.SinglethreadedTaskrunnerType;
+import org.datacleaner.configuration.jaxb.StorageProviderType;
+import org.datacleaner.configuration.jaxb.SugarCrmDatastoreType;
+import org.datacleaner.configuration.jaxb.TableTypeEnum;
+import org.datacleaner.configuration.jaxb.TextFileDictionaryType;
+import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.ValueListDictionaryType;
+import org.datacleaner.configuration.jaxb.ValueListSynonymCatalogType;
+import org.datacleaner.configuration.jaxb.XmlDatastoreType;
 import org.datacleaner.configuration.jaxb.XmlDatastoreType.TableDef;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
@@ -73,6 +121,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.DynamoDbDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore.ClientType;
 import org.datacleaner.connection.ExcelDatastore;
@@ -136,8 +185,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 /**
- * Configuration reader that uses the JAXB model to read XML file based
- * configurations for DataCleaner.
+ * Configuration reader that uses the JAXB model to read XML file based configurations for DataCleaner.
  */
 public final class JaxbConfigurationReader implements ConfigurationReader<InputStream> {
 
@@ -149,8 +197,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     static {
         try {
-            _jaxbContext = JAXBContext
-                    .newInstance(ObjectFactory.class.getPackage().getName(), ObjectFactory.class.getClassLoader());
+            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
+                    ObjectFactory.class.getClassLoader());
         } catch (final JAXBException e) {
             throw new IllegalStateException(e);
         }
@@ -171,15 +219,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     /**
      * Checks if a string is a valid name of a component.
      *
-     * @param name
-     *            the name to be validated
-     * @param type
-     *            the type of component (used for error messages)
-     * @param previousEntries
-     *            the previous entries of that component type (for uniqueness
-     *            check)
-     * @throws IllegalStateException
-     *             if the name is invalid
+     * @param name the name to be validated
+     * @param type the type of component (used for error messages)
+     * @param previousEntries the previous entries of that component type (for uniqueness check)
+     * @throws IllegalStateException if the name is invalid
      */
     private static void checkName(final String name, final Class<?> type, final Map<String, ?> previousEntries)
             throws IllegalStateException {
@@ -194,15 +237,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     /**
      * Checks if a string is a valid name of a component.
      *
-     * @param name
-     *            the name to be validated
-     * @param type
-     *            the type of component (used for error messages)
-     * @param previousEntries
-     *            the previous entries of that component type (for uniqueness
-     *            check)
-     * @throws IllegalStateException
-     *             if the name is invalid
+     * @param name the name to be validated
+     * @param type the type of component (used for error messages)
+     * @param previousEntries the previous entries of that component type (for uniqueness check)
+     * @throws IllegalStateException if the name is invalid
      */
     private static void checkName(final String name, final Class<?> type,
             final List<? extends ReferenceData> previousEntries) throws IllegalStateException {
@@ -251,8 +289,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     /**
-     * Convenience method to get the untouched JAXB configuration object from an
-     * inputstream.
+     * Convenience method to get the untouched JAXB configuration object from an inputstream.
      *
      * @param inputStream input data to be unmarshalled
      * @return configuration based on input data
@@ -269,8 +306,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     /**
-     * Convenience method to marshal a JAXB configuration object into an output
-     * stream.
+     * Convenience method to marshal a JAXB configuration object into an output stream.
      *
      * @param configuration configuration to be marshalled
      * @param outputStream target for the marshalled data
@@ -315,9 +351,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         // Add servers
         final ServerInformationCatalog serverInformationCatalog;
         {
-            serverInformationCatalog =
-                    createServerInformationCatalog(jaxbConfiguration.getServers(), temporaryConfiguration,
-                            temporaryEnvironment);
+            serverInformationCatalog = createServerInformationCatalog(jaxbConfiguration.getServers(),
+                    temporaryConfiguration, temporaryEnvironment);
 
             temporaryConfiguration = temporaryConfiguration.withServerInformationCatalog(serverInformationCatalog);
         }
@@ -337,9 +372,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final ReferenceDataCatalog referenceDataCatalog;
         {
             addVariablePath("referenceDataCatalog");
-            referenceDataCatalog =
-                    createReferenceDataCatalog(jaxbConfiguration.getReferenceDataCatalog(), temporaryEnvironment,
-                            temporaryConfiguration);
+            referenceDataCatalog = createReferenceDataCatalog(jaxbConfiguration.getReferenceDataCatalog(),
+                    temporaryEnvironment, temporaryConfiguration);
             removeVariablePath();
         }
 
@@ -363,12 +397,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         // not defined within the <descriptor-providers> element.
         {
             if (configuration.getClasspathScanner() != null) {
-                providersElement.getCustomClassOrClasspathScanner()
-                        .add(configuration.getClasspathScanner());
+                providersElement.getCustomClassOrClasspathScanner().add(configuration.getClasspathScanner());
             }
             if (configuration.getCustomDescriptorProvider() != null) {
-                providersElement.getCustomClassOrClasspathScanner()
-                        .add(configuration.getCustomDescriptorProvider());
+                providersElement.getCustomClassOrClasspathScanner().add(configuration.getCustomDescriptorProvider());
             }
         }
 
@@ -564,9 +596,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         dict.setDescription(vldt.getDescription());
                         dictionaryList.add(dict);
                     } else if (dictionaryType instanceof CustomElementType) {
-                        final Dictionary customDictionary =
-                                createCustomElement((CustomElementType) dictionaryType, Dictionary.class,
-                                        temporaryConfiguration, false);
+                        final Dictionary customDictionary = createCustomElement((CustomElementType) dictionaryType,
+                                Dictionary.class, temporaryConfiguration, false);
                         checkName(customDictionary.getName(), Dictionary.class, dictionaryList);
                         dictionaryList.add(customDictionary);
                     } else {
@@ -621,15 +652,13 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                                 getStringVariable("datastoreName", datastoreSynonymCatalogType.getDatastoreName());
                         final String masterTermColumnPath = getStringVariable("masterTermColumnPath",
                                 datastoreSynonymCatalogType.getMasterTermColumnPath());
-                        final boolean loadIntoMemory =
-                                getBooleanVariable("loadIntoMemory", datastoreSynonymCatalogType.isLoadIntoMemory(),
-                                        true);
+                        final boolean loadIntoMemory = getBooleanVariable("loadIntoMemory",
+                                datastoreSynonymCatalogType.isLoadIntoMemory(), true);
 
                         final String[] synonymColumnPaths =
                                 datastoreSynonymCatalogType.getSynonymColumnPath().toArray(new String[0]);
-                        final DatastoreSynonymCatalog sc =
-                                new DatastoreSynonymCatalog(name, dataStoreName, masterTermColumnPath,
-                                        synonymColumnPaths, loadIntoMemory);
+                        final DatastoreSynonymCatalog sc = new DatastoreSynonymCatalog(name, dataStoreName,
+                                masterTermColumnPath, synonymColumnPaths, loadIntoMemory);
                         sc.setDescription(datastoreSynonymCatalogType.getDescription());
                         synonymCatalogList.add(sc);
 
@@ -736,7 +765,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         // read all single, non-custom datastores
         final List<AbstractDatastoreType> datastoreTypes =
-                datastoreCatalogType.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore();
+                datastoreCatalogType.getJdbcDatastoreOrAccessDatastoreOrDynamodbDatastore();
         for (final AbstractDatastoreType datastoreType : datastoreTypes) {
             final String name = datastoreType.getName();
             checkName(name, Datastore.class, datastores);
@@ -755,6 +784,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 ds = createDatastore(name, (AccessDatastoreType) datastoreType);
             } else if (datastoreType instanceof XmlDatastoreType) {
                 ds = createDatastore(name, (XmlDatastoreType) datastoreType);
+            } else if (datastoreType instanceof DynamoDbDatastoreType) {
+                ds = createDatastore(name, (DynamoDbDatastoreType) datastoreType);
             } else if (datastoreType instanceof ExcelDatastoreType) {
                 ds = createDatastore(name, (ExcelDatastoreType) datastoreType, temporaryConfiguration);
             } else if (datastoreType instanceof JsonDatastoreType) {
@@ -1108,7 +1139,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         return new MongoDbDatastore(name, hostname, port, databaseName, username, password, tableDefs);
     }
-    
+
     private Datastore createDatastore(final String name, final KafkaDatastoreType kafkaDatastoreType) {
         final String bootstrapServers = kafkaDatastoreType.getBootstrapServers();
         final Collection<String> topics = kafkaDatastoreType.getTopic();
@@ -1186,6 +1217,42 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             customColumnNames = excelDatastoreType.getCustomColumnNames().getColumnName();
         }
         return new ExcelDatastore(name, resource, filename, customColumnNames);
+    }
+
+    private Datastore createDatastore(final String name, final DynamoDbDatastoreType dynamoDbDatastoreType) {
+        final String region = getStringVariable("region", dynamoDbDatastoreType.getRegion());
+        final String accessKey = getStringVariable("accessKey", dynamoDbDatastoreType.getAccessKey());
+        final String accessSecret = getPasswordVariable("accessSecret", dynamoDbDatastoreType.getAccessSecret());
+        final SimpleTableDef[] tableDefs;
+        final List<org.datacleaner.configuration.jaxb.DynamoDbDatastoreType.TableDef> tableDefList =
+                dynamoDbDatastoreType.getTableDef();
+        if (tableDefList.isEmpty()) {
+            tableDefs = null;
+        } else {
+            tableDefs = new SimpleTableDef[tableDefList.size()];
+            for (int i = 0; i < tableDefs.length; i++) {
+                final String tableName = tableDefList.get(i).getTableName();
+                final List<org.datacleaner.configuration.jaxb.DynamoDbDatastoreType.TableDef.Column> columnList =
+                        tableDefList.get(i).getColumn();
+
+                final String[] columnNames = new String[columnList.size()];
+                final ColumnType[] columnTypes = new ColumnType[columnList.size()];
+
+                for (int j = 0; j < columnList.size(); j++) {
+                    columnNames[j] = columnList.get(j).getName();
+                    final String columnTypeName = columnList.get(j).getType();
+                    final ColumnType columnType;
+                    if (StringUtils.isNullOrEmpty(columnTypeName)) {
+                        columnType = ColumnType.STRING;
+                    } else {
+                        columnType = ColumnTypeImpl.valueOf(columnTypeName);
+                    }
+                    columnTypes[j] = columnType;
+                }
+                tableDefs[i] = new SimpleTableDef(tableName, columnNames, columnTypes);
+            }
+        }
+        return new DynamoDbDatastore(name, region, accessKey, accessSecret, tableDefs);
     }
 
     private Datastore createDatastore(final String name, final XmlDatastoreType xmlDatastoreType) {
@@ -1469,20 +1536,15 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     /**
-     * Creates a custom component based on an element which specified just a
-     * class name and an optional set of properties.
+     * Creates a custom component based on an element which specified just a class name and an optional set of
+     * properties.
      *
      * @param <E>
-     * @param customElementType
-     *            the JAXB custom element type
-     * @param expectedClazz
-     *            an expected class or interface that the component should honor
-     * @param configuration
-     *            the DataCleaner configuration (may be temporary) in use
-     * @param initialize
-     *            whether or not to call any initialize methods on the component
-     *            (reference data should not be initialized, while eg. custom
-     *            task runners support this.
+     * @param customElementType the JAXB custom element type
+     * @param expectedClazz an expected class or interface that the component should honor
+     * @param configuration the DataCleaner configuration (may be temporary) in use
+     * @param initialize whether or not to call any initialize methods on the component (reference data should not be
+     *            initialized, while eg. custom task runners support this.
      * @return the custom component
      */
     private <E> E createCustomElement(final CustomElementType customElementType, final Class<E> expectedClazz,

@@ -35,6 +35,7 @@ import org.apache.metamodel.util.Resource;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DynamoDbDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
@@ -105,6 +106,24 @@ public class DomConfigurationWriterTest {
 
         assertEquals(
                 "<excel-datastore description=\"bar\" name=\"foo\">\n  <filename>baz.txt</filename>\n</excel-datastore>\n",
+                str);
+    }
+    
+    @Test
+    public void testExternalizeDynamoDatastore() throws Exception {
+        final DynamoDbDatastore ds = new DynamoDbDatastore("my dyno", "west", "key", "secret", null); 
+        ds.setDescription("bar");
+
+        final Element elem = configurationWriter.toElement(ds);
+
+        final String str = transform(elem);
+
+        assertEquals(
+                "<dynamodb-datastore description=\"bar\" name=\"my dyno\">\n" + 
+                "  <region>west</region>\n" + 
+                "  <accessKey>key</accessKey>\n" + 
+                "  <accessSecret>enc:brIAhgjdd+M=</accessSecret>\n" + 
+                "</dynamodb-datastore>\n",
                 str);
     }
 

@@ -71,7 +71,7 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
         AbstractDatastoreType serializedDatastore = adaptor.createPojoDatastore(datastore, null, 20);
 
         final DatastoreCatalogType serializedDatastoreCatalogType = new DatastoreCatalogType();
-        serializedDatastoreCatalogType.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(serializedDatastore);
+        serializedDatastoreCatalogType.getJdbcDatastoreOrAccessDatastoreOrDynamodbDatastore().add(serializedDatastore);
         Configuration serializedConfiguration = new Configuration();
         serializedConfiguration.setDatastoreCatalog(serializedDatastoreCatalogType);
 
@@ -83,7 +83,7 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
         serializedConfiguration = (Configuration) jaxbContext.createUnmarshaller().unmarshal(file);
 
         serializedDatastore =
-                serializedConfiguration.getDatastoreCatalog().getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().get(0);
+                serializedConfiguration.getDatastoreCatalog().getJdbcDatastoreOrAccessDatastoreOrDynamodbDatastore().get(0);
         datastore = adaptor.read((PojoDatastoreType) serializedDatastore);
 
         final UpdateableDatastoreConnection con = datastore.openConnection();

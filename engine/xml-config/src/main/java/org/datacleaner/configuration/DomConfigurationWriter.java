@@ -35,6 +35,7 @@ import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.DynamoDbDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
@@ -170,14 +171,18 @@ public class DomConfigurationWriter {
         if (datastore instanceof SalesforceDatastore) {
             return true;
         }
-
+        if (datastore instanceof DynamoDbDatastore) {
+            final SimpleTableDef[] tableDefs = ((DynamoDbDatastore) datastore).getTableDefs();
+            if (tableDefs == null) {
+                return true;
+            }
+        }
         if (datastore instanceof JsonDatastore) {
             return true;
         }
         if (datastore instanceof FixedWidthDatastore) {
             return true;
         }
-
         if (datastore instanceof KafkaDatastore) {
             return true;
         }
@@ -332,6 +337,8 @@ public class DomConfigurationWriter {
             elem = toElement((MongoDbDatastore) datastore);
         } else if (datastore instanceof CouchDbDatastore) {
             elem = toElement((CouchDbDatastore) datastore);
+        } else if (datastore instanceof DynamoDbDatastore) {
+            elem = toElement((DynamoDbDatastore) datastore);
         } else if (datastore instanceof SalesforceDatastore) {
             elem = toElement((SalesforceDatastore) datastore);
         } else if (datastore instanceof JsonDatastore) {
@@ -758,6 +765,25 @@ public class DomConfigurationWriter {
     }
 
     /**
+     * Externalizes a {@link DynamoDbDatastore} to a XML element
+     * 
+     * @param datastore
+     * @return
+     */
+    public Element toElement(final DynamoDbDatastore datastore) {
+        final Element ds = getDocument().createElement("dynamodb-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+
+        appendElement(ds, "region", datastore.getRegion());
+        appendElement(ds, "accessKey", datastore.getAccessKey());
+        appendElement(ds, "accessSecret", encodePassword(datastore.getAccessSecret()));
+        return ds;
+    }
+
+    /**
      * Externalizes a {@link CouchDbDatastore} to a XML element
      *
      * @param datastore
@@ -778,7 +804,7 @@ public class DomConfigurationWriter {
 
         return ds;
     }
-    
+
     public Element toElement(KafkaDatastore datastore) {
         final Element ds = getDocument().createElement("kafka-datastore");
         ds.setAttribute("name", datastore.getName());

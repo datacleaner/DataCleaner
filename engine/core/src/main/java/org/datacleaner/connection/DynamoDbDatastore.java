@@ -33,7 +33,7 @@ import com.google.common.base.Strings;
 /**
  * Datastore providing access to AWS DynamoDB
  */
-public class DynamoDbDatastore extends UsageAwareDatastore<DynamoDbDataContext> {
+public class DynamoDbDatastore extends UsageAwareDatastore<DynamoDbDataContext> implements UpdateableDatastore {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,6 +57,11 @@ public class DynamoDbDatastore extends UsageAwareDatastore<DynamoDbDataContext> 
     }
 
     @Override
+    public UpdateableDatastoreConnection openConnection() {
+        return (UpdateableDatastoreConnection) super.openConnection();
+    }
+
+    @Override
     protected UsageAwareDatastoreConnection<DynamoDbDataContext> createDatastoreConnection() {
         final AmazonDynamoDBClientBuilder clientBuilder = AmazonDynamoDBClientBuilder.standard();
         if (!Strings.isNullOrEmpty(_region)) {
@@ -71,7 +76,7 @@ public class DynamoDbDatastore extends UsageAwareDatastore<DynamoDbDataContext> 
         clientBuilder.setCredentials(credentialsProvider);
         final AmazonDynamoDB client = clientBuilder.build();
         final DynamoDbDataContext dataContext = new DynamoDbDataContext(client, _tableDefs);
-        return new DatastoreConnectionImpl<>(dataContext, this);
+        return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
     }
 
     public String getAccessKey() {

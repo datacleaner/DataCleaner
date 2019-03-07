@@ -44,12 +44,14 @@ import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.DynamoDbDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
+import org.datacleaner.connection.KafkaDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.Neo4jDatastore;
 import org.datacleaner.connection.OdbDatastore;
@@ -211,6 +213,7 @@ public final class IconUtils {
     public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
     public static final String MONGODB_IMAGEPATH = "images/datastore-types/mongodb.png";
     public static final String COUCHDB_IMAGEPATH = "images/datastore-types/couchdb.png";
+    public static final String DYNAMODB_IMAGEPATH = "images/datastore-types/dynamodb.png";
     public static final String KAFKA_IMAGEPATH = "images/datastore-types/kafka.png";
     public static final String SALESFORCE_IMAGEPATH = "images/datastore-types/salesforce.png";
     public static final String SUGAR_CRM_IMAGEPATH = "images/datastore-types/sugarcrm.png";
@@ -551,6 +554,10 @@ public final class IconUtils {
             imagePath = JSON_IMAGEPATH;
         } else if (datastore instanceof CouchDbDatastore) {
             imagePath = COUCHDB_IMAGEPATH;
+        } else if (datastore instanceof DynamoDbDatastore) {
+            imagePath = DYNAMODB_IMAGEPATH;
+        } else if (datastore instanceof KafkaDatastore) {
+            imagePath = KAFKA_IMAGEPATH;
         } else if (datastore instanceof MongoDbDatastore) {
             imagePath = MONGODB_IMAGEPATH;
         } else if (datastore instanceof SalesforceDatastore) {

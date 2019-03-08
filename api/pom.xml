@@ -54,7 +54,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-full</artifactId>
+			<artifactId>MetaModel-csv</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

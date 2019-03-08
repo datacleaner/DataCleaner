@@ -20,39 +20,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-full</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-kafka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-dynamodb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
 			<artifactId>MetaModel-hbase</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-sas</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-dbase</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-access</artifactId>
+			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-cassandra</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

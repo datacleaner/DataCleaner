@@ -729,26 +729,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
-				<artifactId>MetaModel-full</artifactId>
+				<artifactId>MetaModel-csv</artifactId>
 				<version>${metamodel.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.metamodel</groupId>
-						<artifactId>MetaModel-elasticsearch-native</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.elasticsearch</groupId>
-						<artifactId>elasticsearch</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.sun.xml.ws</groupId>
-						<artifactId>jaxws-rt</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
-				<artifactId>MetaModel-csv</artifactId>
+				<artifactId>MetaModel-cassandra</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
@@ -759,11 +745,6 @@
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-pojo</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.metamodel</groupId>
-				<artifactId>MetaModel-neo4j</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
@@ -800,6 +781,12 @@
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-elasticsearch-rest</artifactId>
 				<version>${metamodel.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.elasticsearch</groupId>
+						<artifactId>elasticsearch</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>

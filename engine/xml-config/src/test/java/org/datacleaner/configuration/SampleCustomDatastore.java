@@ -22,7 +22,7 @@ package org.datacleaner.configuration;
 import java.io.File;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
+import org.apache.metamodel.xml.XmlDomDataContext;
 import org.datacleaner.api.Configured;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -52,7 +52,7 @@ public class SampleCustomDatastore implements Datastore {
 
     @Override
     public DatastoreConnection openConnection() {
-        final DataContext dc = DataContextFactory.createXmlDataContext(xmlFile, false);
+        final DataContext dc = new XmlDomDataContext(xmlFile, false);
         return new DatastoreConnectionImpl<>(dc, this);
     }
 

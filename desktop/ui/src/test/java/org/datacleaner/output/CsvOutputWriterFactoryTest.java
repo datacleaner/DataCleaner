@@ -22,7 +22,7 @@ package org.datacleaner.output;
 import java.io.File;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
+import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
@@ -41,7 +41,7 @@ public class CsvOutputWriterFactoryTest extends TestCase {
         scenarioHelper.writeExampleData(writer);
         writer.close();
 
-        final DataContext dc = DataContextFactory.createCsvDataContext(new File(filename));
+        final DataContext dc = new CsvDataContext(new File(filename));
         final Table table = dc.getDefaultSchema().getTable(0);
         final Query q = dc.query().from(table).select(table.getColumns()).toQuery();
         final DataSet dataSet = dc.executeQuery(q);

@@ -22,7 +22,7 @@
 		<freemarker.version>2.3.28</freemarker.version>
 		<icu4j.version>61.1</icu4j.version>
 		<jackson.version>2.9.8</jackson.version>
-		<javax.servlet.version>3.0.1</javax.servlet.version>
+		<javax.servlet.version>3.1.0</javax.servlet.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<scala.version>2.11.12</scala.version>

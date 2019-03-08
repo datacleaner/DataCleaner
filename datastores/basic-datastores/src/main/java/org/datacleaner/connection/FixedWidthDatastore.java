@@ -28,9 +28,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.fixedwidth.EbcdicConfiguration;
 import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.fixedwidth.FixedWidthDataContext;
 import org.apache.metamodel.schema.naming.AlphabeticColumnNamingStrategy;
 import org.apache.metamodel.schema.naming.ColumnNamingStrategy;
 import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
@@ -166,9 +166,9 @@ public class FixedWidthDatastore extends UsageAwareDatastore<DataContext> implem
         final DataContext dataContext;
         if (resource == null) {
             logger.warn("Resource was not available, a local file reference will be created with path: {}", _filename);
-            dataContext = DataContextFactory.createFixedWidthDataContext(new File(_filename), configuration);
+            dataContext = new FixedWidthDataContext(new File(_filename), configuration);
         } else {
-            dataContext = DataContextFactory.createFixedWidthDataContext(resource, configuration);
+            dataContext = new FixedWidthDataContext(resource, configuration);
         }
         return new DatastoreConnectionImpl<>(dataContext, this);
     }

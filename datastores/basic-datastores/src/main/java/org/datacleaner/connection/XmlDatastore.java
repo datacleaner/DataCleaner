@@ -25,7 +25,7 @@ import java.io.ObjectInputStream;
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
+import org.apache.metamodel.xml.XmlDomDataContext;
 import org.apache.metamodel.xml.XmlSaxDataContext;
 import org.apache.metamodel.xml.XmlSaxTableDef;
 import org.datacleaner.util.ReadObjectBuilder;
@@ -68,7 +68,7 @@ public class XmlDatastore extends UsageAwareDatastore<DataContext> implements Fi
         final File file = new File(_filename);
         final DataContext dataContext;
         if (_tableDefs == null || _tableDefs.length == 0) {
-            dataContext = DataContextFactory.createXmlDataContext(file, true);
+            dataContext = new XmlDomDataContext(file, true);
         } else {
             dataContext = new XmlSaxDataContext(file, _tableDefs);
         }

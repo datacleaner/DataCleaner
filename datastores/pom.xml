@@ -10,5 +10,6 @@
 	<modules>
 		<module>utils</module>
 		<module>basic-datastores</module>
+		<module>hadoop-datastores</module>
 	</modules>
 </project>

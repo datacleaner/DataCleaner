@@ -23,6 +23,11 @@
 			<artifactId>DataCleaner-basic-datastores</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-hadoop-datastores</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>io.netty</groupId>

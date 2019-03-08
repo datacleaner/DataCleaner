@@ -7,7 +7,11 @@
 		<artifactId>DataCleaner-datastores</artifactId>
 		<version>5.6.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>DataCleaner-basic-datastores</artifactId>
+	<artifactId>DataCleaner-hadoop-datastores</artifactId>
+	<description>
+		Module for datastore types that depend on Hadoop
+		(which brings along a quite extensive transitive dependency graph)
+	</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
@@ -16,59 +20,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-csv</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-fixedwidth</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-pojo</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-neo4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-openoffice</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-salesforce</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-sugarcrm</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-xml</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-jdbc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-elasticsearch-rest</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-excel</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-json</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-mongodb-mongo3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.metamodel</groupId>
-			<artifactId>MetaModel-couchdb</artifactId>
+			<artifactId>MetaModel-full</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -85,6 +37,10 @@
 		<dependency>
 			<groupId>org.apache.metamodel</groupId>
 			<artifactId>MetaModel-dynamodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-hbase</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.metamodel-extras</groupId>

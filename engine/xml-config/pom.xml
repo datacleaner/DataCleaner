@@ -167,6 +167,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-hadoop-datastores</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-env-berkeleydb</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>

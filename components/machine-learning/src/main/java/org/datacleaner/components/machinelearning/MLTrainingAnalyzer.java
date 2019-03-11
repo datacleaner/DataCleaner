@@ -118,7 +118,7 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
     MLAlgorithm algorithm = MLAlgorithm.RANDOM_FOREST;
 
     @Configured(required = false)
-    @FileProperty(accessMode = FileAccessMode.SAVE, extension = ".model.ser")
+    @FileProperty(accessMode = FileAccessMode.SAVE, extension = "model.ser")
     File saveModelToFile = new File("classifier.model.ser");
 
     @Inject

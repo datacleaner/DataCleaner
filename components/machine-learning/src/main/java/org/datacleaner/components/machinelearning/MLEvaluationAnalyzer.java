@@ -52,7 +52,7 @@ public class MLEvaluationAnalyzer implements Analyzer<MLAnalyzerResult> {
     InputColumn<?>[] features;
 
     @Configured
-    @FileProperty(accessMode = FileAccessMode.OPEN, extension = ".model.ser")
+    @FileProperty(accessMode = FileAccessMode.OPEN, extension = "model.ser")
     File modelFile = new File("classifier.model.ser");
 
     private MLClassifier classifier;

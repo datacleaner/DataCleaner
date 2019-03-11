@@ -98,8 +98,8 @@ public final class IconUtils {
 
     private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     public static final int ICON_SIZE_LARGE = adjuster.adjust(32);
-    public static final int ICON_SIZE_MEDIUM = adjuster.adjust(22);
-    public static final int ICON_SIZE_SMALL = adjuster.adjust(16);
+    public static final int ICON_SIZE_MEDIUM = adjuster.adjust(24);
+    public static final int ICON_SIZE_SMALL = adjuster.adjust(18);
     public static final int ICON_SIZE_MENU_ITEM = ICON_SIZE_SMALL;
     public static final int ICON_SIZE_BUTTON = ICON_SIZE_MEDIUM;
     public static final int ICON_SIZE_TAB = ICON_SIZE_MEDIUM;

@@ -20,10 +20,17 @@
 package org.datacleaner.components.machinelearning.impl;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.datacleaner.components.machinelearning.api.MLClassificationRecord;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
+
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 
 public class MLFeatureUtils {
 
@@ -57,5 +64,40 @@ public class MLFeatureUtils {
 
     public static int getFeatureCount(Collection<MLFeatureModifier> featureModifiers) {
         return featureModifiers.stream().mapToInt(f -> f.getFeatureCount()).sum();
+    }
+
+    public static Set<String> sanitizeFeatureVectorSet(Multiset<String> values, MLTrainingOptions options) {
+        final Set<String> resultSet;
+
+        final int maxFeatures = options.getMaxFeatures();
+        if (maxFeatures > 0) {
+            resultSet = new TreeSet<>();
+            final Iterator<String> highestCountFirst = Multisets.copyHighestCountFirst(values).elementSet().iterator();
+            // populate "resultSet" using "highestCountFirst"
+            for (int i = 0; i < maxFeatures; i++) {
+                if (highestCountFirst.hasNext()) {
+                    final String value = highestCountFirst.next();
+                    resultSet.add(value);
+                }
+            }
+        } else {
+            resultSet = new TreeSet<>(values.elementSet());
+        }
+
+        final boolean includeFeaturesForUniqueValues = options.isIncludeFeaturesForUniqueValues();
+        if (!includeFeaturesForUniqueValues) {
+            // remove uniques in "values" from "resultSet".
+            for (Iterator<String> it = resultSet.iterator(); it.hasNext();) {
+                final String value = it.next();
+                if (values.count(value) == 1) {
+                    it.remove();
+                }
+            }
+        }
+
+        // TODO
+        System.out.println("Reduced " + values.size() + " multiset to " + resultSet.size() + " values");
+
+        return resultSet;
     }
 }

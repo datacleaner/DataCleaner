@@ -19,20 +19,29 @@
  */
 package org.datacleaner.components.machinelearning.impl;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilder;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
+
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 
 public class VectorNGramFeatureModifierBuilder implements MLFeatureModifierBuilder {
 
     private final int gramLength;
-    private final Set<String> grams;
-
+    private final Multiset<String> grams;
+    private final MLTrainingOptions options;
+    
     public VectorNGramFeatureModifierBuilder(int gramLength) {
+        this(new MLTrainingOptions(-1, true), gramLength);
+    }
+
+    public VectorNGramFeatureModifierBuilder(MLTrainingOptions options, int gramLength) {
         this.gramLength = gramLength;
-        this.grams = new HashSet<>();
+        this.options = options;
+        this.grams = HashMultiset.create();
     }
 
     @Override
@@ -50,10 +59,11 @@ public class VectorNGramFeatureModifierBuilder implements MLFeatureModifierBuild
 
     @Override
     public MLFeatureModifier build() {
-        return new VectorNGramFeatureModifier(gramLength, grams);
+        return new VectorNGramFeatureModifier(gramLength, getGrams());
     }
 
     protected Set<String> getGrams() {
-        return grams;
+        final Set<String> resultSet = MLFeatureUtils.sanitizeFeatureVectorSet(grams, options);
+        return resultSet;
     }
 }

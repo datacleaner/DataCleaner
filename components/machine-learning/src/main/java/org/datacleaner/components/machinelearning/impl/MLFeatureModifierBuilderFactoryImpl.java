@@ -24,11 +24,12 @@ import java.util.Objects;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilder;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilderFactory;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierType;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
 
 public class MLFeatureModifierBuilderFactoryImpl implements MLFeatureModifierBuilderFactory {
 
     @Override
-    public MLFeatureModifierBuilder create(MLFeatureModifierType type) {
+    public MLFeatureModifierBuilder create(MLFeatureModifierType type, MLTrainingOptions options) {
         Objects.requireNonNull(type);
         switch (type) {
         case DIRECT_NUMERIC:
@@ -38,15 +39,15 @@ public class MLFeatureModifierBuilderFactoryImpl implements MLFeatureModifierBui
         case SCALED_MIN_MAX:
             return new ScaledMinMaxFeatureModifierBuilder();
         case VECTOR_ONE_HOT_ENCODING:
-            return new VectorOneHotEncodingFeatureModifierBuilder();
+            return new VectorOneHotEncodingFeatureModifierBuilder(options);
         case VECTOR_2_GRAM:
-            return new VectorNGramFeatureModifierBuilder(2);
+            return new VectorNGramFeatureModifierBuilder(options, 2);
         case VECTOR_3_GRAM:
-            return new VectorNGramFeatureModifierBuilder(3);
+            return new VectorNGramFeatureModifierBuilder(options, 3);
         case VECTOR_4_GRAM:
-            return new VectorNGramFeatureModifierBuilder(4);
+            return new VectorNGramFeatureModifierBuilder(options, 4);
         case VECTOR_5_GRAM:
-            return new VectorNGramFeatureModifierBuilder(5);
+            return new VectorNGramFeatureModifierBuilder(options, 5);
         default:
             throw new UnsupportedOperationException("Unsupported feature modifier type: " + type);
         }

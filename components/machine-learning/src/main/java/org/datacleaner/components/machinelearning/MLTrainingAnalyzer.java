@@ -59,6 +59,7 @@ import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilder;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilderFactory;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierType;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
 import org.datacleaner.components.machinelearning.impl.MLClassificationRecordImpl;
 import org.datacleaner.components.machinelearning.impl.MLFeatureModifierBuilderFactoryImpl;
 import org.datacleaner.components.machinelearning.impl.MLFeatureUtils;
@@ -75,7 +76,7 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
 
     public static final String PROPERTY_FEATURE_COLUMNS = "Features";
     public static final String PROPERTY_FEATURE_MODIFIERS = "Feature modifier types";
-    
+
     private static final Logger logger = LoggerFactory.getLogger(MLTrainingAnalyzer.class);
     private static final MLFeatureModifierBuilderFactory featureModifierBuilderFactory =
             new MLFeatureModifierBuilderFactoryImpl();
@@ -102,6 +103,16 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
     @Configured
     @NumberProperty(negative = false, zero = false)
     int layerSize = 64;
+
+    @Configured
+    @Description("Defines the maximum number of features to generate per column. "
+            + "Applies to feature vectors such as 'One-Hot Encoding' or n-grams.")
+    @NumberProperty(negative = false, zero = false)
+    Integer maxFeaturesGeneratedPerColumn = 25;
+
+    @Configured
+    @Description("Include generated features that are only triggered once in the training data set.")
+    boolean includeUniqueValueFeatures = false;
 
     @Configured
     MLAlgorithm algorithm = MLAlgorithm.RANDOM_FOREST;
@@ -131,9 +142,11 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
         crossValidationRecords = new ConcurrentLinkedQueue<>();
         featureModifierBuilders = new ArrayList<>(featureModifierTypes.length);
 
+        final int maxFeatures = maxFeaturesGeneratedPerColumn == null ? -1 : maxFeaturesGeneratedPerColumn;
+        final MLTrainingOptions options = new MLTrainingOptions(maxFeatures, includeUniqueValueFeatures);
         for (MLFeatureModifierType featureModifierType : featureModifierTypes) {
             final MLFeatureModifierBuilder featureModifierBuilder =
-                    featureModifierBuilderFactory.create(featureModifierType);
+                    featureModifierBuilderFactory.create(featureModifierType, options);
             featureModifierBuilders.add(featureModifierBuilder);
         }
     }

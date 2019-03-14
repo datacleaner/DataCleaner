@@ -84,8 +84,8 @@ public class DynamoDbDatastoreDialog extends AbstractDatastoreDialog<DynamoDbDat
         } else {
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEnabled(false);
-            _accessKeyIdField.setText(originalDatastore.getAccessKey());
-            _secretAccessKeyField.setText(originalDatastore.getAccessSecret());
+            _accessKeyIdField.setText(originalDatastore.getAccessKeyId());
+            _secretAccessKeyField.setText(originalDatastore.getSecretAccessKey());
             final String originalRegion = originalDatastore.getRegion();
             try {
                 final Regions region = Regions.fromName(originalRegion);
@@ -123,10 +123,10 @@ public class DynamoDbDatastoreDialog extends AbstractDatastoreDialog<DynamoDbDat
     protected DynamoDbDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String region = _regionField.getSelectedItem().getName();
-        final String accessKey = _accessKeyIdField.getText();
-        final String accessSecret = new String(_secretAccessKeyField.getPassword());
+        final String accessKeyId = _accessKeyIdField.getText();
+        final String secretAccessKey = new String(_secretAccessKeyField.getPassword());
         final SimpleTableDef[] tableDefs = _tableDefinitionWidget.getTableDefs();
-        return new DynamoDbDatastore(name, region, accessKey, accessSecret, tableDefs);
+        return new DynamoDbDatastore(name, region, accessKeyId, secretAccessKey, tableDefs);
     }
 
     @Override

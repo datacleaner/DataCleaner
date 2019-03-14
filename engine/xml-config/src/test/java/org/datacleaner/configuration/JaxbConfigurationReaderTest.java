@@ -264,8 +264,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
         
         final DynamoDbDatastore dynamoDatastore = (DynamoDbDatastore) datastoreCatalog.getDatastore("my_dynamo");
         assertEquals("regionX", dynamoDatastore.getRegion());
-        assertEquals("foo", dynamoDatastore.getAccessKey());
-        assertEquals("bar", dynamoDatastore.getAccessSecret());
+        assertEquals("foo", dynamoDatastore.getAccessKeyId());
+        assertEquals("bar", dynamoDatastore.getSecretAccessKey());
         assertNull(dynamoDatastore.getTableDefs());
 
         assertEquals("a SugarCRM instance", datastoreCatalog.getDatastore("my_sugarcrm").getDescription());

@@ -691,8 +691,8 @@
 			<extension base="ab:abstractDatastoreType">
 				<sequence>
 					<element name="region" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="accessKey" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="accessSecret" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="accessKeyId" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="secretAccessKey" minOccurs="1" maxOccurs="1" type="string" />
 					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
 						<complexType>
 							<sequence>

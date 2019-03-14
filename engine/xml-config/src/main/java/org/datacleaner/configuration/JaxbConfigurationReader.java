@@ -1221,8 +1221,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private Datastore createDatastore(final String name, final DynamoDbDatastoreType dynamoDbDatastoreType) {
         final String region = getStringVariable("region", dynamoDbDatastoreType.getRegion());
-        final String accessKey = getStringVariable("accessKey", dynamoDbDatastoreType.getAccessKey());
-        final String accessSecret = getPasswordVariable("accessSecret", dynamoDbDatastoreType.getAccessSecret());
+        final String accessKeyId = getStringVariable("accessKeyId", dynamoDbDatastoreType.getAccessKeyId());
+        final String secretAccessKey = getPasswordVariable("secretAccessKey", dynamoDbDatastoreType.getSecretAccessKey());
         final SimpleTableDef[] tableDefs;
         final List<org.datacleaner.configuration.jaxb.DynamoDbDatastoreType.TableDef> tableDefList =
                 dynamoDbDatastoreType.getTableDef();
@@ -1252,7 +1252,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 tableDefs[i] = new SimpleTableDef(tableName, columnNames, columnTypes);
             }
         }
-        return new DynamoDbDatastore(name, region, accessKey, accessSecret, tableDefs);
+        return new DynamoDbDatastore(name, region, accessKeyId, secretAccessKey, tableDefs);
     }
 
     private Datastore createDatastore(final String name, final XmlDatastoreType xmlDatastoreType) {

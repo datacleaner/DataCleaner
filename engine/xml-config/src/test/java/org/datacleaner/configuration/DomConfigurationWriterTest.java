@@ -120,8 +120,8 @@ public class DomConfigurationWriterTest {
 
         assertEquals("<dynamodb-datastore description=\"bar\" name=\"my dyno\">\n"
                 + "  <region>west</region>\n"
-                + "  <accessKey>key</accessKey>\n"
-                + "  <accessSecret>enc:brIAhgjdd+M=</accessSecret>\n" 
+                + "  <accessKeyId>key</accessKeyId>\n"
+                + "  <secretAccessKey>enc:brIAhgjdd+M=</secretAccessKey>\n" 
                 + "</dynamodb-datastore>\n",
                 str);
     }

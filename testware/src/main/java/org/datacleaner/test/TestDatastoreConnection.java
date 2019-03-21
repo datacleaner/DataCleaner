@@ -20,8 +20,8 @@
 package org.datacleaner.test;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.jdbc.JdbcDataContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
@@ -33,7 +33,7 @@ final class TestDatastoreConnection implements UpdateableDatastoreConnection {
 
     TestDatastoreConnection(final TestDatastore datastore) throws Exception {
         _datastore = datastore;
-        _dataContext = DataContextFactory.createJdbcDataContext(datastore.getDataSource());
+        _dataContext = new JdbcDataContext(datastore.getDataSource());
     }
 
     @Override

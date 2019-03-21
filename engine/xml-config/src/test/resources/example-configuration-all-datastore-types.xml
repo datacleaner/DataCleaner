@@ -37,11 +37,11 @@
 		</dynamodb-datastore>
 
 		<xml-datastore name="my_dom_xml" description="dom xml">
-			<filename>../core/src/test/resources/example-xml-file.xml</filename>
+			<filename>../../datastores/basic-datastores/src/test/resources/example-xml-file.xml</filename>
 		</xml-datastore>
 
 		<xml-datastore name="my_sax_xml" description="sax xml">
-			<filename>../core/src/test/resources/example-xml-file.xml</filename>
+			<filename>../../datastores/basic-datastores/src/test/resources/example-xml-file.xml</filename>
 			<table-def>
 				<rowXpath>/greetings/greeting</rowXpath>
 				<valueXpath>/greetings/greeting/how</valueXpath>
@@ -56,15 +56,15 @@
 		</csv-datastore>
 
 		<excel-datastore name="my_excel_2003" description="xls">
-			<filename>../core/src/test/resources/Spreadsheet2003.xls</filename>
+			<filename>../../datastores/basic-datastores/src/test/resources/Spreadsheet2003.xls</filename>
 		</excel-datastore>
 		
 		<json-datastore name="my_json">
-			<filename>../core/src/test/resources/example.json</filename>
+			<filename>../../datastores/basic-datastores/src/test/resources/example.json</filename>
 		</json-datastore>
 
 		<access-datastore name="my_access" description="mdb">
-			<filename>../core/src/test/resources/developers.mdb</filename>
+			<filename>../../datastores/basic-datastores/src/test/resources/developers.mdb</filename>
 		</access-datastore>
 		
 		<elasticsearch-datastore name="my es index" description="yay, search!">
@@ -96,7 +96,7 @@
 		</cassandra-datastore>
 
 		<dbase-datastore name="my_dbase" description="dbf">
-			<filename>../core/src/test/resources/report.dbf</filename>
+			<filename>../../datastores/basic-datastores/src/test/resources/report.dbf</filename>
 		</dbase-datastore>
 		
 		<odb-datastore name="my_odb" description="odb">
@@ -104,11 +104,11 @@
 		</odb-datastore>
 
 		<sas-datastore name="my_sas" description="folder of sas7bdat files">
-			<directory>../core/src/test/resources/sas</directory>
+			<directory>../../datastores/basic-datastores/src/test/resources/sas</directory>
 		</sas-datastore>
 
 		<fixed-width-datastore name="my_fixed_width_1">
-			<filename>../core/src/test/resources/employees-fixed-width.txt</filename>
+			<filename>../../datastores/basic-datastores/src/test/resources/employees-fixed-width.txt</filename>
 			<width-specification>
 				<fixed-value-width>19</fixed-value-width>
 			</width-specification>
@@ -118,7 +118,7 @@
 		</fixed-width-datastore>
 
 		<fixed-width-datastore name="my_fixed_width_2">
-			<filename>../core/src/test/resources/employees-fixed-width-variable-columns.txt</filename>
+			<filename>../../datastores/basic-datastores/src/test/resources/employees-fixed-width-variable-columns.txt</filename>
 			<width-specification>
 				<value-width>4</value-width>
 				<value-width>17</value-width>

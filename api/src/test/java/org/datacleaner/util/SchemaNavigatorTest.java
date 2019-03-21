@@ -24,9 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.QueryPostprocessDataContext;
+import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.MutableColumn;
@@ -43,8 +43,7 @@ import junit.framework.TestCase;
 public class SchemaNavigatorTest extends TestCase {
 
     public void testTheBasics() throws Exception {
-        final DataContext dc =
-                DataContextFactory.createCsvDataContext(new File("src/test/resources/employees.csv"), ',', '\"');
+        final DataContext dc = new CsvDataContext(new File("src/test/resources/employees.csv"));
         final SchemaNavigator sn = new SchemaNavigator(dc);
         sn.refreshSchemas();
 
@@ -61,17 +60,22 @@ public class SchemaNavigatorTest extends TestCase {
         assertNull(sn.convertToColumns("foo", "bar", null));
         assertEquals(0, (sn.convertToColumns("foo", "bar", new String[0])).length);
 
-        assertEquals("[Column[name=email,columnNumber=1,type=STRING,nullable=true,nativeType=null,columnSize=null], "
+        assertEquals(
+                "[Column[name=email,columnNumber=1,type=STRING,nullable=true,nativeType=null,columnSize=null], "
                         + "Column[name=name,columnNumber=0,type=STRING,nullable=true,nativeType=null,columnSize=null]]",
                 Arrays.toString(sn.convertToColumns(new String[] { "email", "employees.csv.name" })));
-        assertEquals("[Column[name=email,columnNumber=1,type=STRING,nullable=true,nativeType=null,columnSize=null], "
-                + "null, Column[name=name,columnNumber=0,type=STRING,nullable=true,nativeType=null,"
-                + "columnSize=null]]", Arrays.toString(
-                sn.convertToColumns("resources", "employees.csv", new String[] { "email", "not-existing", "name" })));
-        assertEquals("[Column[name=email,columnNumber=1,type=STRING,nullable=true,nativeType=null,columnSize=null], "
-                + "null, Column[name=name,columnNumber=0,"
-                + "type=STRING,nullable=true,nativeType=null,columnSize=null]]", Arrays.toString(
-                sn.convertToColumns(null, "employees.csv", new String[] { "email", "not-existing", "name" })));
+        assertEquals(
+                "[Column[name=email,columnNumber=1,type=STRING,nullable=true,nativeType=null,columnSize=null], "
+                        + "null, Column[name=name,columnNumber=0,type=STRING,nullable=true,nativeType=null,"
+                        + "columnSize=null]]",
+                Arrays.toString(sn.convertToColumns("resources", "employees.csv",
+                        new String[] { "email", "not-existing", "name" })));
+        assertEquals(
+                "[Column[name=email,columnNumber=1,type=STRING,nullable=true,nativeType=null,columnSize=null], "
+                        + "null, Column[name=name,columnNumber=0,"
+                        + "type=STRING,nullable=true,nativeType=null,columnSize=null]]",
+                Arrays.toString(
+                        sn.convertToColumns(null, "employees.csv", new String[] { "email", "not-existing", "name" })));
 
         try {
             sn.convertToColumns("not-existing", "employees.csv", new String[] { "email", "not-existing", "name" });
@@ -105,9 +109,11 @@ public class SchemaNavigatorTest extends TestCase {
 
         assertEquals("Table[name=employees.csv,type=TABLE,remarks=null]",
                 sn.convertToTable("resources", "employees.csv").toString());
-        assertEquals("[Table[name=employees.csv,type=TABLE,remarks=null], "
-                + "Table[name=employees.csv,type=TABLE,remarks=null], null]", Arrays.toString(
-                sn.convertToTables(new String[] { "employees.csv", "resources.employees.csv", "foo" })));
+        assertEquals(
+                "[Table[name=employees.csv,type=TABLE,remarks=null], "
+                        + "Table[name=employees.csv,type=TABLE,remarks=null], null]",
+                Arrays.toString(
+                        sn.convertToTables(new String[] { "employees.csv", "resources.employees.csv", "foo" })));
 
         // schemas
         assertEquals("Schema[name=resources]", sn.convertToSchema("resources").toString());
@@ -122,8 +128,7 @@ public class SchemaNavigatorTest extends TestCase {
     }
 
     public void testSchemaWithDot() throws Exception {
-        final DataContext dc =
-                DataContextFactory.createCsvDataContext(new File("src/test/resources/employees.csv"), ',', '\"');
+        final DataContext dc = new CsvDataContext(new File("src/test/resources/employees.csv"));
 
         assertEquals(2, dc.getDefaultSchema().getTable(0).getColumnCount());
 
@@ -147,7 +152,8 @@ public class SchemaNavigatorTest extends TestCase {
 
         final DataContext dataContext = new QueryPostprocessDataContext() {
             @Override
-            protected DataSet materializeMainSchemaTable(final Table table, final List<Column> columns, final int maxRows) {
+            protected DataSet materializeMainSchemaTable(final Table table, final List<Column> columns,
+                    final int maxRows) {
                 throw new UnsupportedOperationException();
             }
 

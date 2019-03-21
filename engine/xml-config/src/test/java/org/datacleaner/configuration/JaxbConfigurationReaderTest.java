@@ -335,7 +335,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 Arrays.toString(tableDefs));
 
         final XmlDatastore xmlDatastore = (XmlDatastore) datastoreCatalog.getDatastore("my_sax_xml");
-        assertEquals("../core/src/test/resources/example-xml-file.xml", xmlDatastore.getFilename());
+        assertEquals("../../datastores/basic-datastores/src/test/resources/example-xml-file.xml", xmlDatastore.getFilename());
         assertEquals("[XmlSaxTableDef[rowXpath=/greetings/greeting,"
                         + "valueXpaths=[/greetings/greeting/how, /greetings/greeting/what]]]",
                 Arrays.toString(xmlDatastore.getTableDefs()));

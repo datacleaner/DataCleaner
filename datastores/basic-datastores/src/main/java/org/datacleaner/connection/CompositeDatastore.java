@@ -25,8 +25,8 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.metamodel.CompositeDataContext;
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
 import org.datacleaner.util.ReadObjectBuilder;
 
 public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
@@ -59,8 +59,8 @@ public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {
             dataContexts.add(dc);
         }
         final Closeable[] closeablesArray = closeables.toArray(new Closeable[closeables.size()]);
-        return new DatastoreConnectionImpl<>(DataContextFactory.createCompositeDataContext(dataContexts), this,
-                closeablesArray);
+        final CompositeDataContext dataContext = new CompositeDataContext(dataContexts);
+        return new DatastoreConnectionImpl<>(dataContext, this, closeablesArray);
     }
 
     @Override

@@ -41,7 +41,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.query.Query;
@@ -91,7 +92,7 @@ public class AboutDialog extends AbstractDialog {
             throw new IllegalStateException("Could not find dependencies file");
         }
         try {
-            final DataContext dc = DataContextFactory.createCsvDataContext(url.openStream(), ',', '"');
+            final DataContext dc = new CsvDataContext(url.openStream(), new CsvConfiguration());
             final Table table = dc.getDefaultSchema().getTable(0);
             final Column projectColumn = table.getColumnByName("Project");
             final Column websiteColumn = table.getColumnByName("Website");

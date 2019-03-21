@@ -26,12 +26,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Strings;
-
 /**
  * Contains various utility methods regarding string handling.
  *
- * Consider using Guava's {@link Strings} instead.
+ * Consider using Guava's "Strings" instead.
  */
 public final class StringUtils {
 

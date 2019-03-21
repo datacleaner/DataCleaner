@@ -32,8 +32,8 @@
 		
 		<dynamodb-datastore name="my_dynamo">
 			<region>regionX</region>
-			<accessKey>foo</accessKey>
-			<accessSecret>bar</accessSecret>
+			<accessKeyId>foo</accessKeyId>
+			<secretAccessKey>bar</secretAccessKey>
 		</dynamodb-datastore>
 
 		<xml-datastore name="my_dom_xml" description="dom xml">

@@ -778,8 +778,8 @@ public class DomConfigurationWriter {
         }
 
         appendElement(ds, "region", datastore.getRegion());
-        appendElement(ds, "accessKey", datastore.getAccessKey());
-        appendElement(ds, "accessSecret", encodePassword(datastore.getAccessSecret()));
+        appendElement(ds, "accessKeyId", datastore.getAccessKeyId());
+        appendElement(ds, "secretAccessKey", encodePassword(datastore.getSecretAccessKey()));
         return ds;
     }
 

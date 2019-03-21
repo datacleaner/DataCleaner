@@ -52,8 +52,8 @@ public class DynamoDbDatastoreDialog extends AbstractDatastoreDialog<DynamoDbDat
     private static final long serialVersionUID = 1L;
 
     private final DCComboBox<Regions> _regionField;
-    private final JXTextField _accessKeyField;
-    private final JPasswordField _accessSecretField;
+    private final JXTextField _accessKeyIdField;
+    private final JPasswordField _secretAccessKeyField;
     private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
@@ -63,16 +63,16 @@ public class DynamoDbDatastoreDialog extends AbstractDatastoreDialog<DynamoDbDat
 
         _regionField = new DCComboBox<>(Regions.values());
         _regionField.setSelectedItem(Regions.DEFAULT_REGION);
-        _accessKeyField = WidgetFactory.createTextField();
-        _accessSecretField = WidgetFactory.createPasswordField();
+        _accessKeyIdField = WidgetFactory.createTextField();
+        _secretAccessKeyField = WidgetFactory.createPasswordField();
 
-        _accessKeyField.getDocument().addDocumentListener(new DCDocumentListener() {
+        _accessKeyIdField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
             }
         });
-        _accessSecretField.getDocument().addDocumentListener(new DCDocumentListener() {
+        _secretAccessKeyField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(final DocumentEvent event) {
                 validateAndUpdate();
@@ -84,8 +84,8 @@ public class DynamoDbDatastoreDialog extends AbstractDatastoreDialog<DynamoDbDat
         } else {
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEnabled(false);
-            _accessKeyField.setText(originalDatastore.getAccessKey());
-            _accessSecretField.setText(originalDatastore.getAccessSecret());
+            _accessKeyIdField.setText(originalDatastore.getAccessKeyId());
+            _secretAccessKeyField.setText(originalDatastore.getSecretAccessKey());
             final String originalRegion = originalDatastore.getRegion();
             try {
                 final Regions region = Regions.fromName(originalRegion);
@@ -123,10 +123,10 @@ public class DynamoDbDatastoreDialog extends AbstractDatastoreDialog<DynamoDbDat
     protected DynamoDbDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String region = _regionField.getSelectedItem().getName();
-        final String accessKey = _accessKeyField.getText();
-        final String accessSecret = new String(_accessSecretField.getPassword());
+        final String accessKeyId = _accessKeyIdField.getText();
+        final String secretAccessKey = new String(_secretAccessKeyField.getPassword());
         final SimpleTableDef[] tableDefs = _tableDefinitionWidget.getTableDefs();
-        return new DynamoDbDatastore(name, region, accessKey, accessSecret, tableDefs);
+        return new DynamoDbDatastore(name, region, accessKeyId, secretAccessKey, tableDefs);
     }
 
     @Override
@@ -146,8 +146,8 @@ public class DynamoDbDatastoreDialog extends AbstractDatastoreDialog<DynamoDbDat
     protected List<Entry<String, JComponent>> getFormElements() {
         final List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<>("Region", _regionField));
-        result.add(new ImmutableEntry<>("Access Key", _accessKeyField));
-        result.add(new ImmutableEntry<>("Access Secret", _accessSecretField));
+        result.add(new ImmutableEntry<>("Access key ID", _accessKeyIdField));
+        result.add(new ImmutableEntry<>("Secret access key", _secretAccessKeyField));
         result.add(new ImmutableEntry<>("Schema model", _tableDefinitionWidget));
         return result;
     }

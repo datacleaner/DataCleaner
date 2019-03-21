@@ -38,16 +38,16 @@ public class DynamoDbDatastore extends UsageAwareDatastore<DynamoDbDataContext> 
     private static final long serialVersionUID = 1L;
 
     private final String _region;
-    private final String _accessKey;
-    private final String _accessSecret;
+    private final String _accessKeyId;
+    private final String _secretAccessKey;
     private final SimpleTableDef[] _tableDefs;
 
-    public DynamoDbDatastore(final String name, final String region, final String accessKey, final String accessSecret,
-            final SimpleTableDef[] tableDefs) {
+    public DynamoDbDatastore(final String name, final String region, final String accessKeyId,
+            final String secretAccessKey, final SimpleTableDef[] tableDefs) {
         super(name);
         _region = region;
-        _accessKey = accessKey;
-        _accessSecret = accessSecret;
+        _accessKeyId = accessKeyId;
+        _secretAccessKey = secretAccessKey;
         _tableDefs = tableDefs;
     }
 
@@ -68,8 +68,9 @@ public class DynamoDbDatastore extends UsageAwareDatastore<DynamoDbDataContext> 
             clientBuilder.setRegion(_region);
         }
         final AWSCredentialsProvider credentialsProvider;
-        if (!Strings.isNullOrEmpty(_accessKey)) {
-            credentialsProvider = new AWSStaticCredentialsProvider(new BasicAWSCredentials(_accessKey, _accessSecret));
+        if (!Strings.isNullOrEmpty(_accessKeyId)) {
+            credentialsProvider =
+                    new AWSStaticCredentialsProvider(new BasicAWSCredentials(_accessKeyId, _secretAccessKey));
         } else {
             credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance();
         }
@@ -79,12 +80,12 @@ public class DynamoDbDatastore extends UsageAwareDatastore<DynamoDbDataContext> 
         return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
     }
 
-    public String getAccessKey() {
-        return _accessKey;
+    public String getAccessKeyId() {
+        return _accessKeyId;
     }
 
-    public String getAccessSecret() {
-        return _accessSecret;
+    public String getSecretAccessKey() {
+        return _secretAccessKey;
     }
 
     public String getRegion() {

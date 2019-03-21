@@ -29,6 +29,12 @@
 			<password>bar</password>
 			<security-token>baz</security-token>
 		</salesforce-datastore>
+		
+		<dynamodb-datastore name="my_dynamo">
+			<region>regionX</region>
+			<accessKeyId>foo</accessKeyId>
+			<secretAccessKey>bar</secretAccessKey>
+		</dynamodb-datastore>
 
 		<xml-datastore name="my_dom_xml" description="dom xml">
 			<filename>../core/src/test/resources/example-xml-file.xml</filename>

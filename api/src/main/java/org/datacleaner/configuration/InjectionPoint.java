@@ -67,7 +67,7 @@ public interface InjectionPoint<E> {
      * Gets a generic argument by index
      *
      * @param index
-     * @return
+     * @return the generic argument type
      * @throws IndexOutOfBoundsException
      */
     Class<?> getGenericTypeArgument(int index) throws IndexOutOfBoundsException;

@@ -21,14 +21,14 @@ package org.datacleaner.components.machinelearning.api;
 
 import java.io.Serializable;
 
-public class MLTrainingOptions implements Serializable {
+public class MLTrainingConstraints implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private final int maxFeatures;
     private final boolean includeFeaturesForUniqueValues;
 
-    public MLTrainingOptions(int maxFeatures, boolean includeFeaturesForUniqueValues) {
+    public MLTrainingConstraints(int maxFeatures, boolean includeFeaturesForUniqueValues) {
         this.maxFeatures = maxFeatures;
         this.includeFeaturesForUniqueValues = includeFeaturesForUniqueValues;
     }

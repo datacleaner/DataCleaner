@@ -23,29 +23,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.datacleaner.components.machinelearning.api.MLClassificationMetadata;
+import org.datacleaner.components.machinelearning.api.MLClassificationRecord;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainer;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainerCallback;
-import org.datacleaner.components.machinelearning.api.MLClassificationRecord;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainingOptions;
 import org.datacleaner.components.machinelearning.api.MLClassifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 
 import smile.classification.SVM;
+import smile.classification.SVM.Multiclass;
 import smile.math.kernel.GaussianKernel;
 
 public class SvmClasificationTrainer implements MLClassificationTrainer {
 
     private final MLClassificationTrainingOptions trainingOptions;
+    private final int epochs;
+    private final double softMarginPenalty;
+    private final Multiclass multiclass;
+    private final double gaussianKernelSigma;
 
-    public SvmClasificationTrainer(MLClassificationTrainingOptions trainingOptions) {
+    public SvmClasificationTrainer(MLClassificationTrainingOptions trainingOptions, int epochs,
+            double gaussianKernelSigma, double softMarginPenalty, Multiclass multiclass) {
         this.trainingOptions = trainingOptions;
+        this.epochs = epochs;
+        this.gaussianKernelSigma = gaussianKernelSigma;
+        this.softMarginPenalty = softMarginPenalty;
+        this.multiclass = multiclass;
     }
 
     @Override
     public MLClassifier train(Iterable<MLClassificationRecord> data, List<MLFeatureModifier> featureModifiers,
             MLClassificationTrainerCallback callback) {
-        final int epochs = trainingOptions.getEpochs();
-
         final List<double[]> trainingInstances = new ArrayList<>();
         final List<Integer> responseVariables = new ArrayList<>();
         final List<Object> classifications = new ArrayList<>();
@@ -66,15 +74,14 @@ public class SvmClasificationTrainer implements MLClassificationTrainer {
         }
 
         final int numClasses = classifications.size();
-        // TODO: Consider hyper parameters
-        final SVM<double[]> svm =
-                new SVM<double[]>(new GaussianKernel(8.0), 5.0, numClasses, SVM.Multiclass.ONE_VS_ONE);
+        final GaussianKernel kernel = new GaussianKernel(gaussianKernelSigma);
+        final SVM<double[]> svm = new SVM<double[]>(kernel, softMarginPenalty, numClasses, multiclass);
         final double[][] x = trainingInstances.toArray(new double[trainingInstances.size()][]);
         final int[] y = responseVariables.stream().mapToInt(i -> i).toArray();
 
         for (int j = 0; j < epochs; j++) {
             svm.learn(x, y);
-            callback.epochDone(j + 1);
+            callback.epochDone(j + 1, epochs);
         }
         svm.finish();
         svm.trainPlattScaling(x, y);

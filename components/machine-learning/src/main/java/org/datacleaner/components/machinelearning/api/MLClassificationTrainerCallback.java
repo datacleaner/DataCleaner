@@ -21,5 +21,5 @@ package org.datacleaner.components.machinelearning.api;
 
 public interface MLClassificationTrainerCallback {
 
-    void epochDone(int epoch);
+    void epochDone(int epochNo, int expectedEpochs);
 }

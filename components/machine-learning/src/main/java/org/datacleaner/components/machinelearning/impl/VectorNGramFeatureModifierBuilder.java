@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilder;
-import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainingConstraints;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -32,15 +32,15 @@ public class VectorNGramFeatureModifierBuilder implements MLFeatureModifierBuild
 
     private final int gramLength;
     private final Multiset<String> grams;
-    private final MLTrainingOptions options;
+    private final MLTrainingConstraints constraints;
     
     public VectorNGramFeatureModifierBuilder(int gramLength) {
-        this(new MLTrainingOptions(-1, true), gramLength);
+        this(new MLTrainingConstraints(-1, true), gramLength);
     }
 
-    public VectorNGramFeatureModifierBuilder(MLTrainingOptions options, int gramLength) {
+    public VectorNGramFeatureModifierBuilder(MLTrainingConstraints constraints, int gramLength) {
         this.gramLength = gramLength;
-        this.options = options;
+        this.constraints = constraints;
         this.grams = HashMultiset.create();
     }
 
@@ -63,7 +63,7 @@ public class VectorNGramFeatureModifierBuilder implements MLFeatureModifierBuild
     }
 
     protected Set<String> getGrams() {
-        final Set<String> resultSet = MLFeatureUtils.sanitizeFeatureVectorSet(grams, options);
+        final Set<String> resultSet = MLFeatureUtils.sanitizeFeatureVectorSet(grams, constraints);
         return resultSet;
     }
 }

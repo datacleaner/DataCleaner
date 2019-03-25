@@ -35,17 +35,18 @@ import smile.classification.RandomForest;
 public class RandomForestClassificationTrainer implements MLClassificationTrainer {
 
     private final MLClassificationTrainingOptions trainingOptions;
+    private final int epochs;
+    private final int numTrees;
 
-    public RandomForestClassificationTrainer(MLClassificationTrainingOptions trainingOptions) {
+    public RandomForestClassificationTrainer(MLClassificationTrainingOptions trainingOptions, int epochs, int numTrees) {
         this.trainingOptions = trainingOptions;
+        this.epochs = epochs;
+        this.numTrees = numTrees;
     }
 
     @Override
     public MLClassifier train(Iterable<MLClassificationRecord> data, List<MLFeatureModifier> featureModifiers,
             MLClassificationTrainerCallback callback) {
-        final int epochs = trainingOptions.getEpochs();
-        final int numTrees = trainingOptions.getLayerSize();
-
         final List<double[]> trainingInstances = new ArrayList<>();
         final List<Integer> responseVariables = new ArrayList<>();
 

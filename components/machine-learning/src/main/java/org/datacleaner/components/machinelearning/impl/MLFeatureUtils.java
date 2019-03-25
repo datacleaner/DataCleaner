@@ -27,7 +27,7 @@ import java.util.TreeSet;
 
 import org.datacleaner.components.machinelearning.api.MLClassificationRecord;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
-import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainingConstraints;
 
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
@@ -66,10 +66,10 @@ public class MLFeatureUtils {
         return featureModifiers.stream().mapToInt(f -> f.getFeatureCount()).sum();
     }
 
-    public static Set<String> sanitizeFeatureVectorSet(Multiset<String> values, MLTrainingOptions options) {
+    public static Set<String> sanitizeFeatureVectorSet(Multiset<String> values, MLTrainingConstraints constraints) {
         final Set<String> resultSet;
 
-        final int maxFeatures = options.getMaxFeatures();
+        final int maxFeatures = constraints.getMaxFeatures();
         if (maxFeatures > 0) {
             resultSet = new TreeSet<>();
             final Iterator<String> highestCountFirst = Multisets.copyHighestCountFirst(values).elementSet().iterator();
@@ -84,7 +84,7 @@ public class MLFeatureUtils {
             resultSet = new TreeSet<>(values.elementSet());
         }
 
-        final boolean includeFeaturesForUniqueValues = options.isIncludeFeaturesForUniqueValues();
+        final boolean includeFeaturesForUniqueValues = constraints.isIncludeFeaturesForUniqueValues();
         if (!includeFeaturesForUniqueValues) {
             // remove uniques in "values" from "resultSet".
             for (Iterator<String> it = resultSet.iterator(); it.hasNext();) {

@@ -31,6 +31,7 @@ import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPresenter;
 import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
@@ -47,8 +48,8 @@ public class MLTrainingAnalyzerPresenterRenderer implements
 
     @Override
     public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<MLTrainingAnalyzer> ajb) {
-        if (ajb.getDescriptor().getComponentClass() == MLTrainingAnalyzer.class) {
-            return RendererPrecedence.HIGH;
+        if (ReflectionUtils.is(ajb.getDescriptor().getComponentClass(), MLTrainingAnalyzer.class)) {
+            return RendererPrecedence.MEDIUM;
         }
         return RendererPrecedence.NOT_CAPABLE;
     }

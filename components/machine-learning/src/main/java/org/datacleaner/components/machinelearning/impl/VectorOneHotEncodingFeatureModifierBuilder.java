@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilder;
-import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainingConstraints;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
@@ -31,7 +31,7 @@ import com.google.common.collect.Multiset;
 public class VectorOneHotEncodingFeatureModifierBuilder implements MLFeatureModifierBuilder {
 
     private final Multiset<String> values;
-    private final MLTrainingOptions options;
+    private final MLTrainingConstraints constraints;
 
     /**
      * Creates as {@link VectorOneHotEncodingFeatureModifierBuilder} with limitless features.
@@ -40,9 +40,9 @@ public class VectorOneHotEncodingFeatureModifierBuilder implements MLFeatureModi
         this(-1, true);
     }
 
-    public VectorOneHotEncodingFeatureModifierBuilder(MLTrainingOptions options) {
+    public VectorOneHotEncodingFeatureModifierBuilder(MLTrainingConstraints constraints) {
         this.values = HashMultiset.create();
-        this.options = options;
+        this.constraints = constraints;
     }
 
     /**
@@ -52,7 +52,7 @@ public class VectorOneHotEncodingFeatureModifierBuilder implements MLFeatureModi
      * @param includeFeaturesForUniqueValues whether or not to generate features for values that occur just once
      */
     public VectorOneHotEncodingFeatureModifierBuilder(int maxFeatures, boolean includeFeaturesForUniqueValues) {
-        this(new MLTrainingOptions(maxFeatures, includeFeaturesForUniqueValues));
+        this(new MLTrainingConstraints(maxFeatures, includeFeaturesForUniqueValues));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class VectorOneHotEncodingFeatureModifierBuilder implements MLFeatureModi
 
     @Override
     public MLFeatureModifier build() {
-        final Set<String> resultSet = MLFeatureUtils.sanitizeFeatureVectorSet(values, options);
+        final Set<String> resultSet = MLFeatureUtils.sanitizeFeatureVectorSet(values, constraints);
         return new VectorOneHotEncodingFeatureModifier(resultSet);
     }
 

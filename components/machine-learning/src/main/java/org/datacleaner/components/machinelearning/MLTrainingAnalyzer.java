@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.metamodel.util.CollectionUtils;
@@ -59,7 +58,7 @@ import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilder;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierBuilderFactory;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierType;
-import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainingConstraints;
 import org.datacleaner.components.machinelearning.impl.MLClassificationRecordImpl;
 import org.datacleaner.components.machinelearning.impl.MLFeatureModifierBuilderFactoryImpl;
 import org.datacleaner.components.machinelearning.impl.MLFeatureUtils;
@@ -70,9 +69,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
-@Named("Classifier training")
 @Categorized(MachineLearningCategory.class)
-public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
+public abstract class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
 
     public static final String PROPERTY_FEATURE_COLUMNS = "Features";
     public static final String PROPERTY_FEATURE_MODIFIERS = "Feature modifier types";
@@ -97,14 +95,6 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
     Percentage crossValidationSampleRate = new Percentage(10);
 
     @Configured
-    @NumberProperty(negative = false, zero = false)
-    int epochs = 10;
-
-    @Configured
-    @NumberProperty(negative = false, zero = false)
-    int layerSize = 64;
-
-    @Configured
     @Description("Defines the maximum number of features to generate per column. "
             + "Applies to feature vectors such as 'One-Hot Encoding' or n-grams.")
     @NumberProperty(negative = false, zero = false)
@@ -114,12 +104,9 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
     @Description("Include generated features that are only triggered once in the training data set.")
     boolean includeUniqueValueFeatures = false;
 
-    @Configured
-    MLAlgorithm algorithm = MLAlgorithm.RANDOM_FOREST;
-
     @Configured(required = false)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = "model.ser")
-    File saveModelToFile = new File("classifier.model.ser");
+    File saveModelToFile;
 
     @Inject
     @Provided
@@ -143,10 +130,10 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
         featureModifierBuilders = new ArrayList<>(featureModifierTypes.length);
 
         final int maxFeatures = maxFeaturesGeneratedPerColumn == null ? -1 : maxFeaturesGeneratedPerColumn;
-        final MLTrainingOptions options = new MLTrainingOptions(maxFeatures, includeUniqueValueFeatures);
+        final MLTrainingConstraints constraints = new MLTrainingConstraints(maxFeatures, includeUniqueValueFeatures);
         for (MLFeatureModifierType featureModifierType : featureModifierTypes) {
             final MLFeatureModifierBuilder featureModifierBuilder =
-                    featureModifierBuilderFactory.create(featureModifierType, options);
+                    featureModifierBuilderFactory.create(featureModifierType, constraints);
             featureModifierBuilders.add(featureModifierBuilder);
         }
     }
@@ -177,21 +164,20 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
     public MLAnalyzerResult getResult() {
         final List<MLFeatureModifier> featureModifiers =
                 featureModifierBuilders.stream().map(MLFeatureModifierBuilder::build).collect(Collectors.toList());
-
         final List<String> columnNames = CollectionUtils.map(featureColumns, new HasNameMapper());
-        final MLClassificationTrainingOptions options = new MLClassificationTrainingOptions(
-                classification.getDataType(), columnNames, featureModifiers, epochs, layerSize);
-        final MLClassificationTrainer trainer = algorithm.createTrainer(options);
-        final int epochs = options.getEpochs();
-        log("Training " + algorithm.getName() + " model starting. Records=" + trainingRecords.size() + ", Columns="
-                + columnNames.size() + ", Features=" + MLFeatureUtils.getFeatureCount(featureModifiers) + ", Epochs="
-                + epochs + ".");
+        final MLClassificationTrainingOptions options =
+                new MLClassificationTrainingOptions(classification.getDataType(), columnNames, featureModifiers);
+
+        final MLClassificationTrainer trainer = createTrainer(options);
+        log("Training model starting. Records=" + trainingRecords.size() + ", Columns=" + columnNames.size()
+                + ", Features=" + MLFeatureUtils.getFeatureCount(featureModifiers) + ".");
         final MLClassifier classifier =
                 trainer.train(trainingRecords, featureModifiers, new MLClassificationTrainerCallback() {
                     @Override
-                    public void epochDone(int epoch) {
-                        log("Training " + algorithm.getName() + " progress: Epoch " + epoch + " of " + epochs
-                                + " done.");
+                    public void epochDone(int epochNo, int expectedEpochs) {
+                        if (expectedEpochs > 1) {
+                            log("Training progress: Epoch " + epochNo + " of " + expectedEpochs + " done.");
+                        }
                     }
                 });
 
@@ -205,7 +191,7 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
             }
         }
 
-        log("Trained " + algorithm.getName() + " model. Creating evaluation matrices.");
+        log("Trained model. Creating evaluation matrices.");
 
         final Crosstab<Integer> trainedRecordsConfusionMatrix =
                 createConfusionMatrixCrosstab(classifier, trainingRecords);
@@ -214,6 +200,8 @@ public class MLTrainingAnalyzer implements Analyzer<MLAnalyzerResult> {
 
         return new MLAnalyzerResult(classifier, trainedRecordsConfusionMatrix, crossValidationConfusionMatrix);
     }
+
+    protected abstract MLClassificationTrainer createTrainer(MLClassificationTrainingOptions options);
 
     private void log(String string) {
         if (componentContext != null) {

@@ -19,7 +19,6 @@
  */
 package org.datacleaner.components.machinelearning.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.datacleaner.components.machinelearning.api.MLClassificationMetadata;
@@ -54,30 +53,13 @@ public class SvmClasificationTrainer implements MLClassificationTrainer {
     @Override
     public MLClassifier train(Iterable<MLClassificationRecord> data, List<MLFeatureModifier> featureModifiers,
             MLClassificationTrainerCallback callback) {
-        final List<double[]> trainingInstances = new ArrayList<>();
-        final List<Integer> responseVariables = new ArrayList<>();
-        final List<Object> classifications = new ArrayList<>();
 
-        for (MLClassificationRecord record : data) {
-            final Object classification = record.getClassification();
+        final double[][] x = MLFeatureUtils.toFeatureVector(data, featureModifiers);
+        final int[] y = MLFeatureUtils.toClassificationVector(data);
+        final List<Object> classifications = MLFeatureUtils.toClassifications(data);
 
-            int classificationIndex = classifications.indexOf(classification);
-            if (classificationIndex == -1) {
-                classifications.add(classification);
-                classificationIndex = classifications.size() - 1;
-            }
-
-            final double[] features = MLFeatureUtils.generateFeatureValues(record, featureModifiers);
-
-            trainingInstances.add(features);
-            responseVariables.add(classificationIndex);
-        }
-
-        final int numClasses = classifications.size();
         final GaussianKernel kernel = new GaussianKernel(gaussianKernelSigma);
-        final SVM<double[]> svm = new SVM<double[]>(kernel, softMarginPenalty, numClasses, multiclass);
-        final double[][] x = trainingInstances.toArray(new double[trainingInstances.size()][]);
-        final int[] y = responseVariables.stream().mapToInt(i -> i).toArray();
+        final SVM<double[]> svm = new SVM<double[]>(kernel, softMarginPenalty, classifications.size(), multiclass);
 
         for (int j = 0; j < epochs; j++) {
             svm.learn(x, y);

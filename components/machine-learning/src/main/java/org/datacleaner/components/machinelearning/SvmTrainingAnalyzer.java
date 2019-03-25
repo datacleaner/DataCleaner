@@ -36,7 +36,7 @@ public class SvmTrainingAnalyzer extends MLTrainingAnalyzer {
 
     @Configured
     @NumberProperty(negative = false, zero = false)
-    int epochs = 10;
+    int epochs = 6;
 
     @Configured
     @Description("Smooth/width parameter of Gaussian kernel.")

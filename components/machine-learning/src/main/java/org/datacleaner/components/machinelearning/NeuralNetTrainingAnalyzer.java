@@ -26,19 +26,39 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.NumberProperty;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainer;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainingOptions;
-import org.datacleaner.components.machinelearning.impl.RandomForestClassificationTrainer;
+import org.datacleaner.components.machinelearning.impl.NeuralNetTrainer;
 
-@Named("Train Random Forest classifier")
-@Description("Train a classifier of the 'Random Forest' type.")
-public class RandomForestTrainingAnalyzer extends MLTrainingAnalyzer {
+import smile.classification.NeuralNetwork.ActivationFunction;
+import smile.classification.NeuralNetwork.ErrorFunction;
 
-    @Configured("Number of trees")
+@Named("Train Neural Net classifier")
+@Description("Train a classifier of the 'Neural Net' type.")
+public class NeuralNetTrainingAnalyzer extends MLTrainingAnalyzer {
+
+    @Configured
     @NumberProperty(negative = false, zero = false)
-    int numTrees = 64;
+    int epochs = 10;
+
+    @Configured
+    ErrorFunction errorFunction = ErrorFunction.CROSS_ENTROPY;
+
+    @Configured
+    ActivationFunction activationFunction = ActivationFunction.SOFTMAX;
+
+    @Configured("Hidden layers")
+    @NumberProperty(negative = false, zero = false)
+    int[] numUnitsPerLayer = { 64 };
+
+    @Configured
+    double learningRate = 0.1;
+
+    @Configured
+    double momentum = 0.1;
 
     @Override
     protected MLClassificationTrainer createTrainer(MLClassificationTrainingOptions options) {
-        return new RandomForestClassificationTrainer(options, numTrees);
+        return new NeuralNetTrainer(options, epochs, errorFunction, activationFunction, numUnitsPerLayer, learningRate,
+                momentum);
     }
 
 }

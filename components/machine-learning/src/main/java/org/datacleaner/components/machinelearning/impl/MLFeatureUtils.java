@@ -19,8 +19,10 @@
  */
 package org.datacleaner.components.machinelearning.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -33,6 +35,56 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 
 public class MLFeatureUtils {
+
+    public static List<Object> toClassifications(Iterable<MLClassificationRecord> data) {
+        final Set<Object> set = new LinkedHashSet<>();
+        for (MLClassificationRecord record : data) {
+            set.add(record.getClassification());
+        }
+        return new ArrayList<Object>(set);
+    }
+
+    /**
+     * Generates a matrix of feature values for each record.
+     * 
+     * @param data
+     * @param featureModifiers
+     * @return
+     */
+    public static double[][] toFeatureVector(Iterable<MLClassificationRecord> data,
+            List<MLFeatureModifier> featureModifiers) {
+        final List<double[]> trainingInstances = new ArrayList<>();
+        for (MLClassificationRecord record : data) {
+            final double[] features = generateFeatureValues(record, featureModifiers);
+            trainingInstances.add(features);
+        }
+        final double[][] x = trainingInstances.toArray(new double[trainingInstances.size()][]);
+        return x;
+    }
+
+    /**
+     * Generates a vector of classifications for each record.
+     * 
+     * @param data
+     * @return
+     */
+    public static int[] toClassificationVector(Iterable<MLClassificationRecord> data) {
+        final List<Integer> responseVariables = new ArrayList<>();
+        final List<Object> classifications = new ArrayList<>();
+
+        for (MLClassificationRecord record : data) {
+            final Object classification = record.getClassification();
+            int classificationIndex = classifications.indexOf(classification);
+            if (classificationIndex == -1) {
+                classifications.add(classification);
+                classificationIndex = classifications.size() - 1;
+            }
+            responseVariables.add(classificationIndex);
+        }
+
+        final int[] y = responseVariables.stream().mapToInt(i -> i).toArray();
+        return y;
+    }
 
     /**
      * Ensures that a feature value is in the valid range (from 0 to 1).

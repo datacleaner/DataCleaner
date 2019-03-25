@@ -29,6 +29,7 @@ import javax.inject.Named;
 import org.apache.commons.lang.SerializationUtils;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
 import org.datacleaner.api.FileProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.api.Initialize;
@@ -44,7 +45,8 @@ import org.datacleaner.components.machinelearning.impl.MLClassificationRecordImp
 
 import com.google.common.io.Files;
 
-@Named("Classifier transformer")
+@Named("Apply classifier")
+@Description("Applies a classifier to incoming records. Note that the classifier must first be trained using one of the analyzers found in the 'Machine Learning' category.")
 @Categorized(MachineLearningCategory.class)
 public class MLClassificationTransformer implements Transformer {
 

@@ -39,6 +39,7 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.DynamoDbDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FileDatastore;
@@ -70,6 +71,7 @@ import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
+import org.datacleaner.windows.DynamoDbDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
@@ -116,7 +118,7 @@ public class DatastorePanel extends DCPanel {
 
         setOpaque(false);
 
-        final Icon icon = IconUtils.getDatastoreIcon(datastore);
+        final Icon icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_LARGE);
         final String description = getDescription(datastore);
 
         _checkBox = new JCheckBox();
@@ -179,7 +181,7 @@ public class DatastorePanel extends DCPanel {
             return datasourceJndiUrl;
         } else if (datastore instanceof ElasticSearchDatastore) {
             final ElasticSearchDatastore elasticSearchDatastore = (ElasticSearchDatastore) datastore;
-            return elasticSearchDatastore.getClusterName() + " - " + elasticSearchDatastore.getIndexName();
+            return elasticSearchDatastore.getIndexName();
         } else if (datastore instanceof CassandraDatastore) {
             final CassandraDatastore cassandraDatastore = (CassandraDatastore) datastore;
             return cassandraDatastore.getKeyspace();
@@ -333,6 +335,12 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(e -> {
                 final Injector injector = getInjectorBuilder().with(CouchDbDatastore.class, datastore).createInjector();
                 final CouchDbDatastoreDialog dialog = injector.getInstance(CouchDbDatastoreDialog.class);
+                dialog.open();
+            });
+        } else if (datastore instanceof DynamoDbDatastore) {
+            editButton.addActionListener(e -> {
+                final Injector injector = getInjectorBuilder().with(DynamoDbDatastore.class, datastore).createInjector();
+                final DynamoDbDatastoreDialog dialog = injector.getInstance(DynamoDbDatastoreDialog.class);
                 dialog.open();
             });
         } else if (datastore instanceof MongoDbDatastore) {

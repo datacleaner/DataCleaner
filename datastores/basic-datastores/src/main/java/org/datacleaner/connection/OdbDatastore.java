@@ -25,7 +25,7 @@ import java.io.ObjectInputStream;
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
+import org.apache.metamodel.openoffice.OpenOfficeDataContext;
 import org.datacleaner.util.ReadObjectBuilder;
 
 /**
@@ -53,7 +53,7 @@ public final class OdbDatastore extends UsageAwareDatastore<DataContext> impleme
 
     @Override
     protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
-        final DataContext dc = DataContextFactory.createOpenOfficeDataContext(new File(_filename));
+        final DataContext dc = new OpenOfficeDataContext(new File(_filename));
         return new DatastoreConnectionImpl<>(dc, this);
     }
 

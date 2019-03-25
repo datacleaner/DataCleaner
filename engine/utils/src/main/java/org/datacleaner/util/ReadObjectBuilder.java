@@ -32,8 +32,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.datacleaner.connection.UsageAwareDatastore;
-import org.datacleaner.reference.AbstractReferenceData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +41,8 @@ import org.slf4j.LoggerFactory;
  *
  * The main functionality of this helper is to aid in setting field values of
  * fields that have been moved around in the class hierarchy. This is eg. the
- * case with implementations of {@link UsageAwareDatastore} and
- * {@link AbstractReferenceData} (where the _name fields have been moved to
+ * case with implementations of UsageAwareDatastore and
+ * AbstractReferenceData (where the _name fields have been moved to
  * these super classes).
  *
  *

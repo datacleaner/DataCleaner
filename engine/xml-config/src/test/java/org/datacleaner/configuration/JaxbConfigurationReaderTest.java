@@ -43,6 +43,7 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.connection.DynamoDbDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
@@ -228,7 +229,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
         assertEquals(
                 "[my cassandra db, my couch, my es index, my hbase, my mongo, my_access, my_composite, my_csv, "
-                        + "my_custom, my_dbase, my_dom_xml, my_excel_2003, my_fixed_width_1, "
+                        + "my_custom, my_dbase, my_dom_xml, my_dynamo, my_excel_2003, my_fixed_width_1, "
                         + "my_fixed_width_2, my_jdbc_connection, my_jdbc_datasource, my_json, my_odb, my_pojo, "
                         + "my_sas, my_sax_xml, my_sfdc_ds, my_sugarcrm]", Arrays.toString(datastoreNames));
 
@@ -260,6 +261,12 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertEquals("my_es_cluster", esDatastore.getClusterName());
         assertEquals("my_index", esDatastore.getIndexName());
         assertNull(esDatastore.getTableDefs());
+        
+        final DynamoDbDatastore dynamoDatastore = (DynamoDbDatastore) datastoreCatalog.getDatastore("my_dynamo");
+        assertEquals("regionX", dynamoDatastore.getRegion());
+        assertEquals("foo", dynamoDatastore.getAccessKeyId());
+        assertEquals("bar", dynamoDatastore.getSecretAccessKey());
+        assertNull(dynamoDatastore.getTableDefs());
 
         assertEquals("a SugarCRM instance", datastoreCatalog.getDatastore("my_sugarcrm").getDescription());
         assertEquals("dom xml", datastoreCatalog.getDatastore("my_dom_xml").getDescription());
@@ -328,7 +335,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 Arrays.toString(tableDefs));
 
         final XmlDatastore xmlDatastore = (XmlDatastore) datastoreCatalog.getDatastore("my_sax_xml");
-        assertEquals("../core/src/test/resources/example-xml-file.xml", xmlDatastore.getFilename());
+        assertEquals("../../datastores/basic-datastores/src/test/resources/example-xml-file.xml", xmlDatastore.getFilename());
         assertEquals("[XmlSaxTableDef[rowXpath=/greetings/greeting,"
                         + "valueXpaths=[/greetings/greeting/how, /greetings/greeting/what]]]",
                 Arrays.toString(xmlDatastore.getTableDefs()));
@@ -364,7 +371,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
             // CouchDB-based on will work
             if (!"my_jdbc_datasource".equals(name) && !"my mongo".equals(name) && !"my couch".equals(name)
                     && !"my hbase".equals(name) && !"my_sfdc_ds".equals(name) && !"my_sugarcrm".equals(name)
-                    && !"my es index".equals(name)) {
+                    && !"my es index".equals(name) && !"my_dynamo".equals(name)) {
                 final Datastore datastore = datastoreCatalog.getDatastore(name);
                 final DataContext dc;
                 try {

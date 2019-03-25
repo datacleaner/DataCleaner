@@ -185,6 +185,13 @@
 						</documentation>
 					</annotation>
 				</element>
+				<element name="dynamodb-datastore" type="ab:dynamoDbDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on an AWS DynamoDB database.
+						</documentation>
+					</annotation>
+				</element>
 				<element name="csv-datastore" type="ab:csvDatastoreType">
 					<annotation>
 						<documentation>
@@ -656,6 +663,36 @@
 					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
+					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
+						<complexType>
+							<sequence>
+								<element name="table-name" minOccurs="1" maxOccurs="1"
+									type="string" />
+								<element name="column" minOccurs="1" maxOccurs="unbounded">
+									<complexType>
+										<sequence>
+											<element name="name" minOccurs="1" maxOccurs="1"
+												type="string" />
+											<element name="type" minOccurs="0" maxOccurs="1"
+												type="normalizedString" />
+										</sequence>
+									</complexType>
+								</element>
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+	<complexType name="dynamoDbDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="region" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="accessKeyId" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="secretAccessKey" minOccurs="1" maxOccurs="1" type="string" />
 					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
 						<complexType>
 							<sequence>

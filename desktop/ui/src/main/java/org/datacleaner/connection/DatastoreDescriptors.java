@@ -33,6 +33,7 @@ import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
+import org.datacleaner.windows.DynamoDbDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
@@ -98,6 +99,10 @@ public class DatastoreDescriptors {
     private static final DatastoreDescriptor COUCHDB_DATASTORE_DESCRIPTOR =
             new DatastoreDescriptorImpl("CouchDB database", "Connect to an Apache CouchDB database",
                     CouchDbDatastore.class, CouchDbDatastoreDialog.class, IconUtils.COUCHDB_IMAGEPATH, true);
+    
+    private static final DatastoreDescriptor DYNAMODB_DATASTORE_DESCRIPTOR =
+            new DatastoreDescriptorImpl("AWS DynamoDB database", "Connect to an AWS DynamoDB database",
+                    DynamoDbDatastore.class, DynamoDbDatastoreDialog.class, IconUtils.DYNAMODB_IMAGEPATH, true);
     
     private static final DatastoreDescriptor KAFKA_DATASTORE_DESCRIPTOR =
             new DatastoreDescriptorImpl("Kafka stream", "Connect to an Apache Kafka stream",
@@ -206,6 +211,7 @@ public class DatastoreDescriptors {
         availableCloudBasedDatabaseDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
+        availableCloudBasedDatabaseDescriptors.add(DYNAMODB_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(KAFKA_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(NEO4J_DATASTORE_DESCRIPTOR);
 
@@ -227,6 +233,7 @@ public class DatastoreDescriptors {
         datastoreDescriptors.add(SUGARCRM_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(DYNAMODB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(KAFKA_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(ELASTICSEARCH_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);

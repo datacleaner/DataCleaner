@@ -24,8 +24,8 @@ import java.util.List;
 
 import org.datacleaner.cluster.ClusterTestHelper;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.eclipse.jetty.server.NetworkTrafficServerConnector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import junit.framework.TestCase;
@@ -100,7 +100,8 @@ public class HttpClusterManagerTest extends TestCase {
         final String testName = getClass().getSimpleName() + "_" + getName();
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(testName, multiThreaded);
 
-        final SelectChannelConnector connector = new SelectChannelConnector();
+        final Server server = new Server();
+        final NetworkTrafficServerConnector connector = new NetworkTrafficServerConnector(server);
         connector.setPort(port);
 
         final WebAppContext webApp = new WebAppContext();
@@ -108,7 +109,6 @@ public class HttpClusterManagerTest extends TestCase {
         webApp.setContextPath("/");
         webApp.setWar("src/test/resources/jetty_webapp_folder");
 
-        final Server server = new Server();
         server.addConnector(connector);
         server.setHandler(webApp);
         server.start();

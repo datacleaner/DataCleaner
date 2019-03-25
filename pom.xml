@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
@@ -14,13 +16,13 @@
 		<junit.version>4.12</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.5</httpcomponents.version>
-		<metamodel.version>5.2.0</metamodel.version>
+		<metamodel.version>5.2.1</metamodel.version>
 		<metamodel.extras.version>5.2.0</metamodel.extras.version>
 		<spring.core.version>4.3.16.RELEASE</spring.core.version>
 		<freemarker.version>2.3.28</freemarker.version>
 		<icu4j.version>61.1</icu4j.version>
 		<jackson.version>2.9.8</jackson.version>
-		<javax.servlet.version>3.0.1</javax.servlet.version>
+		<javax.servlet.version>3.1.0</javax.servlet.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<scala.version>2.11.12</scala.version>
@@ -59,6 +61,7 @@
 			</activation>
 			<modules>
 				<module>api</module>
+				<module>datastores</module>
 				<module>oss-branding</module>
 				<module>resources</module>
 				<module>testware</module>
@@ -72,6 +75,7 @@
 			<id>quick</id>
 			<modules>
 				<module>api</module>
+				<module>datastores</module>
 				<module>oss-branding</module>
 				<module>resources</module>
 				<module>testware</module>
@@ -84,6 +88,7 @@
 			<id>desktop</id>
 			<modules>
 				<module>api</module>
+				<module>datastores</module>
 				<module>oss-branding</module>
 				<module>resources</module>
 				<module>testware</module>
@@ -446,45 +451,10 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>run-checkstyle</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>checkstyle</goal>
-						</goals>
-						<configuration>
-							<skip>${skipTests}</skip>
-							<configLocation>checkstyle.xml</configLocation>
-							<suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
-							<consoleOutput>true</consoleOutput>
-							<includeTestSourceDirectory>true</includeTestSourceDirectory>
-							<encoding>UTF-8</encoding>
-							<failsOnError>true</failsOnError>
-							<linkXRef>false</linkXRef>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.17</version>
-					<dependencies>
-						<dependency>
-							<groupId>com.puppycrawl.tools</groupId>
-							<artifactId>checkstyle</artifactId>
-							<version>7.2</version>
-						</dependency>
-					</dependencies>
-				</plugin>
 				<plugin>
 					<!-- Ignore instructions for m2e (overrides eclipse warning) -->
 					<groupId>org.eclipse.m2e</groupId>
@@ -724,26 +694,73 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
-				<artifactId>MetaModel-full</artifactId>
+				<artifactId>MetaModel-csv</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-cassandra</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-fixedwidth</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-pojo</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-openoffice</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-salesforce</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-sugarcrm</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-xml</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-jdbc</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-elasticsearch-rest</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.apache.metamodel</groupId>
-						<artifactId>MetaModel-elasticsearch-native</artifactId>
-					</exclusion>
-					<exclusion>
 						<groupId>org.elasticsearch</groupId>
 						<artifactId>elasticsearch</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.sun.xml.ws</groupId>
-						<artifactId>jaxws-rt</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
-				<artifactId>MetaModel-csv</artifactId>
+				<artifactId>MetaModel-mongodb-mongo3</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-couchdb</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-dynamodb</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
@@ -800,11 +817,6 @@
 				<version>${metamodel.extras.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
-				<artifactId>MetaModel-fixedwidth</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.eobjects.metamodel-extras</groupId>
 				<artifactId>MetaModel-extras-dbase</artifactId>
 				<version>${metamodel.extras.version}</version>
@@ -813,6 +825,11 @@
 				<groupId>org.eobjects.metamodel-extras</groupId>
 				<artifactId>MetaModel-extras-access</artifactId>
 				<version>${metamodel.extras.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.18</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.inject</groupId>
@@ -1108,6 +1125,11 @@
 				<groupId>com.h2database</groupId>
 				<artifactId>h2</artifactId>
 				<version>1.3.176</version>
+			</dependency>
+			<dependency>
+				<groupId>hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>1.8.0.10</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hive</groupId>

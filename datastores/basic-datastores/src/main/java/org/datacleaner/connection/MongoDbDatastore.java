@@ -19,15 +19,23 @@
  */
 package org.datacleaner.connection;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.mongodb.mongo3.MongoDbDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.util.StringUtils;
 
-public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
-        implements UpdateableDatastore, UsernameDatastore {
+import com.google.common.base.Strings;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
+
+public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext> implements
+        UpdateableDatastore,
+        UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
 
@@ -91,15 +99,24 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
     @Override
     protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
         try {
+            final List<ServerAddress> serverAddresses = Collections.singletonList(new ServerAddress(_hostname, _port));
+            final List<MongoCredential> credentialsList;
+            if (!Strings.isNullOrEmpty(_username)) {
+                final MongoCredential credential =
+                        MongoCredential.createCredential(_username, _databaseName, _password);
+                credentialsList = Collections.singletonList(credential);
+            } else {
+                credentialsList = Collections.emptyList();
+            }
+            final MongoClient client = new MongoClient(serverAddresses, credentialsList);
+            final MongoDatabase mongoDb = client.getDatabase(_databaseName);
             final UpdateableDataContext dataContext;
             if (_tableDefs == null || _tableDefs.length == 0) {
-                dataContext = DataContextFactory
-                        .createMongoDbDataContext(_hostname, _port, _databaseName, _username, _password);
+                dataContext = new MongoDbDataContext(mongoDb);
             } else {
-                dataContext = DataContextFactory
-                        .createMongoDbDataContext(_hostname, _port, _databaseName, _hostname, _password, _tableDefs);
+                dataContext = new MongoDbDataContext(mongoDb, _tableDefs);
             }
-            return new UpdateableDatastoreConnectionImpl<>(dataContext, this);
+            return new UpdateableDatastoreConnectionImpl<>(dataContext, this, client);
         } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;

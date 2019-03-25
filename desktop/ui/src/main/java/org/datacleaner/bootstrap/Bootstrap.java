@@ -265,7 +265,7 @@ public final class Bootstrap {
      * @param localFilename
      *            the relative filename defined by the system
      * @param userPreferences
-     * @return
+     * @return a file reference
      * @throws FileSystemException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })

@@ -156,7 +156,7 @@ public class FillPatternGroupListPanel extends JPanel {
             return observationCount;
         }
 
-        ActionListener actionListener = (e) -> {
+        final ActionListener actionListener = (e) -> {
             final InputColumn<?>[] highlightedColumns = result.getInspectedColumns().toArray(new InputColumn[0]);
             final AnalyzerResult analyzerResult =
                     new AnnotatedRowsResult(fillPattern.getRowAnnotation(), rowAnnotationFactory, highlightedColumns);

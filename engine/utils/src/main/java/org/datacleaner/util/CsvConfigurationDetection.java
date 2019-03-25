@@ -113,9 +113,8 @@ public class CsvConfigurationDetection {
      * providing the encoding externally.
      *
      * @param encoding
-     * @return
-     * @throws IllegalStateException
-     *             if an error occurs during auto-detection
+     * @return a detected CSV configuration
+     * @throws IllegalStateException if an error occurs during auto-detection
      */
     public CsvConfiguration suggestCsvConfiguration(final String encoding, final List<String> columnNames)
             throws IllegalStateException {
@@ -126,9 +125,8 @@ public class CsvConfigurationDetection {
     /**
      * Auto-detects the {@link CsvConfiguration} of a CSV style data file.
      *
-     * @return
-     * @throws IllegalStateException
-     *             if an error occurs during auto-detection
+     * @return a detected CSV configuration
+     * @throws IllegalStateException if an error occurs during auto-detection
      */
     public CsvConfiguration suggestCsvConfiguration() throws IllegalStateException {
         return suggestCsvConfiguration(null);

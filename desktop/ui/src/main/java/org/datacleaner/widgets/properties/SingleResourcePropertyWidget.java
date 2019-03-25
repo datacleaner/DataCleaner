@@ -129,7 +129,7 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
 
     /**
      *
-     * @return
+     * @return The text field used for the filename
      * @deprecated use {@link #getResourceTextField()} instead
      */
     @Deprecated

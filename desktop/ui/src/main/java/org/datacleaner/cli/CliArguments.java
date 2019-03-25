@@ -80,7 +80,7 @@ public class CliArguments {
      *
      * @param args
      *            the arguments as a string array
-     * @return
+     * @return the parsed CLI arguments
      * @throws CmdLineException
      */
     public static CliArguments parse(final String[] args) {

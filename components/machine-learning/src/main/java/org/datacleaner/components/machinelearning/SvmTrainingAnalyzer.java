@@ -48,6 +48,7 @@ public class SvmTrainingAnalyzer extends MLTrainingAnalyzer {
     double softMarginPenalty = 5.0;
 
     @Configured
+    @Description("Multiclass strategy (relevant only when there are more than 2 classifications)")
     Multiclass multiclass = Multiclass.ONE_VS_ONE;
 
     @Override

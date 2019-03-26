@@ -59,8 +59,15 @@ public class SvmClasificationTrainer implements MLClassificationTrainer {
         final List<Object> classifications = MLFeatureUtils.toClassifications(data);
 
         final GaussianKernel kernel = new GaussianKernel(gaussianKernelSigma);
-        final SVM<double[]> svm = new SVM<double[]>(kernel, softMarginPenalty, classifications.size(), multiclass);
+        final int numClasses = classifications.size();
 
+        final SVM<double[]> svm;
+        if (numClasses < 3) {
+            svm = new SVM<double[]>(kernel, softMarginPenalty);
+        } else {
+            svm = new SVM<double[]>(kernel, softMarginPenalty, numClasses, multiclass);
+        }
+        
         for (int j = 0; j < epochs; j++) {
             svm.learn(x, y);
             callback.epochDone(j + 1, epochs);

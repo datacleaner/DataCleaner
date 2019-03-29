@@ -22,7 +22,7 @@ package org.datacleaner.components.machinelearning.api;
 import java.io.Serializable;
 import java.util.List;
 
-public class MLClassificationTrainingOptions implements Serializable {
+public class MLTrainingOptions implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,7 +30,7 @@ public class MLClassificationTrainingOptions implements Serializable {
     private final Class<?> classificationType;
     private final List<MLFeatureModifier> featureModifiers;
 
-    public MLClassificationTrainingOptions(Class<?> classificationType, List<String> columnNames,
+    public MLTrainingOptions(Class<?> classificationType, List<String> columnNames,
             List<MLFeatureModifier> featureModifiers) {
         this.classificationType = classificationType;
         this.columnNames = columnNames;

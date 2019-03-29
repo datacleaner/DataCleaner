@@ -27,7 +27,7 @@ public class NeuralNetTrainingAnalyzerTest {
 
     @Test
     public void testScenario() {
-        final MLTrainingAnalyzer analyzer = new NeuralNetTrainingAnalyzer();
+        final MLClassificationTrainingAnalyzer analyzer = new NeuralNetTrainingAnalyzer();
         testHelper.runScenario(analyzer);
     }
 }

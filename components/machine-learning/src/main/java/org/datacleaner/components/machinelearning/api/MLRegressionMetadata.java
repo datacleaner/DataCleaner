@@ -19,7 +19,31 @@
  */
 package org.datacleaner.components.machinelearning.api;
 
-public interface MLClassificationTrainerCallback {
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
-    void epochDone(int epochNo, int expectedEpochs);
+public class MLRegressionMetadata implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private final List<String> columnNames;
+    private final List<MLFeatureModifier> featureModifiers;
+
+    public MLRegressionMetadata(List<String> columnNames, List<MLFeatureModifier> featureModifiers) {
+        this.columnNames = columnNames;
+        this.featureModifiers = featureModifiers;
+    }
+
+    public int getColumnCount() {
+        return columnNames.size();
+    }
+
+    public List<String> getColumnNames() {
+        return Collections.unmodifiableList(columnNames);
+    }
+
+    public List<MLFeatureModifier> getFeatureModifiers() {
+        return Collections.unmodifiableList(featureModifiers);
+    }
 }

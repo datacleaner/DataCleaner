@@ -25,12 +25,25 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.machinelearning.api.MLClassifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifierType;
+import org.datacleaner.components.machinelearning.api.MLRegressor;
 import org.datacleaner.util.ReflectionUtils;
 
 public class MLComponentUtils {
 
     public static void validateClassifierMapping(MLClassifier classifier, InputColumn<?>[] featureColumns) {
         final int modelFeatures = classifier.getMetadata().getColumnCount();
+        final List<MLFeatureModifier> featureModifiers = classifier.getMetadata().getFeatureModifiers();
+        validateModelAndFeatureMapping(modelFeatures, featureModifiers, featureColumns);
+    }
+
+    public static void validateRegressorMapping(MLRegressor regressor, InputColumn<?>[] featureColumns) {
+        final int modelFeatures = regressor.getMetadata().getColumnCount();
+        final List<MLFeatureModifier> featureModifiers = regressor.getMetadata().getFeatureModifiers();
+        validateModelAndFeatureMapping(modelFeatures, featureModifiers, featureColumns);
+    }
+
+    private static void validateModelAndFeatureMapping(int modelFeatures, List<MLFeatureModifier> featureModifiers,
+            InputColumn<?>[] featureColumns) {
         if (featureColumns.length > modelFeatures) {
             throw new IllegalArgumentException("Model defines " + modelFeatures + " features, but too few ("
                     + featureColumns.length + ") are configured.");
@@ -40,7 +53,6 @@ public class MLComponentUtils {
                     + featureColumns.length + ") are configured.");
         }
 
-        final List<MLFeatureModifier> featureModifiers = classifier.getMetadata().getFeatureModifiers();
         for (int i = 0; i < featureColumns.length; i++) {
             final InputColumn<?> column = featureColumns[i];
             final MLFeatureModifier featureModifier = featureModifiers.get(i);

@@ -36,7 +36,7 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
 public class MLTrainingAnalyzerPresenterRenderer implements
-        Renderer<AnalyzerComponentBuilder<MLTrainingAnalyzer>, AnalyzerComponentBuilderPresenter> {
+        Renderer<AnalyzerComponentBuilder<MLTrainingAnalyzer<?>>, AnalyzerComponentBuilderPresenter> {
     @Inject
     WindowContext windowContext;
 
@@ -47,7 +47,7 @@ public class MLTrainingAnalyzerPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<MLTrainingAnalyzer> ajb) {
+    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<MLTrainingAnalyzer<?>> ajb) {
         if (ReflectionUtils.is(ajb.getDescriptor().getComponentClass(), MLTrainingAnalyzer.class)) {
             return RendererPrecedence.MEDIUM;
         }
@@ -55,7 +55,7 @@ public class MLTrainingAnalyzerPresenterRenderer implements
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<MLTrainingAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<MLTrainingAnalyzer<?>> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory =
                 dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
 

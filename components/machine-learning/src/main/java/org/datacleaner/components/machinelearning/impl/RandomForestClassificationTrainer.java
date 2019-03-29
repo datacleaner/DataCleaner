@@ -24,8 +24,8 @@ import java.util.List;
 import org.datacleaner.components.machinelearning.api.MLClassificationMetadata;
 import org.datacleaner.components.machinelearning.api.MLClassificationRecord;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainer;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainerCallback;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainerCallback;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
 import org.datacleaner.components.machinelearning.api.MLClassifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 
@@ -33,17 +33,17 @@ import smile.classification.RandomForest;
 
 public class RandomForestClassificationTrainer implements MLClassificationTrainer {
 
-    private final MLClassificationTrainingOptions trainingOptions;
+    private final MLTrainingOptions trainingOptions;
     private final int numTrees;
 
-    public RandomForestClassificationTrainer(MLClassificationTrainingOptions trainingOptions, int numTrees) {
+    public RandomForestClassificationTrainer(MLTrainingOptions trainingOptions, int numTrees) {
         this.trainingOptions = trainingOptions;
         this.numTrees = numTrees;
     }
 
     @Override
     public MLClassifier train(Iterable<MLClassificationRecord> data, List<MLFeatureModifier> featureModifiers,
-            MLClassificationTrainerCallback callback) {
+            MLTrainerCallback callback) {
         final List<Object> classifications = MLFeatureUtils.toClassifications(data);
         final double[][] x = MLFeatureUtils.toFeatureVector(data, featureModifiers);
         final int[] y = MLFeatureUtils.toClassificationVector(data);

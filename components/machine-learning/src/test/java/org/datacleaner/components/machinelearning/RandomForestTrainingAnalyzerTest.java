@@ -27,7 +27,7 @@ public class RandomForestTrainingAnalyzerTest {
 
     @Test
     public void testScenario() {
-        final MLTrainingAnalyzer analyzer = new RandomForestTrainingAnalyzer();
+        final MLClassificationTrainingAnalyzer analyzer = new RandomForestClassificationTrainingAnalyzer();
         testHelper.runScenario(analyzer);
     }
 }

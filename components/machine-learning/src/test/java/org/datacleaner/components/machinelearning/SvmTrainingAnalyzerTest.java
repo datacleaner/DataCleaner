@@ -27,7 +27,7 @@ public class SvmTrainingAnalyzerTest {
 
     @Test
     public void testScenario() {
-        final MLTrainingAnalyzer analyzer = new SvmTrainingAnalyzer();
+        final MLClassificationTrainingAnalyzer analyzer = new SvmTrainingAnalyzer();
         testHelper.runScenario(analyzer);
     }
 }

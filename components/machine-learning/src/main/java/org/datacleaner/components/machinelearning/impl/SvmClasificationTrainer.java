@@ -24,8 +24,8 @@ import java.util.List;
 import org.datacleaner.components.machinelearning.api.MLClassificationMetadata;
 import org.datacleaner.components.machinelearning.api.MLClassificationRecord;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainer;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainerCallback;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainerCallback;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
 import org.datacleaner.components.machinelearning.api.MLClassifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 
@@ -35,13 +35,13 @@ import smile.math.kernel.GaussianKernel;
 
 public class SvmClasificationTrainer implements MLClassificationTrainer {
 
-    private final MLClassificationTrainingOptions trainingOptions;
+    private final MLTrainingOptions trainingOptions;
     private final int epochs;
     private final double softMarginPenalty;
     private final Multiclass multiclass;
     private final double gaussianKernelSigma;
 
-    public SvmClasificationTrainer(MLClassificationTrainingOptions trainingOptions, int epochs,
+    public SvmClasificationTrainer(MLTrainingOptions trainingOptions, int epochs,
             double gaussianKernelSigma, double softMarginPenalty, Multiclass multiclass) {
         this.trainingOptions = trainingOptions;
         this.epochs = epochs;
@@ -52,7 +52,7 @@ public class SvmClasificationTrainer implements MLClassificationTrainer {
 
     @Override
     public MLClassifier train(Iterable<MLClassificationRecord> data, List<MLFeatureModifier> featureModifiers,
-            MLClassificationTrainerCallback callback) {
+            MLTrainerCallback callback) {
 
         final double[][] x = MLFeatureUtils.toFeatureVector(data, featureModifiers);
         final int[] y = MLFeatureUtils.toClassificationVector(data);

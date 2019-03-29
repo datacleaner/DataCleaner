@@ -26,9 +26,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.datacleaner.components.machinelearning.api.MLClassificationRecord;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
+import org.datacleaner.components.machinelearning.api.MLRecord;
+import org.datacleaner.components.machinelearning.api.MLRegressionRecord;
 import org.datacleaner.components.machinelearning.api.MLTrainingConstraints;
 
 import com.google.common.collect.Multiset;
@@ -51,10 +55,10 @@ public class MLFeatureUtils {
      * @param featureModifiers
      * @return
      */
-    public static double[][] toFeatureVector(Iterable<MLClassificationRecord> data,
+    public static double[][] toFeatureVector(Iterable<? extends MLRecord> data,
             List<MLFeatureModifier> featureModifiers) {
         final List<double[]> trainingInstances = new ArrayList<>();
-        for (MLClassificationRecord record : data) {
+        for (MLRecord record : data) {
             final double[] features = generateFeatureValues(record, featureModifiers);
             trainingInstances.add(features);
         }
@@ -87,6 +91,17 @@ public class MLFeatureUtils {
     }
 
     /**
+     * Generates a vector of regression outputs for every record
+     * 
+     * @param data
+     * @return
+     */
+    public static double[] toRegressionOutputVector(Iterable<MLRegressionRecord> data) {
+        final Stream<MLRegressionRecord> stream = StreamSupport.stream(data.spliterator(), false);
+        return stream.mapToDouble(MLRegressionRecord::getRegressionOutput).toArray();
+    }
+
+    /**
      * Ensures that a feature value is in the valid range (from 0 to 1).
      * 
      * @param scaled
@@ -96,8 +111,7 @@ public class MLFeatureUtils {
         return Math.max(0d, Math.min(1d, value));
     }
 
-    public static double[] generateFeatureValues(MLClassificationRecord record,
-            List<MLFeatureModifier> featureModifiers) {
+    public static double[] generateFeatureValues(MLRecord record, List<MLFeatureModifier> featureModifiers) {
         final Object[] recordValues = record.getRecordValues();
         assert featureModifiers.size() == recordValues.length;
 

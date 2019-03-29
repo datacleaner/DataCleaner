@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.components.machinelearning.MLAnalyzerResult;
+import org.datacleaner.components.machinelearning.MLClassificationAnalyzerResult;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabResult;
@@ -38,7 +38,7 @@ import org.datacleaner.widgets.result.DefaultCrosstabResultSwingRenderer;
 import org.jdesktop.swingx.VerticalLayout;
 
 @RendererBean(SwingRenderingFormat.class)
-public class MLTrainingResultSwingRenderer extends AbstractRenderer<MLAnalyzerResult, JComponent> {
+public class MLClassificationAnalyzerResultSwingRenderer extends AbstractRenderer<MLClassificationAnalyzerResult, JComponent> {
 
     @Inject
     @Provided
@@ -49,7 +49,7 @@ public class MLTrainingResultSwingRenderer extends AbstractRenderer<MLAnalyzerRe
     WindowContext _windowContext;
 
     @Override
-    public JComponent render(MLAnalyzerResult result) {
+    public JComponent render(MLClassificationAnalyzerResult result) {
         final DefaultCrosstabResultSwingRenderer crosstabRenderer =
                 new DefaultCrosstabResultSwingRenderer(_windowContext, _rendererFactory);
 

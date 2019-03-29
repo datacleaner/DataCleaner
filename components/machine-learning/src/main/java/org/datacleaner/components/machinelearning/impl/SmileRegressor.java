@@ -21,32 +21,40 @@ package org.datacleaner.components.machinelearning.impl;
 
 import java.util.List;
 
-import org.datacleaner.components.machinelearning.api.MLClassification;
-import org.datacleaner.components.machinelearning.api.MLClassificationMetadata;
-import org.datacleaner.components.machinelearning.api.MLClassifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 import org.datacleaner.components.machinelearning.api.MLRecord;
+import org.datacleaner.components.machinelearning.api.MLRegressionMetadata;
+import org.datacleaner.components.machinelearning.api.MLRegressor;
 
-public abstract class AbstractClassifier implements MLClassifier {
+import smile.regression.Regression;
+
+public class SmileRegressor implements MLRegressor {
 
     private static final long serialVersionUID = 1L;
-
-    private final MLClassificationMetadata metadata;
-
-    public AbstractClassifier(MLClassificationMetadata classificationMetadata) {
-        this.metadata = classificationMetadata;
+    
+    private final MLRegressionMetadata metadata;
+    private final Regression<double[]> regression;
+    
+    public SmileRegressor(MLRegressionMetadata metadata, Regression<double[]> regression) {
+        this.metadata = metadata;
+        this.regression = regression;
     }
 
     @Override
-    public MLClassification classify(MLRecord record) {
-        final List<MLFeatureModifier> featureModifiers = metadata.getFeatureModifiers();
-        final double[] featureValues = MLFeatureUtils.generateFeatureValues(record, featureModifiers);
-        return classify(featureValues);
-    }
-
-    @Override
-    public MLClassificationMetadata getMetadata() {
+    public MLRegressionMetadata getMetadata() {
         return metadata;
+    }
+
+    @Override
+    public double predict(MLRecord record) {
+        final List<MLFeatureModifier> featureModifiers = getMetadata().getFeatureModifiers();
+        final double[] featureValues = MLFeatureUtils.generateFeatureValues(record, featureModifiers);
+        return predict(featureValues);
+    }
+
+    @Override
+    public double predict(double[] featureValues) {
+        return regression.predict(featureValues);
     }
 
 }

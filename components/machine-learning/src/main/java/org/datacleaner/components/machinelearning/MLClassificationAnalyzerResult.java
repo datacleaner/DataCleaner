@@ -23,7 +23,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.components.machinelearning.api.MLClassifier;
 import org.datacleaner.result.Crosstab;
 
-public class MLAnalyzerResult implements AnalyzerResult {
+public class MLClassificationAnalyzerResult implements AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +31,7 @@ public class MLAnalyzerResult implements AnalyzerResult {
     private final Crosstab<Integer> trainedRecordsConfusionMatrix;
     private final Crosstab<Integer> crossValidationConfusionMatrix;
 
-    public MLAnalyzerResult(MLClassifier trainedClassifier, Crosstab<Integer> trainedRecordsConfusionMatrix,
+    public MLClassificationAnalyzerResult(MLClassifier trainedClassifier, Crosstab<Integer> trainedRecordsConfusionMatrix,
             Crosstab<Integer> crossValidationConfusionMatrix) {
         this.trainedClassifier = trainedClassifier;
         this.trainedRecordsConfusionMatrix = trainedRecordsConfusionMatrix;

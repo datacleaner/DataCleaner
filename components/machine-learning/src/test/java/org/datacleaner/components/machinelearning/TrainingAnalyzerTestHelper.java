@@ -45,7 +45,7 @@ public class TrainingAnalyzerTestHelper {
     private static final String BLUE = "blue";
     private final Random random = new Random();
 
-    public void runScenario(MLTrainingAnalyzer analyzer) {
+    public void runScenario(MLClassificationTrainingAnalyzer analyzer) {
         final MockInputColumn<String> color = new MockInputColumn<>("color");
         final MockInputColumn<String> desc = new MockInputColumn<>("Description");
         final MockInputColumn<Double> red = new MockInputColumn<>(RED);
@@ -68,7 +68,7 @@ public class TrainingAnalyzerTestHelper {
                     .put(green, randomHigh()).put(blue, randomLow()), 1);
         }
 
-        final MLAnalyzerResult result = analyzer.getResult();
+        final MLClassificationAnalyzerResult result = analyzer.getResult();
         final MLClassificationMetadata metadata = result.getTrainedClassifier().getMetadata();
 
         assertEquals(RED,

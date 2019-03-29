@@ -17,15 +17,22 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.components.machinelearning.api;
+package org.datacleaner.components.machinelearning;
 
-import java.io.Serializable;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.components.machinelearning.api.MLRegressor;
 
-public interface MLClassifier extends Serializable {
+public class MLRegressionAnalyzerResult implements AnalyzerResult {
 
-    MLClassificationMetadata getMetadata();
+    private static final long serialVersionUID = 1L;
 
-    MLClassification classify(MLRecord record);
+    private final MLRegressor trainedRegressor;
 
-    MLClassification classify(double[] featureValues);
+    public MLRegressionAnalyzerResult(MLRegressor trainedRegressor) {
+        this.trainedRegressor = trainedRegressor;
+    }
+
+    public MLRegressor getTrainedRegressor() {
+        return trainedRegressor;
+    }
 }

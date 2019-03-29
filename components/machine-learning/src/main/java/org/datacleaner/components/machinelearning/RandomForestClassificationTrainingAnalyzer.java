@@ -25,19 +25,19 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.NumberProperty;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainer;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
 import org.datacleaner.components.machinelearning.impl.RandomForestClassificationTrainer;
 
 @Named("Train Random Forest classifier")
 @Description("Train a classifier of the 'Random Forest' type.")
-public class RandomForestTrainingAnalyzer extends MLTrainingAnalyzer {
+public class RandomForestClassificationTrainingAnalyzer extends MLClassificationTrainingAnalyzer {
 
     @Configured("Number of trees")
     @NumberProperty(negative = false, zero = false)
     int numTrees = 64;
 
     @Override
-    protected MLClassificationTrainer createTrainer(MLClassificationTrainingOptions options) {
+    protected MLClassificationTrainer createTrainer(MLTrainingOptions options) {
         return new RandomForestClassificationTrainer(options, numTrees);
     }
 

@@ -24,41 +24,21 @@ import javax.inject.Named;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.NumberProperty;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainer;
+import org.datacleaner.components.machinelearning.api.MLRegressorTrainer;
 import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
-import org.datacleaner.components.machinelearning.impl.NeuralNetTrainer;
+import org.datacleaner.components.machinelearning.impl.RandomForestRegressorTrainer;
 
-import smile.classification.NeuralNetwork.ActivationFunction;
-import smile.classification.NeuralNetwork.ErrorFunction;
+@Named("Train Random Forest regression")
+@Description("Train a regression model of the 'Random Forest' type.")
+public class RandomForestRegressionTrainingAnalyzer extends MLRegressionTrainingAnalyzer {
 
-@Named("Train Neural Net classifier")
-@Description("Train a classifier of the 'Neural Net' type.")
-public class NeuralNetTrainingAnalyzer extends MLClassificationTrainingAnalyzer {
-
-    @Configured
+    @Configured("Number of trees")
     @NumberProperty(negative = false, zero = false)
-    int epochs = 10;
-
-    @Configured
-    ErrorFunction errorFunction = ErrorFunction.CROSS_ENTROPY;
-
-    @Configured
-    ActivationFunction activationFunction = ActivationFunction.SOFTMAX;
-
-    @Configured("Hidden layers")
-    @NumberProperty(negative = false, zero = false)
-    int[] numUnitsPerLayer = { 64 };
-
-    @Configured
-    double learningRate = 0.1;
-
-    @Configured
-    double momentum = 0.1;
+    int numTrees = 64;
 
     @Override
-    protected MLClassificationTrainer createTrainer(MLTrainingOptions options) {
-        return new NeuralNetTrainer(options, epochs, errorFunction, activationFunction, numUnitsPerLayer, learningRate,
-                momentum);
+    protected MLRegressorTrainer createTrainer(MLTrainingOptions options) {
+        return new RandomForestRegressorTrainer(options, numTrees);
     }
 
 }

@@ -24,8 +24,8 @@ import java.util.List;
 import org.datacleaner.components.machinelearning.api.MLClassificationMetadata;
 import org.datacleaner.components.machinelearning.api.MLClassificationRecord;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainer;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainerCallback;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainerCallback;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
 import org.datacleaner.components.machinelearning.api.MLClassifier;
 import org.datacleaner.components.machinelearning.api.MLFeatureModifier;
 
@@ -35,7 +35,7 @@ import smile.classification.NeuralNetwork.ErrorFunction;
 
 public class NeuralNetTrainer implements MLClassificationTrainer {
 
-    private final MLClassificationTrainingOptions trainingOptions;
+    private final MLTrainingOptions trainingOptions;
     private final int epochs;
     private final ErrorFunction errorFunction;
     private final ActivationFunction activationFunction;
@@ -43,7 +43,7 @@ public class NeuralNetTrainer implements MLClassificationTrainer {
     private final double learningRate;
     private final double momentum;
 
-    public NeuralNetTrainer(MLClassificationTrainingOptions trainingOptions, int epochs, ErrorFunction errorFunction,
+    public NeuralNetTrainer(MLTrainingOptions trainingOptions, int epochs, ErrorFunction errorFunction,
             ActivationFunction activationFunction, int[] hiddenNeuronPerLayer, double learningRate, double momentum) {
         this.trainingOptions = trainingOptions;
         this.epochs = epochs;
@@ -56,7 +56,7 @@ public class NeuralNetTrainer implements MLClassificationTrainer {
 
     @Override
     public MLClassifier train(Iterable<MLClassificationRecord> data, List<MLFeatureModifier> featureModifiers,
-            MLClassificationTrainerCallback callback) {
+            MLTrainerCallback callback) {
         final List<Object> classifications = MLFeatureUtils.toClassifications(data);
         final double[][] x = MLFeatureUtils.toFeatureVector(data, featureModifiers);
         final int[] y = MLFeatureUtils.toClassificationVector(data);

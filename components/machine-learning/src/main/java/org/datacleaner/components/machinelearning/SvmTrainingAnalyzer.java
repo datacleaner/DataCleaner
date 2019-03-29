@@ -25,14 +25,14 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.NumberProperty;
 import org.datacleaner.components.machinelearning.api.MLClassificationTrainer;
-import org.datacleaner.components.machinelearning.api.MLClassificationTrainingOptions;
+import org.datacleaner.components.machinelearning.api.MLTrainingOptions;
 import org.datacleaner.components.machinelearning.impl.SvmClasificationTrainer;
 
 import smile.classification.SVM.Multiclass;
 
 @Named("Train SVM classifier")
 @Description("Train a classifier of the 'Support Vector Machine' (SVM) type.")
-public class SvmTrainingAnalyzer extends MLTrainingAnalyzer {
+public class SvmTrainingAnalyzer extends MLClassificationTrainingAnalyzer {
 
     @Configured
     @NumberProperty(negative = false, zero = false)
@@ -52,7 +52,7 @@ public class SvmTrainingAnalyzer extends MLTrainingAnalyzer {
     Multiclass multiclass = Multiclass.ONE_VS_ONE;
 
     @Override
-    protected MLClassificationTrainer createTrainer(MLClassificationTrainingOptions options) {
+    protected MLClassificationTrainer createTrainer(MLTrainingOptions options) {
         return new SvmClasificationTrainer(options, epochs, gaussianKernelSigma, softMarginPenalty, multiclass);
     }
 

@@ -21,11 +21,11 @@ package org.datacleaner.components.machinelearning.api;
 
 import java.io.Serializable;
 
-public interface MLClassifier extends Serializable {
+public interface MLRegressor extends Serializable {
 
-    MLClassificationMetadata getMetadata();
+    MLRegressionMetadata getMetadata();
 
-    MLClassification classify(MLRecord record);
+    double predict(MLRecord record);
 
-    MLClassification classify(double[] featureValues);
+    double predict(double[] featureValues);
 }

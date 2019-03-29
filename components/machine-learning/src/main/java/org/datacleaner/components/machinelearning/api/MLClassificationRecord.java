@@ -19,9 +19,7 @@
  */
 package org.datacleaner.components.machinelearning.api;
 
-public interface MLClassificationRecord {
+public interface MLClassificationRecord extends MLRecord {
 
     Object getClassification();
-    
-    Object[] getRecordValues();
 }

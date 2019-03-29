@@ -44,11 +44,9 @@ public class RandomForestRegressorTrainer implements MLRegressorTrainer {
     @Override
     public MLRegressor train(Iterable<MLRegressionRecord> data, List<MLFeatureModifier> featureModifiers,
             MLTrainerCallback callback) {
-        final RandomForest.Trainer trainer = new RandomForest.Trainer(numTrees);
-
-        double[][] x = MLFeatureUtils.toFeatureVector(data, featureModifiers);
-        double[] y = MLFeatureUtils.toRegressionOutputVector(data);
-        final RandomForest regression = trainer.train(x, y);
+        final double[][] x = MLFeatureUtils.toFeatureVector(data, featureModifiers);
+        final double[] y = MLFeatureUtils.toRegressionOutputVector(data);
+        final RandomForest regression = new RandomForest(x, y, numTrees);
 
         final MLRegressionMetadata metadata =
                 new MLRegressionMetadata(trainingOptions.getColumnNames(), trainingOptions.getFeatureModifiers());

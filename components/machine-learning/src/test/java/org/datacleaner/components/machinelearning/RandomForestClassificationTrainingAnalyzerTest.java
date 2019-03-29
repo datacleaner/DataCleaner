@@ -21,7 +21,7 @@ package org.datacleaner.components.machinelearning;
 
 import org.junit.Test;
 
-public class RandomForestTrainingAnalyzerTest {
+public class RandomForestClassificationTrainingAnalyzerTest {
 
     private final TrainingAnalyzerTestHelper testHelper = new TrainingAnalyzerTestHelper();
 

@@ -160,10 +160,6 @@ public class MLFeatureUtils {
                 }
             }
         }
-
-        // TODO
-        System.out.println("Reduced " + values.size() + " multiset to " + resultSet.size() + " values");
-
         return resultSet;
     }
 }

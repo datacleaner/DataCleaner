@@ -30,7 +30,9 @@ import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SimpleTableDef;
+import org.apache.metamodel.util.UrlResource;
 import org.apache.metamodel.xml.XmlDomDataContext;
+import org.datacleaner.connection.ArffDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
@@ -132,19 +134,17 @@ public class DomConfigurationWriter {
 
         if (datastore instanceof CsvDatastore) {
             final Resource resource = ((CsvDatastore) datastore).getResource();
-            if (resource instanceof FileResource) {
-                return true;
-            }
-            if (resource instanceof HdfsResource) {
-                return true;
-            }
+            return isExternalizable(resource);
         }
 
         if (datastore instanceof ExcelDatastore) {
             final Resource resource = ((ExcelDatastore) datastore).getResource();
-            if (resource instanceof FileResource) {
-                return true;
-            }
+            return isExternalizable(resource);
+        }
+
+        if (datastore instanceof ArffDatastore) {
+            final Resource resource = ((ArffDatastore) datastore).getResource();
+            return isExternalizable(resource);
         }
 
         if (datastore instanceof ElasticSearchDatastore) {
@@ -178,7 +178,8 @@ public class DomConfigurationWriter {
             }
         }
         if (datastore instanceof JsonDatastore) {
-            return true;
+            final Resource resource = ((JsonDatastore) datastore).getResource();
+            return isExternalizable(resource);
         }
         if (datastore instanceof FixedWidthDatastore) {
             return true;
@@ -187,6 +188,11 @@ public class DomConfigurationWriter {
             return true;
         }
         return false;
+    }
+
+    private boolean isExternalizable(Resource resource) {
+        return resource instanceof FileResource || resource instanceof HadoopResource
+                || resource instanceof HdfsResource || resource instanceof UrlResource;
     }
 
     public boolean isExternalizable(final Dictionary dict) {
@@ -325,6 +331,10 @@ public class DomConfigurationWriter {
             final Resource resource = ((CsvDatastore) datastore).getResource();
             final String filename = toFilename(resource);
             elem = toElement((CsvDatastore) datastore, filename);
+        } else if (datastore instanceof ArffDatastore) {
+            final Resource resource = ((ArffDatastore) datastore).getResource();
+            final String filename = toFilename(resource);
+            elem = toElement((ArffDatastore) datastore, filename);
         } else if (datastore instanceof ExcelDatastore) {
             final Resource resource = ((ExcelDatastore) datastore).getResource();
             final String filename = toFilename(resource);
@@ -617,7 +627,9 @@ public class DomConfigurationWriter {
         if (resource instanceof HdfsResource) {
             return resource.getQualifiedPath();
         }
-
+        if (resource instanceof UrlResource) {
+            return resource.getQualifiedPath();
+        }
         throw new UnsupportedOperationException("Unsupported resource type: " + resource);
     }
 
@@ -718,6 +730,7 @@ public class DomConfigurationWriter {
      * @param datastore
      * @return
      */
+    @SuppressWarnings("deprecation")
     public Element toElement(final ElasticSearchDatastore datastore) {
         final Element ds = getDocument().createElement("elasticsearch-datastore");
         ds.setAttribute("name", datastore.getName());
@@ -948,6 +961,18 @@ public class DomConfigurationWriter {
             datastore.getCustomColumnNames()
                     .forEach(columnName -> appendElement(customColumnNamesElement, "column-name", columnName));
         }
+
+        return datastoreElement;
+    }
+
+    private Element toElement(ArffDatastore datastore, String filename) {
+        final Element datastoreElement = getDocument().createElement("arff-datastore");
+        datastoreElement.setAttribute("name", datastore.getName());
+        final String description = datastore.getDescription();
+        if (!Strings.isNullOrEmpty(description)) {
+            datastoreElement.setAttribute("description", description);
+        }
+        appendElement(datastoreElement, "filename", filename);
 
         return datastoreElement;
     }

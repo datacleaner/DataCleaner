@@ -55,6 +55,7 @@ import org.apache.metamodel.xml.XmlSaxTableDef;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.AccessDatastoreType;
+import org.datacleaner.configuration.jaxb.ArffDatastoreType;
 import org.datacleaner.configuration.jaxb.BerkeleyDbStorageProviderType;
 import org.datacleaner.configuration.jaxb.CassandraDatastoreType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType;
@@ -113,6 +114,7 @@ import org.datacleaner.configuration.jaxb.ValueListSynonymCatalogType;
 import org.datacleaner.configuration.jaxb.XmlDatastoreType;
 import org.datacleaner.configuration.jaxb.XmlDatastoreType.TableDef;
 import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.connection.ArffDatastore;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
@@ -774,6 +776,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final Datastore ds;
             if (datastoreType instanceof CsvDatastoreType) {
                 ds = createDatastore(name, (CsvDatastoreType) datastoreType, temporaryConfiguration);
+            } else if (datastoreType instanceof ArffDatastoreType) {
+                ds = createDatastore(name, (ArffDatastoreType) datastoreType, temporaryConfiguration);
             } else if (datastoreType instanceof JdbcDatastoreType) {
                 ds = createDatastore(name, (JdbcDatastoreType) datastoreType);
             } else if (datastoreType instanceof FixedWidthDatastoreType) {
@@ -973,6 +977,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new CassandraDatastore(name, hostname, port, keySpace, username, password, ssl, tableDefs);
     }
 
+    @SuppressWarnings("deprecation")
     private Datastore createDatastore(final String name, final ElasticSearchDatastoreType datastoreType) {
         final String clusterName = getStringVariable("clusterName", datastoreType.getClusterName());
         final String hostname = getStringVariable("hostname", datastoreType.getHostname());
@@ -1407,6 +1412,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 failOnInconsistencies, multilineValues, headerLineNumber, customColumnNames);
     }
 
+    private Datastore createDatastore(String name, ArffDatastoreType datastoreType,
+            DataCleanerConfigurationImpl configuration) {
+        final String filename = getStringVariable("filename", datastoreType.getFilename());
+        final Resource resource = _interceptor.createResource(filename, configuration);
+        
+        return new ArffDatastore(name, resource);
+    }
+    
     private char getChar(final String charString, final char ifNull, final char ifBlank) {
         if (charString == null) {
             return ifNull;

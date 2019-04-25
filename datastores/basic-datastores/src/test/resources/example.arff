@@ -1,0 +1,9 @@
+%% Example ARFF file
+
+@relation example_table
+@attribute some_number numeric
+@attribute Date date 'yyyy-MM-dd'
+
+@data
+1337,1999-01-01
+42,1999-02-01

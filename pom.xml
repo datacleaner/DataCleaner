@@ -697,6 +697,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-arff</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-cassandra</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>

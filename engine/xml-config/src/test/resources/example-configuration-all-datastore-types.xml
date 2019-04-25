@@ -74,6 +74,9 @@
 			<index-name>my_index</index-name>
 		</elasticsearch-datastore>
 		
+		<arff-datastore name="my arff">
+			<filename>../../datastores/basic-datastores/src/test/resources/example.arff</filename>
+		</arff-datastore>
 		
 		<cassandra-datastore name="my cassandra db" description="Apache Cassandra rocks">
 			<keyspace>my_keyspace</keyspace>

@@ -200,6 +200,13 @@
 						</documentation>
 					</annotation>
 				</element>
+				<element name="arff-datastore" type="ab:arffDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a .arff file.
+						</documentation>
+					</annotation>
+				</element>
 				<element name="salesforce-datastore" type="ab:salesforceDatastoreType">
 					<annotation>
 						<documentation>
@@ -446,6 +453,17 @@
 							</sequence>
 						</complexType>
 					</element>
+				</all>
+			</extension>
+		</complexContent>
+	</complexType>
+	
+		<complexType name="arffDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<all>
+					<element name="filename" type="string" minOccurs="1"
+						maxOccurs="1" />
 				</all>
 			</extension>
 		</complexContent>

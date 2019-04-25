@@ -18,6 +18,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-arff</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
 			<artifactId>MetaModel-fixedwidth</artifactId>
 		</dependency>
 		<dependency>

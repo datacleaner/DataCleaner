@@ -189,7 +189,7 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext>
                 return DriverManager.getConnection(_jdbcUrl);
             }
         } catch (final SQLException e) {
-            throw new IllegalStateException("Could not create connection", e);
+            throw new IllegalStateException("Could not create connection to JDBC URL: " + _jdbcUrl, e);
         }
     }
 
@@ -255,7 +255,7 @@ public class JdbcDatastore extends UsageAwareDatastore<UpdateableDataContext>
             try {
                 Class.forName(_driverClass);
             } catch (final ClassNotFoundException e) {
-                throw new IllegalStateException("Could not initialize JDBC driver", e);
+                throw new IllegalStateException("Could not initialize JDBC driver: " + _driverClass, e);
             }
         }
     }

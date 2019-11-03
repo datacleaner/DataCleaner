@@ -27,9 +27,7 @@
 		<jung.version>2.1.1</jung.version>
 		<guava.version>27.0.1-jre</guava.version>
 		<hadoop.version>3.1.1</hadoop.version>
-		
-		<!-- TODO: The following (inter-dependent) dependencies are due for upgrades before Java 11 -->
-		<spark.version>1.6.3</spark.version>
+		<spark.version>2.4.4</spark.version>
 		<curator.version>2.13.0</curator.version>
 	</properties>
 	<parent>
@@ -978,6 +976,14 @@
 					<exclusion>
 						<groupId>org.eclipse.jetty.orbit</groupId>
 						<artifactId>javax.servlet</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.glassfish.hk2.external</groupId>
+						<artifactId>aopalliance-repackaged</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.glassfish.hk2.external</groupId>
+						<artifactId>javax.inject</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

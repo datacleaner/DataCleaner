@@ -23,7 +23,7 @@
 		<javax.servlet.version>3.1.0</javax.servlet.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
-		<scala.version>2.11.12</scala.version>
+		<scala.version>2.12.10</scala.version>
 		<jung.version>2.1.1</jung.version>
 		<guava.version>27.0.1-jre</guava.version>
 		<hadoop.version>3.1.1</hadoop.version>
@@ -947,7 +947,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.spark</groupId>
-				<artifactId>spark-yarn_2.11</artifactId>
+				<artifactId>spark-yarn_2.12</artifactId>
 				<version>${spark.version}</version>
 				<scope>provided</scope>
 				<exclusions>
@@ -983,7 +983,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.spark</groupId>
-				<artifactId>spark-launcher_2.11</artifactId>
+				<artifactId>spark-launcher_2.12</artifactId>
 				<version>${spark.version}</version>
 				<exclusions>
 					<exclusion>
@@ -1406,8 +1406,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang.modules</groupId>
-				<artifactId>scala-xml_2.11</artifactId>
-				<version>1.0.2</version>
+				<artifactId>scala-xml_2.12</artifactId>
+				<version>1.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang</groupId>
@@ -1476,7 +1476,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.module</groupId>
-				<artifactId>jackson-module-scala_2.11</artifactId>
+				<artifactId>jackson-module-scala_2.12</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
 
@@ -1543,8 +1543,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.scalatest</groupId>
-				<artifactId>scalatest_2.11</artifactId>
-				<version>2.2.0</version>
+				<artifactId>scalatest_2.12</artifactId>
+				<version>3.0.6</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>

@@ -42,6 +42,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.Alignment;
@@ -60,6 +61,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private final ImageManager imageManager = ImageManager.get();
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private final List<FilenameTextField> _filenameTextFields;
     private final DCPanel _filesPanel;
     private final DCComboBox<String> _driverClassNameComboBox;
@@ -187,7 +189,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 400;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     @Override
@@ -229,7 +231,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
         outerPanel.add(mainPanel, BorderLayout.CENTER);
         outerPanel.add(WidgetFactory.createStatusBar(_statusLabel), BorderLayout.SOUTH);
 
-        outerPanel.setPreferredSize(400, 350);
+        outerPanel.setPreferredSize(getDialogWidth(), adjuster.adjust(350));
         return outerPanel;
     }
 

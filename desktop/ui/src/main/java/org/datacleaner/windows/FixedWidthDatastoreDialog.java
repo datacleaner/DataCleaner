@@ -52,6 +52,8 @@ import org.datacleaner.widgets.HeaderLineComboBox;
 import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
 import org.datacleaner.widgets.table.DCEditableTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -59,6 +61,7 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger logger = LoggerFactory.getLogger(FixedWidthDatastoreDialog.class);
     private final CharSetEncodingComboBox _encodingComboBox;
     private final JCheckBox _failOnInconsistenciesCheckBox;
     private final JCheckBox _skipEbcdicHeaderCheckBox;
@@ -224,11 +227,6 @@ public final class FixedWidthDatastoreDialog extends AbstractResourceBasedDatast
 
     @Override
     protected boolean isPreviewTableEnabled() {
-        return true;
-    }
-
-    @Override
-    protected boolean isWindowResizable() {
         return true;
     }
 

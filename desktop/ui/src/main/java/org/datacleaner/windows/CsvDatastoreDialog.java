@@ -56,6 +56,8 @@ import org.datacleaner.widgets.HeaderLineComboBox;
 import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
 import org.jdesktop.swingx.HorizontalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dialog for setting up CSV datastores.
@@ -63,6 +65,8 @@ import org.jdesktop.swingx.HorizontalLayout;
 public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDialog<CsvDatastore> {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreDialog.class);
 
     private static final String SEPARATOR_TAB = "Tab (\\t)";
     private static final String SEPARATOR_COMMA = "Comma (,)";

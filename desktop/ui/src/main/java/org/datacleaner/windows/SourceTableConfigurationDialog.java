@@ -84,11 +84,6 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 500;
-    }
-
-    @Override
     protected JComponent getDialogContent() {
         final List<MetaModelInputColumn> columns = _analysisJobBuilder.getSourceColumnsOfTable(_table);
         for (final MetaModelInputColumn metaModelInputColumn : columns) {

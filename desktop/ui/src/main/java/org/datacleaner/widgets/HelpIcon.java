@@ -31,6 +31,7 @@ import javax.swing.border.CompoundBorder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.tooltip.DCToolTip;
 
@@ -39,6 +40,7 @@ public final class HelpIcon extends JLabel {
     private static final long serialVersionUID = 1L;
 
     private static final ImageManager imageManager = ImageManager.get();
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private final String _helpMessage;
     private final Icon _tooltipIcon;
 
@@ -73,7 +75,7 @@ public final class HelpIcon extends JLabel {
         final Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);
         panel.setBorder(border);
 
-        panel.setPreferredSize(300, 130);
+        panel.setPreferredSize(adjuster.adjust(300), adjuster.adjust(130));
 
         return new DCToolTip(this, panel);
     }

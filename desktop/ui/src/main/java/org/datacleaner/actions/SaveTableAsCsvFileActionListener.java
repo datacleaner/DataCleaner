@@ -102,11 +102,6 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
             }
 
             @Override
-            protected int getDialogWidth() {
-                return 600;
-            }
-
-            @Override
             protected boolean isWindowResizable() {
                 return true;
             }

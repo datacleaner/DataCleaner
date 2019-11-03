@@ -157,11 +157,6 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 600;
-    }
-
-    @Override
     protected boolean isWindowResizable() {
         return true;
     }

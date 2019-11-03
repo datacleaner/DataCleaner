@@ -279,11 +279,6 @@ public class RegexSwapDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 650;
-    }
-
-    @Override
     public String getWindowTitle() {
         return "RegexSwap browser";
     }

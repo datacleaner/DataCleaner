@@ -100,11 +100,6 @@ public final class ReferenceDataDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 600;
-    }
-
-    @Override
     protected boolean isWindowResizable() {
         return true;
     }

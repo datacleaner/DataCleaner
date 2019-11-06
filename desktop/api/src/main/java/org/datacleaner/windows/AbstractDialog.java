@@ -45,6 +45,7 @@ import org.datacleaner.util.WidgetUtils;
 public abstract class AbstractDialog extends JDialog implements DCWindow, WindowListener {
 
     private static final long serialVersionUID = 1L;
+    
     private final WindowContext _windowContext;
     private volatile boolean initialized = false;
     private Image _bannerImage;
@@ -228,7 +229,9 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     protected abstract String getBannerTitle();
 
-    protected abstract int getDialogWidth();
+    protected int getDialogWidth() {
+        return WidgetUtils.DIALOG_WIDTH_NORMAL;
+    }
 
     protected abstract JComponent getDialogContent();
 

@@ -95,13 +95,8 @@ public class MongoDbDatastoreDialog extends AbstractDatastoreDialog<MongoDbDatas
     }
 
     @Override
-    protected boolean isWindowResizable() {
-        return true;
-    }
-
-    @Override
     protected int getDialogWidth() {
-        return 400;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     @Override

@@ -68,7 +68,7 @@ public class DropTableDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 450;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     @Override

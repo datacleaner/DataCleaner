@@ -329,11 +329,6 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
     }
 
     @Override
-    protected boolean isWindowResizable() {
-        return true;
-    }
-
-    @Override
     protected String getBannerTitle() {
         return "Database connection";
     }

@@ -70,7 +70,7 @@ public class ErrorDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 500;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     @Override

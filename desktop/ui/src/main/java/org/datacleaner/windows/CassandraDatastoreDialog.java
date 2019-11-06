@@ -40,12 +40,13 @@ import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTextField;
 
 public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraDatastore> implements SchemaFactory {
 
     private static final long serialVersionUID = 1L;
-
+    
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
     private final JXTextField _keyspaceTextField;
@@ -146,13 +147,8 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
     }
 
     @Override
-    protected boolean isWindowResizable() {
-        return true;
-    }
-
-    @Override
     protected int getDialogWidth() {
-        return 400;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     protected CassandraDatastore createDatastore() {

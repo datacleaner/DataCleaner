@@ -45,6 +45,7 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
@@ -64,8 +65,10 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 
     private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
     private static final ImageManager imageManager = ImageManager.get();
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private static final ImageIcon ICON_APP = ImageManager.get().getImageIcon(IconUtils.APPLICATION_ICON);
-    private static final int WIDTH = 220;
+    private static final int WIDTH = adjuster.adjust(220);
+    private static final int HEIGHT = adjuster.adjust(10);
 
     private final DataCleanerConfiguration _configuration;
     private final DCFileChooser _fileChooser;
@@ -90,7 +93,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
         _openJobButton = getOpenJobButton();
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
 
-        setPreferredSize(WIDTH, 10);
+        setPreferredSize(WIDTH, HEIGHT);
 
         setBorder(new EmptyBorder(0, 10, 0, 0));
         setLayout(new BorderLayout());

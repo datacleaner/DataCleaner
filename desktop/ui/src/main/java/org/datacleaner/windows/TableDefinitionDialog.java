@@ -71,11 +71,6 @@ public class TableDefinitionDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 500;
-    }
-
-    @Override
     protected boolean isWindowResizable() {
         return true;
     }

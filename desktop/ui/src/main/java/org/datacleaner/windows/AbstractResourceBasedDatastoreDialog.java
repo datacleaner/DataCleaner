@@ -90,7 +90,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
      */
     private static final int PREVIEW_COLUMNS = 10;
     private static final int PREVIEW_ROWS = 7;
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(AbstractResourceBasedDatastoreDialog.class);
     private final ResourceSelector _resourceSelector;
     private final DCPanel _previewTablePanel;
     private final DCTable _previewTable;
@@ -195,7 +195,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
     @Override
     protected int getDialogWidth() {
         if (isPreviewTableEnabled()) {
-            return 650;
+            return WidgetUtils.DIALOG_WIDTH_WIDE;
         }
         return super.getDialogWidth();
     }

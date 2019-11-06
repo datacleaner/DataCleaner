@@ -53,6 +53,7 @@ import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.ResourceTypePresenter;
 import org.jdesktop.swingx.JXTextField;
 
+@SuppressWarnings("deprecation")
 public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore>
         implements SchemaFactory {
 
@@ -311,13 +312,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     }
 
     @Override
-    protected boolean isWindowResizable() {
-        return true;
-    }
-
-    @Override
     protected int getDialogWidth() {
-        return 400;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     protected ElasticSearchDatastore createDatastore() {

@@ -89,7 +89,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
      * Max amount of columns to display in the preview table
      */
     private static final int PREVIEW_COLUMNS = 10;
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(AbstractFileBasedDatastoreDialog.class);
     private final FilenameTextField _filenameField;
     private final DCPanel _previewTablePanel;
     private final DCTable _previewTable;
@@ -217,7 +217,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     @Override
     protected int getDialogWidth() {
         if (isPreviewTableEnabled()) {
-            return 650;
+            return WidgetUtils.DIALOG_WIDTH_WIDE;
         }
         return super.getDialogWidth();
     }

@@ -112,7 +112,7 @@ public class FileTransferProgressWindow extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 460;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     private int getIndex(final String filename) {

@@ -142,9 +142,8 @@ public class WelcomePanel extends DCSplashPanel {
 
                 final JButton tryProfessionalButton =
                         WidgetFactory.createDefaultButton("Try professional edition", IconUtils.APPLICATION_ICON);
-                tryProfessionalButton.addActionListener(new OpenBrowserAction(
-                        "https://www.quadient.com/products/quadient-datacleaner#get-started-today"));
-
+                tryProfessionalButton
+                        .addActionListener(new OpenBrowserAction("https://www.humaninference.com/en/solutions/datacleaner"));
                 final JButton discussionForumButton =
                         WidgetFactory.createDefaultButton("Visit the discussion forum", "images/menu/forum.png");
                 discussionForumButton

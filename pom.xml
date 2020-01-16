@@ -10,16 +10,16 @@
 		<javadoc.version>3.0.1</javadoc.version>
 
 		<!-- Dependency versions -->
-		<slf4j.version>1.7.25</slf4j.version>
-		<junit.version>4.12</junit.version>
+		<slf4j.version>1.7.30</slf4j.version>
+		<junit.version>4.13</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.5</httpcomponents.version>
-		<metamodel.version>5.3.1</metamodel.version>
+		<metamodel.version>5.3.2</metamodel.version>
 		<metamodel.extras.version>5.2.0</metamodel.extras.version>
-		<spring.core.version>4.3.16.RELEASE</spring.core.version>
-		<freemarker.version>2.3.28</freemarker.version>
-		<icu4j.version>61.1</icu4j.version>
-		<jackson.version>2.10.0</jackson.version>
+		<spring.core.version>4.3.26.RELEASE</spring.core.version>
+		<freemarker.version>2.3.29</freemarker.version>
+		<icu4j.version>65.1</icu4j.version>
+		<jackson.version>2.10.2</jackson.version>
 		<javax.servlet.version>3.1.0</javax.servlet.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>

@@ -11,7 +11,7 @@ import org.datacleaner.result.SimpleAnalysisResult
 import org.datacleaner.result.html.{DefaultHtmlRenderingContext, HtmlAnalysisResultWriter}
 import org.datacleaner.result.renderer.{AnnotatedRowsHtmlRenderer, ListResultHtmlRenderer, RendererFactory}
 import org.junit.{Assert, Test}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
   

@@ -3,7 +3,7 @@ package org.datacleaner.visualization
 import org.datacleaner.api.InputColumn
 import org.datacleaner.data.{MockInputColumn, MockInputRow}
 import org.junit.{Assert, Test}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 import scala.collection.JavaConverters._
 

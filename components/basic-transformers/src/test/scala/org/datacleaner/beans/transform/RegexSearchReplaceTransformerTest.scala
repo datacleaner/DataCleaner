@@ -4,7 +4,7 @@ import java.util.regex.Pattern
 import org.datacleaner.data.{MockInputColumn, MockInputRow}
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class RegexSearchReplaceTransformerTest extends AssertionsForJUnit {
 

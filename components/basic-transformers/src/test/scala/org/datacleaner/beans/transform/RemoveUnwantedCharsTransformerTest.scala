@@ -1,6 +1,6 @@
 package org.datacleaner.beans.transform
 import org.junit.{Assert, Test}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class RemoveUnwantedCharsTransformerTest extends AssertionsForJUnit {
 

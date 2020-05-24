@@ -10,7 +10,7 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl
 import org.datacleaner.result.html.HtmlAnalysisResultWriter
 import org.datacleaner.test.TestHelper
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+org.scalatestplus.junit.AssertionsForJUnit
 
 class StackedAreaAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 

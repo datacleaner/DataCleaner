@@ -6,7 +6,7 @@ import org.datacleaner.result.{AnnotatedRowsResult, Crosstab, DefaultResultProdu
 import org.datacleaner.result.html.DefaultHtmlRenderingContext
 import org.datacleaner.storage.{RowAnnotationImpl, RowAnnotations}
 import org.junit.{Assert, Test}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class CrosstabHtmlRendererCallbackTest extends AssertionsForJUnit {
   

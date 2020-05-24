@@ -41,7 +41,7 @@ public class TuplesToTuplesFunction<K, V> implements PairFlatMapFunction<Iterato
     private static final Logger logger = LoggerFactory.getLogger(TuplesToTuplesFunction.class);
 
     @Override
-    public Iterable<Tuple2<K, V>> call(final Iterator<Tuple2<K, V>> iterator) throws Exception {
+    public Iterator<Tuple2<K, V>> call(final Iterator<Tuple2<K, V>> iterator) throws Exception {
         logger.info("call(Iterator) invoked");
         return new Iterable<Tuple2<K, V>>() {
 
@@ -57,7 +57,7 @@ public class TuplesToTuplesFunction<K, V> implements PairFlatMapFunction<Iterato
                 }
                 return iterator;
             }
-        };
+        }.iterator();
     }
 
 }

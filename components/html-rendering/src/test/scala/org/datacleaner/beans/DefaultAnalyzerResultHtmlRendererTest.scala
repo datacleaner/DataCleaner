@@ -7,7 +7,7 @@ import org.datacleaner.descriptors.Descriptors
 import org.datacleaner.job.{ImmutableAnalyzerJob, ImmutableComponentConfiguration}
 import org.datacleaner.result.html.{ComponentHtmlRenderingContext, DefaultHtmlRenderingContext}
 import org.junit.{Assert, Test}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class DefaultAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 

@@ -3,7 +3,7 @@ package org.datacleaner.visualization
 import org.datacleaner.data.{MockInputColumn, MockInputRow}
 import org.datacleaner.storage.RowAnnotations
 import org.junit.{Assert, Test}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 import scala.collection.JavaConverters._
 class ScatterAnalyzerTest extends AssertionsForJUnit {

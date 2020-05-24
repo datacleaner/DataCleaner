@@ -65,7 +65,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-yarn_2.11</artifactId>
+			<artifactId>spark-yarn_2.12</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
@@ -158,7 +158,7 @@
 				</exclusion>
 				<exclusion>
 					<groupId>org.scala-lang.modules</groupId>
-					<artifactId>scala-xml_2.11</artifactId>
+					<artifactId>scala-xml_2.12</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -197,6 +197,10 @@
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
 </project>

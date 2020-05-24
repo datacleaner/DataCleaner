@@ -1,5 +1,5 @@
 package org.datacleaner.beans
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 import org.junit.Test
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.data.MockInputRow

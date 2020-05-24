@@ -10,7 +10,7 @@ import org.datacleaner.result.renderer.CrosstabTextRenderer
 import org.datacleaner.storage.InMemoryRowAnnotationFactory2
 import org.junit.Assert
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class DateAndTimeAnalyzerScalaTest extends AssertionsForJUnit {
 

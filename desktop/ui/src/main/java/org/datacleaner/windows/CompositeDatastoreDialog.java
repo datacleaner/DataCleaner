@@ -152,7 +152,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
 
     @Override
     protected int getDialogWidth() {
-        return 400;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     @Override

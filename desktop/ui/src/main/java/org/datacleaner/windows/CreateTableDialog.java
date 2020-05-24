@@ -45,6 +45,7 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextField;
@@ -59,6 +60,7 @@ public class CreateTableDialog extends AbstractDialog {
         void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName);
     }
 
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private static final long serialVersionUID = 1L;
     private final UpdateableDatastore _datastore;
     private final Schema _schema;
@@ -156,7 +158,7 @@ public class CreateTableDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 700;
+        return WidgetUtils.DIALOG_WIDTH_WIDE;
     }
 
     @Override
@@ -231,7 +233,7 @@ public class CreateTableDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(createTableButton, panel, 0, row, 0.5, 0.1);
         WidgetUtils.addToGridBag(cancelButton, panel, 1, row, 0.5, 0.1);
 
-        panel.setPreferredSize(getDialogWidth(), 400);
+        panel.setPreferredSize(getDialogWidth(), adjuster.adjust(400));
 
         return panel;
     }

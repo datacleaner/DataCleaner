@@ -102,11 +102,6 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
             }
 
             @Override
-            protected int getDialogWidth() {
-                return 600;
-            }
-
-            @Override
             protected boolean isWindowResizable() {
                 return true;
             }

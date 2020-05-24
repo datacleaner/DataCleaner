@@ -40,6 +40,7 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.convert.NowDate;
 import org.datacleaner.util.convert.ShiftedToday;
@@ -51,11 +52,14 @@ import org.datacleaner.windows.AbstractDialog;
 import org.jdesktop.swingx.JXDatePicker;
 
 public class SingleDatePropertySettingDialog extends AbstractDialog {
+    
+    private static final long serialVersionUID = 1L;
     public static final String LABEL_PARTICULAR = "Particular date";
     public static final String LABEL_TODAY = "Today";
-    private static final long serialVersionUID = 1L;
-    private static final int DIALOG_WIDTH = 270;
-    private static final int DIALOG_HEIGHT = 390;
+    
+    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
+    private static final int DIALOG_WIDTH = adjuster.adjust(270);
+    private static final int DIALOG_HEIGHT = adjuster.adjust(390);
     private static final String TITLE = "Set date value";
     private static final String STATIC_GROUP = "Fixed date";
     private static final String DYNAMIC_GROUP = "Resolved at execution";

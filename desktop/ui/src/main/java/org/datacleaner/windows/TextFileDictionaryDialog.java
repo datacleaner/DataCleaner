@@ -117,11 +117,6 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 600;
-    }
-
-    @Override
     protected JComponent getDialogContent() {
         final DCPanel formPanel = new DCPanel();
 

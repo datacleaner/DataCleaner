@@ -269,6 +269,10 @@ public final class WidgetUtils {
     @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
     public static final String CHAR_CARET_DOWN = "\uf0d7";
 
+    public static final int DIALOG_WIDTH_NORMAL = adjuster.adjust(600);
+    public static final int DIALOG_WIDTH_NARROW = adjuster.adjust(400);
+    public static final int DIALOG_WIDTH_WIDE = adjuster.adjust(700);
+
     private WidgetUtils() {
         // prevent instantiation
     }

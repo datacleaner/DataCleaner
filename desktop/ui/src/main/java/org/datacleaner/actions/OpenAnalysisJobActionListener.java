@@ -197,7 +197,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             if (Version.EDITION_COMMUNITY.equals(Version.getEdition())) {
                 message = "<html><p>Failed to open job because of a missing component:</p><pre>" + e.getMessage()
                         + "</pre><p>This may happen if the job requires a "
-                        + "<a href=\"https://www.quadient.com/products/quadient-datacleaner#get-started-today\">"
+                        + "<a href=\"https://www.humaninference.com/en/solutions/datacleaner\">"
                         + "Commercial Edition of DataCleaner</a>, or an extension that you do not have installed.</p>"
                         + "</html>";
             } else {

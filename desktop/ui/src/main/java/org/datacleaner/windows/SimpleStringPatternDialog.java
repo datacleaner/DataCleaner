@@ -98,7 +98,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 465;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     @Override

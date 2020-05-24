@@ -86,7 +86,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 400;
+        return WidgetUtils.DIALOG_WIDTH_NARROW;
     }
 
     @Override

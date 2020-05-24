@@ -128,11 +128,6 @@ public class SelectHadoopClusterDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 500;
-    }
-
-    @Override
     protected JComponent getDialogContent() {
 
         final DCPanel contentPanel = new DCPanel();

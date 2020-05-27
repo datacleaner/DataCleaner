@@ -249,8 +249,8 @@
 	</licenses>
 	<scm>
 		<url>https://github.com/datacleaner/DataCleaner</url>
-		<connection>scm:git:https://github.com/datacleaner/DataCleaner.git</connection>
-		<developerConnection>scm:git:https://github.com/datacleaner/DataCleaner.git</developerConnection>
+		<connection>scm:git:git@github.com:datacleaner/DataCleaner.git</connection>
+		<developerConnection>scm:git:git@github.com:datacleaner/DataCleaner.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 	<build>

@@ -11,7 +11,7 @@
 
 		<!-- Dependency versions -->
 		<slf4j.version>1.7.30</slf4j.version>
-		<junit.version>4.13</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.5</httpcomponents.version>
 		<metamodel.version>5.3.2</metamodel.version>

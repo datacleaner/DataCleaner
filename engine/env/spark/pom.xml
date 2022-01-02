@@ -101,7 +101,7 @@
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.apache.metamodel</groupId>
+					<groupId>org.eobjects.metamodel</groupId>
 					<artifactId>MetaModel-hbase</artifactId>
 				</exclusion>
 				<exclusion>
@@ -140,11 +140,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-fixedwidth</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-core</artifactId>
 		</dependency>
 		<dependency>
@@ -163,7 +163,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-hadoop</artifactId>
 			<exclusions>
 				<exclusion>
@@ -177,11 +177,11 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-csv</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-json</artifactId>
 			<exclusions>
 				<exclusion>

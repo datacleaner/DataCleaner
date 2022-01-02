@@ -33,6 +33,7 @@ public class RegexSwapClientTest {
 
     @Test
     public void testUpdateContent() throws Exception {
+        Assume.assumeTrue(false); // this test is invalid as long as the RegexSwap is not restored
         Assume.assumeTrue(TestHelper.isInternetConnected());
 
         final RegexSwapClient client = new RegexSwapClient(HttpClients.createSystem());

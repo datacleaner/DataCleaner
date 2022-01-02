@@ -67,15 +67,15 @@ public class VFSUtilsTest extends TestCase {
     public void test2HttpAccess() throws Exception {
         // first check if we have a connection
         try {
-            InetAddress.getByName("eobjects.org");
+            InetAddress.getByName("datacleaner.github.io");
         } catch (final UnknownHostException e) {
             System.err.println("Skipping test " + getClass().getSimpleName() + "." + getName()
-                    + " since we don't seem to be able to reach eobjects.org");
+                    + " since we don't seem to be able to reach datacleaner.github.io");
             e.printStackTrace();
             return;
         }
 
-        final FileObject file = VFSUtils.getFileSystemManager().resolveFile("http://eobjects.org");
+        final FileObject file = VFSUtils.getFileSystemManager().resolveFile("https://datacleaner.github.io");
         try (InputStream in = file.getContent().getInputStream()) {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             final String readLine = reader.readLine();

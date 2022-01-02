@@ -18,7 +18,7 @@
 			<artifactId>gentyref</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-csv</artifactId>
 			<exclusions>
 				<exclusion>

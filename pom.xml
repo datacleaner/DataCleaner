@@ -665,12 +665,12 @@
 				<version>3.4</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-core</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-excel</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>
@@ -685,7 +685,7 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-hadoop</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>
@@ -696,57 +696,57 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-csv</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-arff</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-cassandra</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-fixedwidth</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-pojo</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-openoffice</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-salesforce</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-sugarcrm</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-xml</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-jdbc</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-elasticsearch-rest</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>
@@ -757,32 +757,32 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-mongodb-mongo3</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-couchdb</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-dynamodb</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-kafka</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-json</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-neo4j</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>
@@ -793,7 +793,7 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.metamodel</groupId>
+				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-hbase</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>

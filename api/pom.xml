@@ -21,7 +21,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-core</artifactId>
 		</dependency>
 
@@ -53,7 +53,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-csv</artifactId>
 			<scope>test</scope>
 		</dependency>

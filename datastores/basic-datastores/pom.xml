@@ -13,63 +13,63 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-csv</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-arff</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-fixedwidth</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-pojo</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-neo4j</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-openoffice</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-salesforce</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-sugarcrm</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-xml</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-jdbc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-elasticsearch-rest</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-excel</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-json</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-mongodb-mongo3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-couchdb</artifactId>
 		</dependency>
 		<dependency>
@@ -81,11 +81,11 @@
 			<artifactId>guava</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-kafka</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.metamodel</groupId>
+			<groupId>org.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-dynamodb</artifactId>
 		</dependency>
 		<dependency>

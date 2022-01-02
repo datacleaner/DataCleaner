@@ -1,6 +1,7 @@
 package org.datacleaner.visualization
 
 import javax.swing.JFrame
+import javax.swing.WindowConstants
 
 import org.datacleaner.api.InputColumn
 import org.datacleaner.data.{MockInputColumn, MockInputRow}
@@ -34,7 +35,7 @@ object StackedAreaAnalyzerResultSwingRendererTestApp {
     LookAndFeelManager.get().init();
 
     val window = new JFrame("Example window")
-    window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     window.getContentPane().add(jpanel)
     window.pack();
     window.setVisible(true)

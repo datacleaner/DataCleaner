@@ -391,7 +391,7 @@
 										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
 										<exclude>org.codehaus.jackson:*</exclude>
-										<exclude>org.eobjects.metamodel:*</exclude>
+										<exclude>org.apache.metamodel:*</exclude>
 										<exclude>log4j:apache-log4j-extras:*</exclude>
 										<exclude>org.apache.logging.log4j:*</exclude>
 

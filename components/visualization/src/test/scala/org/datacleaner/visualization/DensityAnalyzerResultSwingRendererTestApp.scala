@@ -1,6 +1,7 @@
 package org.datacleaner.visualization
 
 import javax.swing.JFrame
+import javax.swing.WindowConstants
 
 import org.datacleaner.configuration.{DataCleanerConfigurationImpl, DataCleanerEnvironmentImpl}
 import org.datacleaner.descriptors.{Descriptors, SimpleDescriptorProvider}
@@ -37,7 +38,7 @@ object DensityAnalyzerResultSwingRendererTestApp {
     LookAndFeelManager.get().init();
 
     val window = new JFrame("Example window")
-    window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     window.getContentPane().add(panel)
     window.pack();
     window.setVisible(true)

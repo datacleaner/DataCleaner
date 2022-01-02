@@ -14,8 +14,8 @@
 		<junit.version>4.13.1</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.13</httpcomponents.version>
-		<metamodel.version>5.3.2</metamodel.version>
-		<metamodel.extras.version>5.2.0</metamodel.extras.version>
+		<metamodel.version>5.3.4</metamodel.version>
+		<metamodel.extras.version>5.3.4</metamodel.extras.version>
 		<spring.core.version>4.3.26.RELEASE</spring.core.version>
 		<freemarker.version>2.3.29</freemarker.version>
 		<icu4j.version>65.1</icu4j.version>

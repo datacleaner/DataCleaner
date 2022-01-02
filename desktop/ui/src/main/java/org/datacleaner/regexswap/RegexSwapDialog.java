@@ -59,7 +59,6 @@ import org.datacleaner.windows.AbstractDialog;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
-import org.joda.time.DateTime;
 
 /**
  * A dialog for browsing the online RegexSwap repository.
@@ -68,7 +67,7 @@ public class RegexSwapDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Object[] TABLE_HEADERS = new Object[] { "Name", "Good/bad votes", "Author" };
+    private static final Object[] TABLE_HEADERS = new Object[] { "Name" };
     private static final ImageManager imageManager = ImageManager.get();
     private final RegexSwapClient _client;
     private final JXTree _categoryTree;
@@ -224,7 +223,6 @@ public class RegexSwapDialog extends AbstractDialog {
     private void updateCategories() {
         SharedExecutorService.get().submit((Runnable) () -> {
             final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Categories");
-            _client.refreshCategories();
             final Collection<Category> categories = _client.getCategories();
             for (final Category category : categories) {
                 final DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(category);
@@ -244,8 +242,6 @@ public class RegexSwapDialog extends AbstractDialog {
             for (int i = 0; i < regexes.size(); i++) {
                 final Regex regex = regexes.get(i);
                 tableModel.setValueAt(regex.getName(), i, 0);
-                tableModel.setValueAt(regex.getPositiveVotes() + "/" + regex.getNegativeVotes(), i, 1);
-                tableModel.setValueAt(regex.getAuthor(), i, 2);
             }
         }
         synchronized (_regexSelectionTable) {
@@ -265,8 +261,6 @@ public class RegexSwapDialog extends AbstractDialog {
             sb.append(regex.getExpression());
             sb.append("\n\n<b>Description</b>:\n");
             sb.append(regex.getDescription());
-            sb.append("\n\n<b>Submission date</b>:\n");
-            sb.append(new DateTime(regex.getTimestamp() * 1000).toString());
 
             _regexDescriptionLabel.setText(sb.toString());
             _importRegexButton.setEnabled(true);

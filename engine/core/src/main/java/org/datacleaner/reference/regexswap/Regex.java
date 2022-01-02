@@ -26,90 +26,98 @@ import org.apache.metamodel.util.BaseObject;
 
 public final class Regex extends BaseObject implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private final String _name;
-    private final String _description;
-    private final String _expression;
-    private final String _author;
-    private final long _timestamp;
-    private final int _positiveVotes;
-    private final int _negativeVotes;
-    private final String _detailsUrl;
-    private final List<Category> _categories;
+	private static final long serialVersionUID = 1L;
+	private final String _name;
+	private final String _description;
+	private final String _expression;
+	private final String _author;
+	private final long _timestamp;
+	private final int _positiveVotes;
+	private final int _negativeVotes;
+	private final String _detailsUrl;
+	private final List<Category> _categories;
 
-    public Regex(final String name, final String description, final String expression, final String author,
-            final long timestamp, final int positiveVotes, final int negativeVotes, final String detailsUrl,
-            final List<Category> categories) {
-        _name = name;
-        _description = description;
-        _expression = expression;
-        _author = author;
-        _timestamp = timestamp;
-        _positiveVotes = positiveVotes;
-        _negativeVotes = negativeVotes;
-        _detailsUrl = detailsUrl;
-        _categories = categories;
-    }
+	public Regex(final String name, final String description, final String expression,
+			final List<Category> categories) {
+		this(name, description, expression, null, -1, 0, 0, null, categories);
+	}
 
-    @Override
-    protected void decorateIdentity(final List<Object> identifiers) {
-        identifiers.add(_name);
-        identifiers.add(_description);
-        identifiers.add(_expression);
-        identifiers.add(_author);
-        identifiers.add(_timestamp);
-        identifiers.add(_positiveVotes);
-        identifiers.add(_negativeVotes);
-        identifiers.add(_detailsUrl);
-        identifiers.add(_categories);
-    }
+	@Deprecated
+	public Regex(final String name, final String description, final String expression, final String author,
+			final long timestamp, final int positiveVotes, final int negativeVotes, final String detailsUrl,
+			final List<Category> categories) {
+		_name = name;
+		_description = description;
+		_expression = expression;
+		_author = author;
+		_timestamp = timestamp;
+		_positiveVotes = positiveVotes;
+		_negativeVotes = negativeVotes;
+		_detailsUrl = detailsUrl;
+		_categories = categories;
+	}
 
-    public String getName() {
-        return _name;
-    }
+	@Override
+	protected void decorateIdentity(final List<Object> identifiers) {
+		identifiers.add(_name);
+		identifiers.add(_description);
+		identifiers.add(_expression);
+		identifiers.add(_author);
+		identifiers.add(_timestamp);
+		identifiers.add(_positiveVotes);
+		identifiers.add(_negativeVotes);
+		identifiers.add(_detailsUrl);
+		identifiers.add(_categories);
+	}
 
-    public String getDescription() {
-        return _description;
-    }
+	public String getName() {
+		return _name;
+	}
 
-    public String getExpression() {
-        return _expression;
-    }
+	public String getDescription() {
+		return _description;
+	}
 
-    public String getAuthor() {
-        return _author;
-    }
+	public String getExpression() {
+		return _expression;
+	}
 
-    public long getTimestamp() {
-        return _timestamp;
-    }
+	@Deprecated
+	public String getAuthor() {
+		return _author;
+	}
 
-    public int getPositiveVotes() {
-        return _positiveVotes;
-    }
+	@Deprecated
+	public long getTimestamp() {
+		return _timestamp;
+	}
 
-    public int getNegativeVotes() {
-        return _negativeVotes;
-    }
+	public int getPositiveVotes() {
+		return _positiveVotes;
+	}
 
-    public String getDetailsUrl() {
-        return _detailsUrl;
-    }
+	public int getNegativeVotes() {
+		return _negativeVotes;
+	}
 
-    public List<Category> getCategories() {
-        return _categories;
-    }
+	public String getDetailsUrl() {
+		return _detailsUrl;
+	}
 
-    public boolean containsCategory(final Category category) {
-        return _categories.contains(category);
-    }
+	public List<Category> getCategories() {
+		return _categories;
+	}
 
-    public String createWebsiteUrl() {
-        return "https://datacleaner.org/regex/" + getName().replaceAll(" ", "%20");
-    }
+	public boolean containsCategory(final Category category) {
+		return _categories.contains(category);
+	}
 
-    @Override
-    public String toString() {
-        return "Regex[name=" + _name + ",expression=" + _expression + "]";
-    }
+	public String createWebsiteUrl() {
+		return "https://datacleaner.org/regex/" + getName().replaceAll(" ", "%20");
+	}
+
+	@Override
+	public String toString() {
+		return "Regex[name=" + _name + ",expression=" + _expression + "]";
+	}
 }

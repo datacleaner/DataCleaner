@@ -127,11 +127,6 @@
 			<artifactId>DataCleaner-env-berkeleydb</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-env-spark</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 
 		<!-- DataCleaner components -->
 		<dependency>
@@ -218,16 +213,6 @@
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
-		</dependency>
-
-		<!-- Enough Hadoop/Spark for uploading and submitting jobs -->
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-launcher_2.12</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
 		</dependency>
 
 		<!-- Logging dependencies -->

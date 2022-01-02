@@ -42,7 +42,6 @@ import org.datacleaner.Version;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.cli.CliArguments;
-import org.datacleaner.cli.CliRunType;
 import org.datacleaner.cli.CliRunner;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -154,11 +153,6 @@ public final class Bootstrap {
 
             // init the look and feel
             LookAndFeelManager.get().init();
-        }
-
-        if (arguments.getRunType() == CliRunType.SPARK) {
-            runCli(arguments, null);
-            return;
         }
 
         // initially use a temporary non-persistent user preferences object.

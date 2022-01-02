@@ -61,7 +61,6 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnalysisResultWriter;
-import org.datacleaner.spark.SparkRunner;
 import org.datacleaner.user.DesktopConfigurationReaderInterceptor;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.convert.ResourceConverter;
@@ -101,39 +100,34 @@ public final class CliRunner implements Closeable {
                     }
                 };
             } else {
-                if (_arguments.getRunType() == CliRunType.SPARK) {
-                    _writerRef = null;
-                    _outputStreamRef = null;
-                } else {
-                    final FileObject outputFile;
-                    try {
-                        outputFile = VFSUtils.getFileSystemManager().resolveFile(outputFilePath);
-                    } catch (final FileSystemException e) {
-                        throw new IllegalStateException(e);
-                    }
-
-                    _writerRef = new LazyRef<Writer>() {
-                        @Override
-                        protected Writer fetch() {
-                            try {
-                                final OutputStream out = outputFile.getContent().getOutputStream();
-                                return new OutputStreamWriter(out, FileHelper.DEFAULT_ENCODING);
-                            } catch (UnsupportedEncodingException | FileSystemException e) {
-                                throw new IllegalStateException(e);
-                            }
-                        }
-                    };
-                    _outputStreamRef = new LazyRef<OutputStream>() {
-                        @Override
-                        protected OutputStream fetch() {
-                            try {
-                                return outputFile.getContent().getOutputStream();
-                            } catch (final FileSystemException e) {
-                                throw new IllegalStateException(e);
-                            }
-                        }
-                    };
+                final FileObject outputFile;
+                try {
+                    outputFile = VFSUtils.getFileSystemManager().resolveFile(outputFilePath);
+                } catch (final FileSystemException e) {
+                    throw new IllegalStateException(e);
                 }
+
+                _writerRef = new LazyRef<Writer>() {
+                    @Override
+                    protected Writer fetch() {
+                        try {
+                            final OutputStream out = outputFile.getContent().getOutputStream();
+                            return new OutputStreamWriter(out, FileHelper.DEFAULT_ENCODING);
+                        } catch (UnsupportedEncodingException | FileSystemException e) {
+                            throw new IllegalStateException(e);
+                        }
+                    }
+                };
+                _outputStreamRef = new LazyRef<OutputStream>() {
+                    @Override
+                    protected OutputStream fetch() {
+                        try {
+                            return outputFile.getContent().getOutputStream();
+                        } catch (final FileSystemException e) {
+                            throw new IllegalStateException(e);
+                        }
+                    }
+                };
             }
             _closeOut = true;
         } else {
@@ -339,59 +333,53 @@ public final class CliRunner implements Closeable {
     }
 
     protected void runJob(final DataCleanerConfiguration configuration) throws Throwable {
-        if (_arguments.getRunType() == CliRunType.SPARK) {
-            final SparkRunner sparkRunner = new SparkRunner(_arguments.getConfigurationFile(), _arguments.getJobFile(),
-                    _arguments.getOutputFile());
-            sparkRunner.runJob();
-        } else {
-            final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+        final JaxbJobReader jobReader = new JaxbJobReader(configuration);
 
-            final String jobFilePath = _arguments.getJobFile();
-            final Resource jobResource = resolveResource(jobFilePath);
-            final Map<String, String> variableOverrides = _arguments.getVariableOverrides();
+        final String jobFilePath = _arguments.getJobFile();
+        final Resource jobResource = resolveResource(jobFilePath);
+        final Map<String, String> variableOverrides = _arguments.getVariableOverrides();
 
-            final AnalysisJobBuilder analysisJobBuilder;
-            final InputStream inputStream = jobResource.read();
-            try {
-                if (_arguments.getDatastoreName() != null) {
-                    final Datastore datastore =
-                            configuration.getDatastoreCatalog().getDatastore(_arguments.getDatastoreName());
-                    if (datastore == null) {
-                        throw new IllegalArgumentException("No such datastore: " + _arguments.getDatastoreName());
-                    }
-                    analysisJobBuilder = jobReader.create(inputStream, variableOverrides, datastore);
-                } else {
-                    analysisJobBuilder = jobReader.create(inputStream, variableOverrides);
+        final AnalysisJobBuilder analysisJobBuilder;
+        final InputStream inputStream = jobResource.read();
+        try {
+            if (_arguments.getDatastoreName() != null) {
+                final Datastore datastore =
+                        configuration.getDatastoreCatalog().getDatastore(_arguments.getDatastoreName());
+                if (datastore == null) {
+                    throw new IllegalArgumentException("No such datastore: " + _arguments.getDatastoreName());
                 }
-            } finally {
-                FileHelper.safeClose(inputStream);
-            }
-
-            final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, new CliProgressAnalysisListener());
-            final AnalysisResultFuture resultFuture = runner.run(analysisJobBuilder.toAnalysisJob());
-
-            resultFuture.await();
-
-            if (resultFuture.isSuccessful()) {
-                final CliOutputType outputType = _arguments.getOutputType();
-                final AnalysisResultWriter writer = outputType.createWriter();
-                writer.write(resultFuture, configuration, _writerRef, _outputStreamRef);
+                analysisJobBuilder = jobReader.create(inputStream, variableOverrides, datastore);
             } else {
-                write("ERROR!");
-                write("------");
-
-                final List<Throwable> errors = resultFuture.getErrors();
-                write(errors.size() + " error(s) occurred while executing the job:");
-
-                for (final Throwable throwable : errors) {
-                    write("------");
-                    final StringWriter stringWriter = new StringWriter();
-                    throwable.printStackTrace(new PrintWriter(stringWriter));
-                    write(stringWriter.toString());
-                }
-
-                throw errors.get(0);
+                analysisJobBuilder = jobReader.create(inputStream, variableOverrides);
             }
+        } finally {
+            FileHelper.safeClose(inputStream);
+        }
+
+        final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, new CliProgressAnalysisListener());
+        final AnalysisResultFuture resultFuture = runner.run(analysisJobBuilder.toAnalysisJob());
+
+        resultFuture.await();
+
+        if (resultFuture.isSuccessful()) {
+            final CliOutputType outputType = _arguments.getOutputType();
+            final AnalysisResultWriter writer = outputType.createWriter();
+            writer.write(resultFuture, configuration, _writerRef, _outputStreamRef);
+        } else {
+            write("ERROR!");
+            write("------");
+
+            final List<Throwable> errors = resultFuture.getErrors();
+            write(errors.size() + " error(s) occurred while executing the job:");
+
+            for (final Throwable throwable : errors) {
+                write("------");
+                final StringWriter stringWriter = new StringWriter();
+                throwable.printStackTrace(new PrintWriter(stringWriter));
+                write(stringWriter.toString());
+            }
+
+            throw errors.get(0);
         }
     }
 

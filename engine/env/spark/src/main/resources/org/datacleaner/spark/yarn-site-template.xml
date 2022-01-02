@@ -1,6 +1,0 @@
-<configuration>
-    <property>
-        <name>yarn.resourcemanager.hostname</name>
-        <value>${HDFS_HOSTNAME}</value>
-    </property>
-</configuration>

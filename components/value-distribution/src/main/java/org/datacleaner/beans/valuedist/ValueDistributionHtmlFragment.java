@@ -36,6 +36,9 @@ import org.datacleaner.result.html.SimpleHtmlFragment;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.util.LabelUtils;
 
+import com.google.common.escape.Escapers;
+import com.google.common.html.HtmlEscapers;
+
 public class ValueDistributionHtmlFragment implements HtmlFragment {
 
     private final ValueCountingAnalyzerResult _result;
@@ -103,7 +106,7 @@ public class ValueDistributionHtmlFragment implements HtmlFragment {
             sb.append("<table class=\"valueDistributionValueTable\">");
             for (ValueFrequency valueFreq : valueCounts) {
                 sb.append("<tr><td>");
-                sb.append(valueFreq.getName());
+                sb.append(HtmlEscapers.htmlEscaper().escape(valueFreq.getName()));
                 sb.append("</td><td>");
                 sb.append(getCount(result, valueFreq, context));
                 sb.append("</td></tr>");

@@ -41,11 +41,14 @@ public class ValueDistributionChartScriptHeadElement implements HeadElement {
         String dataId = "data" + _chartElementId;
 
         final StringBuilder sb = new StringBuilder();
-        sb.append("//<![CDATA[");
         sb.append("<script type=\"text/javascript\">");
+        sb.append("//<![CDATA[");
         sb.append("var " + dataId + " = [");
         for (ValueFrequency vc : _valueCounts) {
-            String color = getColor(vc);
+            if (negativeIndex != 0) {
+                sb.append(',');
+            }
+            final String color = getColor(vc);
             negativeIndex = negativeIndex - 1;
             sb.append("{");
             sb.append("label:\"" + escapeLabel(context, vc.getName()) + "\"");
@@ -59,6 +62,7 @@ public class ValueDistributionChartScriptHeadElement implements HeadElement {
         sb.append("require(['jquery'], function ($) {");
         sb.append("$(function() {");
         sb.append("draw_value_distribution_bar('" + _chartElementId + "', " + dataId + ", 2);");
+        sb.append("});");
         sb.append("});");
         sb.append("// ]]>");
         sb.append("</script>");

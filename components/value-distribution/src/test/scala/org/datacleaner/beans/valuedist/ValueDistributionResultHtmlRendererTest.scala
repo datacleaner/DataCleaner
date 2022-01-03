@@ -14,43 +14,6 @@ import org.junit.{Assert, Test}
 import org.scalatestplus.junit.AssertionsForJUnit
 
 class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
-  
-  @Test
-  def testSpecialColorValues = {
-    val context = new DefaultHtmlRenderingContext();
-
-    val col1 = new MockInputColumn[String]("Traffic light", classOf[String]);
-
-    val analyzer = new ValueDistributionAnalyzer(col1, false);
-    analyzer.run(new MockInputRow().put(col1, "green"), 10);
-    analyzer.run(new MockInputRow().put(col1, "BLUE"), 8);
-    analyzer.run(new MockInputRow().put(col1, "orange"), 5);
-    analyzer.run(new MockInputRow().put(col1, "red"), 2);
-    analyzer.run(new MockInputRow().put(col1, "<blank>"), 2);
-    analyzer.run(new MockInputRow().put(col1, null), 2);
-    analyzer.run(new MockInputRow().put(col1, "foo"), 1);
-    analyzer.run(new MockInputRow().put(col1, "bar"), 1);
-    analyzer.run(new MockInputRow().put(col1, "baz"), 1);
-    
-    val analyzerResult = analyzer.getResult()
-    val conf = new DataCleanerConfigurationImpl()
-    val descriptorProvider = conf.getEnvironment().getDescriptorProvider().asInstanceOf[SimpleDescriptorProvider];
-    descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[ValueDistributionResultHtmlRenderer]))
-    descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[ListResultHtmlRenderer]))
-    descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[AnnotatedRowsHtmlRenderer]))
-    val descriptor = conf.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorForClass(classOf[ValueDistributionAnalyzer]);
-    val map = new java.util.HashMap[ComponentJob, AnalyzerResult]()
-    val componentJob = new ImmutableAnalyzerJob("my value dist", descriptor, new ImmutableComponentConfiguration(null), null, null, null);
-    map.put(componentJob, analyzerResult);
-    val result = new SimpleAnalysisResult(map)
-    
-    val fileWriter = FileHelper.getBufferedWriter(new File("target/out_special_colors.html")); 
-    
-    val resultWriter = new HtmlAnalysisResultWriter
-    resultWriter.write(result, conf, fileWriter);
-    
-    fileWriter.close();
-  }
 
   @Test
   def testNoUniqueValuesStored = {
@@ -73,6 +36,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     val bodyElems = htmlFragment.getBodyElements()
     Assert.assertEquals(2, bodyElems.size());
 
+    val html = bodyElems.get(1).toHtml(context)
     Assert.assertEquals("""<div class="valueDistributionResultContainer">
                  <div class="valueDistributionGroupPanel">
              
@@ -86,7 +50,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
                <tr><td>Distinct count</td><td>3</td></tr>
              </table>
            </div>
-               </div>""".replaceAll("\r\n", "\n"), bodyElems.get(1).toHtml(context).replaceAll("\r\n", "\n"));
+               </div>""".replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""), html.replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""));
   }
 
   @Test
@@ -140,7 +104,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
                <tr><td>Distinct count</td><td>3</td></tr>
              </table>
            </div>
-               </div>""".replaceAll("\r\n", "\n"), html.replaceAll("\r\n", "\n"));
+               </div>""".replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""), html.replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""));
 
     Assert.assertEquals("""<script type="text/javascript">
     //<![CDATA[
@@ -154,7 +118,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     });
     //]]>
 </script>
-""".replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(1).toHtml(context).replaceAll("\r\n", "\n"))
+""".replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""), htmlFragment.getHeadElements().get(1).toHtml(context).replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""))
 
     Assert.assertEquals("""<script type="text/javascript">
     //<![CDATA[
@@ -168,7 +132,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     });
     //]]>
 </script>
-""".replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(2).toHtml(context).replaceAll("\r\n", "\n"))
+""".replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""), htmlFragment.getHeadElements().get(2).toHtml(context).replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""))
   }
 
   @Test
@@ -200,14 +164,14 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     Assert.assertEquals("""<div id="reselem_2" class="drillToDetailsPanel" style="display:none;">
 <h3>Records (9)</h3>
 <table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr></table>
-</div>""".replaceAll("\r\n", "\n"), html.replaceAll("\r\n", "\n"));
+</div>""".replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""), html.replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""));
 
     html = htmlFragment.getBodyElements().get(1).toHtml(context);
 
     Assert.assertEquals("""<div id="reselem_3" class="drillToDetailsPanel" style="display:none;">
 <h3>Records (3)</h3>
 <table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper.sorensen</td></tr><tr class="odd"><td class="highlighted">kasper.sorensen</td></tr><tr class="even"><td class="highlighted">kasper.sorensen</td></tr></table>
-</div>""".replaceAll("\r\n", "\n"), html.replaceAll("\r\n", "\n"));
+</div>""".replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""), html.replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""));
 
     html = htmlFragment.getBodyElements().get(4).toHtml(context);
     
@@ -224,7 +188,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
                <tr><td>Distinct count</td><td>4</td></tr>
              </table>
            </div>
-               </div>""".replaceAll("\r\n", "\n"), html.replaceAll("\r\n", "\n"));
+               </div>""".replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""), html.replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""));
 
     Assert.assertEquals("""<script type="text/javascript">
     //<![CDATA[
@@ -238,7 +202,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     });
     //]]>
 </script>
-""".replaceAll("\r\n", "\n"), htmlFragment.getHeadElements().get(1).toHtml(context).replaceAll("\r\n", "\n"))
+""".replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""), htmlFragment.getHeadElements().get(1).toHtml(context).replaceAll("\r", "").replaceAll("\n", "").replaceAll(" ", ""))
   }
 
   def createRendererFactory(): RendererFactory = {

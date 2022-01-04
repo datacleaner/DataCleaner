@@ -34,6 +34,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.util.EntityUtils;
+import org.datacleaner.util.SystemProperties;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,7 +43,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public final class RegexSwapClient {
 
-    private static final URI REGEXES_URI = URI.create("https://datacleaner.github.io/content/regexes.json");
+    private static final URI REGEXES_URI = URI.create(SystemProperties.getString("org.datacleaner.regexswap.url",
+            "https://datacleaner.github.io/content/regexes.json"));
 
     private final Map<String, Category> _categories = new HashMap<>();
     private final Map<String, Regex> _regexes = new HashMap<>();

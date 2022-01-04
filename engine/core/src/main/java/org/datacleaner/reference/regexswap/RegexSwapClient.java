@@ -38,82 +38,80 @@ import org.apache.http.util.EntityUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Client class for the RegexSwap, which allows for easy retrieval of shared
- * regular expressions.
+ * Client class for the RegexSwap, which allows for easy retrieval of shared regular expressions.
  */
 public final class RegexSwapClient {
 
-	private static final URI REGEXES_URI = URI.create("https://datacleaner.github.io/content/regexes.json");
+    private static final URI REGEXES_URI = URI.create("https://datacleaner.github.io/content/regexes.json");
 
-	private final Map<String, Category> _categories = new HashMap<>();
-	private final Map<String, Regex> _regexes = new HashMap<>();
-	private final HttpClient _httpClient;
+    private final Map<String, Category> _categories = new HashMap<>();
+    private final Map<String, Regex> _regexes = new HashMap<>();
+    private final HttpClient _httpClient;
 
-	public RegexSwapClient(final HttpClient httpClient) {
-		_httpClient = httpClient;
-	}
+    public RegexSwapClient(final HttpClient httpClient) {
+        _httpClient = httpClient;
+    }
 
-	public Category getCategoryByName(final String name) {
-		if (_regexes.isEmpty()) {
-			refreshRegexes();
-		}
-		return _categories.get(name);
-	}
+    public Category getCategoryByName(final String name) {
+        if (_regexes.isEmpty()) {
+            refreshRegexes();
+        }
+        return _categories.get(name);
+    }
 
-	public Regex getRegexByName(final String name) {
-		if (_regexes.isEmpty()) {
-			refreshRegexes();
-		}
-		return _regexes.get(name);
-	}
+    public Regex getRegexByName(final String name) {
+        if (_regexes.isEmpty()) {
+            refreshRegexes();
+        }
+        return _regexes.get(name);
+    }
 
-	@SuppressWarnings("unchecked")
-	public void refreshRegexes() {
-		final HttpUriRequest request = RequestBuilder.get(REGEXES_URI).build();
-		final Map<String, ?> root;
-		try {
-			final HttpResponse response = _httpClient.execute(request);
-			final String json = EntityUtils.toString(response.getEntity());
-			final ObjectMapper objectMapper = new ObjectMapper();
-			root = objectMapper.readValue(json, Map.class);
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-		final List<?> regexes = (List<?>) root.get("regexes");
-		for (Object node : regexes) {
-			createRegex((Map<String, ?>) node);
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public void refreshRegexes() {
+        final HttpUriRequest request = RequestBuilder.get(REGEXES_URI).build();
+        final Map<String, ?> root;
+        try {
+            final HttpResponse response = _httpClient.execute(request);
+            final String json = EntityUtils.toString(response.getEntity());
+            final ObjectMapper objectMapper = new ObjectMapper();
+            root = objectMapper.readValue(json, Map.class);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to fetch regular expressions from " + REGEXES_URI, e);
+        }
+        final List<?> regexes = (List<?>) root.get("regexes");
+        for (Object node : regexes) {
+            createRegex((Map<String, ?>) node);
+        }
+    }
 
-	public Collection<Category> getCategories() {
-		if (_regexes.isEmpty()) {
-			refreshRegexes();
-		}
-		return _categories.values();
-	}
+    public Collection<Category> getCategories() {
+        if (_regexes.isEmpty()) {
+            refreshRegexes();
+        }
+        return _categories.values();
+    }
 
-	private Regex createRegex(final Map<String, ?> node) {
-		final String name = (String) node.get("name");
-		final String description = (String) node.get("description");
-		final String expression = (String) node.get("expression");
-		@SuppressWarnings("unchecked")
-		final List<String> tags = (List<String>) node.get("tags");
-		final List<Category> categories = new ArrayList<>();
-		for (final String tag : tags) {
-			Category category = _categories.get(tag);
-			if (category == null) {
-				category = new Category(tag);
-				_categories.put(tag, category);
-			}
-			categories.add(category);
-		}
-		final Regex regex = new Regex(name, description, expression, categories);
-		_regexes.put(name, regex);
-		return regex;
-	}
+    private Regex createRegex(final Map<String, ?> node) {
+        final String name = (String) node.get("name");
+        final String description = (String) node.get("description");
+        final String expression = (String) node.get("expression");
+        @SuppressWarnings("unchecked") final List<String> tags = (List<String>) node.get("tags");
+        final List<Category> categories = new ArrayList<>();
+        for (final String tag : tags) {
+            Category category = _categories.get(tag);
+            if (category == null) {
+                category = new Category(tag);
+                _categories.put(tag, category);
+            }
+            categories.add(category);
+        }
+        final Regex regex = new Regex(name, description, expression, categories);
+        _regexes.put(name, regex);
+        return regex;
+    }
 
-	public List<Regex> getRegexes(final Category category) {
-		return _regexes.values().stream().filter(r -> r.getCategories().contains(category))
-				.collect(Collectors.toList());
-	}
+    public List<Regex> getRegexes(final Category category) {
+        return _regexes.values().stream().filter(r -> r.getCategories().contains(category))
+                .collect(Collectors.toList());
+    }
 }

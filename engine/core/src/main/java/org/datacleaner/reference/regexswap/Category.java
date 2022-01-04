@@ -30,9 +30,9 @@ public final class Category extends BaseObject implements Serializable {
     private final String _name;
     private final String _description;
     private final String _detailsUrl;
-    
+
     public Category(final String name) {
-    	this(name, null, null);
+        this(name, null, null);
     }
 
     @Deprecated

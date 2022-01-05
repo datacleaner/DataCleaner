@@ -37,6 +37,12 @@ public final class Regex extends BaseObject implements Serializable {
     private final String _detailsUrl;
     private final List<Category> _categories;
 
+    public Regex(final String name, final String description, final String expression,
+            final List<Category> categories) {
+        this(name, description, expression, null, -1, 0, 0, null, categories);
+    }
+
+    @Deprecated
     public Regex(final String name, final String description, final String expression, final String author,
             final long timestamp, final int positiveVotes, final int negativeVotes, final String detailsUrl,
             final List<Category> categories) {
@@ -76,10 +82,12 @@ public final class Regex extends BaseObject implements Serializable {
         return _expression;
     }
 
+    @Deprecated
     public String getAuthor() {
         return _author;
     }
 
+    @Deprecated
     public long getTimestamp() {
         return _timestamp;
     }

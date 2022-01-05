@@ -33,7 +33,6 @@ public class RegexSwapClientTest {
 
     @Test
     public void testUpdateContent() throws Exception {
-        Assume.assumeTrue(false); // this test is invalid as long as the RegexSwap is not restored
         Assume.assumeTrue(TestHelper.isInternetConnected());
 
         final RegexSwapClient client = new RegexSwapClient(HttpClients.createSystem());
@@ -42,7 +41,7 @@ public class RegexSwapClientTest {
         assertFalse(categories.isEmpty());
         final Category partials = client.getCategoryByName("partials");
         assertEquals("partials", partials.getName());
-        assertNotNull(partials.getDescription());
+        assertNull(partials.getDescription());
 
         final List<Regex> partialsRegexes = client.getRegexes(partials);
 
@@ -61,7 +60,6 @@ public class RegexSwapClientTest {
 
         Regex regex = client.getRegexByName("Integer or rounded decimal");
         assertNotNull(regex);
-        regex = client.refreshRegex(regex);
         final List<Category> regexCategories = regex.getCategories();
         assertFalse(regexCategories.isEmpty());
         for (final Category category : regexCategories) {

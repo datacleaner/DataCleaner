@@ -155,7 +155,7 @@ public class ComponentDocumentationBuilder {
             out.flush();
             out.close();
         } catch (final TemplateException e) {
-            throw new IllegalStateException("Unexpected templare exception", e);
+            throw new IllegalStateException("Unexpected template exception", e);
         }
     }
 

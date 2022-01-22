@@ -19,16 +19,13 @@
  */
 package org.datacleaner.documentation;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.io.FileUtils;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -74,11 +71,6 @@ public class ComponentDocumentationBuilderTest {
 
     @Test
     public void testGenerateSimple() throws Exception {
-        final File directory = new File("target/component_reference_documentation");
-        if (directory.exists()) {
-            FileUtils.deleteDirectory(directory);
-        }
-
         final ComponentDescriptor<?> componentDescriptor = Descriptors.ofTransformer(ExampleTransformer.class);
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();

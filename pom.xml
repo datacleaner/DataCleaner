@@ -17,7 +17,7 @@
 		<metamodel.version>5.3.4</metamodel.version>
 		<metamodel.extras.version>5.3.4</metamodel.extras.version>
 		<spring.core.version>4.3.26.RELEASE</spring.core.version>
-		<freemarker.version>2.3.30</freemarker.version>
+		<freemarker.version>2.3.31</freemarker.version>
 		<icu4j.version>65.1</icu4j.version>
 		<jackson.version>2.13.1</jackson.version>
 		<javax.servlet.version>3.1.0</javax.servlet.version>

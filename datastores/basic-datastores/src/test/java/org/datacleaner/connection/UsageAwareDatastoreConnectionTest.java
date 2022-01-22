@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.util.MutableRef;
+import org.junit.Ignore;
 
 import junit.framework.TestCase;
 
@@ -82,6 +83,10 @@ public class UsageAwareDatastoreConnectionTest extends TestCase {
         assertFalse(ds.isDatastoreConnectionOpen());
     }
 
+    // Test is placed on ignore because it requires a lot of resources that won't always be available on the build
+    // machine. And strictly speaking it is not a deterministic test but very likely to pass the higher the threadcount
+    // is.
+    @Ignore
     public void testCloseNoRaceConditions() throws Exception {
         final int threadCount = 5000;
         final Thread[] threads = new Thread[threadCount];

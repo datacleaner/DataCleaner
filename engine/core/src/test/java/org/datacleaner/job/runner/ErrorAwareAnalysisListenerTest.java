@@ -24,7 +24,6 @@ import java.io.PrintStream;
 import java.sql.SQLException;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.util.FileHelper;
 
@@ -46,8 +45,6 @@ public class ErrorAwareAnalysisListenerTest extends TestCase {
         oldOut = System.out;
         newOut = new PrintStream(baos);
         System.setOut(newOut);
-
-        DOMConfigurator.configure("src/test/resources/log4j.xml");
     }
 
     @Override
@@ -67,7 +64,7 @@ public class ErrorAwareAnalysisListenerTest extends TestCase {
         assertTrue(string, string.indexOf("org.apache.metamodel.MetaModelException: java.sql.SQLException: foo") != -1);
 
         assertTrue(string,
-                string.indexOf("WARN  ErrorAwareAnalysisListener - SQLException.getNextException() stack trace:")
+                string.indexOf("ErrorAwareAnalysisListener - SQLException.getNextException() stack trace:")
                         != -1);
 
         assertTrue(string, string.indexOf("java.sql.SQLException: baz") != -1);

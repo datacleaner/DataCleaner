@@ -75,4 +75,20 @@ public class TestHelper {
             return false;
         }
     }
+
+    /**
+     * Asserts that a string is contained within another string.
+     * 
+     * @param longString
+     * @param expectedSubstring
+     */
+    public static void assertStringContains(String longString, String expectedSubstring) {
+        Assert.assertNotNull("String (1 of 2) is null", longString);
+        Assert.assertFalse("String (1 of 2) is empty", longString.isEmpty());
+        Assert.assertNotNull("String (2 of 2) is null", expectedSubstring);
+        Assert.assertFalse("String (2 of 2) is empty", expectedSubstring.isEmpty());
+        if (longString.indexOf(expectedSubstring) == -1) {
+            Assert.fail("String '" + expectedSubstring + "' not contained in:\n" + longString);
+        }
+    }
 }

@@ -50,6 +50,7 @@ import org.datacleaner.job.ImmutableAnalysisJobMetadata;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.widgets.LoadingIcon;
+import org.junit.Assume;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,9 +92,8 @@ public class OpenAnalysisJobAsTemplateDialogTest {
 
     @Test
     public void testGetDialogWidth() throws Exception {
-        if (!GraphicsEnvironment.isHeadless()) {
-            assertEquals(600, getDialog().getDialogWidth());
-        }
+        Assume.assumeFalse(GraphicsEnvironment.isHeadless());
+        assertTrue(getDialog().getDialogWidth() >= 600);
     }
 
     @Test

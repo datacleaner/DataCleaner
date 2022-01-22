@@ -52,7 +52,7 @@ final class DatastoreOutputUtils {
     }
 
     public static String getJdbcUrl(final File directory, final String dbName) {
-        final String urlSuffix = directory.getPath() + File.separatorChar + safeName(dbName);
+        final String urlSuffix = directory.getAbsolutePath() + File.separatorChar + safeName(dbName);
         return "jdbc:h2:" + urlSuffix + ";FILE_LOCK=FS";
     }
 }

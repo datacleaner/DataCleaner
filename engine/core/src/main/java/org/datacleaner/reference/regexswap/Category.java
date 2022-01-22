@@ -31,6 +31,11 @@ public final class Category extends BaseObject implements Serializable {
     private final String _description;
     private final String _detailsUrl;
 
+    public Category(final String name) {
+        this(name, null, null);
+    }
+
+    @Deprecated
     public Category(final String name, final String description, final String detailsUrl) {
         _name = name;
         _description = description;
@@ -45,6 +50,7 @@ public final class Category extends BaseObject implements Serializable {
         return _description;
     }
 
+    @Deprecated
     public String getDetailsUrl() {
         return _detailsUrl;
     }

@@ -85,7 +85,7 @@ public @interface ExternalDocumentation {
          *
          * @return
          */
-        DocumentationType type();
+        DocumentationType type() default DocumentationType.REFERENCE;
 
         /**
          * Defines the version of DataCleaner that this documentation item was

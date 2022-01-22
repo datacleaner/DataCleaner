@@ -35,6 +35,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
@@ -94,13 +95,19 @@ public class ComponentDocumentationWrapper {
         return ReflectionUtils.is(_componentDescriptor.getComponentClass(), QueryOptimizedFilter.class);
     }
 
-    public ExternalDocumentation.DocumentationLink[] getDocumentationLinks() {
+    public DocumentationLinkWrapper[] getDocumentationLinks() {
         final ExternalDocumentation externalDocumentation =
                 _componentDescriptor.getAnnotation(ExternalDocumentation.class);
-        if (externalDocumentation == null) {
-            return new ExternalDocumentation.DocumentationLink[0];
+        if (externalDocumentation == null || externalDocumentation.value() == null) {
+            return new DocumentationLinkWrapper[0];
         }
-        return externalDocumentation.value();
+        final DocumentationLinkWrapper[] result = new DocumentationLinkWrapper[externalDocumentation.value().length];
+        int i = 0;
+        for (final DocumentationLink link : externalDocumentation.value()) {
+            result[i] = new DocumentationLinkWrapper(link);
+            i++;
+        }
+        return result;
     }
 
     public String[] getAliases() {

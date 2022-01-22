@@ -87,12 +87,12 @@ h3 {
 					
 					<#list component.documentationLinks as link>
 					<div>
-						<#if link.type().name() == 'VIDEO'>
+						<#if link.type == 'VIDEO'>
 						<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
 						<#else>
 						<span class="glyphicon glyphicon-book" aria-hidden="true"></span>
 						</#if>
-						<a href="${link.url()}">${link.title()}</a>
+						<a href="${link.url}">${link.title}</a>
 					</div>
 					</#list>
 				</div>

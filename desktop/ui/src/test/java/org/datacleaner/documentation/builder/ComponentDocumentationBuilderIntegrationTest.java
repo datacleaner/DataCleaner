@@ -37,7 +37,7 @@ import org.datacleaner.documentation.ComponentDocumentationBuilder;
 import org.datacleaner.util.StringUtils;
 import org.junit.Test;
 
-public class ComponentDocumentationBuilderTest {
+public class ComponentDocumentationBuilderIntegrationTest {
 
     private final ComponentDocumentationBuilder documentationCreator = new ComponentDocumentationBuilder(true);
 

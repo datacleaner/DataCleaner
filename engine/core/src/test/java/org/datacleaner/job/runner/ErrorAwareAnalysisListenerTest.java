@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.test.TestHelper;
 
 import junit.framework.TestCase;
 
@@ -61,13 +62,9 @@ public class ErrorAwareAnalysisListenerTest extends TestCase {
         listener.handleError(null, new MetaModelException(sqlException));
 
         final String string = FileHelper.readInputStreamAsString(new ByteArrayInputStream(baos.toByteArray()), "UTF8");
-        assertTrue(string, string.indexOf("org.apache.metamodel.MetaModelException: java.sql.SQLException: foo") != -1);
-
-        assertTrue(string,
-                string.indexOf("ErrorAwareAnalysisListener - SQLException.getNextException() stack trace:")
-                        != -1);
-
-        assertTrue(string, string.indexOf("java.sql.SQLException: baz") != -1);
+        TestHelper.assertStringContains(string, "org.apache.metamodel.MetaModelException: java.sql.SQLException: foo");
+        TestHelper.assertStringContains(string, "ErrorAwareAnalysisListener - SQLException.getNextException() stack trace:");
+        TestHelper.assertStringContains(string, "java.sql.SQLException: baz");
 
     }
 }

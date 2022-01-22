@@ -82,5 +82,7 @@ public class ComponentDocumentationBuilderTest {
         assertTrue(str.indexOf("<title>NameName</title>") != -1);
         assertTrue(str.indexOf("String prop") != -1);
         assertTrue(str.indexOf("Column prop") != -1);
+        
+        assertTrue(str.indexOf("Internationalization in DataCleaner") != -1);
     }
 }

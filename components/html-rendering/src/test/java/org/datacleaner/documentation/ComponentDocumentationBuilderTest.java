@@ -38,6 +38,7 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.test.TestHelper;
 import org.junit.Test;
 
 public class ComponentDocumentationBuilderTest {
@@ -79,10 +80,9 @@ public class ComponentDocumentationBuilderTest {
 
         final String str = new String(out.toByteArray());
         assertTrue(str.length() > 100);
-        assertTrue(str.indexOf("<title>NameName</title>") != -1);
-        assertTrue(str.indexOf("String prop") != -1);
-        assertTrue(str.indexOf("Column prop") != -1);
-        
-        assertTrue(str.indexOf("Internationalization in DataCleaner") != -1);
+        TestHelper.assertStringContains(str, "<title>NameName</title>");
+        TestHelper.assertStringContains(str, "String prop");
+        TestHelper.assertStringContains(str, "Column prop");
+        TestHelper.assertStringContains(str, "Internationalization in DataCleaner");        
     }
 }

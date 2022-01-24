@@ -10,7 +10,7 @@
 		<javadoc.version>3.0.1</javadoc.version>
 
 		<!-- Dependency versions -->
-		<slf4j.version>1.7.32</slf4j.version>
+		<slf4j.version>1.7.33</slf4j.version>
 		<junit.version>4.13.1</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.13</httpcomponents.version>
@@ -27,6 +27,7 @@
 		<guava.version>31.0-jre</guava.version>
 		<hadoop.version>3.3.1</hadoop.version>
 		<curator.version>2.13.0</curator.version>
+		<log4j.version>2.17.1</log4j.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -390,8 +391,7 @@
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
 										<exclude>org.codehaus.jackson:*</exclude>
 										<exclude>org.apache.metamodel:*</exclude>
-										<exclude>log4j:apache-log4j-extras:*</exclude>
-										<exclude>org.apache.logging.log4j:*</exclude>
+										<exclude>log4j:*</exclude>
 
 										<!-- commons-beanutils-core is redundant when we already depend 
 											on commons-beanutils -->
@@ -940,6 +940,10 @@
 						<groupId>xerces</groupId>
 						<artifactId>xercesImpl</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -1372,14 +1376,24 @@
 				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.17</version>
-			</dependency>
-			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-1.2-api</artifactId>
+				<version>${log4j.version}</version>
 			</dependency>
 
 			<dependency>

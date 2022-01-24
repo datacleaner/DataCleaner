@@ -29,6 +29,7 @@
 		<hadoop.version>3.3.1</hadoop.version>
 		<spark.version>2.4.4</spark.version>
 		<curator.version>2.13.0</curator.version>
+		<log4j.version>2.17.1</log4j.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -1538,17 +1539,17 @@
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
-				<version>2.17.1</version>
+				<version>${log4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-slf4j-impl</artifactId>
-				<version>2.17.1</version>
+				<version>${log4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-1.2-api</artifactId>
-				<version>2.17.1</version>
+				<version>${log4j.version}</version>
 			</dependency>
 
 			<dependency>

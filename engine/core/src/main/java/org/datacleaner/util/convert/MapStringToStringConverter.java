@@ -33,6 +33,7 @@ import org.datacleaner.util.ReflectionUtils;
 
 import com.google.common.base.Splitter;
 import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 
 /**
  * A {@link Converter} for maps.
@@ -44,8 +45,8 @@ public class MapStringToStringConverter implements Converter<Map<?, ?>> {
     @Override
     public Map<?, ?> fromString(final Class<?> type, final String serializedForm) {
         try {
-            final CSVParser csvParser = new CSVParser(configuration.getSeparatorChar(), configuration.getQuoteChar(),
-                    configuration.getEscapeChar());
+            final CSVParser csvParser = new CSVParserBuilder().withSeparator(configuration.getSeparatorChar())
+                    .withQuoteChar(configuration.getQuoteChar()).withEscapeChar(configuration.getEscapeChar()).build();
 
             final Map<String, String> map = new LinkedHashMap<>();
             final Iterable<String> lines = Splitter.on('\n').split(serializedForm);

@@ -1605,7 +1605,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
-				<version>${spring.core.version}</version>
+				<version>${spring.version}</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>

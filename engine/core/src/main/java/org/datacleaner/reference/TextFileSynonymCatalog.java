@@ -34,6 +34,7 @@ import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.convert.ResourceConverter;
 
 import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 
 /**
  * Synonym catalog based on a text file.
@@ -78,7 +79,8 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
         final Map<String, String> synonyms = resource.read(in -> {
             final Map<String, String> synonyms1 = new HashMap<>();
 
-            final CSVParser parser = new CSVParser(',', '"', '\\');
+            final CSVParser parser =
+                    new CSVParserBuilder().withSeparator(',').withQuoteChar('"').withEscapeChar('\\').build();
             final BufferedReader reader = FileHelper.getBufferedReader(in, _encoding);
             try {
                 for (String line = reader.readLine(); line != null; line = reader.readLine()) {

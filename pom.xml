@@ -7,16 +7,16 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Maven plugin versions -->
-		<javadoc.version>3.0.1</javadoc.version>
+		<javadoc.version>3.3.1</javadoc.version>
 
 		<!-- Dependency versions -->
 		<slf4j.version>1.7.33</slf4j.version>
 		<junit.version>4.13.1</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.13</httpcomponents.version>
-		<metamodel.version>5.3.4</metamodel.version>
+		<metamodel.version>5.3.5</metamodel.version>
 		<metamodel.extras.version>5.3.4</metamodel.extras.version>
-		<spring.core.version>4.3.26.RELEASE</spring.core.version>
+		<spring.version>5.2.19.RELEASE</spring.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<icu4j.version>65.1</icu4j.version>
 		<jackson.version>2.13.1</jackson.version>
@@ -24,7 +24,7 @@
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<jung.version>2.1.1</jung.version>
-		<guava.version>31.0-jre</guava.version>
+		<guava.version>31.0.1-jre</guava.version>
 		<hadoop.version>3.3.1</hadoop.version>
 		<curator.version>2.13.0</curator.version>
 		<log4j.version>2.17.1</log4j.version>
@@ -1179,7 +1179,7 @@
 			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty-all</artifactId>
-				<version>4.1.42.Final</version>
+				<version>4.1.73.Final</version>
 			</dependency>
 
 			<dependency>
@@ -1423,7 +1423,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
-				<version>${spring.core.version}</version>
+				<version>${spring.version}</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>

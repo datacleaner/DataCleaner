@@ -23,6 +23,7 @@ import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.spark.api.java.function.Function;
 
 import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 
 public final class CsvParserFunction implements Function<String, Object[]> {
 
@@ -51,9 +52,9 @@ public final class CsvParserFunction implements Function<String, Object[]> {
 
     @Override
     public Object[] call(final String csvLine) throws Exception {
-        final CSVParser csvParser =
-                new CSVParser(_csvConfiguration.getSeparatorChar(), _csvConfiguration.getQuoteChar(),
-                        _csvConfiguration.getEscapeChar());
+        final CSVParser csvParser = new CSVParserBuilder().withSeparator(_csvConfiguration.getSeparatorChar())
+                .withQuoteChar(_csvConfiguration.getQuoteChar()).withEscapeChar(_csvConfiguration.getEscapeChar())
+                .build();
         return csvParser.parseLine(csvLine);
     }
 

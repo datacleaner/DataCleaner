@@ -101,7 +101,7 @@ public class AnalysisResultSaveHandler {
             for (final Entry<ComponentJob, AnalyzerResult> entry : resultMap.entrySet()) {
                 final AnalyzerResult analyzerResult = entry.getValue();
                 try {
-                    SerializationUtils.serialize(analyzerResult, new NullOutputStream());
+                    SerializationUtils.serialize(analyzerResult, NullOutputStream.NULL_OUTPUT_STREAM);
                 } catch (final SerializationException e) {
                     _unsafeResultElements.put(entry.getKey(), analyzerResult);
                 }

@@ -92,6 +92,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     private final Supplier<AnalysisJobBuilder> _analysisJobBuilderRef;
     private DataCleanerConfiguration _configuration;
     private WindowContext _windowContext;
+    private FileObject _jobFilename;
+    private AnalysisResult _analysisResult;
 
     /**
      * Creates a DCModule based on a parent module. This constructor is
@@ -322,7 +324,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public AnalysisJob getAnalysisJob(@Nullable final AnalysisJobBuilder builder) {
+    public final AnalysisJob getAnalysisJob(@Nullable final AnalysisJobBuilder builder) {
         if (builder == null) {
             return null;
         }
@@ -335,7 +337,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public AnalysisJobBuilder getAnalysisJobBuilder(final DataCleanerConfiguration configuration) {
+    public final AnalysisJobBuilder getAnalysisJobBuilder(final DataCleanerConfiguration configuration) {
         AnalysisJobBuilder ajb = _analysisJobBuilderRef.get();
         if (ajb == null && _analysisJobBuilderRef instanceof MutableRef) {
             ajb = new AnalysisJobBuilder(configuration);
@@ -347,18 +349,26 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
     @Provides
     @JobFile
-    public FileObject getJobFilename() {
-        return null;
+    public final FileObject getJobFilename() {
+        return _jobFilename;
+    }
+    
+    public void setJobFilename(FileObject jobFilename) {
+        _jobFilename = jobFilename;
     }
 
     @Provides
     public final DCModuleImpl getModule() {
         return this;
     }
+    
+    public void setAnalysisResult(AnalysisResult analysisResult) {
+        _analysisResult = analysisResult;
+    }
 
     @Provides
-    public AnalysisResult getAnalysisResult() {
-        return null;
+    public final AnalysisResult getAnalysisResult() {
+        return _analysisResult;
     }
 
     @Provides
@@ -367,12 +377,12 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public CloseableHttpClient getHttpClient(final UserPreferences userPreferences) {
+    public final CloseableHttpClient getHttpClient(final UserPreferences userPreferences) {
         return userPreferences.createHttpClient();
     }
 
     @Provides
-    public ResourceConverter getResourceConverter() {
+    public final ResourceConverter getResourceConverter() {
         return new ResourceConverter(_configuration)
                 .withExtraHandlers(Collections.singletonList(new DummyRepositoryResourceFileTypeHandler()));
     }

@@ -70,7 +70,7 @@
 			is used -->
 		<dependency>
 			<groupId>org.kohsuke</groupId>
-			<artifactId>asm5</artifactId>
+			<artifactId>asm6</artifactId>
 		</dependency>
 
 		<!-- Logging dependencies -->

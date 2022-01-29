@@ -20,7 +20,6 @@
 package org.datacleaner.descriptors;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -55,7 +54,7 @@ import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
-import org.kohsuke.asm5.ClassReader;
+import org.kohsuke.asm6.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

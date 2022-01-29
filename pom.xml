@@ -1475,6 +1475,11 @@
 				<version>5.0.1</version>
 			</dependency>
 			<dependency>
+				<groupId>org.kohsuke</groupId>
+				<artifactId>asm6</artifactId>
+				<version>6.2</version>
+			</dependency>
+			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>${freemarker.version}</version>

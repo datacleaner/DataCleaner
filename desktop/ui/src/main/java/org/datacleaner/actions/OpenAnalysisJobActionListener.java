@@ -159,21 +159,10 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             _userPreferences.addRecentJobFile(fileObject);
         }
 
-        final Injector injector = Guice.createInjector(new DCModuleImpl(parentModule, null) {
-            public FileObject getJobFilename() {
-                return fileObject;
-            }
-
-            @Override
-            public AnalysisResult getAnalysisResult() {
-                return analysisResult;
-            }
-
-            @Override
-            public AnalysisJobBuilder getAnalysisJobBuilder(final DataCleanerConfiguration configuration) {
-                return null;
-            }
-        });
+        final DCModuleImpl module = new DCModuleImpl(parentModule, null);
+        module.setJobFilename(fileObject);
+        module.setAnalysisResult(analysisResult);
+        final Injector injector = Guice.createInjector(module);
 
         final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
         resultWindow.open();
@@ -264,11 +253,8 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             _userPreferences.addRecentJobFile(fileObject);
         }
 
-        return Guice.createInjector(new DCModuleImpl(_parentModule, ajb) {
-            public FileObject getJobFilename() {
-                return fileObject;
-            }
-
-        });
+        final DCModuleImpl module = new DCModuleImpl(_parentModule, ajb);
+        module.setJobFilename(fileObject);
+        return Guice.createInjector(module);
     }
 }

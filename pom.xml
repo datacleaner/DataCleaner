@@ -380,6 +380,11 @@
 										<exclude>javax.transaction:jta:*</exclude>
 										<exclude>javax.transaction:transaction-api:*</exclude>
 										
+										<!-- prefer jakarta.activation-api over any other activation jar -->
+										<exclude>com.sun.activation:jakarta.activation:*</exclude>
+										<exclude>javax.activation:activation:*</exclude>
+										<exclude>javax.activation:javax.activation-api:*</exclude>
+										
 										<!-- The proper artifact for JSP API is javax.servlet.jsp:javax.servlet.jsp-api, so we're banning the rest -->
 										<exclude>javax.servlet:jsp-api:*</exclude>
 										<exclude>javax.servlet.jsp:jsp-api:*</exclude>
@@ -400,9 +405,11 @@
 											on commons-beanutils -->
 										<exclude>commons-beanutils:commons-beanutils-core:*</exclude>
 
-										<!-- JAXB is included in Java 7 and upwards, so no longer needed -->
-										<exclude>com.sun.xml.bind:jaxb-impl:*:jar:compile</exclude>
-										<exclude>com.sun.xml.bind:jaxb-xjc:*:jar:compile</exclude>
+										<!-- prefer jakarta.xml-bind-api over any other jaxb jar -->
+										<exclude>com.sun.xml.bind:jaxb-impl:*</exclude>
+										<exclude>com.sun.xml.bind:jaxb-xjc:*</exclude>
+										<exclude>javax.xml.bind:jaxb-api:*</exclude>
+										<exclude>org.glassfish.jaxb:jaxb-runtime:*</exclude>
 
 										<exclude>javax.faces:javax.faces-api:*:jar:compile</exclude>
 										<exclude>org.glassfish.web:el-impl:*:jar:compile</exclude>
@@ -694,6 +701,10 @@
 						<groupId>commons-beanutils</groupId>
 						<artifactId>commons-beanutils-core</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -735,6 +746,12 @@
 				<groupId>org.eobjects.metamodel</groupId>
 				<artifactId>MetaModel-sugarcrm</artifactId>
 				<version>${metamodel.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.eobjects.metamodel</groupId>
@@ -851,19 +868,20 @@
 				<version>1.3</version>
 			</dependency>
 			<dependency>
-				<groupId>javax.xml.bind</groupId>
-				<artifactId>jaxb-api</artifactId>
-				<version>2.3.1</version>
+				<groupId>jakarta.xml.bind</groupId>
+				<artifactId>jakarta.xml.bind-api</artifactId>
+				<version>3.0.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sun.activation</groupId>
+						<artifactId>jakarta.activation</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.glassfish.jaxb</groupId>
-				<artifactId>jaxb-runtime</artifactId>
-				<version>2.3.5</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.activation</groupId>
-				<artifactId>activation</artifactId>
-				<version>1.1.1</version>
+				<groupId>jakarta.activation</groupId>
+				<artifactId>jakarta.activation-api</artifactId>
+				<version>2.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.xml.ws</groupId>
@@ -1001,6 +1019,14 @@
 					<exclusion>
 						<groupId>log4j</groupId>
 						<artifactId>log4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.activation</groupId>
+						<artifactId>activation</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -1305,6 +1331,10 @@
 					<exclusion>
 						<groupId>log4j</groupId>
 						<artifactId>apache-log4j-extras</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

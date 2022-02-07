@@ -26,8 +26,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
@@ -45,6 +43,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.xml.bind.JAXBContext;
 import junit.framework.TestCase;
 
 public class JaxbPojoDatastoreAdaptorTest extends TestCase {

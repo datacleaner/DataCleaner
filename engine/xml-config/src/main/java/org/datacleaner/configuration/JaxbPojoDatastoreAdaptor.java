@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.xml.bind.JAXBElement;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.data.DataSet;
@@ -64,6 +62,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import jakarta.xml.bind.JAXBElement;
 
 /**
  * Convenient utility class for reading and writing POJO datastores from and to

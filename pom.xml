@@ -263,6 +263,7 @@
 					<source>1.8</source>
 					<target>1.8</target>
 					<encoding>utf-8</encoding>
+					<fork>true</fork>
 				</configuration>
 			</plugin>
 

@@ -383,7 +383,6 @@
 										<exclude>javax.transaction:transaction-api:*</exclude>
 										
 										<!-- prefer jakarta.activation-api over any other activation jar -->
-										<exclude>com.sun.activation:jakarta.activation:*</exclude>
 										<exclude>javax.activation:activation:*</exclude>
 										<exclude>javax.activation:javax.activation-api:*</exclude>
 										
@@ -408,7 +407,6 @@
 										<exclude>commons-beanutils:commons-beanutils-core:*</exclude>
 
 										<!-- prefer jakarta.xml-bind-api over any other jaxb jar -->
-										<exclude>com.sun.xml.bind:jaxb-impl:*</exclude>
 										<exclude>com.sun.xml.bind:jaxb-xjc:*</exclude>
 										<exclude>javax.xml.bind:jaxb-api:*</exclude>
 										<exclude>org.glassfish.jaxb:jaxb-runtime:*</exclude>

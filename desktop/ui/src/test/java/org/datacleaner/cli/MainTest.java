@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.result.AnalysisResult;
 import org.xml.sax.Attributes;
@@ -57,8 +56,6 @@ public class MainTest extends TestCase {
         _stringWriter = new StringWriter();
         _originalSysOut = System.out;
         useAsSystemOut(_stringWriter);
-
-        PropertyConfigurator.configure("src/test/resources/log4j.xml");
     }
 
     private void useAsSystemOut(final StringWriter stringWriter) {
@@ -278,8 +275,8 @@ public class MainTest extends TestCase {
             if (!warningsAndErrors.isEmpty()) {
                 for (final Exception error : warningsAndErrors) {
                     final String message = error.getMessage();
-                    if (message.startsWith("No explicit character encoding declaration has been seen yet") || message
-                            .startsWith("The character encoding of the document was not declared.")) {
+                    if (message.startsWith("No explicit character encoding declaration has been seen yet")
+                            || message.startsWith("The character encoding of the document was not declared.")) {
                         // ignore/accept this one
                         continue;
                     }

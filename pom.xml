@@ -400,6 +400,7 @@
 										<exclude>org.codehaus.jackson:*</exclude>
 										<exclude>org.apache.metamodel:*</exclude>
 										<exclude>log4j:*</exclude>
+										<exclude>org.apache.logging.log4j:*</exclude>
 
 										<!-- commons-beanutils-core is redundant when we already depend 
 											on commons-beanutils -->
@@ -1545,7 +1546,7 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.2.0</version>
+				<version>1.2.10</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

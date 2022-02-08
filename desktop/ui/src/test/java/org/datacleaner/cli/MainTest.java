@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.test.TestHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -57,7 +58,7 @@ public class MainTest extends TestCase {
         _originalSysOut = System.out;
         useAsSystemOut(_stringWriter);
     }
-
+    
     private void useAsSystemOut(final StringWriter stringWriter) {
         final OutputStream out = new OutputStream() {
             @Override
@@ -159,8 +160,8 @@ public class MainTest extends TestCase {
 
         assertEquals("Transformers:", lines[0]);
 
-        assertTrue(out, out.indexOf("name: Email standardizer") != -1);
-        assertTrue(out, out.indexOf(" - Consumes a single input column (type: String)") != -1);
+        TestHelper.assertStringContains(out, "name: Email standardizer");
+        TestHelper.assertStringContains(out, " - Consumes a single input column (type: String)");
     }
 
     public void testListFilters() throws Throwable {
@@ -171,9 +172,9 @@ public class MainTest extends TestCase {
 
         assertEquals("Filters:", lines[0]);
 
-        assertTrue(out.indexOf("name: Null check") != -1);
-        assertTrue(out.indexOf("- Outcome: NOT_NULL") != -1);
-        assertTrue(out.indexOf("- Outcome: NULL") != -1);
+        TestHelper.assertStringContains(out, "name: Null check");
+        TestHelper.assertStringContains(out, "- Outcome: NOT_NULL");
+        TestHelper.assertStringContains(out, "- Outcome: NULL");
     }
 
     public void testListAnalyzers() throws Throwable {

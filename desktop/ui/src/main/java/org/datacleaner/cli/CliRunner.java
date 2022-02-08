@@ -80,9 +80,8 @@ public final class CliRunner implements Closeable {
     private final boolean _closeOut;
 
     /**
-     * Alternative constructor that will specifically specifies the output
-     * writer. Should be used only for testing, since normally the CliArguments
-     * should be used to decide which outputwriter to use
+     * Alternative constructor that will specifically specifies the output writer. Should be used only for testing,
+     * since normally the CliArguments should be used to decide which outputwriter to use
      *
      * @param arguments
      * @param writer
@@ -234,29 +233,32 @@ public final class CliRunner implements Closeable {
                 System.err.println("No such datastore: " + datastoreName);
             } else {
                 final DatastoreConnection con = ds.openConnection();
-                final DataContext dc = con.getDataContext();
-                final Schema schema;
-                if (schemaName == null) {
-                    schema = dc.getDefaultSchema();
-                } else {
-                    schema = dc.getSchemaByName(schemaName);
-                }
-                if (schema == null) {
-                    System.err.println("No such schema: " + schemaName);
-                } else {
-                    final Table table = schema.getTableByName(tableName);
-                    if (table == null) {
-                        write("No such table: " + tableName);
+                try {
+                    final DataContext dc = con.getDataContext();
+                    final Schema schema;
+                    if (schemaName == null) {
+                        schema = dc.getDefaultSchema();
                     } else {
-                        final List<String> columnNames = table.getColumnNames();
-                        write("Columns:");
-                        write("--------");
-                        for (final String columnName : columnNames) {
-                            write(columnName);
+                        schema = dc.getSchemaByName(schemaName);
+                    }
+                    if (schema == null) {
+                        System.err.println("No such schema: " + schemaName);
+                    } else {
+                        final Table table = schema.getTableByName(tableName);
+                        if (table == null) {
+                            write("No such table: " + tableName);
+                        } else {
+                            final List<String> columnNames = table.getColumnNames();
+                            write("Columns:");
+                            write("--------");
+                            for (final String columnName : columnNames) {
+                                write(columnName);
+                            }
                         }
                     }
+                } finally {
+                    con.close();
                 }
-                con.close();
             }
         }
     }
@@ -273,28 +275,31 @@ public final class CliRunner implements Closeable {
                 System.err.println("No such datastore: " + datastoreName);
             } else {
                 final DatastoreConnection con = ds.openConnection();
-                final DataContext dc = con.getDataContext();
-                final Schema schema;
-                if (schemaName == null) {
-                    schema = dc.getDefaultSchema();
-                } else {
-                    schema = dc.getSchemaByName(schemaName);
-                }
-                if (schema == null) {
-                    System.err.println("No such schema: " + schemaName);
-                } else {
-                    final List<String> tableNames = schema.getTableNames();
-                    if (tableNames == null || tableNames.isEmpty()) {
-                        System.err.println("No tables in schema!");
+                try {
+                    final DataContext dc = con.getDataContext();
+                    final Schema schema;
+                    if (schemaName == null) {
+                        schema = dc.getDefaultSchema();
                     } else {
-                        write("Tables:");
-                        write("-------");
-                        for (final String tableName : tableNames) {
-                            write(tableName);
+                        schema = dc.getSchemaByName(schemaName);
+                    }
+                    if (schema == null) {
+                        System.err.println("No such schema: " + schemaName);
+                    } else {
+                        final List<String> tableNames = schema.getTableNames();
+                        if (tableNames == null || tableNames.isEmpty()) {
+                            System.err.println("No tables in schema!");
+                        } else {
+                            write("Tables:");
+                            write("-------");
+                            for (final String tableName : tableNames) {
+                                write(tableName);
+                            }
                         }
                     }
+                } finally {
+                    con.close();
                 }
-                con.close();
             }
         }
     }
@@ -310,17 +315,20 @@ public final class CliRunner implements Closeable {
                 System.err.println("No such datastore: " + datastoreName);
             } else {
                 final DatastoreConnection con = ds.openConnection();
-                final List<String> schemaNames = con.getDataContext().getSchemaNames();
-                if (schemaNames == null || schemaNames.isEmpty()) {
-                    write("No schemas in datastore!");
-                } else {
-                    write("Schemas:");
-                    write("--------");
-                    for (final String schemaName : schemaNames) {
-                        write(schemaName);
+                try {
+                    final List<String> schemaNames = con.getDataContext().getSchemaNames();
+                    if (schemaNames == null || schemaNames.isEmpty()) {
+                        write("No schemas in datastore!");
+                    } else {
+                        write("Schemas:");
+                        write("--------");
+                        for (final String schemaName : schemaNames) {
+                            write(schemaName);
+                        }
                     }
+                } finally {
+                    con.close();
                 }
-                con.close();
             }
         }
     }
@@ -367,30 +375,34 @@ public final class CliRunner implements Closeable {
                 FileHelper.safeClose(inputStream);
             }
 
-            final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, new CliProgressAnalysisListener());
-            final AnalysisResultFuture resultFuture = runner.run(analysisJobBuilder.toAnalysisJob());
+            try {
+                final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, new CliProgressAnalysisListener());
+                final AnalysisResultFuture resultFuture = runner.run(analysisJobBuilder.toAnalysisJob());
 
-            resultFuture.await();
+                resultFuture.await();
 
-            if (resultFuture.isSuccessful()) {
-                final CliOutputType outputType = _arguments.getOutputType();
-                final AnalysisResultWriter writer = outputType.createWriter();
-                writer.write(resultFuture, configuration, _writerRef, _outputStreamRef);
-            } else {
-                write("ERROR!");
-                write("------");
-
-                final List<Throwable> errors = resultFuture.getErrors();
-                write(errors.size() + " error(s) occurred while executing the job:");
-
-                for (final Throwable throwable : errors) {
+                if (resultFuture.isSuccessful()) {
+                    final CliOutputType outputType = _arguments.getOutputType();
+                    final AnalysisResultWriter writer = outputType.createWriter();
+                    writer.write(resultFuture, configuration, _writerRef, _outputStreamRef);
+                } else {
+                    write("ERROR!");
                     write("------");
-                    final StringWriter stringWriter = new StringWriter();
-                    throwable.printStackTrace(new PrintWriter(stringWriter));
-                    write(stringWriter.toString());
-                }
 
-                throw errors.get(0);
+                    final List<Throwable> errors = resultFuture.getErrors();
+                    write(errors.size() + " error(s) occurred while executing the job:");
+
+                    for (final Throwable throwable : errors) {
+                        write("------");
+                        final StringWriter stringWriter = new StringWriter();
+                        throwable.printStackTrace(new PrintWriter(stringWriter));
+                        write(stringWriter.toString());
+                    }
+
+                    throw errors.get(0);
+                }
+            } finally {
+                analysisJobBuilder.close();
             }
         }
     }
@@ -441,22 +453,22 @@ public final class CliRunner implements Closeable {
                 final ConfiguredPropertyDescriptor propertyForInput = propertiesForInput.iterator().next();
                 if (propertyForInput != null) {
                     if (propertyForInput.isArray()) {
-                        write(" - Consumes multiple input columns (type: " + propertyForInput.getTypeArgument(0)
-                                .getSimpleName() + ")");
+                        write(" - Consumes multiple input columns (type: "
+                                + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
                     } else {
-                        write(" - Consumes a single input column (type: " + propertyForInput.getTypeArgument(0)
-                                .getSimpleName() + ")");
+                        write(" - Consumes a single input column (type: "
+                                + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
                     }
                 }
             } else {
                 write(" - Consumes " + propertiesForInput.size() + " named inputs");
                 for (final ConfiguredPropertyDescriptor propertyForInput : propertiesForInput) {
                     if (propertyForInput.isArray()) {
-                        write("   Input columns: " + propertyForInput.getName() + " (type: " + propertyForInput
-                                .getTypeArgument(0).getSimpleName() + ")");
+                        write("   Input columns: " + propertyForInput.getName() + " (type: "
+                                + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
                     } else {
-                        write("   Input column: " + propertyForInput.getName() + " (type: " + propertyForInput
-                                .getTypeArgument(0).getSimpleName() + ")");
+                        write("   Input column: " + propertyForInput.getName() + " (type: "
+                                + propertyForInput.getTypeArgument(0).getSimpleName() + ")");
                     }
                 }
             }

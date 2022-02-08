@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %ex{2}%nopex%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="fileAppender" class="ch.qos.logback.core.FileAppender">
+		<file>${user.home}/.datacleaner/log/datacleaner.log</file>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %ex{2}%nopex%n</pattern>
+		</encoder>
+	</appender>
+	
+	<logger name="org.datacleaner" level="INFO"/>
+	<logger name="org.apache.metamodel" level="INFO"/>
+
+	<root level="warn">
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</root>
+</configuration>

@@ -260,9 +260,9 @@ public class JaxbJobReaderTest extends TestCase {
             fail("Exception expected");
         } catch (final IllegalArgumentException e) {
             final String message = e.getMessage();
-            assertTrue(message, message.startsWith("javax.xml.bind.UnmarshalException"));
-            assertTrue(message, message.toLowerCase().contains("uri:\"http://eobjects.org/analyzerbeans/job/1.0\""));
-            assertTrue(message, message.contains("\"datacontext\""));
+            assertTrue(message, message.startsWith("jakarta.xml.bind.UnmarshalException: "));
+            TestHelper.assertStringContains(message.toLowerCase(), "uri:\"http://eobjects.org/analyzerbeans/job/1.0\"");
+            TestHelper.assertStringContains(message, "\"datacontext\"");
         }
     }
 

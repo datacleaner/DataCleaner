@@ -19,11 +19,11 @@
  */
 package org.datacleaner.util;
 
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEventHandler;
 
 public final class JaxbValidationEventHandler implements ValidationEventHandler {
 

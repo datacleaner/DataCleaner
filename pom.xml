@@ -31,6 +31,8 @@
 		<spark.version>2.4.4</spark.version>
 		<curator.version>2.13.0</curator.version>
 		<log4j.version>2.17.1</log4j.version>
+		<jaxb.api.version>3.0.1</jaxb.api.version>
+		<jaxb.impl.version>3.0.2</jaxb.impl.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -381,7 +383,6 @@
 										<exclude>javax.transaction:transaction-api:*</exclude>
 										
 										<!-- prefer jakarta.activation-api over any other activation jar -->
-										<exclude>com.sun.activation:jakarta.activation:*</exclude>
 										<exclude>javax.activation:activation:*</exclude>
 										<exclude>javax.activation:javax.activation-api:*</exclude>
 										
@@ -407,7 +408,6 @@
 										<exclude>commons-beanutils:commons-beanutils-core:*</exclude>
 
 										<!-- prefer jakarta.xml-bind-api over any other jaxb jar -->
-										<exclude>com.sun.xml.bind:jaxb-impl:*</exclude>
 										<exclude>com.sun.xml.bind:jaxb-xjc:*</exclude>
 										<exclude>javax.xml.bind:jaxb-api:*</exclude>
 										<exclude>org.glassfish.jaxb:jaxb-runtime:*</exclude>
@@ -592,9 +592,19 @@
 					<version>0.14.0</version>
 					<dependencies>
 						<dependency>
-							<groupId>org.glassfish.jaxb</groupId>
-							<artifactId>jaxb-runtime</artifactId>
-							<version>2.3.5</version>
+							<groupId>com.sun.xml.bind</groupId>
+							<artifactId>jaxb-xjc</artifactId>
+							<version>${jaxb.api.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>com.sun.xml.bind</groupId>
+							<artifactId>jaxb-impl</artifactId>
+							<version>${jaxb.api.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>jakarta.xml.bind</groupId>
+							<artifactId>jakarta.xml.bind-api</artifactId>
+							<version>${jaxb.api.version}</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -869,9 +879,14 @@
 				<version>1.3</version>
 			</dependency>
 			<dependency>
+				<groupId>com.sun.xml.bind</groupId>
+				<artifactId>jaxb-impl</artifactId>
+				<version>${jaxb.api.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>jakarta.xml.bind</groupId>
 				<artifactId>jakarta.xml.bind-api</artifactId>
-				<version>3.0.1</version>
+				<version>${jaxb.api.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.sun.activation</groupId>

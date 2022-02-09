@@ -22,7 +22,7 @@ package org.datacleaner.beans.codec;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.StringJoiner;
-import javax.xml.bind.DatatypeConverter;
+
 import javax.inject.Named;
 
 import org.datacleaner.api.Categorized;
@@ -33,6 +33,8 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.EncodingCategory;
+
+import jakarta.xml.bind.DatatypeConverter;
 
 @Named("Hash value")
 @Description("It creates a hash from specified input. ")

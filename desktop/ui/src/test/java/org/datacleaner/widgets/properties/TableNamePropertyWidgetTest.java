@@ -112,7 +112,10 @@ public class TableNamePropertyWidgetTest extends TestCase {
         assertEquals("bar", tableWidget1.getTable().getName());
         assertEquals("bar", tableWidget2.getTable().getName());
 
+        // clean up
         analysisJobBuilder.close();
+        datastoreWidget1.onPanelRemove();
+        datastoreWidget2.onPanelRemove();
     }
 
     private PropertyWidgetCollection createPropertyWidgetCollection(

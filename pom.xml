@@ -382,9 +382,10 @@
 										<exclude>javax.transaction:jta:*</exclude>
 										<exclude>javax.transaction:transaction-api:*</exclude>
 										
-										<!-- prefer jakarta.activation-api over any other activation jar -->
+										<!-- prefer jakarta.activation over any other activation jar -->
 										<exclude>javax.activation:activation:*</exclude>
 										<exclude>javax.activation:javax.activation-api:*</exclude>
+										<exclude>jakarta.activation:jakarta.activation-api:*</exclude>
 										
 										<!-- The proper artifact for JSP API is javax.servlet.jsp:javax.servlet.jsp-api, so we're banning the rest -->
 										<exclude>javax.servlet:jsp-api:*</exclude>
@@ -846,6 +847,10 @@
 						<groupId>javax.servlet.jsp</groupId>
 						<artifactId>jsp-api</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>jakarta.activation</groupId>
+						<artifactId>jakarta.activation-api</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -887,16 +892,10 @@
 				<groupId>jakarta.xml.bind</groupId>
 				<artifactId>jakarta.xml.bind-api</artifactId>
 				<version>${jaxb.api.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>com.sun.activation</groupId>
-						<artifactId>jakarta.activation</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>jakarta.activation</groupId>
-				<artifactId>jakarta.activation-api</artifactId>
+				<groupId>com.sun.activation</groupId>
+				<artifactId>jakarta.activation</artifactId>
 				<version>2.0.1</version>
 			</dependency>
 			<dependency>
@@ -941,6 +940,10 @@
 					<exclusion>
 						<groupId>javax.xml.stream</groupId>
 						<artifactId>stax-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>jakarta.activation</groupId>
+						<artifactId>jakarta.activation-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -1047,6 +1050,10 @@
 					<exclusion>
 						<groupId>org.slf4j</groupId>
 						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>jakarta.activation</groupId>
+						<artifactId>jakarta.activation-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -1355,6 +1362,10 @@
 					<exclusion>
 						<groupId>javax.xml.bind</groupId>
 						<artifactId>jaxb-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>jakarta.activation</groupId>
+						<artifactId>jakarta.activation-api</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

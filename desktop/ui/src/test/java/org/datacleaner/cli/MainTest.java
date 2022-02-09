@@ -80,10 +80,10 @@ public class MainTest extends TestCase {
         final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
         // disregard any line that looks like unrelated Finalizer logging output
         final List<String> lines = Splitter.on('\n').splitToList(out);
-        lines.stream().filter(line -> {
+        final Object[] parts = lines.stream().filter(line -> {
             return line.indexOf("[Finalizer] ") == -1;
-        });
-        return Joiner.on('\n').join(lines);
+        }).toArray();
+        return Joiner.on('\n').join(parts);
     }
 
     public void testUsage() throws Throwable {

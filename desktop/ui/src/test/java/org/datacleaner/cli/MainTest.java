@@ -41,6 +41,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import junit.framework.TestCase;
@@ -74,11 +75,21 @@ public class MainTest extends TestCase {
         super.tearDown();
         System.setOut(_originalSysOut);
     }
+    
+    private String getOutput() {
+        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        // disregard any line that looks like unrelated Finalizer logging output
+        final List<String> lines = Splitter.on('\n').splitToList(out);
+        lines.stream().filter(line -> {
+            return line.indexOf("[Finalizer] ") == -1;
+        });
+        return Joiner.on('\n').join(lines);
+    }
 
     public void testUsage() throws Throwable {
         Main.main("-usage".split(" "));
 
-        final String out1 = _stringWriter.toString();
+        final String out1 = getOutput();
 
         final String[] lines = out1.split("\n");
 
@@ -114,28 +125,28 @@ public class MainTest extends TestCase {
         useAsSystemOut(_stringWriter);
         Main.main(new String[0]);
 
-        final String out2 = _stringWriter.toString();
+        final String out2 = getOutput();
         assertEquals(out1, out2);
     }
 
     public void testListDatastores() throws Throwable {
         Main.main("-conf src/test/resources/cli-examples/conf.xml -list DATASTORES".split(" "));
 
-        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        final String out = getOutput();
         assertEquals("Datastores:\n-----------\nall_datastores\nemployees_csv\norderdb\n", out);
     }
 
     public void testListSchemas() throws Throwable {
         Main.main("-conf src/test/resources/cli-examples/conf.xml -ds orderdb -list SCHEMAS".split(" "));
 
-        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        final String out = getOutput();
         assertEquals("Schemas:\n" + "--------\n" + "INFORMATION_SCHEMA\n" + "PUBLIC\n", out);
     }
 
     public void testListTables() throws Throwable {
         Main.main("-conf src/test/resources/cli-examples/conf.xml -ds orderdb -schema PUBLIC -list TABLES".split(" "));
 
-        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        final String out = getOutput();
         assertEquals(
                 "Tables:\n-------\nCUSTOMERS\nEMPLOYEES\nOFFICES\nORDERDETAILS\nORDERFACT\nORDERS\nPAYMENTS\nPRODUCTS\n",
                 out);
@@ -146,7 +157,7 @@ public class MainTest extends TestCase {
                 "-conf src/test/resources/cli-examples/conf.xml -ds orderdb -schema PUBLIC -table EMPLOYEES -list COLUMNS"
                         .split(" "));
 
-        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        final String out = getOutput();
         assertEquals(
                 "Columns:\n--------\nEMPLOYEENUMBER\nLASTNAME\nFIRSTNAME\nEXTENSION\nEMAIL\nOFFICECODE\nREPORTSTO\nJOBTITLE\n",
                 out);
@@ -155,7 +166,7 @@ public class MainTest extends TestCase {
     public void testListTransformers() throws Throwable {
         Main.main("-conf src/test/resources/cli-examples/conf.xml -list TRANSFORMERS".split(" "));
 
-        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        final String out = getOutput();
         final String[] lines = out.split("\n");
 
         assertEquals("Transformers:", lines[0]);
@@ -167,7 +178,7 @@ public class MainTest extends TestCase {
     public void testListFilters() throws Throwable {
         Main.main("-conf src/test/resources/cli-examples/conf.xml -list FILTERS".split(" "));
 
-        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        final String out = getOutput();
         final String[] lines = out.split("\n");
 
         assertEquals("Filters:", lines[0]);
@@ -180,7 +191,7 @@ public class MainTest extends TestCase {
     public void testListAnalyzers() throws Throwable {
         Main.main("-conf src/test/resources/cli-examples/conf.xml -list ANALYZERS".split(" "));
 
-        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        final String out = getOutput();
         final String[] lines = out.split("\n");
 
         assertEquals("Analyzers:", lines[0]);
@@ -194,7 +205,7 @@ public class MainTest extends TestCase {
                 "-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml"
                         .split(" "));
 
-        final String out = _stringWriter.toString().replaceAll("\r\n", "\n");
+        final String out = getOutput();
         final List<String> lines = Splitter.on('\n').splitToList(out);
 
         assertTrue(out, out.indexOf("- Value count (company.com): 4") != -1);

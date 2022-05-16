@@ -19,7 +19,7 @@
 		<spring.version>5.2.19.RELEASE</spring.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<icu4j.version>65.1</icu4j.version>
-		<jackson.version>2.13.1</jackson.version>
+		<jackson.version>2.13.2.1</jackson.version>
 		<javax.servlet.version>3.1.0</javax.servlet.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>

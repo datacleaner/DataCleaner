@@ -27,7 +27,7 @@
 		<jung.version>2.1.1</jung.version>
 		<guava.version>31.0.1-jre</guava.version>
 		<guice.version>5.1.0</guice.version>
-		<hadoop.version>3.3.1</hadoop.version>
+		<hadoop.version>3.3.2</hadoop.version>
 		<spark.version>2.4.4</spark.version>
 		<curator.version>2.13.0</curator.version>
 		<log4j.version>2.17.1</log4j.version>

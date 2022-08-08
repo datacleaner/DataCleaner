@@ -19,7 +19,7 @@
 		<spring.version>5.2.19.RELEASE</spring.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<icu4j.version>65.1</icu4j.version>
-		<jackson.version>2.13.2.1</jackson.version>
+		<jackson.version>2.13.3</jackson.version>
 		<javax.servlet.version>3.1.0</javax.servlet.version>
 		<javax.el.version>2.2.5</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
@@ -27,7 +27,7 @@
 		<jung.version>2.1.1</jung.version>
 		<guava.version>31.0.1-jre</guava.version>
 		<guice.version>5.1.0</guice.version>
-		<hadoop.version>3.3.2</hadoop.version>
+		<hadoop.version>3.3.4</hadoop.version>
 		<spark.version>2.4.4</spark.version>
 		<curator.version>2.13.0</curator.version>
 		<log4j.version>2.17.1</log4j.version>

@@ -963,6 +963,14 @@
 						<groupId>jakarta.activation</groupId>
 						<artifactId>jakarta.activation-api</artifactId>
 					</exclusion>
+                    <exclusion>
+                    	<groupId>org.slf4j</groupId>
+                    	<artifactId>slf4j-reload4j</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>ch.qos.reload4j</groupId>
+                    	<artifactId>reload4j</artifactId>
+                	</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -1166,16 +1174,6 @@
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-mapreduce-client-core</artifactId>
 				<version>${hadoop.version}</version>
-            	<exclusions>
-                    <exclusion>
-                    	<groupId>org.slf4j</groupId>
-                    	<artifactId>slf4j-reload4j</artifactId>
-                	</exclusion>
-                	<exclusion>
-                    	<groupId>ch.qos.reload4j</groupId>
-                    	<artifactId>reload4j</artifactId>
-                	</exclusion>
-            	</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>

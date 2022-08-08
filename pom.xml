@@ -403,6 +403,8 @@
 										<exclude>org.apache.metamodel:*</exclude>
 										<exclude>log4j:*</exclude>
 										<exclude>org.apache.logging.log4j:*</exclude>
+                                        <exclude>org.slf4j:slf4j-reload4j:*</exclude>
+                                        <exclude>ch.qos.reload4j:reload4j:*</exclude>
 
 										<!-- commons-beanutils-core is redundant when we already depend 
 											on commons-beanutils -->

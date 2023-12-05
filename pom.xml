@@ -25,7 +25,7 @@
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<scala.version>2.12.11</scala.version>
 		<jung.version>2.1.1</jung.version>
-		<guava.version>31.0.1-jre</guava.version>
+		<guava.version>32.0.0-jre</guava.version>
 		<guice.version>5.1.0</guice.version>
 		<hadoop.version>3.3.4</hadoop.version>
 		<spark.version>2.4.4</spark.version>

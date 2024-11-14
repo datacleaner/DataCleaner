@@ -26,7 +26,6 @@ import java.util.Map;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
@@ -68,8 +67,6 @@ public interface UserPreferences {
     List<Dictionary> getUserDictionaries();
 
     List<SynonymCatalog> getUserSynonymCatalogs();
-
-    List<UserDatabaseDriver> getDatabaseDrivers();
 
     List<StringPattern> getUserStringPatterns();
 

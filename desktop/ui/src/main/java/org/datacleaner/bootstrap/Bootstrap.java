@@ -42,7 +42,6 @@ import org.datacleaner.Version;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.cli.CliArguments;
-import org.datacleaner.cli.CliRunType;
 import org.datacleaner.cli.CliRunner;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -52,7 +51,6 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.macos.MacOSManager;
 import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
@@ -156,11 +154,6 @@ public final class Bootstrap {
             LookAndFeelManager.get().init();
         }
 
-        if (arguments.getRunType() == CliRunType.SPARK) {
-            runCli(arguments, null);
-            return;
-        }
-
         // initially use a temporary non-persistent user preferences object.
         // This is just to have basic settings available for eg. resolving
         // files.
@@ -181,10 +174,6 @@ public final class Bootstrap {
         } else {
             // run in GUI mode
             final AnalysisJobBuilderWindow analysisJobBuilderWindow;
-
-            // initialize Mac OS specific settings
-            final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
-            macOsManager.init();
 
             // check for job file
             final String jobFilePath = _options.getCommandLineArguments().getJobFile();
@@ -268,7 +257,6 @@ public final class Bootstrap {
      * @return a file reference
      * @throws FileSystemException
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private FileObject resolveFile(final String userRequestedFilename, final String localFilename,
             final UserPreferences userPreferences) throws FileSystemException {
         final File dataCleanerHome = DataCleanerHome.getAsFile();

@@ -21,47 +21,16 @@ package org.datacleaner.user;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
-import java.util.List;
 
-import org.apache.commons.vfs2.FileObject;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.reference.Dictionary;
-import org.datacleaner.util.VFSUtils;
 
 import junit.framework.TestCase;
 
 public class UserPreferencesImplTest extends TestCase {
 
-    public void testDeserialize21preferences() throws Exception {
-        final FileObject file =
-                VFSUtils.getFileSystemManager().resolveFile("src/test/resources/userpreferences-2.1.dat");
-        final UserPreferences preferences = UserPreferencesImpl.load(file, false);
-        assertNotNull(preferences);
-
-        final List<Datastore> datastores = preferences.getUserDatastores();
-        assertEquals(2, datastores.size());
-
-        Datastore datastore;
-        datastore = datastores.get(0);
-        assertEquals("JdbcDatastore[name=orderdb,url=jdbc:hsqldb:res:orderdb;readonly=true]", datastore.toString());
-        assertEquals(null, datastore.getDescription());
-
-        datastore = datastores.get(1);
-        assertEquals("CsvDatastore[name=foobar, filename=C:\\foobar.txt, quoteChar='\"', separatorChar=',', "
-                + "encoding=UTF-8, headerLineNumber=0]", datastore.toString());
-        assertEquals("C:\\foobar.txt", ((CsvDatastore) datastore).getFilename());
-        assertEquals(null, datastore.getDescription());
-
-        final List<Dictionary> dictionaries = preferences.getUserDictionaries();
-        assertEquals(1, dictionaries.size());
-
-        assertEquals("SimpleDictionary[name=my dictionary]", dictionaries.get(0).toString());
-    }
 
     public void testCreateHttpClientWithoutNtCredentials() throws Exception {
         final UserPreferencesImpl up = new UserPreferencesImpl(null);

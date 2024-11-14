@@ -22,6 +22,7 @@ package org.datacleaner.reference;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -29,7 +30,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.junit.Ignore;
 
 import junit.framework.TestCase;
@@ -89,7 +89,7 @@ public class ReferenceDataDeserializationTest extends TestCase {
     @SuppressWarnings("unchecked")
     private <T> T deserialize(final String path) throws Exception {
         try (FileInputStream in = new FileInputStream(new File(path))) {
-            try (ChangeAwareObjectInputStream objectInputStream = new ChangeAwareObjectInputStream(in)) {
+            try (ObjectInputStream objectInputStream = new ObjectInputStream(in)) {
                 return (T) objectInputStream.readObject();
             }
         }

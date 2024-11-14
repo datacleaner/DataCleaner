@@ -127,11 +127,6 @@
 			<artifactId>DataCleaner-env-berkeleydb</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-env-spark</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 
 		<!-- DataCleaner components -->
 		<dependency>
@@ -172,11 +167,6 @@
 			<groupId>args4j</groupId>
 			<artifactId>args4j</artifactId>
 			<version>2.0.16</version>
-		</dependency>
-		<dependency>
-			<groupId>org.simplericity.macify</groupId>
-			<artifactId>macify</artifactId>
-			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>
@@ -220,11 +210,7 @@
 			<artifactId>freemarker</artifactId>
 		</dependency>
 
-		<!-- Enough Hadoop/Spark for uploading and submitting jobs -->
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-launcher_2.12</artifactId>
-		</dependency>
+		<!-- Enough Hadoop for uploading and submitting jobs -->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>

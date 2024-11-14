@@ -21,6 +21,7 @@ package org.datacleaner.util.convert;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -40,7 +41,6 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
@@ -207,10 +207,9 @@ public class StandardTypeConverter implements Converter<Object> {
         if (ReflectionUtils.is(type, Serializable.class)) {
             logger.warn("fromString(...): No built-in handling of type: {}, using deserialization", type.getName());
             final byte[] bytes = (byte[]) _parentConverter.fromString(byte[].class, str);
-            ChangeAwareObjectInputStream objectInputStream = null;
+            ObjectInputStream objectInputStream = null;
             try {
-                objectInputStream = new ChangeAwareObjectInputStream(new ByteArrayInputStream(bytes));
-                objectInputStream.addClassLoader(type.getClassLoader());
+                objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
                 return objectInputStream.readObject();
             } catch (final Exception e) {
                 throw new IllegalStateException("Could not deserialize to " + type + ".", e);

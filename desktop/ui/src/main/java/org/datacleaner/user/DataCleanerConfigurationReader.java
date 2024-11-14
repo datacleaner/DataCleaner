@@ -19,13 +19,7 @@
  */
 package org.datacleaner.user;
 
-import java.io.File;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -34,9 +28,6 @@ import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.JaxbConfigurationReader;
-import org.datacleaner.extensions.ExtensionPackage;
-import org.datacleaner.extensions.ExtensionReader;
-import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +42,10 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
 
     private final FileObject _dataCleanerHome;
     private final FileObject _configurationFile;
-    private final Supplier<UserPreferences> _userPreferencesRef;
 
-    public DataCleanerConfigurationReader(final FileObject dataCleanerHome, final FileObject configurationFile,
-            final Supplier<UserPreferences> userPreferencesRef) {
+    public DataCleanerConfigurationReader(final FileObject dataCleanerHome, final FileObject configurationFile) {
         _dataCleanerHome = dataCleanerHome;
         _configurationFile = configurationFile;
-        _userPreferencesRef = userPreferencesRef;
     }
 
     /**
@@ -73,13 +61,6 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
 
     @Override
     protected DataCleanerConfiguration fetch() {
-        // load user preferences first, since we need it while reading
-        // the configuration (some custom elements may refer to classes
-        // within the extensions)
-        final UserPreferences userPreferences = _userPreferencesRef.get();
-
-        loadExtensions(userPreferences);
-
         // load the configuration file
         final JaxbConfigurationReader configurationReader =
                 new JaxbConfigurationReader(new DesktopConfigurationReaderInterceptor(_dataCleanerHome));
@@ -125,78 +106,6 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         }
 
         return c;
-    }
-
-    private void loadExtensions(final UserPreferences userPreferences) {
-        final String dumpInstallKey = "org.datacleaner.extension.dumpinstall";
-        final File extensionsDirectory = userPreferences.getExtensionsDirectory();
-
-        final Set<String> extensionFilenames = new HashSet<>();
-        final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
-        for (final Iterator<ExtensionPackage> it = extensionPackages.iterator(); it.hasNext(); ) {
-            final ExtensionPackage extensionPackage = (ExtensionPackage) it.next();
-
-            // some extensions may be installed simply by "dumping" a JAR in the
-            // extension folder. Such installs will have this key registered.
-            final boolean dumpInstalled = "true".equals(extensionPackage.getAdditionalProperties().get(dumpInstallKey));
-            boolean remove = false;
-
-            final File[] files = extensionPackage.getFiles();
-            for (final File file : files) {
-                if (dumpInstalled && !file.exists()) {
-                    // file has been removed, we'll remove this extension
-                    remove = true;
-                    break;
-                } else {
-                    final File directory = file.getParentFile();
-                    if (extensionsDirectory.equals(directory)) {
-                        extensionFilenames.add(file.getName());
-                    }
-                }
-            }
-
-            if (remove) {
-                it.remove();
-            } else {
-                extensionPackage.loadExtension();
-            }
-        }
-
-        // Read all JAR files in the 'extensions' directory and register those
-        // that are not already loaded.
-        final File[] jarFiles = extensionsDirectory.listFiles(FileFilters.JAR);
-        if (jarFiles != null) {
-            for (final File file : jarFiles) {
-                final String filename = file.getName();
-                if (!extensionFilenames.contains(filename)) {
-                    logger.info("Adding extension from 'extension' folder: {}", file.getName());
-                    final ExtensionReader reader = new ExtensionReader();
-                    final ExtensionPackage extension = reader.readExternalExtension(file);
-                    userPreferences.addExtensionPackage(extension);
-                    extension.getAdditionalProperties().put(dumpInstallKey, "true");
-                    extension.loadExtension();
-                }
-            }
-        }
-
-        // List directories and treat each sub directory with JAR files as
-        // an extension
-        final File[] subDirectories = extensionsDirectory.listFiles(File::isDirectory);
-        if (subDirectories != null) {
-            for (final File subDirectory : subDirectories) {
-                final String directoryName = subDirectory.getName();
-                if (!extensionFilenames.contains(directoryName)) {
-                    logger.info("Adding extension from 'extension' folder: {}", directoryName);
-                    final ExtensionReader reader = new ExtensionReader();
-                    final ExtensionPackage extension = reader.readExternalExtension(subDirectory);
-                    if (extension != null) {
-                        userPreferences.addExtensionPackage(extension);
-                        extension.getAdditionalProperties().put(dumpInstallKey, "true");
-                        extension.loadExtension();
-                    }
-                }
-            }
-        }
     }
 
     private DataCleanerConfiguration getConfigurationFromClasspath(final JaxbConfigurationReader configurationReader) {

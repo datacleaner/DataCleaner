@@ -21,6 +21,7 @@ package org.datacleaner.user;
 
 import java.io.File;
 import java.io.InvalidClassException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -46,12 +47,10 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
-import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.datacleaner.util.VFSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private final List<Dictionary> userDictionaries = new ArrayList<>();
     private final List<StringPattern> userStringPatterns = new ArrayList<>();
     private transient FileObject _userPreferencesFile;
-    private List<UserDatabaseDriver> databaseDrivers = new ArrayList<>();
     private List<ExtensionPackage> extensionPackages = new ArrayList<>();
     private List<Datastore> userDatastores = new ArrayList<>();
     private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<>();
@@ -118,22 +116,10 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             logger.debug("Could not determine if file exists: {}", userPreferencesFile);
         }
 
-        ChangeAwareObjectInputStream inputStream = null;
+        ObjectInputStream inputStream = null;
         try {
-            inputStream = new ChangeAwareObjectInputStream(userPreferencesFile.getContent().getInputStream());
-            inputStream.addRenamedClass("org.datacleaner.user.UserPreferences", UserPreferencesImpl.class);
+            inputStream = new ObjectInputStream(userPreferencesFile.getContent().getInputStream());
             final UserPreferencesImpl result = (UserPreferencesImpl) inputStream.readObject();
-
-            if (loadDatabaseDrivers) {
-                final List<UserDatabaseDriver> installedDatabaseDrivers = result.getDatabaseDrivers();
-                for (final UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
-                    try {
-                        userDatabaseDriver.loadDriver();
-                    } catch (final IllegalStateException e) {
-                        logger.error("Could not load database driver", e);
-                    }
-                }
-            }
 
             result._userPreferencesFile = userPreferencesFile;
             result.refreshProxySettings();
@@ -284,14 +270,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             userSynonymCatalogs = new ArrayList<>();
         }
         return userSynonymCatalogs;
-    }
-
-    @Override
-    public List<UserDatabaseDriver> getDatabaseDrivers() {
-        if (databaseDrivers == null) {
-            databaseDrivers = new ArrayList<>();
-        }
-        return databaseDrivers;
     }
 
     @Override

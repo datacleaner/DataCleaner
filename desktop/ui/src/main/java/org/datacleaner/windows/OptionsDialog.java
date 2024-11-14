@@ -44,7 +44,6 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.DatabaseDriversPanel;
-import org.datacleaner.panels.ExtensionPackagesPanel;
 import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.user.QuickAnalysisStrategy;
 import org.datacleaner.user.UserPreferences;
@@ -79,7 +78,6 @@ public class OptionsDialog extends AbstractWindow {
     @Inject
     protected OptionsDialog(final WindowContext windowContext, final DataCleanerConfiguration configuration,
             final UserPreferences userPreferences, final DatabaseDriversPanel databaseDriversPanel,
-            final ExtensionPackagesPanel extensionPackagesPanel,
             final HadoopClustersOptionsPanel hadoopClustersOptionsPanel) {
         super(windowContext);
         setMinimumSize(new Dimension(500, 500));
@@ -94,8 +92,6 @@ public class OptionsDialog extends AbstractWindow {
                 databaseDriversPanel);
         _tabbedPane.addTab("Hadoop clusters", imageManager.getImageIcon(IconUtils.FILE_HDFS, IconUtils.ICON_SIZE_TAB),
                 hadoopClustersOptionsPanel);
-        _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN, IconUtils.ICON_SIZE_TAB),
-                extensionPackagesPanel);
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
                 getNetworkTab());
         _tabbedPane.addTab("Performance",

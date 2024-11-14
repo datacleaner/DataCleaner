@@ -22,6 +22,7 @@ package org.datacleaner.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.ObjectInputStream;
 
 import javax.inject.Inject;
 import javax.swing.JFileChooser;
@@ -32,7 +33,6 @@ import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.AnalysisJobMetadata;
@@ -43,7 +43,6 @@ import org.datacleaner.job.NoSuchDatastoreException;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
@@ -141,10 +140,9 @@ public class OpenAnalysisJobActionListener implements ActionListener {
     public ResultWindow openAnalysisResult(final FileObject fileObject, final DCModule parentModule) {
         final AnalysisResult analysisResult;
         try {
-            final ChangeAwareObjectInputStream is =
-                    new ChangeAwareObjectInputStream(fileObject.getContent().getInputStream());
+            final ObjectInputStream is =
+                    new ObjectInputStream(fileObject.getContent().getInputStream());
             try {
-                is.addClassLoader(ExtensionPackage.getExtensionClassLoader());
                 analysisResult = (AnalysisResult) is.readObject();
             } finally {
                 FileHelper.safeClose(is);

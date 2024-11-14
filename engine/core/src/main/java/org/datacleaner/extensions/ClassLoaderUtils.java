@@ -19,16 +19,6 @@
  */
 package org.datacleaner.extensions;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A utility class for dealing with {@link ClassLoader}s. The primary focus of
  * this class is to ease with handling the diversity of situations that the
@@ -37,57 +27,17 @@ import org.slf4j.LoggerFactory;
  */
 public final class ClassLoaderUtils {
 
-    // to find out if web start is running, use system property
-    // http://lopica.sourceforge.net/faq.html#under
-    public static final boolean IS_WEB_START = System.getProperty("javawebstart.version") != null;
-    private static final Logger logger = LoggerFactory.getLogger(ClassLoaderUtils.class);
+	private ClassLoaderUtils() {
+		// prevent instantiation
+	}
 
-    private ClassLoaderUtils() {
-        // prevent instantiation
-    }
-
-    /**
-     * Gets an appropriate classloader for usage when performing classpath
-     * lookups and scanning.
-     *
-     * @return
-     */
-    public static ClassLoader getParentClassLoader() {
-        logger.debug("getParentClassLoader() invoked, web start mode: {}", IS_WEB_START);
-        if (IS_WEB_START) {
-            return Thread.currentThread().getContextClassLoader();
-        } else {
-            return ClassLoaderUtils.class.getClassLoader();
-        }
-    }
-
-    public static ClassLoader createClassLoader(final File[] files) {
-        return createClassLoader(files, getParentClassLoader());
-    }
-
-    public static ClassLoader createClassLoader(final File[] files, final ClassLoader parentClassLoader) {
-        try {
-            final URL[] urls = new URL[files.length];
-            for (int i = 0; i < urls.length; i++) {
-                final URL url = files[i].toURI().toURL();
-                logger.debug("Using URL: {}", url);
-                urls[i] = url;
-            }
-            return createClassLoader(urls, parentClassLoader);
-        } catch (final MalformedURLException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ClassLoader createClassLoader(final URL[] urls) {
-        return createClassLoader(urls, ClassLoaderUtils.getParentClassLoader());
-    }
-
-    public static ClassLoader createClassLoader(final URL[] urls, final ClassLoader parentClassLoader) {
-        // removing the security manager is necessary for classes in external jar files to have privileges to do
-        // eg. system property lookups etc.
-        System.setSecurityManager(null);
-        return AccessController
-                .doPrivileged((PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(urls, parentClassLoader));
-    }
+	/**
+	 * Gets an appropriate classloader for usage when performing classpath lookups
+	 * and scanning.
+	 *
+	 * @return
+	 */
+	public static ClassLoader getParentClassLoader() {
+		return ClassLoaderUtils.class.getClassLoader();
+	}
 }

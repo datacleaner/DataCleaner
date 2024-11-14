@@ -19,12 +19,10 @@
  */
 package org.datacleaner.descriptors;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 
-import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.test.TestEnvironment;
 
@@ -33,28 +31,6 @@ import junit.framework.TestCase;
 public class ClasspathScanDescriptorProviderTest extends TestCase {
 
     private MultiThreadedTaskRunner taskRunner = TestEnvironment.getMultiThreadedTaskRunner();
-
-    public void testScanOnlySingleJar() throws Exception {
-        // File that only contains various transformers
-        final File pluginFile1 = new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar");
-
-        ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider(taskRunner);
-        assertEquals(0, provider.getAnalyzerDescriptors().size());
-        Collection<TransformerDescriptor<?>> transformerComponentDescriptors = provider.getTransformerDescriptors();
-        assertEquals(0, transformerComponentDescriptors.size());
-        final File[] files = new File[] { pluginFile1 };
-        provider =
-                provider.scanPackage("org.datacleaner", true, ClassLoaderUtils.createClassLoader(files), false, files);
-        assertEquals(0, provider.getAnalyzerDescriptors().size());
-
-        transformerComponentDescriptors = provider.getTransformerDescriptors();
-        assertEquals(11, transformerComponentDescriptors.size());
-
-        transformerComponentDescriptors = new TreeSet<>(transformerComponentDescriptors);
-
-        assertEquals("org.datacleaner.beans.transform.DateDiffTransformer",
-                transformerComponentDescriptors.iterator().next().getComponentClass().getName());
-    }
 
     public void testScanNonExistingPackage() throws Exception {
         final ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider(taskRunner);
@@ -96,35 +72,6 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
                 new TreeSet<>(rendererComponentDescriptors).toString());
     }
 
-    public void testScanJarFilesOnClasspath() throws Exception {
-        // File that contains 24 transformers including XmlDecoderTransformer
-        final File pluginFile1 = new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar");
-        // File that contains 2 writers including InsertIntoTableAnalyzer
-        final File pluginFile2 = new File("src/test/resources/extensions/DataCleaner-writers.jar");
-        assertTrue(pluginFile2.exists());
-
-        final File[] files = new File[] { pluginFile1, pluginFile2 };
-        final ClassLoader classLoader = ClassLoaderUtils.createClassLoader(files);
-
-        ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider(taskRunner);
-
-        assertEquals(0, provider.getAnalyzerDescriptors().size());
-        assertEquals(0, provider.getTransformerDescriptors().size());
-
-        provider = provider.scanPackage("org.datacleaner", true, classLoader, true);
-        assertEquals(11, provider.getTransformerDescriptors().size());
-
-        boolean foundRoundNumberTransformer = false;
-        for (final TransformerDescriptor<?> transformerComponentDescriptor : provider.getTransformerDescriptors()) {
-            if (transformerComponentDescriptor.getComponentClass().getName()
-                    .equals("org.datacleaner.beans.numbers.RoundNumberTransformer")) {
-                foundRoundNumberTransformer = true;
-                break;
-            }
-        }
-        assertTrue(foundRoundNumberTransformer);
-    }
-
     public void testIsClassInPackageNonRecursive() throws Exception {
         final ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider(taskRunner);
 
@@ -147,14 +94,5 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
 
         assertFalse(provider.isClassInPackage("foo/baz/Baz.class", "foo/bar", true));
         assertFalse(provider.isClassInPackage("foo/Baz.class", "foo/bar", true));
-    }
-
-    public void testDeadLock() {
-        final ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider();
-
-        provider.addListener(DescriptorProvider::getAnalyzerDescriptors);
-
-        provider.scanPackage("org.datacleaner", true, ClassLoaderUtils.createClassLoader(
-                new File[] { new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar") }), true);
     }
 }

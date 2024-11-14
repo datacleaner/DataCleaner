@@ -19,11 +19,7 @@
  */
 package org.datacleaner.extensions;
 
-import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +27,6 @@ import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +41,6 @@ public final class ExtensionPackage implements Serializable, HasName {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
 
-    private static Collection<ClassLoader> _allExtensionClassLoaders = new ArrayList<>();
-    private final File[] _files;
     private final String _name;
     private final String _scanPackage;
     private final boolean _scanRecursive;
@@ -59,54 +52,17 @@ public final class ExtensionPackage implements Serializable, HasName {
     private transient int _loadedRenderers;
     private transient ClassLoader _classLoader;
 
-    public ExtensionPackage(final String name, String scanPackage, final boolean scanRecursive, final File[] files) {
+    public ExtensionPackage(final String name, String scanPackage, final boolean scanRecursive) {
         _name = name;
         if (scanPackage == null) {
             scanPackage = "";
         }
         _scanPackage = scanPackage;
         _scanRecursive = scanRecursive;
-        _files = files;
         _additionalProperties = new HashMap<>();
     }
 
-    /**
-     * Gets the classloader that represents the currently loaded extensions'
-     * classes.
-     *
-     * @return
-     */
-    public static ClassLoader getExtensionClassLoader() {
-        final Collection<ClassLoader> childClassLoaders = new ArrayList<>();
-        childClassLoaders.addAll(_allExtensionClassLoaders);
-        childClassLoaders.add(ClassLoaderUtils.getParentClassLoader());
-        return new CompoundClassLoader(childClassLoaders);
-    }
-
-    public File[] getFiles() {
-        return Arrays.copyOf(_files, _files.length);
-    }
-
-    /**
-     * Determines if this extension is externally installed from a file not in
-     * the primary classpath.
-     *
-     * @return
-     */
-    public boolean isExternal() {
-        return _files != null && _files.length > 0;
-    }
-
-    /**
-     * Determines if this extension is internally installed by being placed on
-     * the primary classpath.
-     *
-     * @return
-     */
-    private boolean isInternal() {
-        return !isExternal();
-    }
-
+    
     /**
      * Gets the name of the extension
      */
@@ -121,30 +77,6 @@ public final class ExtensionPackage implements Serializable, HasName {
 
     public boolean isScanRecursive() {
         return _scanRecursive;
-    }
-
-    public void loadExtension() {
-        if (isInternal()) {
-            // no reason to change _latestClassLoader
-            _classLoader = ClassLoaderUtils.getParentClassLoader();
-            return;
-        }
-        synchronized (ExtensionPackage.class) {
-            // Each extension is loaded using its own ExtensionClassLoader. This
-            // loader has 2 parents. The first is an URL class loader
-            // provided by ClassLoaderUtils. This class loader loads classes
-            // specific to the extension. The second class loader resolves all
-            // classes already loaded from the main locations.
-            _classLoader = ClassLoaderUtils.createClassLoader(getJarFiles(), ClassLoaderUtils.getParentClassLoader());
-            _allExtensionClassLoaders.add(_classLoader);
-        }
-    }
-
-    private File[] getJarFiles() {
-        if (_files.length == 1 && _files[0].isDirectory()) {
-            return _files[0].listFiles(FileFilters.JAR);
-        }
-        return _files;
     }
 
     public ExtensionPackage loadDescriptors(final DescriptorProvider descriptorProvider) throws IllegalStateException {
@@ -165,12 +97,8 @@ public final class ExtensionPackage implements Serializable, HasName {
             final int filtersBefore = classpathScanner.getFilterDescriptors().size();
             final int renderersBefore = classpathScanner.getRendererBeanDescriptors().size();
 
-            if (_classLoader == null) {
-                loadExtension();
-            }
-
             if (_scanPackage != null) {
-                classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, getJarFiles());
+                classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true);
             }
 
             _loadedAnalyzers = classpathScanner.getAnalyzerDescriptors().size() - analyzersBefore;

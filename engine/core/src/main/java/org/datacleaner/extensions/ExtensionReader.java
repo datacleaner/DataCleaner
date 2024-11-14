@@ -33,7 +33,6 @@ import java.util.jar.JarFile;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.ResourceManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.http.HttpXmlUtils;
@@ -71,7 +70,7 @@ public class ExtensionReader {
         try {
             final InputStream inputStream = url.openStream();
             try {
-                return readExtension(inputStream, new File[0]);
+                return readExtension(inputStream);
             } finally {
                 FileHelper.safeClose(inputStream);
             }
@@ -81,84 +80,11 @@ public class ExtensionReader {
         return null;
     }
 
-    public ExtensionPackage readExternalExtension(final File fileOrDirectory) {
-        if (fileOrDirectory == null) {
-            return null;
-        }
-        if (!fileOrDirectory.isDirectory()) {
-            return readExternalExtension(new File[] { fileOrDirectory });
-        }
-
-        return readExternalExtension(fileOrDirectory.getName(), new File[] { fileOrDirectory });
+    private ExtensionPackage readExtension(final InputStream inputStream) throws Exception {
+        return readExtension(null, inputStream);
     }
 
-    public ExtensionPackage readExternalExtension(final File[] files) {
-        return readExternalExtension(null, files);
-    }
-
-    public ExtensionPackage readExternalExtension(final String name, final File[] files) {
-        final boolean autoDetectPackage;
-        final File[] jarFiles;
-        if (files.length == 1 && files[0].isDirectory()) {
-            jarFiles = files[0].listFiles(FileFilters.JAR);
-            autoDetectPackage = false;
-        } else {
-            jarFiles = files;
-            autoDetectPackage = true;
-        }
-
-        if (jarFiles.length == 0) {
-            return null;
-        }
-
-        // check if any of the files has an extension descriptor file
-        for (final File file : jarFiles) {
-            if (file.getName().toLowerCase().endsWith(".jar")) {
-                try {
-                    try (JarFile jarFile = new JarFile(file)) {
-                        final JarEntry entry = jarFile.getJarEntry("datacleaner-extension.xml");
-                        if (entry == null) {
-                            logger.info("No extension descriptor file (datacleaner-extension.xml) found in file: {}",
-                                    file);
-                        } else {
-                            final InputStream inputStream = jarFile.getInputStream(entry);
-                            try {
-                                return readExtension(name, inputStream, jarFiles);
-                            } finally {
-                                FileHelper.safeClose(inputStream);
-                            }
-                        }
-                    }
-                } catch (final Exception e) {
-                    logger.error("Failed to read from JAR file", e);
-                }
-            }
-        }
-
-        // no extension descriptor files found
-        final String extensionName;
-        if (StringUtils.isNullOrEmpty(name)) {
-            final StringBuilder extensionNameBuilder = new StringBuilder();
-            for (final File file : files) {
-                if (extensionNameBuilder.length() > 0) {
-                    extensionNameBuilder.append(", ");
-                }
-                extensionNameBuilder.append(file.getName());
-            }
-            extensionName = extensionNameBuilder.toString();
-        } else {
-            extensionName = name;
-        }
-        final String packageName = (autoDetectPackage ? autoDetectPackageName(jarFiles[0]) : "");
-
-        return new ExtensionPackage(extensionName, packageName, true, files);
-    }
-
-    private ExtensionPackage readExtension(final InputStream inputStream, final File[] files) throws Exception {
-        return readExtension(null, inputStream, files);
-    }
-
-    private ExtensionPackage readExtension(String name, final InputStream inputStream, final File[] files)
+    private ExtensionPackage readExtension(String name, final InputStream inputStream)
             throws Exception {
         final DocumentBuilder documentBuilder = XmlUtils.createDocumentBuilder();
         final Document document = documentBuilder.parse(inputStream);
@@ -168,7 +94,7 @@ public class ExtensionReader {
         }
         final String scanPackage = HttpXmlUtils.getChildNodeText(documentElement, "package");
 
-        final ExtensionPackage extensionPackage = new ExtensionPackage(name, scanPackage, true, files);
+        final ExtensionPackage extensionPackage = new ExtensionPackage(name, scanPackage, true);
 
         final String description = HttpXmlUtils.getChildNodeText(documentElement, "description");
         if (!StringUtils.isNullOrEmpty(description)) {

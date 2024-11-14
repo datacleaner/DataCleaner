@@ -20,26 +20,15 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.datacleaner.actions.DownloadFilesActionListener;
-import org.datacleaner.actions.FileDownloadListener;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -47,20 +36,11 @@ import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.database.DatabaseDriverState;
-import org.datacleaner.database.UserDatabaseDriver;
-import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.util.http.SimpleWebServiceHttpClient;
-import org.datacleaner.util.http.WebServiceHttpClient;
 import org.datacleaner.widgets.Alignment;
-import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.table.DCTable;
-import org.datacleaner.windows.AddDatabaseDriverDialog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the panel in the Options dialog where the user can get an overview
@@ -70,23 +50,14 @@ public class DatabaseDriversPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseDriversPanel.class);
     private final ImageManager imageManager = ImageManager.get();
     private final Set<String> _usedDriverClassNames = new HashSet<>();
     private final DatabaseDriverCatalog _databaseDriverCatalog;
-    private final WindowContext _windowContext;
-    private final UserPreferences _userPreferences;
-    private final CloseableHttpClient _httpClient;
 
     @Inject
-    protected DatabaseDriversPanel(final DataCleanerConfiguration configuration, final WindowContext windowContext,
-            final UserPreferences userPreferences, final DatabaseDriverCatalog databaseDriverCatalog,
-            final CloseableHttpClient httpClient) {
+    protected DatabaseDriversPanel(final DataCleanerConfiguration configuration, final DatabaseDriverCatalog databaseDriverCatalog) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        _windowContext = windowContext;
-        _userPreferences = userPreferences;
         _databaseDriverCatalog = databaseDriverCatalog;
-        _httpClient = httpClient;
         setLayout(new BorderLayout());
 
         final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
@@ -101,53 +72,13 @@ public class DatabaseDriversPanel extends DCPanel {
             }
         }
 
-        for (final UserDatabaseDriver driver : _userPreferences.getDatabaseDrivers()) {
-            _usedDriverClassNames.add(driver.getDriverClassName());
-        }
-
         updateComponents();
     }
 
     private void updateComponents() {
         this.removeAll();
 
-        final PopupButton addDriverButton =
-                WidgetFactory.createDefaultPopupButton("Add database driver", IconUtils.ACTION_ADD_DARK);
-        final JPopupMenu addDriverMenu = addDriverButton.getMenu();
-
-        final JMenu automaticDownloadAndInstallMenu = new JMenu("Automatic download and install");
-        automaticDownloadAndInstallMenu
-                .setIcon(imageManager.getImageIcon(IconUtils.ACTION_DOWNLOAD, IconUtils.ICON_SIZE_MENU_ITEM));
-
-        final List<DatabaseDriverDescriptor> drivers = _databaseDriverCatalog.getDatabaseDrivers();
-        for (final DatabaseDriverDescriptor dd : drivers) {
-            final String[] urls = dd.getDownloadUrls();
-            if (urls != null && _databaseDriverCatalog.getState(dd) == DatabaseDriverState.NOT_INSTALLED) {
-                final JMenuItem downloadAndInstallMenuItem =
-                        WidgetFactory.createMenuItem(dd.getDisplayName(), dd.getIconImagePath());
-                downloadAndInstallMenuItem.addActionListener(createDownloadActionListener(dd));
-                automaticDownloadAndInstallMenu.add(downloadAndInstallMenuItem);
-            }
-        }
-
-        if (automaticDownloadAndInstallMenu.getMenuComponentCount() == 0) {
-            automaticDownloadAndInstallMenu.setEnabled(false);
-        }
-
-        final JMenuItem localJarFilesMenuItem =
-                WidgetFactory.createMenuItem("Local JAR file(s)...", IconUtils.FILE_ARCHIVE);
-        localJarFilesMenuItem.addActionListener(e -> {
-            final AddDatabaseDriverDialog dialog =
-                    new AddDatabaseDriverDialog(_databaseDriverCatalog, DatabaseDriversPanel.this, _windowContext,
-                            _userPreferences);
-            dialog.setVisible(true);
-        });
-
-        addDriverMenu.add(automaticDownloadAndInstallMenu);
-        addDriverMenu.add(localJarFilesMenuItem);
-
         final DCTable table = getDatabaseDriverTable();
-        this.add(DCPanel.flow(Alignment.RIGHT, addDriverButton), BorderLayout.NORTH);
         this.add(table.toPanel(), BorderLayout.CENTER);
     }
 
@@ -160,12 +91,9 @@ public class DatabaseDriversPanel extends DCPanel {
 
     private DCTable getDatabaseDriverTable() {
         final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getDatabaseDrivers();
-        final List<UserDatabaseDriver> userPreferencesDatabaseDrivers = _userPreferences.getDatabaseDrivers();
-        final List<UserDatabaseDriver> unknownManuallyInstalledDrivers =
-                getUnknownManuallyInstalledDrivers(userPreferencesDatabaseDrivers, databaseDrivers);
         final TableModel tableModel =
                 new DefaultTableModel(new String[] { "", "Database", "Driver class", "Installed?", "Used?" },
-                        databaseDrivers.size() + unknownManuallyInstalledDrivers.size());
+                        databaseDrivers.size());
 
         final DCTable table = new DCTable(tableModel);
 
@@ -194,48 +122,13 @@ public class DatabaseDriversPanel extends DCPanel {
             } else if (state == DatabaseDriverState.INSTALLED_NOT_WORKING) {
                 tableModel.setValueAt(invalidIcon, row, installedCol);
             } else if (state == DatabaseDriverState.NOT_INSTALLED) {
-                final String[] downloadUrls = dd.getDownloadUrls();
-                if (downloadUrls != null) {
-                    final DCPanel buttonPanel = new DCPanel();
-                    buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
-
-                    final JButton downloadButton = WidgetFactory.createSmallButton(IconUtils.ACTION_DOWNLOAD);
-                    downloadButton.setToolTipText("Download and install the driver for " + dd.getDisplayName());
-
-                    downloadButton.addActionListener(createDownloadActionListener(dd));
-                    buttonPanel.add(downloadButton);
-
-                    tableModel.setValueAt(buttonPanel, row, installedCol);
-                }
+                // TODO: Maybe indicate that it is missing
             }
 
             if (isUsed(driverClassName)) {
                 tableModel.setValueAt(validIcon, row, usedCol);
             }
 
-            row++;
-        }
-
-        for (final UserDatabaseDriver driver : unknownManuallyInstalledDrivers) {
-            final String driverClassName = driver.getDriverClassName();
-            final Icon driverIcon =
-                    imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL);
-            tableModel.setValueAt(driverIcon, row, 0);
-            tableModel.setValueAt("", row, 1);
-            tableModel.setValueAt(driverClassName, row, 2);
-            final DatabaseDriverState state = driver.getState();
-            if (state == DatabaseDriverState.INSTALLED_WORKING) {
-                tableModel.setValueAt(validIcon, row, installedCol);
-            } else if (state == DatabaseDriverState.INSTALLED_NOT_WORKING) {
-                tableModel.setValueAt(invalidIcon, row, installedCol);
-            } else if (state == DatabaseDriverState.NOT_INSTALLED) {
-                final Icon icon = imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL);
-                tableModel.setValueAt(icon, row, installedCol);
-
-            }
-            if (isUsed(driverClassName)) {
-                tableModel.setValueAt(validIcon, row, usedCol);
-            }
             row++;
         }
 
@@ -252,50 +145,5 @@ public class DatabaseDriversPanel extends DCPanel {
 
     private boolean isUsed(final String driverClassName) {
         return _usedDriverClassNames.contains(driverClassName);
-    }
-
-    private List<UserDatabaseDriver> getUnknownManuallyInstalledDrivers(
-            final List<UserDatabaseDriver> userPreferencesDatabaseDrivers,
-            final List<DatabaseDriverDescriptor> databaseDrivers) {
-        final List<UserDatabaseDriver> unknownDrivers = new ArrayList<>();
-        for (final UserDatabaseDriver driver : userPreferencesDatabaseDrivers) {
-            if (isDriverMissing(driver, databaseDrivers)) {
-                unknownDrivers.add(driver);
-            }
-        }
-        return unknownDrivers;
-    }
-
-    private boolean isDriverMissing(final UserDatabaseDriver driver,
-            final List<DatabaseDriverDescriptor> databaseDrivers) {
-        final String driverClassName = driver.getDriverClassName();
-        for (final DatabaseDriverDescriptor descriptor : databaseDrivers) {
-            if (descriptor.getDriverClassName().equals(driverClassName)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private ActionListener createDownloadActionListener(final DatabaseDriverDescriptor dd) {
-        final FileDownloadListener downloadListener = files -> {
-            final String driverClassName = dd.getDriverClassName();
-
-            logger.info("Registering and loading driver '{}' in files '{}'", driverClassName, files);
-
-            final UserDatabaseDriver userDatabaseDriver = new UserDatabaseDriver(files, driverClassName);
-            _userPreferences.getDatabaseDrivers().add(userDatabaseDriver);
-
-            try {
-                userDatabaseDriver.loadDriver();
-            } catch (final IllegalStateException e) {
-                WidgetUtils.showErrorMessage("Error while loading driver", "Error message: " + e.getMessage(), e);
-            }
-            updateDriverList();
-        };
-
-        final WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_httpClient);
-        return new DownloadFilesActionListener(dd.getDownloadUrls(), downloadListener, _windowContext, httpClient,
-                _userPreferences);
     }
 }

@@ -234,14 +234,6 @@ public class DatabaseDriverCatalog implements Serializable {
 
     public DatabaseDriverState getState(final DatabaseDriverDescriptor databaseDescriptor) {
         final String driverClassName = databaseDescriptor.getDriverClassName();
-        if (_userPreferences != null) {
-            final List<UserDatabaseDriver> drivers = _userPreferences.getDatabaseDrivers();
-            for (final UserDatabaseDriver userDatabaseDriver : drivers) {
-                if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
-                    return userDatabaseDriver.getState();
-                }
-            }
-        }
         try {
             Class.forName(driverClassName);
             return DatabaseDriverState.INSTALLED_WORKING;

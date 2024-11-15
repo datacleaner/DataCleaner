@@ -157,7 +157,7 @@ public final class Main {
         if (initializeLogging) {
             initializeLogging();
         }
-
+        
         final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
         final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
         bootstrap.run();

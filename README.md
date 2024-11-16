@@ -1,7 +1,5 @@
 # DataCleaner
 
-[![Build Status: Linux](https://travis-ci.org/datacleaner/DataCleaner.svg?branch=master)](https://travis-ci.org/datacleaner/DataCleaner) [![Gitter chat](https://badges.gitter.im/datacleaner/community.png)](https://gitter.im/datacleaner/community)
-
 <div>
 <img src="https://datacleaner.github.io/assets/dc-logo-100.png" alt="DataCleaner logo" />
 </div>
@@ -9,6 +7,17 @@
 The premier Open Source Data Quality solution.
 
 DataCleaner is a Data Quality toolkit that allows you to profile, correct and enrich your data. People use it for ad-hoc analysis, recurring cleansing as well as a swiss-army knife in matching and Master Data Management solutions.
+
+## Project status
+
+The project is maintained, but is not being actively developed:
+
+ * We ensure that DataCleaner runs on modern versions of Java on major operating systems.
+ * We take security bugs serious and try to keep dependencies up to date whenever there are vulnerabilities detected.
+ * We are open for bug reports, contributions and discussions.
+ * New features are driven by pull requests.
+
+The current maintainer of the project is [@kaspersorensen](https://github.com/kaspersorensen).
 
 ## Where to go for end-user information?
 
@@ -42,12 +51,6 @@ The main application modules are:
 ## Code style and formatting
 
 In the root of the project you can find 'Formatter-[IDE].xml' files which enable you to import the code formatting rules of the project into your IDE.
-
-## Continuous Integration
-
-There's a public build of DataCleaner that can be found on Travis CI:
-
-https://travis-ci.org/datacleaner/DataCleaner
 
 ## License
 

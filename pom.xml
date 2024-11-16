@@ -237,10 +237,6 @@
 		<system>GitHub</system>
 		<url>https://github.com/datacleaner/DataCleaner/issues</url>
 	</issueManagement>
-	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/datacleaner/DataCleaner</url>
-	</ciManagement>
 	<licenses>
 		<license>
 			<name>Lesser General Public License</name>

@@ -37,128 +37,128 @@ import org.slf4j.LoggerFactory;
  */
 public final class ExtensionPackage implements Serializable, HasName {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
 
-    private final String _name;
-    private final String _scanPackage;
-    private final boolean _scanRecursive;
-    private final Map<String, String> _additionalProperties;
-    private transient boolean _loaded = false;
-    private transient int _loadedAnalyzers;
-    private transient int _loadedTransformers;
-    private transient int _loadedFilters;
-    private transient int _loadedRenderers;
-    private transient ClassLoader _classLoader;
+	private final String _name;
+	private final String _scanPackage;
+	private final boolean _scanRecursive;
+	private final Map<String, String> _additionalProperties;
+	private transient boolean _loaded = false;
+	private transient int _loadedAnalyzers;
+	private transient int _loadedTransformers;
+	private transient int _loadedFilters;
+	private transient int _loadedRenderers;
 
-    public ExtensionPackage(final String name, String scanPackage, final boolean scanRecursive) {
-        _name = name;
-        if (scanPackage == null) {
-            scanPackage = "";
-        }
-        _scanPackage = scanPackage;
-        _scanRecursive = scanRecursive;
-        _additionalProperties = new HashMap<>();
-    }
+	public ExtensionPackage(final String name, String scanPackage, final boolean scanRecursive) {
+		_name = name;
+		if (scanPackage == null) {
+			scanPackage = "";
+		}
+		_scanPackage = scanPackage;
+		_scanRecursive = scanRecursive;
+		_additionalProperties = new HashMap<>();
+	}
 
-    
-    /**
-     * Gets the name of the extension
-     */
-    @Override
-    public String getName() {
-        return _name;
-    }
+	/**
+	 * Gets the name of the extension
+	 */
+	@Override
+	public String getName() {
+		return _name;
+	}
 
-    public String getScanPackage() {
-        return _scanPackage;
-    }
+	public String getScanPackage() {
+		return _scanPackage;
+	}
 
-    public boolean isScanRecursive() {
-        return _scanRecursive;
-    }
+	public boolean isScanRecursive() {
+		return _scanRecursive;
+	}
 
-    public ExtensionPackage loadDescriptors(final DescriptorProvider descriptorProvider) throws IllegalStateException {
-        if (!_loaded) {
+	public ExtensionPackage loadDescriptors(final DescriptorProvider descriptorProvider) throws IllegalStateException {
+		if (!_loaded) {
 
-            final ClasspathScanDescriptorProvider classpathScanner;
-            if (descriptorProvider instanceof ClasspathScanDescriptorProvider) {
-                classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
-            } else if (descriptorProvider instanceof CompositeDescriptorProvider) {
-                classpathScanner = ((CompositeDescriptorProvider) descriptorProvider).findClasspathScanProvider();
-            } else {
-                throw new IllegalStateException(
-                        "Can only load user extensions when descriptor provider is of classpath scanner type.");
-            }
+			final ClasspathScanDescriptorProvider classpathScanner;
+			if (descriptorProvider instanceof ClasspathScanDescriptorProvider) {
+				classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
+			} else if (descriptorProvider instanceof CompositeDescriptorProvider) {
+				classpathScanner = ((CompositeDescriptorProvider) descriptorProvider).findClasspathScanProvider();
+			} else {
+				throw new IllegalStateException(
+						"Can only load user extensions when descriptor provider is of classpath scanner type.");
+			}
 
-            final int analyzersBefore = classpathScanner.getAnalyzerDescriptors().size();
-            final int transformersBefore = classpathScanner.getTransformerDescriptors().size();
-            final int filtersBefore = classpathScanner.getFilterDescriptors().size();
-            final int renderersBefore = classpathScanner.getRendererBeanDescriptors().size();
+			final int analyzersBefore = classpathScanner.getAnalyzerDescriptors().size();
+			final int transformersBefore = classpathScanner.getTransformerDescriptors().size();
+			final int filtersBefore = classpathScanner.getFilterDescriptors().size();
+			final int renderersBefore = classpathScanner.getRendererBeanDescriptors().size();
 
-            if (_scanPackage != null) {
-                classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true);
-            }
+			if (_scanPackage != null) {
+				final ClassLoader classLoader = ClassLoaderUtils.getParentClassLoader();
+				classpathScanner.scanPackage(_scanPackage, _scanRecursive, classLoader, true);
+			}
 
-            _loadedAnalyzers = classpathScanner.getAnalyzerDescriptors().size() - analyzersBefore;
-            _loadedTransformers = classpathScanner.getTransformerDescriptors().size() - transformersBefore;
-            _loadedFilters = classpathScanner.getFilterDescriptors().size() - filtersBefore;
-            _loadedRenderers = classpathScanner.getRendererBeanDescriptors().size() - renderersBefore;
+			_loadedAnalyzers = classpathScanner.getAnalyzerDescriptors().size() - analyzersBefore;
+			_loadedTransformers = classpathScanner.getTransformerDescriptors().size() - transformersBefore;
+			_loadedFilters = classpathScanner.getFilterDescriptors().size() - filtersBefore;
+			_loadedRenderers = classpathScanner.getRendererBeanDescriptors().size() - renderersBefore;
 
-            _loaded = true;
+			_loaded = true;
 
-            logger.info("Succesfully loaded extension '{}' containing {} analyzers, {} transformers, {} filters,"
-                            + " {} renderers", getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters(),
-                    getLoadedRenderers());
-        }
-        return this;
-    }
+			logger.info(
+					"Succesfully loaded extension '{}' containing {} analyzers, {} transformers, {} filters,"
+							+ " {} renderers",
+					getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters(), getLoadedRenderers());
+		}
+		return this;
+	}
 
-    public Map<String, String> getAdditionalProperties() {
-        return _additionalProperties;
-    }
+	public Map<String, String> getAdditionalProperties() {
+		return _additionalProperties;
+	}
 
-    public boolean isLoaded() {
-        return _loaded;
-    }
+	public boolean isLoaded() {
+		return _loaded;
+	}
 
-    public int getLoadedRenderers() {
-        return _loadedRenderers;
-    }
+	public int getLoadedRenderers() {
+		return _loadedRenderers;
+	}
 
-    public int getLoadedAnalyzers() {
-        return _loadedAnalyzers;
-    }
+	public int getLoadedAnalyzers() {
+		return _loadedAnalyzers;
+	}
 
-    public int getLoadedFilters() {
-        return _loadedFilters;
-    }
+	public int getLoadedFilters() {
+		return _loadedFilters;
+	}
 
-    public int getLoadedTransformers() {
-        return _loadedTransformers;
-    }
+	public int getLoadedTransformers() {
+		return _loadedTransformers;
+	}
 
-    public String getDescription() {
-        return _additionalProperties.get("description");
-    }
+	public String getDescription() {
+		return _additionalProperties.get("description");
+	}
 
-    public String getVersion() {
-        return _additionalProperties.get("version");
-    }
+	public String getVersion() {
+		return _additionalProperties.get("version");
+	}
 
-    public String getUrl() {
-        return _additionalProperties.get("url");
-    }
+	public String getUrl() {
+		return _additionalProperties.get("url");
+	}
 
-    public String getAuthor() {
-        return _additionalProperties.get("author");
-    }
+	public String getAuthor() {
+		return _additionalProperties.get("author");
+	}
 
-    /**
-     * Returns the name of the package.
-     */
-    public String toString() {
-        return getName();
-    }
+	/**
+	 * Returns the name of the package.
+	 */
+	public String toString() {
+		return getName();
+	}
 }

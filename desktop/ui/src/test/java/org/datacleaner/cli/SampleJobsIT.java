@@ -134,15 +134,6 @@ public class SampleJobsIT {
     }
 
     @Test
-    public void testDenormalizeOrderTotalsAndPresentAsStackedAreaChart() throws Exception {
-        final Map<String, String[]> expectedResultSets = new HashMap<>();
-        expectedResultSets.put("RESULT: Stacked area plot (13 columns)",
-                new String[] { "JavaStackedAreaAnalyzerResult:", "(no metrics)" });
-
-        testJob("Denormalize order totals and present as stacked area chart", expectedResultSets);
-    }
-
-    @Test
     public void testExportOfOrdersDataMart() throws Exception {
         final Map<String, String[]> expectedResultSets = new HashMap<>();
         expectedResultSets

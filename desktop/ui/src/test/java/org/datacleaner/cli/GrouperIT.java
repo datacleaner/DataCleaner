@@ -23,12 +23,12 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Rule;
@@ -56,7 +56,7 @@ public class GrouperIT {
 
     private void checkOutputFileForInconsistencies(final String filePath) {
         try {
-            final List<String> lines = Files.readLines(new File(filePath), Charsets.UTF_8);
+            final List<String> lines = Files.readLines(new File(filePath), StandardCharsets.UTF_8);
 
             for (int i = 1; i < lines.size(); i++) { // skipping header
                 final String[] values = lines.get(i).split(";");
@@ -76,7 +76,7 @@ public class GrouperIT {
 
     private Map<String, String[]> loadExpectedResult(final String resourceName) throws IOException {
         final String filePath = TEST_DATACLEANER_HOME + "/expected-results/" + resourceName + ".txt";
-        final List<String> fileLines = FileUtils.readLines(new File(filePath));
+        final List<String> fileLines = FileUtils.readLines(new File(filePath), StandardCharsets.UTF_8);
         final Map<String, String[]> results = new HashMap<>();
         final List<String> values = new ArrayList<>();
         String key = "";

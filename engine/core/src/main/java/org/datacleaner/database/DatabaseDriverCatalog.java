@@ -74,6 +74,8 @@ public class DatabaseDriverCatalog implements Serializable {
                 "jdbc:mysql://<hostname>:3306/<database>?defaultFetchSize=" + Integer.MIN_VALUE
                         + "&largeRowSizeThreshold=1024", "jdbc:mysql://<hostname>:<port>/<database>?defaultFetchSize="
                         + Integer.MIN_VALUE + "&largeRowSizeThreshold=1024");
+        add("MariaDB", "images/datastore-types/databases/mysql.png", "org.mariadb.jdbc.Driver", null,
+                "jdbc:mariadb://<hostname>:<port>/<database>");
         add(DATABASE_NAME_DB2, "images/datastore-types/databases/db2.png", "com.ibm.db2.jcc.DB2Driver", null,
                 "jdbc:db2://<hostname>:<port>/<database>", "jdbc:db2j:net://<hostname>:<port>/<database>");
         add(DATABASE_NAME_INGRES, "images/datastore-types/databases/ingres.png", "com.ingres.jdbc.IngresDriver",
@@ -234,14 +236,6 @@ public class DatabaseDriverCatalog implements Serializable {
 
     public DatabaseDriverState getState(final DatabaseDriverDescriptor databaseDescriptor) {
         final String driverClassName = databaseDescriptor.getDriverClassName();
-        if (_userPreferences != null) {
-            final List<UserDatabaseDriver> drivers = _userPreferences.getDatabaseDrivers();
-            for (final UserDatabaseDriver userDatabaseDriver : drivers) {
-                if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
-                    return userDatabaseDriver.getState();
-                }
-            }
-        }
         try {
             Class.forName(driverClassName);
             return DatabaseDriverState.INSTALLED_WORKING;

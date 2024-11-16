@@ -19,16 +19,19 @@
  */
 package org.datacleaner.macos;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+
 import javax.inject.Provider;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.windows.AboutDialog;
 import org.datacleaner.windows.OptionsDialog;
-import org.simplericity.macify.eawt.Application;
 import org.simplericity.macify.eawt.ApplicationEvent;
 import org.simplericity.macify.eawt.ApplicationListener;
 import org.simplericity.macify.eawt.DefaultApplication;
@@ -101,9 +104,23 @@ public class MacOSManager {
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _optionsDialogProvider = optionsDialogProvider;
     }
+    
+    private BufferedImage bufferedImage(Image image) throws IllegalArgumentException {
+    	if (image instanceof BufferedImage) {
+    		return (BufferedImage) image;
+    	}
+        int width = image.getWidth(null);
+        int height = image.getHeight(null);
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Image dimensions are invalid");
+        }
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        bufferedImage.getGraphics().drawImage(image, 0, 0, null);
+        return bufferedImage;
+    }
 
     public void init() {
-        final Application app = new DefaultApplication();
+        final DefaultApplication app = new DefaultApplication();
 
         if (!app.isMac()) {
             logger.debug("Omitting Mac OS initialization, since operating system is not Mac OS");
@@ -112,6 +129,8 @@ public class MacOSManager {
 
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
+        final Image image = ImageManager.get().getImage("images/menu/dc-logo-30.png");
+        app.setApplicationIconImage(bufferedImage(image));
         app.addAboutMenuItem();
         app.setEnabledAboutMenu(true);
         app.addPreferencesMenuItem();

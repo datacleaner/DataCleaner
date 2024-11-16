@@ -169,6 +169,8 @@ public final class ReadObjectBuilder<E extends Serializable> {
             }
         } catch (final IllegalAccessException e) {
             logger.warn("Not allowed to access field: {}", fieldName);
+        } catch (final ClassNotFoundException e) {
+            logger.warn("Class not found while accessing field: {}", fieldName);
         } catch (final IllegalArgumentException e) {
             logger.debug("No such field found in GetFields: {}", fieldName);
         }

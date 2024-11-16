@@ -29,6 +29,7 @@
 						</manifest>
 						<manifestEntries>
 							<SplashScreen-Image>images/splash.png</SplashScreen-Image>
+							<Add-Exports>java.desktop/com.apple.eawt=ALL-UNNAMED</Add-Exports>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -127,11 +128,6 @@
 			<artifactId>DataCleaner-env-berkeleydb</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-env-spark</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 
 		<!-- DataCleaner components -->
 		<dependency>
@@ -165,6 +161,16 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.47.0.0</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.mariadb.jdbc</groupId>
+    		<artifactId>mariadb-java-client</artifactId>
+    		<version>3.5.0</version>
 		</dependency>
 
 		<!-- External stuff -->
@@ -220,11 +226,7 @@
 			<artifactId>freemarker</artifactId>
 		</dependency>
 
-		<!-- Enough Hadoop/Spark for uploading and submitting jobs -->
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-launcher_2.12</artifactId>
-		</dependency>
+		<!-- Enough Hadoop for uploading and submitting jobs -->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>

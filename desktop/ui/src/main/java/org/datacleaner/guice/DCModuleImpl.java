@@ -139,7 +139,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     public DCModuleImpl(final FileObject dataCleanerHome, final FileObject configurationFile) {
         _userPreferencesRef = createUserPreferencesRef(dataCleanerHome);
         _undecoratedConfigurationRef =
-                new DataCleanerConfigurationReader(dataCleanerHome, configurationFile, _userPreferencesRef);
+                new DataCleanerConfigurationReader(dataCleanerHome, configurationFile);
         _analysisJobBuilderRef = new MutableRef<>();
         _configuration = null;
         _windowContext = null;

@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 import org.datacleaner.bootstrap.Bootstrap;
 import org.datacleaner.bootstrap.BootstrapOptions;
 import org.datacleaner.bootstrap.DefaultBootstrapOptions;
-import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.user.DataCleanerHome;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
@@ -93,14 +92,6 @@ public final class Main {
                 final URL url = Main.class.getResource("logback-initial.xml");
                 assert url != null;
                 configurator.doConfigure(url);
-            }
-
-            if (ClassLoaderUtils.IS_WEB_START) {
-                final URL url = Main.class.getResource("logback-jnlp.xml");
-                assert url != null;
-                println("Using JNLP log configuration: " + url);
-                configurator.doConfigure(url);
-                return true;
             }
 
             final File dataCleanerHome = DataCleanerHome.getAsFile();
@@ -166,7 +157,7 @@ public final class Main {
         if (initializeLogging) {
             initializeLogging();
         }
-
+        
         final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
         final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
         bootstrap.run();

@@ -20,6 +20,7 @@
 package org.datacleaner.cluster.http;
 
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.metamodel.util.FileHelper;
@@ -48,7 +50,6 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,9 +197,9 @@ public class HttpClusterManager implements ClusterManager {
     }
 
     protected AnalysisResult readResult(final InputStream inputStream, final List<Throwable> errors) throws Exception {
-        final ChangeAwareObjectInputStream changeAwareObjectInputStream = new ChangeAwareObjectInputStream(inputStream);
-        final Object object = changeAwareObjectInputStream.readObject();
-        changeAwareObjectInputStream.close();
+        final ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+        final Object object = objectInputStream .readObject();
+        objectInputStream.close();
         if (object instanceof AnalysisResult) {
             // response carries a result
             return (AnalysisResult) object;

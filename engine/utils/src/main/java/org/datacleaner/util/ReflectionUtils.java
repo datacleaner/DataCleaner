@@ -552,7 +552,7 @@ public final class ReflectionUtils {
 
     public static <E> E newInstance(final Class<? extends E> clazz) {
         try {
-            return clazz.newInstance();
+            return clazz.getConstructor().newInstance();
         } catch (final Exception e) {
             logger.warn("Could not instantiate {}: {}", clazz, e);
             if (e instanceof RuntimeException) {

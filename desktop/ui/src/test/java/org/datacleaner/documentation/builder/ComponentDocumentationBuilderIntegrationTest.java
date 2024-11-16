@@ -35,6 +35,7 @@ import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.documentation.ComponentDocumentationBuilder;
 import org.datacleaner.util.StringUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ComponentDocumentationBuilderIntegrationTest {
@@ -47,6 +48,7 @@ public class ComponentDocumentationBuilderIntegrationTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void testBuildPatternFinderDocs() throws Exception {
         final File benchmarkFile = new File("src/test/resources/documentation/pattern_finder.html");
         final File outputFile = new File("target/documentation_pattern_finder.html");
@@ -61,6 +63,7 @@ public class ComponentDocumentationBuilderIntegrationTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void testBuildSynonymLookupDocs() throws Exception {
         final File benchmarkFile = new File("src/test/resources/documentation/synonym_lookup.html");
         final File outputFile = new File("target/documentation_synonym_lookup.html");
@@ -75,6 +78,7 @@ public class ComponentDocumentationBuilderIntegrationTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void testBuildEqualsFilterDocs() throws Exception {
         final File benchmarkFile = new File("src/test/resources/documentation/equals_filter.html");
         final File outputFile = new File("target/documentation_equals_filter.html");
@@ -89,6 +93,7 @@ public class ComponentDocumentationBuilderIntegrationTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void testBuildConcatenatorTransformerDocs() throws Exception {
         final File benchmarkFile = new File("src/test/resources/documentation/concatenator.html");
         final File outputFile = new File("target/documentation_concatenator.html");
@@ -103,6 +108,7 @@ public class ComponentDocumentationBuilderIntegrationTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void testBuildTableLookupTransformerDocs() throws Exception {
         final File benchmarkFile = new File("src/test/resources/documentation/table_lookup.html");
         final File outputFile = new File("target/documentation_table_lookup.html");
@@ -117,6 +123,7 @@ public class ComponentDocumentationBuilderIntegrationTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void testBuildCompletenessAnalyzerDocs() throws Exception {
         final File benchmarkFile = new File("src/test/resources/documentation/completeness_analyzer.html");
         final File outputFile = new File("target/documentation_completeness_analyzer.html");

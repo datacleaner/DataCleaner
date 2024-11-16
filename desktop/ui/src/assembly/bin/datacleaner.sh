@@ -17,7 +17,7 @@ esac
 
 DATACLEANER_JAVA_OPTS="$JAVA_OPTS -Xmx1024m"
 if $macos; then
-	DATACLEANER_JAVA_OPTS="$DATACLEANER_JAVA_OPTS -Xdock:name=DataCleaner"
+	DATACLEANER_JAVA_OPTS="$DATACLEANER_JAVA_OPTS -Xdock:name=DataCleaner --add-exports java.desktop/com.apple.eawt=ALL-UNNAMED"
 fi
 echo "Using DATACLEANER_JAVA_OPTS: $DATACLEANER_JAVA_OPTS"
 

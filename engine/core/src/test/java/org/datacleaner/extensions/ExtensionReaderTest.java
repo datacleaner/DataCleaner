@@ -38,7 +38,6 @@ public class ExtensionReaderTest extends TestCase {
                 foundTestExtension = true;
 
                 assertEquals("org.eobjects.foobar", extensionPackage.getScanPackage());
-                assertEquals(false, extensionPackage.isExternal());
                 assertEquals(false, extensionPackage.isLoaded());
 
                 final Map<String, String> additionalProperties = extensionPackage.getAdditionalProperties();

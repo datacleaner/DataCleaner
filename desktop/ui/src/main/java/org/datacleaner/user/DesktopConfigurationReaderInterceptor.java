@@ -33,13 +33,11 @@ import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.extensions.ClassLoaderUtils;
-import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.repository.vfs.VfsRepository;
-import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
@@ -49,63 +47,59 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  */
 public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
 
-    private static final TaskRunner TASK_RUNNER = new MultiThreadedTaskRunner();
-    private static final DescriptorProvider DESCRIPTOR_PROVIDER =
-            new ClasspathScanDescriptorProvider(TASK_RUNNER).scanPackage("org.datacleaner", true);
-    private static final DataCleanerEnvironment BASE_ENVIRONMENT =
-            new DataCleanerEnvironmentImpl().withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER);
+	private static final TaskRunner TASK_RUNNER = new MultiThreadedTaskRunner();
+	private static final DescriptorProvider DESCRIPTOR_PROVIDER = new ClasspathScanDescriptorProvider(TASK_RUNNER)
+			.scanPackage("org.datacleaner", true);
+	private static final DataCleanerEnvironment BASE_ENVIRONMENT = new DataCleanerEnvironmentImpl()
+			.withTaskRunner(TASK_RUNNER).withDescriptorProvider(DESCRIPTOR_PROVIDER);
 
-    private final Repository _homeRepository;
+	private final Repository _homeRepository;
 
-    public DesktopConfigurationReaderInterceptor(final FileObject dataCleanerHome) {
-        this(new VfsRepository(dataCleanerHome));
-    }
+	public DesktopConfigurationReaderInterceptor(final FileObject dataCleanerHome) {
+		this(new VfsRepository(dataCleanerHome));
+	}
 
-    public DesktopConfigurationReaderInterceptor(final FileObject dataCleanerHome, final Resource propertiesResource) {
-        this(new VfsRepository(dataCleanerHome), propertiesResource);
-    }
+	public DesktopConfigurationReaderInterceptor(final FileObject dataCleanerHome, final Resource propertiesResource) {
+		this(new VfsRepository(dataCleanerHome), propertiesResource);
+	}
 
-    public DesktopConfigurationReaderInterceptor(final File dataCleanerHome) {
-        this(new FileRepository(dataCleanerHome));
-    }
+	public DesktopConfigurationReaderInterceptor(final File dataCleanerHome) {
+		this(new FileRepository(dataCleanerHome));
+	}
 
-    public DesktopConfigurationReaderInterceptor(final File dataCleanerHome, final Resource propertiesResource) {
-        this(new FileRepository(dataCleanerHome), propertiesResource);
-    }
+	public DesktopConfigurationReaderInterceptor(final File dataCleanerHome, final Resource propertiesResource) {
+		this(new FileRepository(dataCleanerHome), propertiesResource);
+	}
 
-    public DesktopConfigurationReaderInterceptor(final Repository homeRepository) {
-        this(homeRepository, null);
-    }
+	public DesktopConfigurationReaderInterceptor(final Repository homeRepository) {
+		this(homeRepository, null);
+	}
 
-    public DesktopConfigurationReaderInterceptor(final Repository homeRepository, final Resource propertiesResource) {
-        super(propertiesResource, BASE_ENVIRONMENT);
-        _homeRepository = homeRepository;
-    }
+	public DesktopConfigurationReaderInterceptor(final Repository homeRepository, final Resource propertiesResource) {
+		super(propertiesResource, BASE_ENVIRONMENT);
+		_homeRepository = homeRepository;
+	}
 
-    @Override
-    public DataCleanerHomeFolder getHomeFolder() {
-        return new DataCleanerHomeFolderImpl(getHomeRepository());
-    }
+	@Override
+	public DataCleanerHomeFolder getHomeFolder() {
+		return new DataCleanerHomeFolderImpl(getHomeRepository());
+	}
 
-    private Repository getHomeRepository() {
-        return _homeRepository;
-    }
+	private Repository getHomeRepository() {
+		return _homeRepository;
+	}
 
-    @Override
-    public Class<?> loadClass(final String className) throws ClassNotFoundException {
-        final ClassLoader classLoader = ExtensionPackage.getExtensionClassLoader();
-        return Class.forName(className, true, classLoader);
-    }
+	@Override
+	public Class<?> loadClass(final String className) throws ClassNotFoundException {
+		final ClassLoader classLoader = ClassLoaderUtils.getParentClassLoader();
+		return Class.forName(className, true, classLoader);
+	}
 
-    @Override
-    protected List<ResourceTypeHandler<?>> getExtraResourceTypeHandlers() {
-        final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
-        if (ClassLoaderUtils.IS_WEB_START) {
-            handlers.add(new DummyRepositoryResourceFileTypeHandler());
-        } else {
-            final Repository homeFolder = getHomeRepository();
-            handlers.add(new RepositoryFileResourceTypeHandler(homeFolder, homeFolder));
-        }
-        return handlers;
-    }
+	@Override
+	protected List<ResourceTypeHandler<?>> getExtraResourceTypeHandlers() {
+		final List<ResourceTypeHandler<?>> handlers = new ArrayList<>();
+		final Repository homeFolder = getHomeRepository();
+		handlers.add(new RepositoryFileResourceTypeHandler(homeFolder, homeFolder));
+		return handlers;
+	}
 }

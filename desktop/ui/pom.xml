@@ -29,6 +29,7 @@
 						</manifest>
 						<manifestEntries>
 							<SplashScreen-Image>images/splash.png</SplashScreen-Image>
+							<Add-Exports>java.desktop/com.apple.eawt=ALL-UNNAMED</Add-Exports>
 						</manifestEntries>
 					</archive>
 				</configuration>

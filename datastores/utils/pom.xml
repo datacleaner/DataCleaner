@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-datastores</artifactId>
-		<version>5.9.0</version>
+		<version>5.9.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-datastore-utils</artifactId>
 	<dependencies>

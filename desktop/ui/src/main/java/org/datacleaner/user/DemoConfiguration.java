@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.SalesforceDatastore;
 

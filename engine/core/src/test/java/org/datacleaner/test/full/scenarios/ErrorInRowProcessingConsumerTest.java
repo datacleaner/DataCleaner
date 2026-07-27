@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;

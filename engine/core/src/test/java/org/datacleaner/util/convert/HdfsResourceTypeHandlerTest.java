@@ -21,7 +21,7 @@ package org.datacleaner.util.convert;
 
 import static org.junit.Assert.*;
 
-import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.HdfsResource;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.test.MockHadoopConfigHelper;
 import org.junit.Rule;

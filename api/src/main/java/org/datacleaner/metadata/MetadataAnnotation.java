@@ -21,7 +21,7 @@ package org.datacleaner.metadata;
 
 import java.util.Map;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Represents an annotation of a metadata element such as a

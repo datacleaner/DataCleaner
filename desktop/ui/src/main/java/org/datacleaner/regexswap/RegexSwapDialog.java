@@ -39,7 +39,7 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import org.apache.metamodel.util.SharedExecutorService;
+import org.datacleaner.metamodel.util.SharedExecutorService;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.reference.regexswap.Category;

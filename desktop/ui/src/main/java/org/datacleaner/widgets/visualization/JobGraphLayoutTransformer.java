@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;

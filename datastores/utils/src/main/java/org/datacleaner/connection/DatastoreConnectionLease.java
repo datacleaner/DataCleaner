@@ -21,7 +21,7 @@ package org.datacleaner.connection;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

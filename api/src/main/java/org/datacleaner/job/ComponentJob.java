@@ -22,7 +22,7 @@ package org.datacleaner.job;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.descriptors.ComponentDescriptor;
 
 /**

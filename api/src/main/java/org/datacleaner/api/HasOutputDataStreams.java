@@ -19,7 +19,7 @@
  */
 package org.datacleaner.api;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 
 /**
  * Interface for components that produce data streams as an output of their

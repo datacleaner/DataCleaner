@@ -28,7 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.FileResource;
 import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.bootstrap.DCWindowContext;

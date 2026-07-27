@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
 

@@ -21,10 +21,10 @@ package org.datacleaner.connection;
 
 import java.util.List;
 
-import org.apache.metamodel.hbase.HBaseConfiguration;
-import org.apache.metamodel.hbase.HBaseDataContext;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.hbase.HBaseConfiguration;
+import org.datacleaner.metamodel.hbase.HBaseDataContext;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 
 /**
  * Datastore implementation for HBase.

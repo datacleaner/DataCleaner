@@ -21,7 +21,7 @@ package org.datacleaner.api;
 
 import java.io.Serializable;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Represents a category that a component can be applied to. Categories aid the

@@ -21,7 +21,7 @@ package org.datacleaner.bootstrap;
 
 import java.awt.Image;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.cli.CliArguments;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;

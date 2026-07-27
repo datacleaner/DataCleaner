@@ -33,9 +33,9 @@ import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;

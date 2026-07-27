@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.Nullable;

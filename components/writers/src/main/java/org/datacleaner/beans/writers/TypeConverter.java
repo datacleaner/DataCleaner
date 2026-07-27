@@ -21,8 +21,8 @@ package org.datacleaner.beans.writers;
 
 import java.util.Date;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.ColumnType;
 import org.datacleaner.components.convert.ConvertToBooleanTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 

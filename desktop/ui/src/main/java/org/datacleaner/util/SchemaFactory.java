@@ -19,7 +19,7 @@
  */
 package org.datacleaner.util;
 
-import org.apache.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Schema;
 
 /**
  * Interface for any object that can create or provide a schema.

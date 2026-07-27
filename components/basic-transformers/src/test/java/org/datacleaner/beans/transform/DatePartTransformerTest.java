@@ -23,8 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
+import org.datacleaner.metamodel.util.DateUtils;
+import org.datacleaner.metamodel.util.Month;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.beans.transform.DatePartTransformer.WeekDay;
 import org.datacleaner.data.MockInputColumn;

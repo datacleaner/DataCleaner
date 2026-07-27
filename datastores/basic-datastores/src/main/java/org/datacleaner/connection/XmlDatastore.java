@@ -24,10 +24,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.xml.XmlDomDataContext;
-import org.apache.metamodel.xml.XmlSaxDataContext;
-import org.apache.metamodel.xml.XmlSaxTableDef;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.xml.XmlDomDataContext;
+import org.datacleaner.metamodel.xml.XmlSaxDataContext;
+import org.datacleaner.metamodel.xml.XmlSaxTableDef;
 import org.datacleaner.util.ReadObjectBuilder;
 
 /**

@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;

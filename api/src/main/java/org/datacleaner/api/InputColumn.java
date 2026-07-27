@@ -21,8 +21,8 @@ package org.datacleaner.api;
 
 import java.io.Serializable;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Represents a column that is used to retrieve values from a row of data. A

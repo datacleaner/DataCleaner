@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Defines a type of matching output, which can be either true/false or the

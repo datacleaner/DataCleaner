@@ -50,7 +50,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.actions.ExportResultToHtmlActionListener;
 import org.datacleaner.actions.SaveAnalysisResultActionListener;
 import org.datacleaner.api.AnalyzerResult;

@@ -29,7 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;

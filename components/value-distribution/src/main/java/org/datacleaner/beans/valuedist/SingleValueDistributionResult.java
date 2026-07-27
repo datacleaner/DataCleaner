@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 
-import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.metamodel.util.SerializableRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CompositeValueFrequency;

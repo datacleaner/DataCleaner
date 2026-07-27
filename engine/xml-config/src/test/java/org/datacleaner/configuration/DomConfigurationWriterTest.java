@@ -27,11 +27,11 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.metamodel.schema.TableType;
-import org.apache.metamodel.util.ClasspathResource;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.schema.TableType;
+import org.datacleaner.metamodel.util.ClasspathResource;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;

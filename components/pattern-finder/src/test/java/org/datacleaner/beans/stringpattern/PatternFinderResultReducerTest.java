@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Action;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;

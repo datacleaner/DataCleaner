@@ -18,8 +18,8 @@
 			<artifactId>gentyref</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-csv</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-csv</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>

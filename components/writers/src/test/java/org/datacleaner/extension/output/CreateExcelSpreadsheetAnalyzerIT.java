@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;

@@ -23,17 +23,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.MetaModelException;
-import org.apache.metamodel.QueryPostprocessDataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.EmptyDataSet;
-import org.apache.metamodel.query.FilterItem;
-import org.apache.metamodel.query.SelectItem;
-import org.apache.metamodel.schema.AbstractSchema;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.MetaModelException;
+import org.datacleaner.metamodel.QueryPostprocessDataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.EmptyDataSet;
+import org.datacleaner.metamodel.query.FilterItem;
+import org.datacleaner.metamodel.query.SelectItem;
+import org.datacleaner.metamodel.schema.AbstractSchema;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.OutputDataStream;
 
 /**

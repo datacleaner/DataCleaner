@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;

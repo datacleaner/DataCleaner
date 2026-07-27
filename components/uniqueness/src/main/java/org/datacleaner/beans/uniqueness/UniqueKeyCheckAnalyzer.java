@@ -28,13 +28,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.csv.CsvWriter;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.ToStringComparator;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.csv.CsvDataContext;
+import org.datacleaner.metamodel.csv.CsvWriter;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.ToStringComparator;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;

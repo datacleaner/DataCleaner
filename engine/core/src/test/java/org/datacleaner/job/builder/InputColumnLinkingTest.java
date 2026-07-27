@@ -21,8 +21,8 @@ package org.datacleaner.job.builder;
 
 import static org.junit.Assert.*;
 
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.components.convert.ConvertToDateTransformer;

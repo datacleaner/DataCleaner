@@ -22,7 +22,7 @@ package org.datacleaner.components.group;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.util.AggregateBuilder;
+import org.datacleaner.metamodel.util.AggregateBuilder;
 
 final class CreateListAggregateBuilder extends AbstractRowNumberAwareAggregateBuilder<List<?>>
         implements AggregateBuilder<List<?>> {

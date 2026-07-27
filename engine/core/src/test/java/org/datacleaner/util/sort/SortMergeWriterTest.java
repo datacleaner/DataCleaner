@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Comparator;
 
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.ToStringComparator;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.ToStringComparator;
 
 import junit.framework.TestCase;
 

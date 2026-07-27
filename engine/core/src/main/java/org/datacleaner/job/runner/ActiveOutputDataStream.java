@@ -23,9 +23,9 @@ import java.io.Closeable;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.query.SelectItem;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.query.SelectItem;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.OutputDataStreamJob;

@@ -24,8 +24,8 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.util.Action;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.MongoDbDatastore;

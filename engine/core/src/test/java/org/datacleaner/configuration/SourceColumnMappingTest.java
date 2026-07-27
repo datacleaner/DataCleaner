@@ -19,7 +19,7 @@
  */
 package org.datacleaner.configuration;
 
-import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableColumn;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.test.mock.MockDatastore;

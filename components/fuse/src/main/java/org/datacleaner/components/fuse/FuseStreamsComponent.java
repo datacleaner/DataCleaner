@@ -26,9 +26,9 @@ import java.util.List;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.ColumnTypeImpl;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.ColumnTypeImpl;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;

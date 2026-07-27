@@ -27,8 +27,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.SharedExecutorService;
+import org.datacleaner.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -24,8 +24,8 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.Alignment;

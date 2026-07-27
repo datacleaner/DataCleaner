@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.sugarcrm.SugarCrmDataContext;
+import org.datacleaner.metamodel.sugarcrm.SugarCrmDataContext;
 
 /**
  * A datastore that connects to a SugarCRM instance to fetch data

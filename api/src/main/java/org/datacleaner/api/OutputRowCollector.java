@@ -21,7 +21,7 @@ package org.datacleaner.api;
 
 import javax.inject.Inject;
 
-import org.apache.metamodel.data.Row;
+import org.datacleaner.metamodel.data.Row;
 
 /**
  * An {@link OutputRowCollector} is a consumer of output rows from

@@ -22,7 +22,7 @@ package org.datacleaner.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.data.Row;
+import org.datacleaner.metamodel.data.Row;
 import org.datacleaner.api.OutputRowCollector;
 
 public class MockOutputRowCollector implements OutputRowCollector {

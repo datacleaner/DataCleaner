@@ -21,9 +21,9 @@ package org.datacleaner.connection;
 
 import javax.sql.DataSource;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.jdbc.JdbcDataContext;
-import org.apache.metamodel.schema.TableType;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.jdbc.JdbcDataContext;
+import org.datacleaner.metamodel.schema.TableType;
 
 /**
  * A {@link DatastoreConnection} based on a {@link DataSource}.

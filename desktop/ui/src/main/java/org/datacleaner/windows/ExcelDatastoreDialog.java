@@ -30,10 +30,10 @@ import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.excel.ExcelConfiguration;
-import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.excel.ExcelConfiguration;
+import org.datacleaner.metamodel.schema.naming.CustomColumnNamingStrategy;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.guice.Nullable;

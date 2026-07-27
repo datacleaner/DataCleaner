@@ -22,9 +22,9 @@ package org.datacleaner.widgets.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.pojo.ArrayTableDataProvider;
+import org.datacleaner.metamodel.pojo.TableDataProvider;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.SimpleWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;

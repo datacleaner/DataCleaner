@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.DataCleanerHomeFolder;

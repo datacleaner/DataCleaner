@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job.runner;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;

@@ -21,7 +21,7 @@ package org.datacleaner.connection;
 
 import java.util.List;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 
 import junit.framework.TestCase;
 

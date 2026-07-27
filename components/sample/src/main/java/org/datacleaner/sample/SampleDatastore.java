@@ -19,7 +19,7 @@
  */
 package org.datacleaner.sample;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.api.Configured;
 import org.datacleaner.connection.DatastoreConnectionImpl;
 import org.datacleaner.connection.PerformanceCharacteristics;

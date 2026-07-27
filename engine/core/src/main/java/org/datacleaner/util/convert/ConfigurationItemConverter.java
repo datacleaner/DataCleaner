@@ -23,9 +23,9 @@ import static org.datacleaner.util.ReflectionUtils.*;
 
 import javax.inject.Inject;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
  * <li>org.datacleaner.reference.SynonymCatalog</li>
  * <li>org.datacleaner.reference.StringPattern</li>
  * <li>org.datacleaner.connection.Datastore</li>
- * <li>org.apache.metamodel.schema.Column</li>
- * <li>org.apache.metamodel.schema.Table</li>
- * <li>org.apache.metamodel.schema.Schema</li>
+ * <li>org.datacleaner.metamodel.schema.Column</li>
+ * <li>org.datacleaner.metamodel.schema.Table</li>
+ * <li>org.datacleaner.metamodel.schema.Schema</li>
  * </ul>
  */
 public class ConfigurationItemConverter implements Converter<Object> {

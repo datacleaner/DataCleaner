@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.salesforce.SalesforceDataContext;
+import org.datacleaner.metamodel.salesforce.SalesforceDataContext;
 
 import com.google.common.base.Strings;
 

@@ -40,9 +40,9 @@ import javax.swing.TransferHandler;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.Datastore;

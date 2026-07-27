@@ -27,12 +27,12 @@ import java.util.Properties;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.query.OperatorType;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.query.OperatorType;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;

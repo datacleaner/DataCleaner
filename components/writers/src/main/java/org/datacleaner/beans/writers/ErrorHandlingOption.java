@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.writers;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 public enum ErrorHandlingOption implements HasName {
 

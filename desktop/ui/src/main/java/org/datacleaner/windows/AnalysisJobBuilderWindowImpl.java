@@ -54,9 +54,9 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.actions.NewAnalysisJobActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;

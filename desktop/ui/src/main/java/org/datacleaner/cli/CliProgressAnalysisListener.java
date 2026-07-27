@@ -22,7 +22,7 @@ package org.datacleaner.cli;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisListenerAdaptor;
 import org.datacleaner.job.runner.RowProcessingMetrics;

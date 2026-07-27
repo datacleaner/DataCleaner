@@ -22,11 +22,11 @@ package org.datacleaner.beans;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.UrlResource;
+import org.datacleaner.metamodel.pojo.TableDataProvider;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.UrlResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.CompletenessAnalyzer.Condition;

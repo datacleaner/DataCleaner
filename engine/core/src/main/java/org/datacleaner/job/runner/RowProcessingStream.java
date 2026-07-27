@@ -21,7 +21,7 @@ package org.datacleaner.job.runner;
 
 import java.util.Objects;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.OutputDataStreamJob;
 

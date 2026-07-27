@@ -22,7 +22,7 @@ package org.datacleaner.windows;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.FileResource;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;

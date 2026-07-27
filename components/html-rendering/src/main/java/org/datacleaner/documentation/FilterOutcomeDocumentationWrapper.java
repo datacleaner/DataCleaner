@@ -19,7 +19,7 @@
  */
 package org.datacleaner.documentation;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Filter;
 import org.datacleaner.util.ReflectionUtils;

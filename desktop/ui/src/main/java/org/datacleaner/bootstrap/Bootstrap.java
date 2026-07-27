@@ -37,7 +37,7 @@ import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.provider.AbstractFileSystem;
 import org.apache.commons.vfs2.provider.DelegateFileObject;
 import org.apache.commons.vfs2.provider.url.UrlFileName;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;

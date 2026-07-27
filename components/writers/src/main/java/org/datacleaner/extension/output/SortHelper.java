@@ -21,8 +21,8 @@ package org.datacleaner.extension.output;
 
 import java.util.Comparator;
 
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.util.NumberComparator;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.util.NumberComparator;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;

@@ -26,7 +26,7 @@ import java.net.UnknownHostException;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.connection.Datastore;
 import org.junit.Assert;
 

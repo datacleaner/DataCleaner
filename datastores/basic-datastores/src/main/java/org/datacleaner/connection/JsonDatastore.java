@@ -21,10 +21,10 @@ package org.datacleaner.connection;
 
 import java.util.List;
 
-import org.apache.metamodel.json.JsonDataContext;
-import org.apache.metamodel.schema.builder.SchemaBuilder;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.metamodel.json.JsonDataContext;
+import org.datacleaner.metamodel.schema.builder.SchemaBuilder;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.SerializableRef;
 
 /**
  * Datastore implementation for JSON files

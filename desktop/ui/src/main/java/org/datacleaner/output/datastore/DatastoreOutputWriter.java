@@ -27,11 +27,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.create.CreateTable;
-import org.apache.metamodel.drop.DropTable;
-import org.apache.metamodel.jdbc.JdbcDataContext;
-import org.apache.metamodel.schema.Schema;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.create.CreateTable;
+import org.datacleaner.metamodel.drop.DropTable;
+import org.datacleaner.metamodel.jdbc.JdbcDataContext;
+import org.datacleaner.metamodel.schema.Schema;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.JdbcDatastore;

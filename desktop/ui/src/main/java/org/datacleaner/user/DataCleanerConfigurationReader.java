@@ -23,8 +23,8 @@ import java.io.InputStream;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.LazyRef;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.JaxbConfigurationReader;

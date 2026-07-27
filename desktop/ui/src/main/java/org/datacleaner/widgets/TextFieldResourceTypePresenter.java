@@ -27,7 +27,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.WidgetFactory;

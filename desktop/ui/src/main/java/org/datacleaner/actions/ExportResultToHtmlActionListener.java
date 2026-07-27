@@ -31,7 +31,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;

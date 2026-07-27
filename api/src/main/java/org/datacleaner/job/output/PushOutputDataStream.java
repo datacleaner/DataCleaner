@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job.output;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.connection.PerformanceCharacteristics;
 import org.datacleaner.connection.PerformanceCharacteristicsImpl;

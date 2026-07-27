@@ -21,8 +21,8 @@ package org.datacleaner.connection;
 
 import java.util.Collection;
 
-import org.apache.metamodel.kafka.KafkaDataContext;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.kafka.KafkaDataContext;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Datastore class for Apache Kafka. Uses a Kafka 'bootstrap servers' connection string, a topic list and key+value

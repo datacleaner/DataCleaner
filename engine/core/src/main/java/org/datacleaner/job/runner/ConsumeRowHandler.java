@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;

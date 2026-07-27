@@ -32,7 +32,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;

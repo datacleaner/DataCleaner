@@ -32,8 +32,8 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.ElasticSearchDatastore;

@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 
 import junit.framework.TestCase;

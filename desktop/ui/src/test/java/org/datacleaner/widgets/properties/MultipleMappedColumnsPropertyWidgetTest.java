@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MutableInputColumn;

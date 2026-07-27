@@ -26,11 +26,11 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.NamedStructure;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.NamedStructure;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.util.IconUtils;

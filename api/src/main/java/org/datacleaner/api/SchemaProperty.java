@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
-import org.apache.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Schema;
 
 /**
  * Annotation to provide the extra metadata about a property that it is a

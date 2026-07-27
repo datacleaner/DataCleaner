@@ -14,8 +14,7 @@
 		<junit.version>4.13.1</junit.version>
 		<easymock.version>3.6</easymock.version>
 		<httpcomponents.version>4.5.13</httpcomponents.version>
-		<metamodel.version>5.3.5</metamodel.version>
-		<metamodel.extras.version>5.3.4</metamodel.extras.version>
+		<metamodel.version>5.3.10</metamodel.version>
 		<spring.version>5.2.19.RELEASE</spring.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<icu4j.version>65.1</icu4j.version>
@@ -42,6 +41,17 @@
 		almost any kind of data, eg. CSV files, databases, Excel spreadsheets, NoSQL databases and more.</description>
 	<url>https://datacleaner.github.io</url>
 	<packaging>pom</packaging>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+			<id>github-metamodel</id>
+			<url>https://maven.pkg.github.com/datacleaner/metamodel</url>
+        </repository>
+	</repositories>
 
 	<profiles>
 		<profile>
@@ -381,7 +391,7 @@
 										<exclude>org.eclipse.jetty.aggregate:jetty-all:*:jar:compile</exclude>
 										<exclude>org.mortbay.jetty:jetty:*:jar:compile</exclude>
 										<exclude>org.codehaus.jackson:*</exclude>
-										<exclude>org.apache.metamodel:*</exclude>
+										<exclude>org.datacleaner.metamodel:*</exclude>
 										<exclude>log4j:*</exclude>
 										<exclude>org.apache.logging.log4j:*</exclude>
                                         <exclude>org.slf4j:slf4j-reload4j:*</exclude>
@@ -623,13 +633,13 @@
 				<version>3.18.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-core</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-core</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-excel</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-excel</artifactId>
 				<version>${metamodel.version}</version>
 				<exclusions>
 					<exclusion>
@@ -643,176 +653,44 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-hadoop</artifactId>
-				<version>${metamodel.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-beanutils</groupId>
-						<artifactId>commons-beanutils-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>javax.xml.bind</groupId>
-						<artifactId>jaxb-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-csv</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-csv</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-arff</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-arff</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-cassandra</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-fixedwidth</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-fixedwidth</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-pojo</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-pojo</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-xml</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-openoffice</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-jdbc</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-salesforce</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-mongodb-mongo3</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-sugarcrm</artifactId>
+				<groupId>org.datacleaner.metamodel</groupId>
+				<artifactId>metamodel-json</artifactId>
 				<version>${metamodel.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>javax.xml.bind</groupId>
-						<artifactId>jaxb-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-xml</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-jdbc</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-elasticsearch-rest</artifactId>
-				<version>${metamodel.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.elasticsearch</groupId>
-						<artifactId>elasticsearch</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-mongodb-mongo3</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-couchdb</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-dynamodb</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-kafka</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-json</artifactId>
-				<version>${metamodel.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-neo4j</artifactId>
-				<version>${metamodel.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.geronimo.bundles</groupId>
-						<artifactId>json</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel</groupId>
-				<artifactId>MetaModel-hbase</artifactId>
-				<version>${metamodel.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>jdk.tools</groupId>
-						<artifactId>jdk.tools</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>commons-beanutils</groupId>
-						<artifactId>commons-beanutils-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.github.stephenc.findbugs</groupId>
-						<artifactId>findbugs-annotations</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>javax.xml.stream</groupId>
-						<artifactId>stax-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>javax.servlet.jsp</groupId>
-						<artifactId>jsp-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>jakarta.activation</groupId>
-						<artifactId>jakarta.activation-api</artifactId>
-					</exclusion>
-                    <exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-reload4j</artifactId>
-					</exclusion>
-                    <exclusion>
-						<groupId>ch.qos.reload4j</groupId>
-						<artifactId>reload4j</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel-extras</groupId>
-				<artifactId>MetaModel-extras-sas</artifactId>
-				<version>${metamodel.extras.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel-extras</groupId>
-				<artifactId>MetaModel-extras-dbase</artifactId>
-				<version>${metamodel.extras.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eobjects.metamodel-extras</groupId>
-				<artifactId>MetaModel-extras-access</artifactId>
-				<version>${metamodel.extras.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>

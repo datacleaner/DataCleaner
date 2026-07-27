@@ -22,8 +22,8 @@ package org.datacleaner.util;
 import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.server.HadoopClusterInformation;
 
 public class HadoopResource extends HdfsResource {

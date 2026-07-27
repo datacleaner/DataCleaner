@@ -24,12 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.create.TableCreationBuilder;
-import org.apache.metamodel.excel.ExcelDataContext;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.create.TableCreationBuilder;
+import org.datacleaner.metamodel.excel.ExcelDataContext;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.MutableRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.output.OutputWriter;
 

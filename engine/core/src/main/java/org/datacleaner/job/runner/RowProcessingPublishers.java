@@ -29,10 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.Filter;

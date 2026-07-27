@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;

@@ -22,8 +22,8 @@ package org.datacleaner.job.runner;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.concurrent.ForkTaskListener;
 import org.datacleaner.job.concurrent.TaskListener;

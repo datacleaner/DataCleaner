@@ -23,9 +23,9 @@ import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.HasName;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.util.Action;
+import org.datacleaner.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.SchemaFactory;

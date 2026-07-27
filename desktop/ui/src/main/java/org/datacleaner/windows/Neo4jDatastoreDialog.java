@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Schema;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.Neo4jDatastore;

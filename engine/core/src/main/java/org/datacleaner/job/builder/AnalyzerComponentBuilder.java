@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;

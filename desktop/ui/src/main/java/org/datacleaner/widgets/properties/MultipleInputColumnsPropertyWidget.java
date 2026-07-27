@@ -40,8 +40,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
+import org.datacleaner.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.HasNameMapper;
 import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.datacleaner.actions.ReorderColumnsActionListener;
 import org.datacleaner.api.ExpressionBasedInputColumn;

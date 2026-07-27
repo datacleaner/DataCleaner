@@ -53,7 +53,7 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.JTextComponent;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.widgets.DarkButtonUI;
 import org.datacleaner.widgets.DarkToggleButtonUI;

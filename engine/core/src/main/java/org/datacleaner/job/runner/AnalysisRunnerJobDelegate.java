@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfiguration;

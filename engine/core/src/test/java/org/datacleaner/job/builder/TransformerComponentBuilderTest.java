@@ -26,10 +26,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.HasNameMapper;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.mock.TransformerMock;

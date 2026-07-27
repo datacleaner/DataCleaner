@@ -21,7 +21,7 @@ package org.datacleaner.cli;
 
 import java.io.PrintWriter;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 
 /**
  * Main class for the DataCleaner Command-line interface (CLI).

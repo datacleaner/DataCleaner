@@ -24,8 +24,8 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 

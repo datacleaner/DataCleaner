@@ -19,8 +19,8 @@
  */
 package org.datacleaner.data;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
 
 import junit.framework.TestCase;
 

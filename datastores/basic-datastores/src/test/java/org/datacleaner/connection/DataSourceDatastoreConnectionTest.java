@@ -23,7 +23,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.test.TestHelper;
 import org.easymock.EasyMock;
 import org.springframework.mock.jndi.SimpleNamingContext;

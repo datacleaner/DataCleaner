@@ -25,10 +25,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.components.fuse.CoalesceMultipleFieldsTransformer;

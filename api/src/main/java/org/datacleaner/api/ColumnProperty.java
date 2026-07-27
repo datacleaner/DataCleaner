@@ -26,7 +26,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 
 /**
  * Annotation to provide the extra metadata about a property that it is a

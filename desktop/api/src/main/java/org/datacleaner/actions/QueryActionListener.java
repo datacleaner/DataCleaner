@@ -23,8 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.builder.AnalysisJobBuilder;

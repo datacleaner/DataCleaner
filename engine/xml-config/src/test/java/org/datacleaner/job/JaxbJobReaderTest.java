@@ -33,8 +33,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.ToStringComparator;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.ToStringComparator;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;

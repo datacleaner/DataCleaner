@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.Collection;
 
-import org.apache.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Action;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.documentation.ComponentDocumentationBuilder;

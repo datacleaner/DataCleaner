@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.util.LazyRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisJobFailedException;

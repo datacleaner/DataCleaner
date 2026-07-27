@@ -22,8 +22,8 @@ package org.datacleaner.components.fuse;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.data.MetaModelInputColumn;

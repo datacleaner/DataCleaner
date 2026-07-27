@@ -29,10 +29,10 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.SchemaFactory;

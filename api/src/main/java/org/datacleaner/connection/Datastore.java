@@ -21,7 +21,7 @@ package org.datacleaner.connection;
 
 import java.io.Serializable;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Defines a datastore from which data can be queried.

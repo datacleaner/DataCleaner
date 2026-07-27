@@ -19,7 +19,7 @@
  */
 package org.datacleaner.configuration;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.w3c.dom.Document;
 
 /**

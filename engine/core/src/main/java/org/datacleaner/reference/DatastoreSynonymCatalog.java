@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;

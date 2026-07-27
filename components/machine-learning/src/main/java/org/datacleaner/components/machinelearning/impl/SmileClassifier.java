@@ -19,7 +19,7 @@
  */
 package org.datacleaner.components.machinelearning.impl;
 
-import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.metamodel.util.SerializableRef;
 import org.datacleaner.components.machinelearning.api.MLClassification;
 import org.datacleaner.components.machinelearning.api.MLClassificationMetadata;
 

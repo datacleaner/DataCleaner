@@ -29,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;

@@ -27,8 +27,8 @@ import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DynamoDbDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;

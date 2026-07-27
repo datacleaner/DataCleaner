@@ -30,7 +30,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
-import org.apache.metamodel.util.EqualsBuilder;
+import org.datacleaner.metamodel.util.EqualsBuilder;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;

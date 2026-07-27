@@ -23,9 +23,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.pojo.PojoDataContext;
-import org.apache.metamodel.pojo.TableDataProvider;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.pojo.PojoDataContext;
+import org.datacleaner.metamodel.pojo.TableDataProvider;
 
 /**
  * A {@link Datastore} that works entirely on in-memory Java objects.

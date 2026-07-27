@@ -19,7 +19,7 @@
  */
 package org.datacleaner.widgets;
 
-import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.HdfsResource;
 import org.datacleaner.windows.HdfsUrlChooser;
 
 public class HdfsResourceTextField extends AbstractResourceTextField<HdfsResource> {

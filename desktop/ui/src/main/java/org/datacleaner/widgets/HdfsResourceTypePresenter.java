@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.HdfsResource;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.server.HadoopClusterInformation;

@@ -23,12 +23,12 @@ import java.io.Closeable;
 import java.io.File;
 import java.util.List;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.create.CreateTable;
-import org.apache.metamodel.excel.ExcelDataContext;
-import org.apache.metamodel.insert.RowInsertionBuilder;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.create.CreateTable;
+import org.datacleaner.metamodel.excel.ExcelDataContext;
+import org.datacleaner.metamodel.insert.RowInsertionBuilder;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.util.WriteBuffer;
 import org.datacleaner.util.sort.SortMergeWriter;
 

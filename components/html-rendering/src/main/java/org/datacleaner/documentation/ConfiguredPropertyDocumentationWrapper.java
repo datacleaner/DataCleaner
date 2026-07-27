@@ -19,7 +19,7 @@
  */
 package org.datacleaner.documentation;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;

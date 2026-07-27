@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.neo4j.Neo4jDataContext;
+import org.datacleaner.metamodel.neo4j.Neo4jDataContext;
 
 /**
  * Datastore providing access to Neo4j graph database

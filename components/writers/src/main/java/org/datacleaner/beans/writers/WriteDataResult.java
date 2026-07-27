@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.writers;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Metric;

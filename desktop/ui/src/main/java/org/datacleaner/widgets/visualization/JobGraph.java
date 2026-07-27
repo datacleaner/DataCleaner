@@ -41,8 +41,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.TransferHandler;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;

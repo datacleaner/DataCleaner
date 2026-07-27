@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
-import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.metamodel.util.SerializableRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Metric;

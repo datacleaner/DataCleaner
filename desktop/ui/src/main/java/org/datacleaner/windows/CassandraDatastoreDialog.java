@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Schema;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.DatastoreConnection;

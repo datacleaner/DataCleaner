@@ -21,9 +21,9 @@ package org.datacleaner.beans.standardize;
 
 import java.util.Arrays;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 
 import junit.framework.TestCase;

@@ -30,10 +30,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Filter;

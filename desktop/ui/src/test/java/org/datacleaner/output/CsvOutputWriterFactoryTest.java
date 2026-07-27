@@ -21,11 +21,11 @@ package org.datacleaner.output;
 
 import java.io.File;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.csv.CsvDataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.output.csv.CsvOutputWriterFactory;
 
 import junit.framework.TestCase;

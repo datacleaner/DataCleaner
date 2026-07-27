@@ -27,11 +27,11 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.MutableRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;

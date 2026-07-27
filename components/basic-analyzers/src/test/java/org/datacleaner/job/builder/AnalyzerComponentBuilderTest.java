@@ -19,10 +19,10 @@
  */
 package org.datacleaner.job.builder;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;

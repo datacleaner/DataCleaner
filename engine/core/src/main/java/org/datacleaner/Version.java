@@ -22,7 +22,7 @@ package org.datacleaner;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.util.SystemProperties;
 
 import com.google.common.base.Strings;

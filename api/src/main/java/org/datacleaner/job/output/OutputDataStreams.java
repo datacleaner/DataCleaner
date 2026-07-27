@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job.output;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.OutputDataStream;
 

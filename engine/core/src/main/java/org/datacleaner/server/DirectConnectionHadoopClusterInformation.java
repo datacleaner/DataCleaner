@@ -22,7 +22,7 @@ package org.datacleaner.server;
 import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.HdfsResource;
 import org.datacleaner.util.SystemProperties;
 
 /**

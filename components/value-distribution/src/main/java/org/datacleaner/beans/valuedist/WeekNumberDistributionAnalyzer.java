@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.Weekday;
+import org.datacleaner.metamodel.util.Weekday;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Concurrent;

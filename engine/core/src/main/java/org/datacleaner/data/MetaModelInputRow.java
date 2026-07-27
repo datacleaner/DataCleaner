@@ -31,10 +31,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.query.SelectItem;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.query.SelectItem;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.slf4j.Logger;

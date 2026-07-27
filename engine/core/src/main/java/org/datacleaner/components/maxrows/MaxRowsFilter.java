@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;

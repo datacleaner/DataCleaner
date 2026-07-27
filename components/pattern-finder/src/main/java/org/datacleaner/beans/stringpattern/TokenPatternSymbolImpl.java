@@ -21,7 +21,7 @@ package org.datacleaner.beans.stringpattern;
 
 import java.util.Arrays;
 
-import org.apache.metamodel.util.EqualsBuilder;
+import org.datacleaner.metamodel.util.EqualsBuilder;
 
 public class TokenPatternSymbolImpl implements TokenPatternSymbol {
 

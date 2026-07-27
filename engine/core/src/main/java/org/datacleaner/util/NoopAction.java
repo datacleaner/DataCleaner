@@ -19,7 +19,7 @@
  */
 package org.datacleaner.util;
 
-import org.apache.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Action;
 
 public class NoopAction<E> implements Action<E> {
 

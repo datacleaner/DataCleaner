@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.metamodel.util.AggregateBuilder;
-import org.apache.metamodel.util.ObjectComparator;
+import org.datacleaner.metamodel.util.AggregateBuilder;
+import org.datacleaner.metamodel.util.ObjectComparator;
 
 abstract class AbstractRowNumberAwareAggregateBuilder<T> implements AggregateBuilder<T> {
 

@@ -58,9 +58,9 @@ import org.slf4j.LoggerFactory;
  * <li>org.datacleaner.reference.SynonymCatalog</li>
  * <li>org.datacleaner.reference.StringPattern</li>
  * <li>org.datacleaner.connection.Datastore</li>
- * <li>org.apache.metamodel.schema.Column</li>
- * <li>org.apache.metamodel.schema.Table</li>
- * <li>org.apache.metamodel.schema.Schema</li>
+ * <li>org.datacleaner.metamodel.schema.Column</li>
+ * <li>org.datacleaner.metamodel.schema.Table</li>
+ * <li>org.datacleaner.metamodel.schema.Schema</li>
  * </ul>
  */
 public final class StringConverter {

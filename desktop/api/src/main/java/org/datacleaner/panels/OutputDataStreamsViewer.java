@@ -25,7 +25,7 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.data.MetaModelInputColumn;

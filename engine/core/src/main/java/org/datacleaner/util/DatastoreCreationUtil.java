@@ -25,9 +25,9 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;

@@ -19,8 +19,8 @@
  */
 package org.datacleaner.metadata;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Defines metadata about a single {@link Column}.

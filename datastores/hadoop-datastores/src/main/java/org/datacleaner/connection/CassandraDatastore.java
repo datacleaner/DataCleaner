@@ -19,8 +19,8 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.cassandra.CassandraDataContext;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.cassandra.CassandraDataContext;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Cluster.Builder;

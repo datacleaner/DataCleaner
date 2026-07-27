@@ -26,9 +26,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.ToStringComparator;
+import org.datacleaner.metamodel.util.Action;
+import org.datacleaner.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.ToStringComparator;
 import org.datacleaner.repository.AbstractRepositoryNode;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;

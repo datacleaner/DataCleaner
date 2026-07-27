@@ -19,8 +19,8 @@
  */
 package org.datacleaner.util.convert;
 
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.util.HadoopResource;

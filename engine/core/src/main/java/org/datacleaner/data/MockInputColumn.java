@@ -19,7 +19,7 @@
  */
 package org.datacleaner.data;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 
 /**
  * A mock-implementation of the input column. Use this only for testing purposes

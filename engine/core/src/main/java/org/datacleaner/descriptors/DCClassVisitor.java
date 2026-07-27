@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.TruePredicate;
+import org.datacleaner.metamodel.util.TruePredicate;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;

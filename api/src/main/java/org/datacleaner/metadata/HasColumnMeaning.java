@@ -19,7 +19,7 @@
  */
 package org.datacleaner.metadata;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.util.HasAliases;
 
 /**

@@ -30,7 +30,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;

@@ -24,10 +24,10 @@ import java.util.List;
 
 import javax.swing.table.TableModel;
 
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.DataSetTableModel;
-import org.apache.metamodel.data.InMemoryDataSet;
-import org.apache.metamodel.data.Row;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.DataSetTableModel;
+import org.datacleaner.metamodel.data.InMemoryDataSet;
+import org.datacleaner.metamodel.data.Row;
 import org.datacleaner.api.AnalyzerResult;
 
 public class DataSetResult implements TableModelResult, AnalyzerResult {

@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.ConstantInputColumn;

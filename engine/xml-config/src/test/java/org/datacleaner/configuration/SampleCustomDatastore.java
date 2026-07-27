@@ -21,8 +21,8 @@ package org.datacleaner.configuration;
 
 import java.io.File;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.xml.XmlDomDataContext;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.xml.XmlDomDataContext;
 import org.datacleaner.api.Configured;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;

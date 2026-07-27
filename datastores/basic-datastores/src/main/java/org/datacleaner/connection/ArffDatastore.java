@@ -19,9 +19,9 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.arff.ArffDataContext;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.arff.ArffDataContext;
+import org.datacleaner.metamodel.util.Resource;
 
 /**
  * Datastore implementation for .arff files.

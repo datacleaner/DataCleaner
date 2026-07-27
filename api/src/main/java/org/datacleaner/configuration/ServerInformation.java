@@ -21,7 +21,7 @@ package org.datacleaner.configuration;
 
 import java.io.Serializable;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Defines a server which could be used for storing resources.

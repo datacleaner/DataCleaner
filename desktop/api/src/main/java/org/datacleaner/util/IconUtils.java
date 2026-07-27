@@ -32,7 +32,7 @@ import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;

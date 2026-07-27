@@ -22,7 +22,7 @@ package org.datacleaner.util;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Comparator of {@link HasName} objects, which sorts based on the name.

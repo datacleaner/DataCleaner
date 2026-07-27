@@ -25,10 +25,10 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;

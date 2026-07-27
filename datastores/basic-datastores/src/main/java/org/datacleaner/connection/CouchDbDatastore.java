@@ -21,8 +21,8 @@ package org.datacleaner.connection;
 
 import java.util.List;
 
-import org.apache.metamodel.couchdb.CouchDbDataContext;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.couchdb.CouchDbDataContext;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.ektorp.http.StdHttpClient;
 
 public class CouchDbDatastore extends UsageAwareDatastore<CouchDbDataContext>

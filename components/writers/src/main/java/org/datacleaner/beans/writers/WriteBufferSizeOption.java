@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.writers;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * An enum that represents typical user-selectable sizes for a

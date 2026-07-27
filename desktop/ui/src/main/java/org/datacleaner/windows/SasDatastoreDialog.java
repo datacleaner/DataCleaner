@@ -35,7 +35,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.widgets.AbstractResourceTextField;
 import org.datacleaner.widgets.DCLabel;
-import org.eobjects.metamodel.sas.SasFilenameFilter;
+import org.datacleaner.metamodel.sas.SasFilenameFilter;
 
 public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<SasDatastore> {
 

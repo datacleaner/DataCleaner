@@ -23,9 +23,9 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.datacleaner.actions.ReorderColumnsActionListener;
 import org.datacleaner.api.InputColumn;

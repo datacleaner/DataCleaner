@@ -26,8 +26,8 @@ import javax.inject.Inject;
 import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.HBaseDatastore;

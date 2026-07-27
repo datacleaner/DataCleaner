@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.cluster.SlaveAnalysisRunner;
 import org.datacleaner.cluster.SlaveJobInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;

@@ -21,8 +21,8 @@ package org.datacleaner.util.convert;
 
 import java.net.URI;
 
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.UrlResource;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.UrlResource;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 

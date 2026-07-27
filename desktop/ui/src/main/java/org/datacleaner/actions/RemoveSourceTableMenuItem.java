@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;

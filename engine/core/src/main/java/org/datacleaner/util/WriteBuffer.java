@@ -26,7 +26,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

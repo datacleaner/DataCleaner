@@ -19,8 +19,8 @@
  */
 package org.datacleaner.util.convert;
 
-import org.apache.metamodel.util.ClasspathResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.ClasspathResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 

@@ -22,9 +22,9 @@ package org.datacleaner.connection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.mongodb.mongo3.MongoDbDataContext;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.mongodb.mongo3.MongoDbDataContext;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.util.StringUtils;
 
 import com.google.common.base.Strings;

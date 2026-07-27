@@ -22,23 +22,23 @@ package org.datacleaner.sample;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.MetaModelException;
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.QueryPostprocessDataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.DefaultRow;
-import org.apache.metamodel.data.InMemoryDataSet;
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.data.SimpleDataSetHeader;
-import org.apache.metamodel.query.SelectItem;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableSchema;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.schema.TableType;
+import org.datacleaner.metamodel.MetaModelException;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.QueryPostprocessDataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.DefaultRow;
+import org.datacleaner.metamodel.data.InMemoryDataSet;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.data.SimpleDataSetHeader;
+import org.datacleaner.metamodel.query.SelectItem;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableSchema;
+import org.datacleaner.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.TableType;
 
 public class SampleDataContext extends QueryPostprocessDataContext {
 

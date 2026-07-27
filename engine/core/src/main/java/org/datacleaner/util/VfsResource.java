@@ -25,9 +25,9 @@ import java.io.OutputStream;
 import org.apache.commons.vfs2.FileContent;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.metamodel.util.AbstractResource;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.ResourceException;
+import org.datacleaner.metamodel.util.AbstractResource;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

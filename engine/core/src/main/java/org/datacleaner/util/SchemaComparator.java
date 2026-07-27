@@ -22,8 +22,8 @@ package org.datacleaner.util;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.schema.Schema;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.schema.Schema;
 
 /**
  * Comparator of schemas that will put information schemas in the top

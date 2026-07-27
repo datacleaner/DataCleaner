@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.InputStreamToPropertiesMapFunc;
 import org.datacleaner.util.convert.ResourceConverter;

@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

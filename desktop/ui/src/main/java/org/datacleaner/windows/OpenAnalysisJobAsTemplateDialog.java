@@ -40,8 +40,8 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;

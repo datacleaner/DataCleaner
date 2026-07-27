@@ -24,7 +24,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.metamodel.util.MutableRef;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;

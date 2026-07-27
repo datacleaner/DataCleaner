@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.ColumnType;
 
 /**
  * Defines the metadata of a job. This metadata type can be used to present

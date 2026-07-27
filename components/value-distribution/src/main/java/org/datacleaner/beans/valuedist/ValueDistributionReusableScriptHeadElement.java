@@ -21,7 +21,7 @@ package org.datacleaner.beans.valuedist;
 
 import java.io.InputStream;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.result.html.HeadElement;
 import org.datacleaner.result.html.HtmlRenderingContext;
 

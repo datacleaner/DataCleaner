@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
 
 import junit.framework.TestCase;
 

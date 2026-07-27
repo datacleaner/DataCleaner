@@ -22,7 +22,7 @@ package org.datacleaner.test;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.util.LazyRef;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultFuture;

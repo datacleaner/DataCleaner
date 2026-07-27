@@ -59,9 +59,9 @@ import javax.inject.Qualifier;
  * <li>org.datacleaner.reference.Dictionary</li>
  * <li>org.datacleaner.reference.SynonymCatalog</li>
  * <li>org.datacleaner.reference.StringPattern</li>
- * <li>org.apache.metamodel.schema.Column</li>
- * <li>org.apache.metamodel.schema.Table</li>
- * <li>org.apache.metamodel.schema.Schema</li>
+ * <li>org.datacleaner.metamodel.schema.Column</li>
+ * <li>org.datacleaner.metamodel.schema.Table</li>
+ * <li>org.datacleaner.metamodel.schema.Schema</li>
  * </ul>
  *
  * In addition to the name of the {@link Configured} property (provided via

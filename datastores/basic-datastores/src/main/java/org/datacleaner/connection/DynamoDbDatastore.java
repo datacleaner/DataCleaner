@@ -19,8 +19,8 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.dynamodb.DynamoDbDataContext;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.dynamodb.DynamoDbDataContext;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

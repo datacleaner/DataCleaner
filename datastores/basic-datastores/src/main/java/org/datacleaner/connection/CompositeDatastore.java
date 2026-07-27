@@ -25,8 +25,8 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.CompositeDataContext;
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.CompositeDataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.util.ReadObjectBuilder;
 
 public final class CompositeDatastore extends UsageAwareDatastore<DataContext> {

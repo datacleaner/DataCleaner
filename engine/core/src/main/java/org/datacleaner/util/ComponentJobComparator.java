@@ -21,7 +21,7 @@ package org.datacleaner.util;
 
 import java.util.Comparator;
 
-import org.apache.metamodel.util.ToStringComparator;
+import org.datacleaner.metamodel.util.ToStringComparator;
 import org.datacleaner.job.ComponentJob;
 
 /**

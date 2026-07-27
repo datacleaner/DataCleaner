@@ -26,11 +26,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.pojo.ArrayTableDataProvider;
+import org.datacleaner.metamodel.pojo.TableDataProvider;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.DatastoreCatalogType;

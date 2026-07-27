@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.UpdateableDataContext;
 
 public class UpdateableDatastoreConnectionImpl<E extends UpdateableDataContext> extends DatastoreConnectionImpl<E>
         implements UpdateableDatastoreConnection {

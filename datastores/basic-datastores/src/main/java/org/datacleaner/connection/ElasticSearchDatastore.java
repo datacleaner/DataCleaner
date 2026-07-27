@@ -27,11 +27,11 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.elasticsearch.rest.ElasticSearchRestClient;
-import org.apache.metamodel.elasticsearch.rest.ElasticSearchRestDataContext;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.elasticsearch.rest.ElasticSearchRestClient;
+import org.datacleaner.metamodel.elasticsearch.rest.ElasticSearchRestDataContext;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 

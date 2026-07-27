@@ -26,10 +26,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.UrlResource;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.HdfsResource;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.UrlResource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;

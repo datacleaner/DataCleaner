@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.LazyRef;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;

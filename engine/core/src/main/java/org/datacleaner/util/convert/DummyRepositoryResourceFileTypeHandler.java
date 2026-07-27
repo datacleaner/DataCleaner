@@ -19,8 +19,8 @@
  */
 package org.datacleaner.util.convert;
 
-import org.apache.metamodel.util.InMemoryResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.InMemoryResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 

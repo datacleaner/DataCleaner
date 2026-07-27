@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.util.ReadObjectBuilder;
-import org.eobjects.metamodel.deebase.DbaseDataContext;
+import org.datacleaner.metamodel.deebase.DbaseDataContext;
 
 /**
  * Datastore implementation for dBase databases.

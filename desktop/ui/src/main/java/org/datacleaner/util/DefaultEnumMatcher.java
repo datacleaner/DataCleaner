@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.descriptors.EnumerationProvider;
 import org.datacleaner.descriptors.EnumerationValue;
 

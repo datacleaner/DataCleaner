@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.pojo.ArrayTableDataProvider;
+import org.datacleaner.metamodel.pojo.TableDataProvider;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;

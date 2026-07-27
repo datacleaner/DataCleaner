@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.openoffice.OpenOfficeDataContext;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.openoffice.OpenOfficeDataContext;
 import org.datacleaner.util.ReadObjectBuilder;
 
 /**

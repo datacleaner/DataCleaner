@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.HiddenProperty;
 import org.datacleaner.api.InputColumn;

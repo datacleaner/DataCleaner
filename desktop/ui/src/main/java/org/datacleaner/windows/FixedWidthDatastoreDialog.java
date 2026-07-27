@@ -32,9 +32,9 @@ import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
-import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
-import org.apache.metamodel.util.AlphabeticSequence;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.datacleaner.metamodel.util.AlphabeticSequence;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;

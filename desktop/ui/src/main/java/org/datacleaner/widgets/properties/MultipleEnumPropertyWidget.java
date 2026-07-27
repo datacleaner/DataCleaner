@@ -21,7 +21,7 @@ package org.datacleaner.widgets.properties;
 
 import javax.inject.Inject;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 

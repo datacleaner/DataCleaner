@@ -24,7 +24,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 

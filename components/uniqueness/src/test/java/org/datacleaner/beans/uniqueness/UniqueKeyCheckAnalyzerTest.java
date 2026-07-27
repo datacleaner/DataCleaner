@@ -22,7 +22,7 @@ package org.datacleaner.beans.uniqueness;
 import java.io.File;
 import java.util.Map;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.junit.Test;

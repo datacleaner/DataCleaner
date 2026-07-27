@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.apache.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.FileResource;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;

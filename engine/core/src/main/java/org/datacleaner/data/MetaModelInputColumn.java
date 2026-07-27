@@ -19,8 +19,8 @@
  */
 package org.datacleaner.data;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.ColumnType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.ReflectionUtils;
 

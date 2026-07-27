@@ -26,7 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.FileResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.convert.ConvertToBooleanTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;

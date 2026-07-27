@@ -31,7 +31,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;

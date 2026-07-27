@@ -22,8 +22,8 @@ package org.datacleaner.test.full.scenarios;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.pojo.ArrayTableDataProvider;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;

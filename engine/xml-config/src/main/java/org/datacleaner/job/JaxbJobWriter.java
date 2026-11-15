@@ -267,7 +267,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             Schema singleSchema = null;
             int realSchemas = 0;
             for (final Schema schema : schemas) {
-                if (!MetaModelHelper.isInformationSchema(schema)) {
+                if (!MetaModelHelper.isInformationSchema(schema) && !"SYSTEM_LOBS".equals(schema.getName())) {
                     realSchemas++;
                     singleSchema = schema;
                 }

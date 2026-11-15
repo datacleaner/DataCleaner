@@ -138,7 +138,7 @@ public class MainTest extends TestCase {
         Main.main("-conf src/test/resources/cli-examples/conf.xml -ds orderdb -list SCHEMAS".split(" "));
 
         final String out = getOutput();
-        assertEquals("Schemas:\n" + "--------\n" + "INFORMATION_SCHEMA\n" + "PUBLIC\n", out);
+        assertEquals("Schemas:\n" + "--------\n" + "INFORMATION_SCHEMA\n" + "PUBLIC\n" + "SYSTEM_LOBS\n", out);
     }
 
     public void testListTables() throws Throwable {
@@ -229,6 +229,7 @@ public class MainTest extends TestCase {
 
     public void testWriteHtmlToFile() throws Throwable {
         final String filename = "target/test_write_html_to_file.html";
+        new File(filename).delete();
         Main.main(
                 ("-conf src/test/resources/cli-examples/conf.xml -job src/test/resources/cli-examples/employees_job.xml -of "
                         + filename + " -ot HTML").split(" "));
@@ -286,7 +287,9 @@ public class MainTest extends TestCase {
                 for (final Exception error : warningsAndErrors) {
                     final String message = error.getMessage();
                     if (message.startsWith("No explicit character encoding declaration has been seen yet")
-                            || message.startsWith("The character encoding of the document was not declared.")) {
+                            || message.startsWith("The character encoding of the document was not declared")
+                            || message.startsWith(
+                                    "No explicit character encoding declaration has been seen yet (assumed")) {
                         // ignore/accept this one
                         continue;
                     }

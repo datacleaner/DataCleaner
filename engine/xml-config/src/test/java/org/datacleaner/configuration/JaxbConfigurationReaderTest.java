@@ -320,6 +320,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
             try (DatastoreConnection con = compositeDatastore.openConnection()) {
                 final DataContext dataContext = con.getDataContext();
                 final List<String> schemaNames = dataContext.getSchemaNames();
+                // newer HSQLDB versions expose the internal SYSTEM_LOBS schema
+                schemaNames.remove("SYSTEM_LOBS");
                 assertEquals("[PUBLIC, Spreadsheet2003.xls, resources]", schemaNames.toString());
             }
         }

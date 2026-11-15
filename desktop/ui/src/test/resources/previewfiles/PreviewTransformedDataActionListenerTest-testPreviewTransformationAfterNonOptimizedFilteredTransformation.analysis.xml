@@ -46,7 +46,7 @@
         <filter>
             <descriptor ref="Equals"/>
             <properties>
-                <property name="Compare values" value="[ 5307.98 ]"/>
+                <property name="Compare values" value="[ 5308 ]"/>
             </properties>
             <input ref="col_amountasnumber" name="Input column"/>
             <outcome id="outcome_0" category="EQUALS"/>

@@ -207,11 +207,11 @@ public class FuseStreamsComponentIntegrationTest {
 
             final Row countCustomers = MetaModelHelper
                     .executeSingleRowQuery(dataContext, dataContext.query().from("customers").selectCount().toQuery());
-            Assert.assertEquals(COUNT_CUSTOMERS, countCustomers.getValue(0));
+            Assert.assertEquals(COUNT_CUSTOMERS, ((Number) countCustomers.getValue(0)).intValue());
 
             final Row countEmployees = MetaModelHelper
                     .executeSingleRowQuery(dataContext, dataContext.query().from("employees").selectCount().toQuery());
-            Assert.assertEquals(COUNT_EMPLOYEES, countEmployees.getValue(0));
+            Assert.assertEquals(COUNT_EMPLOYEES, ((Number) countEmployees.getValue(0)).intValue());
         }
     }
 

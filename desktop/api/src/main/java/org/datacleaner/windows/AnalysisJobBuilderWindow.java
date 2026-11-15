@@ -20,7 +20,7 @@
 package org.datacleaner.windows;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.DCModule;

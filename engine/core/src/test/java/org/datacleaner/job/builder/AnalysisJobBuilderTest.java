@@ -25,8 +25,8 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableTable;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;

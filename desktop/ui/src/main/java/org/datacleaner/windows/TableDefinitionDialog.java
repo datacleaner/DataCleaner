@@ -24,11 +24,9 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.util.Action;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.connection.CouchDbDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.SimpleTableDefsPanel;
 import org.datacleaner.util.IconUtils;
@@ -40,8 +38,7 @@ import org.datacleaner.widgets.Alignment;
 
 /**
  * A dialog presenting a {@link SimpleTableDefsPanel} and a save button. Used
- * for defining tables for {@link MongoDbDatastore}s and
- * {@link CouchDbDatastore}s.
+ * for defining custom tables.
  */
 public class TableDefinitionDialog extends AbstractDialog {
 

@@ -23,9 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.SalesforceDatastore;
 
 /**
  * Contains information about the initial configuration with demo datastores,
@@ -52,12 +51,6 @@ public class DemoConfiguration implements InitialConfiguration {
     public static final String OTHER_SYNONYM_CATALOG_JOB_TITLES = addFile("datastores/job_title_synonyms.txt");
 
     public static boolean isUnconfiguredDemoDatastore(final Datastore ds) {
-        if (ds instanceof SalesforceDatastore) {
-            final SalesforceDatastore sfdcDatastore = (SalesforceDatastore) ds;
-            if ("username".equals(sfdcDatastore.getUsername())) {
-                return true;
-            }
-        }
         return false;
     }
 

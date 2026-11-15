@@ -27,8 +27,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.ReducedSingleValueDistributionResult;

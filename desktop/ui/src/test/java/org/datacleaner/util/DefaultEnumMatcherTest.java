@@ -19,7 +19,7 @@
  */
 package org.datacleaner.util;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.descriptors.EnumerationValue;
 import org.datacleaner.metadata.ColumnMeaning;
 

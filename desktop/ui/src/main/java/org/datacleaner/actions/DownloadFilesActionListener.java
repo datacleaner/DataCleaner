@@ -36,7 +36,7 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Action;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.job.tasks.Task;
 import org.datacleaner.user.UserPreferences;

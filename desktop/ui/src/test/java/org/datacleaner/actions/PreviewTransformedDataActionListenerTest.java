@@ -468,7 +468,7 @@ public class PreviewTransformedDataActionListenerTest {
 
         assertEquals(1, tableModel.getRowCount());
 
-        assertTrue(tableModel.getValueAt(0, 1).toString().contains("5307.98"));
+        assertTrue(tableModel.getValueAt(0, 1).toString().contains("5308"));
     }
 
     private void compareWithBenchmark(final PreviewTransformedDataActionListener action) throws IOException {

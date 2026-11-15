@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.util.LazyRef;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;

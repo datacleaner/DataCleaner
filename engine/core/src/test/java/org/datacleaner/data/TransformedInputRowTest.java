@@ -19,12 +19,12 @@
  */
 package org.datacleaner.data;
 
-import org.apache.metamodel.data.DataSetHeader;
-import org.apache.metamodel.data.DefaultRow;
-import org.apache.metamodel.data.SimpleDataSetHeader;
-import org.apache.metamodel.query.SelectItem;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.data.DataSetHeader;
+import org.datacleaner.metamodel.data.DefaultRow;
+import org.datacleaner.metamodel.data.SimpleDataSetHeader;
+import org.datacleaner.metamodel.query.SelectItem;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.MutableColumn;
 import org.datacleaner.api.InputColumn;
 
 import junit.framework.TestCase;

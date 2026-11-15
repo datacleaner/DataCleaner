@@ -21,8 +21,8 @@ package org.datacleaner.components.fuse;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.junit.Assert;

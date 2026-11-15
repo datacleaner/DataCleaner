@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.metamodel.util.BaseObject;
 import org.datacleaner.util.ReflectionUtils;
 
 /**

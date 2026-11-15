@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.job.FilterOutcome;
 

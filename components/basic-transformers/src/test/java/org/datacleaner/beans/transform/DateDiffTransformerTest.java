@@ -21,8 +21,8 @@ package org.datacleaner.beans.transform;
 
 import java.util.Arrays;
 
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
+import org.datacleaner.metamodel.util.DateUtils;
+import org.datacleaner.metamodel.util.Month;
 
 import junit.framework.TestCase;
 

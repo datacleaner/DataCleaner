@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.CompositeDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;

@@ -29,8 +29,8 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;

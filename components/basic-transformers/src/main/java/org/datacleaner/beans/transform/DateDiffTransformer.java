@@ -25,7 +25,7 @@ import java.util.List;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.DateUtils;
+import org.datacleaner.metamodel.util.DateUtils;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;

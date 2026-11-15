@@ -27,9 +27,9 @@ import java.util.Map;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.pojo.ArrayTableDataProvider;
+import org.datacleaner.metamodel.pojo.TableDataProvider;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;

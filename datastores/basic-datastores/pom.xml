@@ -13,64 +13,52 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-csv</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-arff</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-csv</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-fixedwidth</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-arff</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-pojo</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-fixedwidth</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-neo4j</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-pojo</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-openoffice</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-xml</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-salesforce</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-jdbc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-sugarcrm</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-excel</artifactId>
+		</dependency>
+ 		<dependency>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-json</artifactId>
+		</dependency>
+ 		<dependency>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-sas</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-xml</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-duckdb</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-jdbc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-elasticsearch-rest</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-excel</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-json</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-mongodb-mongo3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-couchdb</artifactId>
+			<groupId>org.duckdb</groupId>
+			<artifactId>duckdb_jdbc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -81,24 +69,9 @@
 			<artifactId>guava</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-kafka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-dynamodb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-sas</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-dbase</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.metamodel-extras</groupId>
-			<artifactId>MetaModel-extras-access</artifactId>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

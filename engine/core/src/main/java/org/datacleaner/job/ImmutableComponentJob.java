@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.metamodel.util.BaseObject;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;

@@ -25,15 +25,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
-import org.datacleaner.util.HadoopResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.datacleaner.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.HasNameMapper;
 
 public class ServerInformationCatalogImpl implements ServerInformationCatalog {
-    private static final Logger logger = LoggerFactory.getLogger(ServerInformationCatalogImpl.class);
     private static final long serialVersionUID = 1L;
 
     private final Collection<ServerInformation> _servers;
@@ -49,19 +44,6 @@ public class ServerInformationCatalogImpl implements ServerInformationCatalog {
         final List<ServerInformation> serversList = new ArrayList<>();
         Collections.addAll(serversList, servers);
         _servers = serversList;
-
-        try {
-            if (!containsServer(HadoopResource.DEFAULT_CLUSTERREFERENCE)) {
-                final EnvironmentBasedHadoopClusterInformation environmentBasedHadoopClusterInformation =
-                        new EnvironmentBasedHadoopClusterInformation(HadoopResource.DEFAULT_CLUSTERREFERENCE, null);
-                if (environmentBasedHadoopClusterInformation.getDirectories().length > 0) {
-                    serversList.add(0, environmentBasedHadoopClusterInformation);
-                }
-            }
-        } catch (final IllegalStateException e) {
-            logger.info("No Hadoop environment variables, skipping default server");
-        }
-
     }
 
     @Override

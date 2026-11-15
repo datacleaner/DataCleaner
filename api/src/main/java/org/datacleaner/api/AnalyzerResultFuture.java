@@ -21,7 +21,7 @@ package org.datacleaner.api;
 
 import java.util.function.Supplier;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Represents an {@link AnalyzerResult} that is still being produced.

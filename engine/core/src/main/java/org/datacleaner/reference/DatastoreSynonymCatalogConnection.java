@@ -21,10 +21,10 @@ package org.datacleaner.reference;
 
 import java.util.Collection;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.query.builder.SatisfiedWhereBuilder;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.query.builder.SatisfiedWhereBuilder;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.connection.DatastoreConnection;
 
 final class DatastoreSynonymCatalogConnection implements SynonymCatalogConnection {

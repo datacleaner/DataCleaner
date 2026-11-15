@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabNavigator;

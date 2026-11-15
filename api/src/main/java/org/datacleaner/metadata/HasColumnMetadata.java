@@ -21,7 +21,7 @@ package org.datacleaner.metadata;
 
 import java.util.List;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 
 /**
  * Defines methods for objects that contain column metadata.

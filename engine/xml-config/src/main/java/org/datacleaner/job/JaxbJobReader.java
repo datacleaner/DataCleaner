@@ -40,8 +40,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.api.Converter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
@@ -189,7 +189,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
     public AnalysisJobMetadata readMetadata(final JobType job) {
         final String datastoreName = job.getSource().getDataContext().getRef();
         final List<String> sourceColumnPaths = getSourceColumnPaths(job);
-        final List<org.apache.metamodel.schema.ColumnType> sourceColumnTypes = getSourceColumnTypes(job);
+        final List<org.datacleaner.metamodel.schema.ColumnType> sourceColumnTypes = getSourceColumnTypes(job);
         final Map<String, String> variables = getVariables(job);
 
         final String jobName;
@@ -290,8 +290,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
         return paths;
     }
 
-    private List<org.apache.metamodel.schema.ColumnType> getSourceColumnTypes(final JobType job) {
-        final List<org.apache.metamodel.schema.ColumnType> types;
+    private List<org.datacleaner.metamodel.schema.ColumnType> getSourceColumnTypes(final JobType job) {
+        final List<org.datacleaner.metamodel.schema.ColumnType> types;
 
         final ColumnsType columnsType = job.getSource().getColumns();
         if (columnsType != null) {
@@ -303,8 +303,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     types.add(null);
                 } else {
                     try {
-                        final org.apache.metamodel.schema.ColumnType type =
-                                org.apache.metamodel.schema.ColumnTypeImpl.valueOf(typeName);
+                        final org.datacleaner.metamodel.schema.ColumnType type =
+                                org.datacleaner.metamodel.schema.ColumnTypeImpl.valueOf(typeName);
                         types.add(type);
                     } catch (final IllegalArgumentException e) {
                         // type literal was not a valid ColumnType
@@ -839,7 +839,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
                 final String expectedType = column.getType();
                 if (expectedType != null) {
-                    final org.apache.metamodel.schema.ColumnType actualType = physicalColumn.getType();
+                    final org.datacleaner.metamodel.schema.ColumnType actualType = physicalColumn.getType();
                     if (actualType != null && !expectedType.equals(actualType.toString())) {
                         logger.warn("Column '{}' had type '{}', but '{}' was expected.",
                                 new Object[] { path, actualType, expectedType });

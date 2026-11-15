@@ -35,7 +35,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Converter;
 import org.datacleaner.components.convert.ConvertToDateTransformer;

@@ -25,7 +25,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.util.StringUtils;
 
 /**

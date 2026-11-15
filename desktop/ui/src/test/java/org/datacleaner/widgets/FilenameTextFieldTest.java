@@ -25,8 +25,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.junit.Test;
 
 public class FilenameTextFieldTest {

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.filter;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.NullCheckFilter.EvaluationMode;
 import org.datacleaner.connection.Datastore;

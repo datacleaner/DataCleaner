@@ -37,7 +37,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;

@@ -26,11 +26,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.pojo.ArrayTableDataProvider;
+import org.datacleaner.metamodel.pojo.TableDataProvider;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
@@ -70,7 +70,7 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
         AbstractDatastoreType serializedDatastore = adaptor.createPojoDatastore(datastore, null, 20);
 
         final DatastoreCatalogType serializedDatastoreCatalogType = new DatastoreCatalogType();
-        serializedDatastoreCatalogType.getJdbcDatastoreOrAccessDatastoreOrDynamodbDatastore().add(serializedDatastore);
+        serializedDatastoreCatalogType.getJdbcDatastoreOrCsvDatastoreOrArffDatastore().add(serializedDatastore);
         Configuration serializedConfiguration = new Configuration();
         serializedConfiguration.setDatastoreCatalog(serializedDatastoreCatalogType);
 
@@ -82,7 +82,7 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
         serializedConfiguration = (Configuration) jaxbContext.createUnmarshaller().unmarshal(file);
 
         serializedDatastore =
-                serializedConfiguration.getDatastoreCatalog().getJdbcDatastoreOrAccessDatastoreOrDynamodbDatastore().get(0);
+                serializedConfiguration.getDatastoreCatalog().getJdbcDatastoreOrCsvDatastoreOrArffDatastore().get(0);
         datastore = adaptor.read((PojoDatastoreType) serializedDatastore);
 
         final UpdateableDatastoreConnection con = datastore.openConnection();

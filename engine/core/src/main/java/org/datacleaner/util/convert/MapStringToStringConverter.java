@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.csv.CsvWriter;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.csv.CsvWriter;
 import org.datacleaner.api.Converter;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;

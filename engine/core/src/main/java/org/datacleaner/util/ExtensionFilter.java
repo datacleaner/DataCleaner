@@ -24,7 +24,7 @@ import java.io.FilenameFilter;
 
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 
 /**
  * A file filter for JFileChooser's which filters on behalf of the file

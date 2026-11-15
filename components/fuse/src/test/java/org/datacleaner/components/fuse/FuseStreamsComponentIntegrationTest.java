@@ -22,9 +22,9 @@ package org.datacleaner.components.fuse;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.data.Row;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.data.Row;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -207,11 +207,11 @@ public class FuseStreamsComponentIntegrationTest {
 
             final Row countCustomers = MetaModelHelper
                     .executeSingleRowQuery(dataContext, dataContext.query().from("customers").selectCount().toQuery());
-            Assert.assertEquals(COUNT_CUSTOMERS, countCustomers.getValue(0));
+            Assert.assertEquals(COUNT_CUSTOMERS, ((Number) countCustomers.getValue(0)).intValue());
 
             final Row countEmployees = MetaModelHelper
                     .executeSingleRowQuery(dataContext, dataContext.query().from("employees").selectCount().toQuery());
-            Assert.assertEquals(COUNT_EMPLOYEES, countEmployees.getValue(0));
+            Assert.assertEquals(COUNT_EMPLOYEES, ((Number) countEmployees.getValue(0)).intValue());
         }
     }
 

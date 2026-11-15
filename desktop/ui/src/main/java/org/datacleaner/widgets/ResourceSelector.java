@@ -30,7 +30,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.panels.DCPanel;
@@ -96,9 +96,6 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         switch (scheme) {
         case "file":
             presenter = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), _openMode);
-            break;
-        case "hdfs":
-            presenter = new HdfsResourceTypePresenter(_serverInformationCatalog);
             break;
         default:
             presenter = new TextFieldResourceTypePresenter(resourceTypeHandler);

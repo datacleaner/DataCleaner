@@ -26,11 +26,11 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.util.Set;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.DatastoreConnection;

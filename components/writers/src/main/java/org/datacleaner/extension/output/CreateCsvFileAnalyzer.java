@@ -31,15 +31,15 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.csv.CsvWriter;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.csv.CsvDataContext;
+import org.datacleaner.metamodel.csv.CsvWriter;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
@@ -251,11 +251,11 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
             final CsvDataContext tempDataContext = new CsvDataContext(_targetResource, csvConfiguration);
             final Table table = tempDataContext.getDefaultSchema().getTable(0);
 
-            final Comparator<? super Row> comparator =
+            final Comparator<? super Object[]> comparator =
                     SortHelper.createComparator(columnToBeSortedOn, _indexOfColumnToBeSortedOn);
 
             final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
-            final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(comparator) {
+            final SortMergeWriter<Object[], Writer> sortMergeWriter = new SortMergeWriter<Object[], Writer>(comparator) {
 
                 @Override
                 protected void writeHeader(final Writer writer) throws IOException {
@@ -270,9 +270,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
                 }
 
                 @Override
-                protected void writeRow(final Writer writer, final Row row, final int count) throws IOException {
+                protected void writeRow(final Writer writer, final Object[] rowValues, final int count)
+                        throws IOException {
                     for (int i = 0; i < count; i++) {
-                        final List<Object> valuesList = new ArrayList<>(Arrays.asList(row.getValues()));
+                        final List<Object> valuesList = new ArrayList<>(Arrays.asList(rowValues));
                         if (!_isColumnToBeSortedOnPresentInInput) {
                             valuesList.remove(_indexOfColumnToBeSortedOn);
                         }
@@ -301,8 +302,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
             // read from the temp file and sort it into the final file
             try (DataSet dataSet = tempDataContext.query().from(table).selectAll().execute()) {
                 while (dataSet.next()) {
-                    final Row row = dataSet.getRow();
-                    sortMergeWriter.append(row);
+                    sortMergeWriter.append(dataSet.getRow().getValues());
                 }
             }
 

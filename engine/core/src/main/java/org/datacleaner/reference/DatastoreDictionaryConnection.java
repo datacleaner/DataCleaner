@@ -21,9 +21,9 @@ package org.datacleaner.reference;
 
 import java.util.Iterator;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.connection.DatastoreConnection;
 
 final class DatastoreDictionaryConnection implements DictionaryConnection {

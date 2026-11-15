@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.util.DateUtils;
+import org.datacleaner.metamodel.util.Month;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.ImmutableAnalysisJobMetadata;
 

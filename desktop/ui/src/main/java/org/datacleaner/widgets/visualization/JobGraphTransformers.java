@@ -31,7 +31,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;

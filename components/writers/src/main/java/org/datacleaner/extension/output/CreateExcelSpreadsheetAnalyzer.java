@@ -29,17 +29,17 @@ import java.util.List;
 import javax.inject.Named;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.drop.DropTable;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.csv.CsvDataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.drop.DropTable;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
@@ -274,11 +274,11 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
         final Table table = tempDataContext.getDefaultSchema().getTable(0);
 
-        final Comparator<? super Row> comparator =
+        final Comparator<? super Object[]> comparator =
                 SortHelper.createComparator(columnToBeSortedOn, indexOfColumnToBeSortedOn);
 
-        final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter =
-                new SortMergeWriter<Row, ExcelDataContextWriter>(comparator) {
+        final SortMergeWriter<Object[], ExcelDataContextWriter> sortMergeWriter =
+                new SortMergeWriter<Object[], ExcelDataContextWriter>(comparator) {
 
                     @Override
                     protected ExcelDataContextWriter createWriter(final Resource resource) {
@@ -297,10 +297,11 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                     }
 
                     @Override
-                    protected void writeRow(final ExcelDataContextWriter writer, final Row row, final int count)
+                    protected void writeRow(final ExcelDataContextWriter writer, final Object[] rowValues,
+                            final int count)
                             throws IOException {
                         for (int i = 0; i < count; i++) {
-                            final List<Object> valuesList = new ArrayList<>(Arrays.asList(row.getValues()));
+                            final List<Object> valuesList = new ArrayList<>(Arrays.asList(rowValues));
                             if (!isColumnToBeSortedOnPresentInInput) {
                                 valuesList.remove(indexOfColumnToBeSortedOn);
                             }
@@ -313,8 +314,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         // read from the temp file and sort it into the final file
         try (DataSet dataSet = tempDataContext.query().from(table).selectAll().execute()) {
             while (dataSet.next()) {
-                final Row row = dataSet.getRow();
-                sortMergeWriter.append(row);
+                sortMergeWriter.append(dataSet.getRow().getValues());
             }
         }
         sortMergeWriter.write(file);

@@ -61,8 +61,7 @@ public class SystemProperties {
     public static final String SANDBOX = "datacleaner.sandbox";
 
     /**
-     * Property used to determine the default scheme, which is normally "file",
-     * but could be set to e.g. "hdfs" for Hadoop environments etc.
+     * Property used to determine the default scheme, which is normally "file".
      */
     public static final String DEFAULT_RESOURCE_SCHEME = "datacleaner.resources.scheme.default";
 

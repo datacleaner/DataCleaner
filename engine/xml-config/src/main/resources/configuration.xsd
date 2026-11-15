@@ -176,23 +176,7 @@
 							connection.
 						</documentation>
 					</annotation>
-				</element>
-				<element name="access-datastore" type="ab:accessDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on a MS Access database
-							file.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="dynamodb-datastore" type="ab:dynamoDbDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on an AWS DynamoDB database.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="csv-datastore" type="ab:csvDatastoreType">
+				</element>				<element name="csv-datastore" type="ab:csvDatastoreType">
 					<annotation>
 						<documentation>
 							Defines a datastore based on a Comma-separated
@@ -206,70 +190,7 @@
 							Defines a datastore based on a .arff file.
 						</documentation>
 					</annotation>
-				</element>
-				<element name="salesforce-datastore" type="ab:salesforceDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on a Salesforce.com
-							account.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="sugar-crm-datastore" type="ab:sugarCrmDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on a SugarCRM system.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="hbase-datastore" type="ab:hbaseDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on an Apache HBase
-							database.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="mongodb-datastore" type="ab:mongodbDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on a MongoDB database.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="elasticsearch-datastore" type="ab:elasticSearchDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on an ElasticSearch
-							index.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="cassandra-datastore" type="ab:cassandraDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on an Cassandra
-							index.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="couchdb-datastore" type="ab:couchdbDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on an Apache CouchDB
-							database.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="neo4j-datastore" type="ab:neo4jDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on a Neo4j graph
-							database.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="fixed-width-datastore" type="ab:fixedWidthDatastoreType">
+				</element>				<element name="fixed-width-datastore" type="ab:fixedWidthDatastoreType">
 					<annotation>
 						<documentation>
 							Defines a datastore based on a fixed width value
@@ -283,6 +204,13 @@
 							Defines a datastore based on a directory of SAS
 							data
 							sets.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="duckdb-datastore" type="ab:duckdbDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a DuckDB database file.
 						</documentation>
 					</annotation>
 				</element>
@@ -300,37 +228,13 @@
 							Defines a datastore based on a JSON file.
 						</documentation>
 					</annotation>
-				</element>
-				<element name="dbase-datastore" type="ab:dbaseDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on a dBase database file.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="odb-datastore" type="ab:openOfficeDatabaseDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on a OpenOffice.org
-							database file.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="xml-datastore" type="ab:xmlDatastoreType">
+				</element>				<element name="xml-datastore" type="ab:xmlDatastoreType">
 					<annotation>
 						<documentation>
 							Defines a datastore based on an XML file.
 						</documentation>
 					</annotation>
-				</element>
-				<element name="kafka-datastore" type="ab:kafkaDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on Apache Kafka.
-						</documentation>
-					</annotation>
-				</element>
-				<element name="pojo-datastore" type="ab:pojoDatastoreType">
+				</element>				<element name="pojo-datastore" type="ab:pojoDatastoreType">
 					<annotation>
 						<documentation>
 							Defines an in-memory datastore based on Plain Old
@@ -469,51 +373,6 @@
 		</complexContent>
 	</complexType>
 
-	<complexType name="salesforceDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<all>
-					<element name="username" type="string" minOccurs="1"
-						maxOccurs="1" />
-					<element name="password" type="string" minOccurs="1"
-						maxOccurs="1" />
-					<element name="security-token" type="string" minOccurs="1"
-						maxOccurs="1" />
-					<element name="endpoint-url" type="string" minOccurs="0"
-						maxOccurs="1" />
-				</all>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="sugarCrmDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<all>
-					<element name="base-url" type="string" minOccurs="1"
-						maxOccurs="1" />
-					<element name="username" type="string" minOccurs="1"
-						maxOccurs="1" />
-					<element name="password" type="string" minOccurs="1"
-						maxOccurs="1" />
-				</all>
-			</extension>
-		</complexContent>
-	</complexType>
-
-		<complexType name="neo4jDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="hostname" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
-					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
 	<complexType name="pojoDatastoreType">
 		<complexContent>
 			<extension base="ab:abstractDatastoreType">
@@ -564,208 +423,7 @@
 			</element>
 		</sequence>
 	</complexType>
-
-	<complexType name="hbaseDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="zookeeper-hostname" minOccurs="0" maxOccurs="1"
-						type="string" />
-					<element name="zookeeper-port" minOccurs="0" maxOccurs="1"
-						type="int" />
-					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
-						<complexType>
-							<sequence>
-								<element name="name" minOccurs="1" maxOccurs="1"
-									type="normalizedString" />
-								<element name="column" minOccurs="1" maxOccurs="unbounded">
-									<complexType>
-										<sequence>
-											<element name="family" minOccurs="0" maxOccurs="1"
-												type="normalizedString" />
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="normalizedString" />
-											<element name="type" minOccurs="0" maxOccurs="1"
-												type="normalizedString" />
-										</sequence>
-									</complexType>
-								</element>
-							</sequence>
-						</complexType>
-					</element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="mongodbDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="hostname" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
-					<element name="database-name" minOccurs="1" maxOccurs="1"
-						type="string" />
-					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
-						<complexType>
-							<sequence>
-								<element name="collection" minOccurs="1" maxOccurs="1"
-									type="string" />
-								<element name="property" minOccurs="1" maxOccurs="unbounded">
-									<complexType>
-										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
-											<element name="type" minOccurs="0" maxOccurs="1"
-												type="normalizedString" />
-										</sequence>
-									</complexType>
-								</element>
-							</sequence>
-						</complexType>
-					</element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="elasticSearchDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="hostname" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
-					<element name="cluster-name" minOccurs="1" maxOccurs="1"
-						type="string" />
-					<element name="index-name" minOccurs="1" maxOccurs="1"
-						type="string" />
-					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
-						<complexType>
-							<sequence>
-								<element name="document-type" minOccurs="1" maxOccurs="1"
-									type="string" />
-								<element name="field" minOccurs="1" maxOccurs="unbounded">
-									<complexType>
-										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
-											<element name="type" minOccurs="0" maxOccurs="1"
-												type="normalizedString" />
-										</sequence>
-									</complexType>
-								</element>
-							</sequence>
-						</complexType>
-					</element>
-					<element name="client-type" minOccurs="0" maxOccurs="1"
-						type="string" />
-					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
-					<element name="keystore-path" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="keystore-password" minOccurs="0" maxOccurs="1" type="string" />
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="cassandraDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="keyspace" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="hostname" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
-					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
-					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
-						<complexType>
-							<sequence>
-								<element name="table-name" minOccurs="1" maxOccurs="1"
-									type="string" />
-								<element name="column" minOccurs="1" maxOccurs="unbounded">
-									<complexType>
-										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
-											<element name="type" minOccurs="0" maxOccurs="1"
-												type="normalizedString" />
-										</sequence>
-									</complexType>
-								</element>
-							</sequence>
-						</complexType>
-					</element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
 	
-	<complexType name="dynamoDbDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="region" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="accessKeyId" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="secretAccessKey" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
-						<complexType>
-							<sequence>
-								<element name="table-name" minOccurs="1" maxOccurs="1"
-									type="string" />
-								<element name="column" minOccurs="1" maxOccurs="unbounded">
-									<complexType>
-										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
-											<element name="type" minOccurs="0" maxOccurs="1"
-												type="normalizedString" />
-										</sequence>
-									</complexType>
-								</element>
-							</sequence>
-						</complexType>
-					</element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="couchdbDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="hostname" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
-					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
-					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
-						<complexType>
-							<sequence>
-								<element name="database" minOccurs="1" maxOccurs="1"
-									type="string" />
-								<element name="field" minOccurs="1" maxOccurs="unbounded">
-									<complexType>
-										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
-											<element name="type" minOccurs="0" maxOccurs="1"
-												type="normalizedString" />
-										</sequence>
-									</complexType>
-								</element>
-							</sequence>
-						</complexType>
-					</element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
 	<complexType name="fixedWidthDatastoreType">
 		<complexContent>
 			<extension base="ab:abstractDatastoreType">
@@ -818,6 +476,16 @@
 		</complexContent>
 	</complexType>
 
+	<complexType name="duckdbDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="url" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
 	<complexType name="excelDatastoreType">
 		<complexContent>
 			<extension base="ab:abstractDatastoreType">
@@ -865,55 +533,12 @@
 		</complexContent>
 	</complexType>
 	
-		<complexType name="kafkaDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="bootstrap-servers" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="topic" minOccurs="1" maxOccurs="unbounded" type="string" />
-					<element name="key-type" minOccurs="1" maxOccurs="1" type="string" />
-					<element name="value-type" minOccurs="1" maxOccurs="1" type="string" />
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="accessDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
 	<complexType name="compositeDatastoreType">
 		<complexContent>
 			<extension base="ab:abstractDatastoreType">
 				<sequence>
 					<element name="datastore-name" minOccurs="1" maxOccurs="unbounded"
 						type="string" />
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="dbaseDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
-	<complexType name="openOfficeDatabaseDatastoreType">
-		<complexContent>
-			<extension base="ab:abstractDatastoreType">
-				<sequence>
-					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
 				</sequence>
 			</extension>
 		</complexContent>

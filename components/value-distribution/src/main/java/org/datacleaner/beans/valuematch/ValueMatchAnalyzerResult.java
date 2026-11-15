@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.metamodel.util.SerializableRef;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Metric;

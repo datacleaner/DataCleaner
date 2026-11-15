@@ -28,8 +28,8 @@ import javax.swing.JButton;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.actions.ReorderColumnsActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;

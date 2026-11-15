@@ -35,9 +35,9 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.jdbc.JdbcDataContext;
-import org.apache.metamodel.schema.TableType;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.jdbc.JdbcDataContext;
+import org.datacleaner.metamodel.schema.TableType;
 import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;

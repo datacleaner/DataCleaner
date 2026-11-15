@@ -35,7 +35,7 @@ import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.metamodel.util.EqualsBuilder;
+import org.datacleaner.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.fuse.CoalesceUnit;
 import org.datacleaner.components.fuse.CoalesceUnitMissingColumnException;

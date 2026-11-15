@@ -18,19 +18,19 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-core</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-jdbc</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-jdbc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>hsqldb</groupId>
+			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 		</dependency>
 		<dependency>

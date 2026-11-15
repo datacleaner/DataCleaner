@@ -22,7 +22,7 @@ package org.datacleaner.metadata;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 
 import com.google.common.collect.ImmutableList;
 

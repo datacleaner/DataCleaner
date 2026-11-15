@@ -31,8 +31,8 @@ import java.util.function.Supplier;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.SerializableRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;

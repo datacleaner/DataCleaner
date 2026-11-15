@@ -33,7 +33,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.descriptors.ComponentDescriptor;

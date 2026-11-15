@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;

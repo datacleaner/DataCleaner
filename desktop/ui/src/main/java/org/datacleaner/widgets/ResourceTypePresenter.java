@@ -22,7 +22,7 @@ package org.datacleaner.widgets;
 import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 
 /**
  * Interface for widgets that present a {@link Resource} to the user and

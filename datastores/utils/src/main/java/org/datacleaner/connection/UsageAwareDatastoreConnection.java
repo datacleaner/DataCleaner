@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.util.UsageAwareCloseable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

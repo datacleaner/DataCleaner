@@ -25,8 +25,8 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;

@@ -25,7 +25,7 @@ import java.awt.Shape;
 import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 import com.google.common.base.Function;
 

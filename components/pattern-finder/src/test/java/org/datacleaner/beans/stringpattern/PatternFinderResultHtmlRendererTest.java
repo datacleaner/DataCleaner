@@ -21,7 +21,7 @@ package org.datacleaner.beans.stringpattern;
 
 import java.io.File;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;

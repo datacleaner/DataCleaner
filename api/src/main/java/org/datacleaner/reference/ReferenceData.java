@@ -21,7 +21,7 @@ package org.datacleaner.reference;
 
 import java.io.Serializable;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Abstraction over all reference data types in DataCleaner

@@ -29,7 +29,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.net.URI;
 import java.util.List;
 
 import javax.inject.Provider;
@@ -40,30 +39,23 @@ import javax.swing.TransferHandler;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.ServerInformationCatalog;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
-import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DatastoreCreationUtil;
 import org.datacleaner.util.FileFilters;
-import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.windows.HdfsUrlChooser;
-import org.datacleaner.windows.HdfsUrlChooser.OpenType;
 import org.datacleaner.windows.OptionsDialog;
-import org.datacleaner.windows.SelectHadoopClusterDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,58 +99,6 @@ public class Dropzone extends DCPanel {
                 new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.NONE,
                         new Insets(0, 0, 10, 0), 0, 0));
         orClickButton.addActionListener(e -> showFileChooser());
-        // select hadoop file button
-        final JButton selectHadoopButton =
-                WidgetFactory.createPrimaryButton("Select Hadoop HDFS file", IconUtils.FILE_HDFS);
-        selectHadoopButton.setFont(WidgetUtils.FONT_HEADER2);
-        selectHadoopButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(selectHadoopButton,
-                new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                        new Insets(0, 10, 10, 0), 0, 0));
-
-        selectHadoopButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(final MouseEvent e) {
-
-                String selectedServer = null;
-                final String[] serverNames = serverInformationCatalog.getServerNames();
-                // If there is only one configuration, it doesn't make sense to
-                // show the selection of configuration dialog
-
-                if (serverNames.length == 1) {
-                    assert HadoopResource.DEFAULT_CLUSTERREFERENCE.equals(serverNames[0]);
-
-                    // check if YARN_CONF_DIR or HADOOP_CONF_DIR is set
-                    if (EnvironmentBasedHadoopClusterInformation.isConfigurationDirectoriesSpecified()) {
-                        selectedServer = serverNames[0];
-                    }
-                }
-
-                if (selectedServer == null) {
-                    final SelectHadoopClusterDialog selectHadoopConfigurationDialog =
-                            new SelectHadoopClusterDialog(windowContext, serverInformationCatalog,
-                                    optionsDialogProvider);
-                    selectHadoopConfigurationDialog.setVisible(true);
-                    selectedServer = selectHadoopConfigurationDialog.getSelectedConfiguration();
-                }
-
-                if (selectedServer != null) {
-                    final URI selectedFile = HdfsUrlChooser
-                            .showDialog(Dropzone.this, serverInformationCatalog, selectedServer, null, OpenType.LOAD);
-                    logger.info("Selected HDFS file: " + selectedFile);
-
-                    if (selectedFile != null) {
-                        final HadoopClusterInformation server =
-                                (HadoopClusterInformation) serverInformationCatalog.getServer(selectedServer);
-                        final HdfsResource resource =
-                                new HadoopResource(selectedFile, server.getConfiguration(), selectedServer);
-                        final Datastore datastore = createAndAddDatastore(resource);
-                        _datastoreSelectListener.datastoreSelected(datastore);
-                    }
-                }
-            }
-
-        });
 
         addMouseListener(new MouseAdapter() {
             @Override

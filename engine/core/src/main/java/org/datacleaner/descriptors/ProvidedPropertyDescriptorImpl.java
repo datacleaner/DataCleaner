@@ -21,7 +21,7 @@ package org.datacleaner.descriptors;
 
 import java.lang.reflect.Field;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.storage.CollectionFactory;
 import org.datacleaner.storage.RowAnnotationFactory;

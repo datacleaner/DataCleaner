@@ -39,7 +39,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.slf4j.Logger;

@@ -22,7 +22,7 @@ package org.datacleaner.descriptors;
 import java.io.IOException;
 import java.io.Serializable;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.util.HasAliases;
 
 import com.fasterxml.jackson.core.JsonGenerator;

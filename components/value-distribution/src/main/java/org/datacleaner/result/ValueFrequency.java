@@ -22,7 +22,7 @@ package org.datacleaner.result;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Represents a frequency of values. Value frequencies can either represent a single

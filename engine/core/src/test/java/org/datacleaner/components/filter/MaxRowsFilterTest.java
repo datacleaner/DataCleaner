@@ -19,7 +19,7 @@
  */
 package org.datacleaner.components.filter;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.data.MockInputRow;

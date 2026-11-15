@@ -31,14 +31,12 @@ public class UsageAwareDatastoreTest extends TestCase {
 
     public void testSerializationAndDeserializationOfAllDatastoreTypes() throws Exception {
         final List<UsageAwareDatastore<?>> datastores = new ArrayList<>();
-        datastores.add(new AccessDatastore("access", "bar.mdb"));
         datastores.add(new CsvDatastore("csv", "bar.csv"));
-        datastores.add(new DbaseDatastore("dbase", "bar.dbf"));
         datastores.add(new ExcelDatastore("excel", null, "bar.xls"));
         datastores.add(new JdbcDatastore("jdbc", "url"));
         datastores.add(new FixedWidthDatastore("fixedwidth", "foo.txt", "UTF8", new int[] { 1, 2, 3 }));
         datastores.add(new CompositeDatastore("foo",
-                Arrays.asList(datastores.get(0), datastores.get(1), datastores.get(3))));
+                Arrays.asList(datastores.get(0), datastores.get(1), datastores.get(2))));
 
         for (final UsageAwareDatastore<?> ds : datastores) {
             System.out.println("Cloning datastore: " + ds);

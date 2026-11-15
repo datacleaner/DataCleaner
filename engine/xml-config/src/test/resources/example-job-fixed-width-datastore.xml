@@ -11,15 +11,5 @@
   <fail-on-inconsistencies>false</fail-on-inconsistencies>
 </fixed-width-datastore>
 
-<fixed-width-datastore name="employees-hadoop">
-      <filename>/datacleaner/employees-fixed-width.txt</filename>
-      <encoding>UTF-8</encoding>
-      <width-specification>
-        <value-width>19</value-width>
-        <value-width>22</value-width>
-      </width-specification>
-      <header-line-number>1</header-line-number>
-      <fail-on-inconsistencies>false</fail-on-inconsistencies>
-    </fixed-width-datastore>
   </datastore-catalog>
 </configuration>

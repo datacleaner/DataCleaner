@@ -29,8 +29,8 @@ import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;

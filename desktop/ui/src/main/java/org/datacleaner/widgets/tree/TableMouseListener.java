@@ -31,8 +31,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.QueryActionListener;
 import org.datacleaner.actions.QuickAnalysisActionListener;

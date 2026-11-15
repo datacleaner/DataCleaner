@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.ColumnType;
 
 /**
  * Empty/blank implementation of {@link AnalysisJobMetadata}.

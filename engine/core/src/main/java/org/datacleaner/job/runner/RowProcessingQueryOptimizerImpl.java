@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.QueryOptimizedFilter;

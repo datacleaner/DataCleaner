@@ -19,8 +19,8 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.UpdateableDataContext;
 
 /**
  * Represents a connection to a datastore that is updateable/writable.

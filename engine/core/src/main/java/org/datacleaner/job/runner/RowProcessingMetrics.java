@@ -19,8 +19,8 @@
  */
 package org.datacleaner.job.runner;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;

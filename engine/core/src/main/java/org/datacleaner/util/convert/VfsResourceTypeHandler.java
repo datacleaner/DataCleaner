@@ -20,7 +20,7 @@
 package org.datacleaner.util.convert;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;

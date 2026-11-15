@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;

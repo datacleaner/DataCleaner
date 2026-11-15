@@ -22,9 +22,9 @@ package org.datacleaner.output;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.util.DateUtils;
+import org.datacleaner.metamodel.util.Month;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.junit.Assert;

@@ -23,7 +23,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.job.builder.AnalysisJobBuilder;

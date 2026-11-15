@@ -32,10 +32,10 @@ import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.TableModel;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.DataSetTableModel;
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.DataSetTableModel;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ErrorUtils;

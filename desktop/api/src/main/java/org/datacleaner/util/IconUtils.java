@@ -32,32 +32,20 @@ import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
-import org.datacleaner.connection.AccessDatastore;
-import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
-import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DbaseDatastore;
-import org.datacleaner.connection.DynamoDbDatastore;
-import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.DuckDbDatastore;
+import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
-import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.connection.KafkaDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
-import org.datacleaner.connection.Neo4jDatastore;
-import org.datacleaner.connection.OdbDatastore;
-import org.datacleaner.connection.SalesforceDatastore;
-import org.datacleaner.connection.SasDatastore;
-import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
@@ -207,21 +195,12 @@ public final class IconUtils {
     public static final String EXCEL_IMAGEPATH = "images/datastore-types/excel.png";
     public static final String ACCESS_IMAGEPATH = "images/datastore-types/access.png";
     public static final String DBASE_IMAGEPATH = "images/datastore-types/dbase.png";
-    public static final String SAS_IMAGEPATH = "images/datastore-types/sas.png";
     public static final String FIXEDWIDTH_IMAGEPATH = "images/datastore-types/fixedwidth.png";
+    public static final String SAS_IMAGEPATH = "images/datastore-types/sas.png";
+    public static final String DUCKDB_IMAGEPATH = "images/datastore-types/duckdb.png";
     public static final String ODB_IMAGEPATH = "images/datastore-types/odb.png";
     public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
-    public static final String MONGODB_IMAGEPATH = "images/datastore-types/mongodb.png";
-    public static final String COUCHDB_IMAGEPATH = "images/datastore-types/couchdb.png";
-    public static final String DYNAMODB_IMAGEPATH = "images/datastore-types/dynamodb.png";
-    public static final String KAFKA_IMAGEPATH = "images/datastore-types/kafka.png";
-    public static final String SALESFORCE_IMAGEPATH = "images/datastore-types/salesforce.png";
-    public static final String SUGAR_CRM_IMAGEPATH = "images/datastore-types/sugarcrm.png";
     public static final String JSON_IMAGEPATH = "images/datastore-types/json.png";
-    public static final String HBASE_IMAGEPATH = "images/datastore-types/hbase.png";
-    public static final String CASSANDRA_IMAGEPATH = "images/datastore-types/cassandra.png";
-    public static final String ELASTICSEARCH_IMAGEPATH = "images/datastore-types/elasticsearch.png";
-    public static final String NEO4J_IMAGEPATH = "images/datastore-types/neo4j.png";
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
     public static final String FILE_FILE = "images/filetypes/file.png";
@@ -532,42 +511,18 @@ public final class IconUtils {
             imagePath = CSV_IMAGEPATH;
         } else if (datastore instanceof ExcelDatastore) {
             imagePath = EXCEL_IMAGEPATH;
-        } else if (datastore instanceof AccessDatastore) {
-            imagePath = ACCESS_IMAGEPATH;
-        } else if (datastore instanceof OdbDatastore) {
-            imagePath = ODB_IMAGEPATH;
         } else if (datastore instanceof FixedWidthDatastore) {
             imagePath = FIXEDWIDTH_IMAGEPATH;
-        } else if (datastore instanceof DbaseDatastore) {
-            imagePath = DBASE_IMAGEPATH;
         } else if (datastore instanceof SasDatastore) {
             imagePath = SAS_IMAGEPATH;
+        } else if (datastore instanceof DuckDbDatastore) {
+            imagePath = DUCKDB_IMAGEPATH;
         } else if (datastore instanceof XmlDatastore) {
             imagePath = XML_IMAGEPATH;
-        } else if (datastore instanceof HBaseDatastore) {
-            imagePath = HBASE_IMAGEPATH;
-        } else if (datastore instanceof ElasticSearchDatastore) {
-            imagePath = ELASTICSEARCH_IMAGEPATH;
-        } else if (datastore instanceof CassandraDatastore) {
-            imagePath = CASSANDRA_IMAGEPATH;
         } else if (datastore instanceof JsonDatastore) {
             imagePath = JSON_IMAGEPATH;
-        } else if (datastore instanceof CouchDbDatastore) {
-            imagePath = COUCHDB_IMAGEPATH;
-        } else if (datastore instanceof DynamoDbDatastore) {
-            imagePath = DYNAMODB_IMAGEPATH;
-        } else if (datastore instanceof KafkaDatastore) {
-            imagePath = KAFKA_IMAGEPATH;
-        } else if (datastore instanceof MongoDbDatastore) {
-            imagePath = MONGODB_IMAGEPATH;
-        } else if (datastore instanceof SalesforceDatastore) {
-            imagePath = SALESFORCE_IMAGEPATH;
-        } else if (datastore instanceof SugarCrmDatastore) {
-            imagePath = SUGAR_CRM_IMAGEPATH;
         } else if (datastore instanceof CompositeDatastore) {
             imagePath = COMPOSITE_IMAGEPATH;
-        } else if (datastore instanceof Neo4jDatastore) {
-            imagePath = NEO4J_IMAGEPATH;
         }
 
         return imagePath;

@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;

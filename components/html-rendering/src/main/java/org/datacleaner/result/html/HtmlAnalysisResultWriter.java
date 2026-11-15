@@ -33,7 +33,7 @@ import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.apache.metamodel.util.TruePredicate;
+import org.datacleaner.metamodel.util.TruePredicate;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.DataCleanerConfiguration;

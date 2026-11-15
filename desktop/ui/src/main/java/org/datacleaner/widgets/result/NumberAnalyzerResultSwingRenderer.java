@@ -22,7 +22,7 @@ package org.datacleaner.widgets.result;
 import java.awt.BasicStroke;
 import java.awt.event.ActionListener;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.NumberAnalyzer;

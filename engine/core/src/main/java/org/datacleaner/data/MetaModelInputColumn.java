@@ -19,22 +19,37 @@
  */
 package org.datacleaner.data;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.ColumnType;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.util.ColumnSnapshot;
 import org.datacleaner.util.ReflectionUtils;
 
 public final class MetaModelInputColumn extends AbstractInputColumn<Object> {
 
     private static final long serialVersionUID = 1L;
 
-    private final Column _column;
+    private transient Column _column;
 
     public MetaModelInputColumn(final Column column) {
         if (column == null) {
             throw new IllegalArgumentException("column cannot be null");
         }
         _column = column;
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.writeObject(new ColumnSnapshot(_column));
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        final ColumnSnapshot snapshot = (ColumnSnapshot) in.readObject();
+        _column = snapshot.rebuild();
     }
 
     @SuppressWarnings("unchecked")

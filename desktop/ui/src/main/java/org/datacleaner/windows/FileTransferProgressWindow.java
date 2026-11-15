@@ -30,7 +30,7 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Action;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;

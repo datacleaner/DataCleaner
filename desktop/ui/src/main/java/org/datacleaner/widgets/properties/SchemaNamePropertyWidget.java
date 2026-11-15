@@ -21,10 +21,10 @@ package org.datacleaner.widgets.properties;
 
 import javax.swing.DefaultComboBoxModel;
 
-import org.apache.metamodel.schema.MutableSchema;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.metamodel.schema.MutableSchema;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.MutableRef;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;

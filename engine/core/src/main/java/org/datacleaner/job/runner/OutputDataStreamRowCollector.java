@@ -22,11 +22,11 @@ package org.datacleaner.job.runner;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.metamodel.data.CachingDataSetHeader;
-import org.apache.metamodel.data.DefaultRow;
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.query.SelectItem;
+import org.datacleaner.metamodel.data.CachingDataSetHeader;
+import org.datacleaner.metamodel.data.DefaultRow;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.query.SelectItem;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.OutputRowCollector;

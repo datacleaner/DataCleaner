@@ -21,8 +21,8 @@ package org.datacleaner.connection;
 
 import java.io.File;
 
-import org.apache.metamodel.DataContext;
-import org.eobjects.metamodel.sas.metamodel.SasDataContext;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.sas.metamodel.SasDataContext;
 
 /**
  * Datastore implementation for directories with SAS datasets.

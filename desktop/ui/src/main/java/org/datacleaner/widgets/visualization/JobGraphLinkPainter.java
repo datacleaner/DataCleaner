@@ -36,7 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;

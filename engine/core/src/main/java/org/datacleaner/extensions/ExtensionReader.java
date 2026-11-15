@@ -32,7 +32,7 @@ import java.util.jar.JarFile;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.util.ResourceManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.http.HttpXmlUtils;

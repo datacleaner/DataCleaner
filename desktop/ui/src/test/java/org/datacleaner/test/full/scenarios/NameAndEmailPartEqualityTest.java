@@ -21,9 +21,9 @@ package org.datacleaner.test.full.scenarios;
 
 import java.util.List;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzer;

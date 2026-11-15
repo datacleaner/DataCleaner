@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.output.OutputWriter;
 

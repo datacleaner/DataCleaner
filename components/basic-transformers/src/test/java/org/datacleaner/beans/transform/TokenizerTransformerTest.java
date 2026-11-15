@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.OutputRowCollector;

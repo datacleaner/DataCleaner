@@ -37,9 +37,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.util.ImmutableEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +49,14 @@ import org.slf4j.LoggerFactory;
  * support high volume sorted data.
  *
  * @param <R>
- *            the row type, HAS to be serializable
+ *            the row type. Needs to be serializable in order to support
+ *            external sorting (staging of rows in temporary files) of more
+ *            rows than fit in memory.
  * @param <W>
  *            the writer type used when writing a row to the final destination
  *            file.
  */
-public abstract class SortMergeWriter<R extends Serializable, W extends Closeable> {
+public abstract class SortMergeWriter<R, W extends Closeable> {
 
     private static final Logger logger = LoggerFactory.getLogger(SortMergeWriter.class);
 

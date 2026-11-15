@@ -21,7 +21,7 @@ package org.datacleaner.windows;
 
 import javax.inject.Inject;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.JsonDatastore;

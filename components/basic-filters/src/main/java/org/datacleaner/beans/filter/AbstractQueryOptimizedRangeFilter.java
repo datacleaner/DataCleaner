@@ -21,11 +21,11 @@ package org.datacleaner.beans.filter;
 
 import java.util.Comparator;
 
-import org.apache.metamodel.query.FilterItem;
-import org.apache.metamodel.query.OperatorType;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.query.SelectItem;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.query.FilterItem;
+import org.datacleaner.metamodel.query.OperatorType;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.query.SelectItem;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.InputColumn;

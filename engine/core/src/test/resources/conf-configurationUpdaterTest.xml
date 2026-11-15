@@ -20,11 +20,6 @@
             <password/>
         </jdbc-datastore>
 
-        <salesforce-datastore description="Example connection to SFDC - credentials not provided" name="Salesforce.com">
-            <username>username</username>
-            <password>password</password>
-            <security-token>token</security-token>
-        </salesforce-datastore>
 
         <csv-datastore description="Example CSV-file with representing customers' details" name="Customers">
             <filename>datastores/customers.csv</filename>

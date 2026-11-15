@@ -21,7 +21,7 @@ package org.datacleaner.connection;
 
 import java.io.Closeable;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 
 /**
  * Represents an open connection to a {@link Datastore}.

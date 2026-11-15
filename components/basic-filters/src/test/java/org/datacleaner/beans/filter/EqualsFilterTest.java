@@ -19,8 +19,8 @@
  */
 package org.datacleaner.beans.filter;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;

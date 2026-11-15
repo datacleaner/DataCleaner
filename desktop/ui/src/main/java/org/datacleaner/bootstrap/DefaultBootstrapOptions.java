@@ -24,7 +24,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.cli.CliArguments;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;

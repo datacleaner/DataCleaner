@@ -22,7 +22,7 @@ package org.datacleaner.components.machinelearning.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.util.ReflectionUtils;
 
 /**

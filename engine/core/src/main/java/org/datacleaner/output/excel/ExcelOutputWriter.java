@@ -19,8 +19,8 @@
  */
 package org.datacleaner.output.excel;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.output.AbstractMetaModelOutputWriter;
 

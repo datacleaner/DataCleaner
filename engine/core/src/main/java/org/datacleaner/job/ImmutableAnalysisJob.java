@@ -22,7 +22,7 @@ package org.datacleaner.job;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.metamodel.util.BaseObject;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
 

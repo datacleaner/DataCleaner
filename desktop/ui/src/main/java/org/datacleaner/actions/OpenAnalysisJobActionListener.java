@@ -29,7 +29,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;

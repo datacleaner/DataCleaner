@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job;
 
-import org.apache.metamodel.data.Row;
+import org.datacleaner.metamodel.data.Row;
 import org.datacleaner.api.OutputRowCollector;
 
 /**

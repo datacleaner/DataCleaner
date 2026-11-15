@@ -28,17 +28,17 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.schema.naming.ColumnNamingStrategy;
-import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.InMemoryResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.csv.CsvDataContext;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.naming.ColumnNamingStrategy;
+import org.datacleaner.metamodel.schema.naming.CustomColumnNamingStrategy;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.InMemoryResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

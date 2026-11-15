@@ -21,7 +21,7 @@ package org.datacleaner.beans.writers;
 
 import java.util.function.Function;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;

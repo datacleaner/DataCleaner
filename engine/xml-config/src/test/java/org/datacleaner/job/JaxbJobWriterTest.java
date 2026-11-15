@@ -30,9 +30,9 @@ import java.util.List;
 
 import javax.xml.datatype.DatatypeFactory;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileResource;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.FileResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.beans.CompletenessAnalyzer;

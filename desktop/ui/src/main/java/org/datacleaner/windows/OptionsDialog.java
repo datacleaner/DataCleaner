@@ -77,8 +77,7 @@ public class OptionsDialog extends AbstractWindow {
 
     @Inject
     protected OptionsDialog(final WindowContext windowContext, final DataCleanerConfiguration configuration,
-            final UserPreferences userPreferences, final DatabaseDriversPanel databaseDriversPanel,
-            final HadoopClustersOptionsPanel hadoopClustersOptionsPanel) {
+            final UserPreferences userPreferences, final DatabaseDriversPanel databaseDriversPanel) {
         super(windowContext);
         setMinimumSize(new Dimension(500, 500));
         _userPreferences = userPreferences;
@@ -90,8 +89,6 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane.addTab("Database drivers",
                 imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_TAB),
                 databaseDriversPanel);
-        _tabbedPane.addTab("Hadoop clusters", imageManager.getImageIcon(IconUtils.FILE_HDFS, IconUtils.ICON_SIZE_TAB),
-                hadoopClustersOptionsPanel);
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
                 getNetworkTab());
         _tabbedPane.addTab("Performance",
@@ -107,10 +104,6 @@ public class OptionsDialog extends AbstractWindow {
 
     public void selectDatabaseDriversTab() {
         _tabbedPane.setSelectedIndex(2);
-    }
-
-    public void selectHadoopClustersTab() {
-        _tabbedPane.setSelectedIndex(3);
     }
 
     private DCPanel getGeneralTab() {

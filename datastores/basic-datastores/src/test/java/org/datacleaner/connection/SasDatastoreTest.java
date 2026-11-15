@@ -22,10 +22,10 @@ package org.datacleaner.connection;
 import java.io.File;
 import java.util.List;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
 
 import junit.framework.TestCase;
 

@@ -26,22 +26,17 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.metamodel.schema.TableType;
-import org.apache.metamodel.util.ClasspathResource;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.connection.CouchDbDatastore;
+import org.datacleaner.metamodel.schema.TableType;
+import org.datacleaner.metamodel.util.ClasspathResource;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DynamoDbDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
-import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.RegexStringPattern;
@@ -49,11 +44,6 @@ import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
-import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
-import org.datacleaner.test.MockHadoopConfigHelper;
-import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.xml.XmlUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -109,22 +99,6 @@ public class DomConfigurationWriterTest {
                 str);
     }
     
-    @Test
-    public void testExternalizeDynamoDatastore() throws Exception {
-        final DynamoDbDatastore ds = new DynamoDbDatastore("my dyno", "west", "key", "secret", null); 
-        ds.setDescription("bar");
-
-        final Element elem = configurationWriter.toElement(ds);
-
-        final String str = transform(elem);
-
-        assertEquals("<dynamodb-datastore description=\"bar\" name=\"my dyno\">\n"
-                + "  <region>west</region>\n"
-                + "  <accessKeyId>key</accessKeyId>\n"
-                + "  <secretAccessKey>enc:brIAhgjdd+M=</secretAccessKey>\n" 
-                + "</dynamodb-datastore>\n",
-                str);
-    }
 
     @Test
     public void testIsExternalizableAndExternalize() throws Exception {
@@ -201,37 +175,8 @@ public class DomConfigurationWriterTest {
                 + "  <catalog-name>catalogName</catalog-name>\n" + "</jdbc-datastore>\n", transform(externalized));
     }
 
-    @Test
-    public void testExternalizeMongoDbDatastoreWithPassword() throws Exception {
-        final Datastore ds1 = new MongoDbDatastore("name", "hostname", 1234, "database", "user", "password");
 
-        final Element externalized = configurationWriter.externalize(ds1);
-        assertEquals("<mongodb-datastore name=\"name\">\n" + "  <hostname>hostname</hostname>\n  <port>1234</port>\n"
-                + "  <database-name>database</database-name>\n" + "  <username>user</username>\n" + "  <password>"
-                + PASSWORD_ENCODED + "</password>\n</mongodb-datastore>\n", transform(externalized));
-    }
 
-    @Test
-    public void testExternalizeCouchDbDatastoreWithPassword() throws Exception {
-        final Datastore ds1 = new CouchDbDatastore("name", "hostname", 1234, "user", "password", true, null);
-
-        final Element externalized = configurationWriter.externalize(ds1);
-        assertEquals(
-                "<couchdb-datastore name=\"name\">\n" + "  <hostname>hostname</hostname>\n" + "  <port>1234</port>\n"
-                        + "  <username>user</username>\n" + "  <password>" + PASSWORD_ENCODED + "</password>\n"
-                        + "  <ssl>true</ssl>\n" + "</couchdb-datastore>\n", transform(externalized));
-    }
-
-    @Test
-    public void testExternalizeSalesforceDatastoreWithPassword() throws Exception {
-        final Datastore ds1 = new SalesforceDatastore("name", "username", "password", "securityToken");
-
-        final Element externalized = configurationWriter.externalize(ds1);
-        assertEquals("<salesforce-datastore name=\"name\">\n" + "  <username>username</username>\n" + "  <password>"
-                        + PASSWORD_ENCODED + "</password>\n"
-                        + "  <security-token>securityToken</security-token>\n</salesforce-datastore>\n",
-                transform(externalized));
-    }
 
     @Test
     public void testExternalizeJsonDatastore() throws Exception {
@@ -304,79 +249,6 @@ public class DomConfigurationWriterTest {
         assertEquals("products.productname", datastoreSynonymCatalog.getMasterTermColumnPath());
         assertEquals("[products.productline, product.producttype]",
                 Arrays.toString(datastoreSynonymCatalog.getSynonymColumnPaths()));
-    }
-
-    @Test
-    public void testWriteAndReadAllServers() throws Exception {
-        configurationWriter
-                .externalize(new EnvironmentBasedHadoopClusterInformation("environment", "Environment-based cluster"));
-        configurationWriter.externalize(
-                new DirectoryBasedHadoopClusterInformation("directory", "Directory-based cluster", "C:\\Users\\Test",
-                        "file:///C:/Users/Test2"));
-        configurationWriter.externalize(
-                new DirectConnectionHadoopClusterInformation("namenode", "Namenode-based cluster",
-                        URI.create("hdfs://localhost:8020/")));
-
-        final String str = transform(configurationWriter.getDocument());
-
-        // "Default" hadoop cluster reference should never be written
-        assertFalse(str.contains(HadoopResource.DEFAULT_CLUSTERREFERENCE));
-
-        final File file = new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
-        FileHelper.writeStringAsFile(file, str);
-
-        final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
-        final ServerInformationCatalog serverInformationCatalog = configuration.getServerInformationCatalog();
-        assertEquals("[directory, environment, namenode, org.datacleaner.hadoop.environment]",
-                Arrays.toString(serverInformationCatalog.getServerNames()));
-
-        assertNotNull(serverInformationCatalog.getServer("environment"));
-
-        final DirectoryBasedHadoopClusterInformation directoryBasedHadoopClusterInformation =
-                (DirectoryBasedHadoopClusterInformation) serverInformationCatalog.getServer("directory");
-        assertArrayEquals(new String[] { "C:\\Users\\Test", "file:///C:/Users/Test2" },
-                directoryBasedHadoopClusterInformation.getDirectories());
-
-        final DirectConnectionHadoopClusterInformation directConnectionHadoopClusterInformation =
-                (DirectConnectionHadoopClusterInformation) serverInformationCatalog.getServer("namenode");
-        assertEquals(URI.create("hdfs://localhost:8020/"), directConnectionHadoopClusterInformation.getNameNodeUri());
-
-        configurationWriter.removeHadoopClusterServerInformation("namenode");
-
-        final String str2 = transform(configurationWriter.getDocument());
-        assertFalse(str2, str2.contains("namenode"));
-    }
-
-    @Test
-    public void testWriteAndReadHadoopResourceDatastore() throws Exception {
-        final MockHadoopConfigHelper helper = new MockHadoopConfigHelper(_temporaryFolder);
-
-        helper.generateCoreFile();
-        // Prepare "environment"
-        try {
-            System.setProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR,
-                    helper.getConfFolder().getAbsolutePath());
-
-            final HadoopResource hadoopResource =
-                    new HadoopResource(URI.create("example-dates.csv"), new Configuration(),
-                            HadoopResource.DEFAULT_CLUSTERREFERENCE);
-            configurationWriter.externalize(new CsvDatastore("csvDatastore", hadoopResource));
-            final String str = transform(configurationWriter.getDocument());
-            final File file =
-                    new File("target/" + getClass().getSimpleName() + "-" + testName.getMethodName() + ".xml");
-            FileHelper.writeStringAsFile(file, str);
-
-            final DataCleanerConfiguration configuration = new JaxbConfigurationReader().create(file);
-
-            final CsvDatastore csvDatastore =
-                    (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csvDatastore");
-            final HadoopResource resource = (HadoopResource) csvDatastore.getResource();
-            assertNotNull(resource);
-            assertEquals("example-dates.csv", resource.getFilepath());
-            assertEquals(helper.getPath(), resource.getHadoopConfiguration().get("fs.defaultFS"));
-        } finally {
-            System.clearProperty(EnvironmentBasedHadoopClusterInformation.HADOOP_CONF_DIR);
-        }
     }
 
     @Test

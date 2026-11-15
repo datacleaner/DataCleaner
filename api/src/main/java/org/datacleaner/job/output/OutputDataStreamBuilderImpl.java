@@ -21,14 +21,14 @@ package org.datacleaner.job.output;
 
 import java.util.List;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.ColumnTypeImpl;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableSchema;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.schema.TableType;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.ColumnTypeImpl;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableSchema;
+import org.datacleaner.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.TableType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 

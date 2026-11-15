@@ -24,12 +24,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.excel.ExcelConfiguration;
-import org.apache.metamodel.excel.ExcelDataContext;
-import org.apache.metamodel.schema.naming.CustomColumnNamingStrategy;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.excel.ExcelConfiguration;
+import org.datacleaner.metamodel.excel.ExcelDataContext;
+import org.datacleaner.metamodel.schema.naming.CustomColumnNamingStrategy;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.SerializableRef;
 import org.datacleaner.util.ReadObjectBuilder;
 
 /**

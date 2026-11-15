@@ -150,9 +150,6 @@ public final class Bootstrap {
 			// set up error handling that displays an error dialog
 			final DCUncaughtExceptionHandler exceptionHandler = new DCUncaughtExceptionHandler();
 			Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
-
-			// init the look and feel
-			LookAndFeelManager.get().init();
 		}
 
 		// initially use a temporary non-persistent user preferences object.
@@ -168,6 +165,18 @@ public final class Bootstrap {
 
 		// configuration loading can be multithreaded, so begin early
 		final DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
+
+		if (!cliMode) {
+			// init the look and feel. The theme is persisted in the user
+			// preferences, so load those first to make it available.
+			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
+			final String theme = userPreferences.getAdditionalProperties()
+					.get(LookAndFeelManager.USER_PROPERTY_THEME);
+			if (theme != null) {
+				System.setProperty(LookAndFeelManager.SYSTEM_PROPERTY_THEME, theme);
+			}
+			LookAndFeelManager.get().init();
+		}
 
 		if (cliMode) {
 			runCli(arguments, configuration);

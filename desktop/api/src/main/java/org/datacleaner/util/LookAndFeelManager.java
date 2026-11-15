@@ -19,34 +19,52 @@
  */
 package org.datacleaner.util;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
-import java.util.Set;
-
-import javax.swing.BorderFactory;
 import javax.swing.LookAndFeel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  * Class that encapsulates all central configuration of look and feel and
  * similar Swing constructs.
+ *
+ * <p>
+ * The visual theme is defined in the FlatLaf properties files in the
+ * {@code org.datacleaner.themes} package. Both a light and a dark theme are
+ * available; the active theme can be selected at runtime via
+ * {@link #setDarkTheme(boolean)} and is persisted by the caller (see the
+ * Options dialog) in the user preferences.
+ * </p>
  */
 public final class LookAndFeelManager {
+
+    /**
+     * System property used to select the UI theme ({@link #THEME_LIGHT} or
+     * {@link #THEME_DARK}). Set programmatically before initialization.
+     */
+    public static final String SYSTEM_PROPERTY_THEME = "datacleaner.ui.theme";
+
+    /**
+     * Key in the user preferences' additional properties where the theme
+     * ({@link #THEME_LIGHT} or {@link #THEME_DARK}) is persisted.
+     */
+    public static final String USER_PROPERTY_THEME = "ui.theme";
+
+    public static final String THEME_LIGHT = "light";
+    public static final String THEME_DARK = "dark";
 
     private static final Logger logger = LoggerFactory.getLogger(LookAndFeelManager.class);
     private static final LookAndFeelManager instance = new LookAndFeelManager();
     private static final ImageManager imageManager = ImageManager.get();
+
+    private boolean initialized;
 
     private LookAndFeelManager() {
     }
@@ -77,158 +95,85 @@ public final class LookAndFeelManager {
     }
 
     /**
-     * Initializes the look and feel.
+     * Initializes the look and feel. Subsequent invocations are no-ops (the
+     * method is also used as an initialization guard from widget code).
      *
      * @param laf
-     *            the look and feel to install. If null, the default
-     *            {@link FlatLightLaf} is installed.
+     *            the look and feel to install. If null, the theme selected via
+     *            the {@value #SYSTEM_PROPERTY_THEME} system property is
+     *            installed (light by default).
      */
     public void init(final LookAndFeel laf) {
         applyUiScale();
 
+        if (initialized) {
+            return;
+        }
+        initialized = true;
+
+        // make the bundled fonts resolvable by family name for the FlatLaf
+        // theme properties (e.g. "defaultFont")
+        WidgetUtils.registerFonts();
+
+        // load the DataCleaner theme properties with every FlatLaf theme
+        FlatLaf.registerCustomDefaultsSource("org.datacleaner.themes");
+
         try {
-            UIManager.setLookAndFeel(laf != null ? laf : new FlatLightLaf());
+            UIManager.setLookAndFeel(laf != null ? laf : createThemeLaf());
             logger.info("Look and feel set to: {}", UIManager.getLookAndFeel());
         } catch (final UnsupportedLookAndFeelException e) {
             throw new IllegalStateException(e);
         }
 
-        // set default font on all component types
-        final Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
-        for (final Object propertyKey : propertyKeys) {
-            if (propertyKey instanceof String && ((String) propertyKey).endsWith(".font")) {
-                UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
-            }
-        }
-
-        ToolTipManager.sharedInstance().setInitialDelay(500);
-
-        final EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
-        UIManager.put("ScrollPane.border", emptyBorder);
-
-        // OptionPane background and Panel background are linked because the
-        // JOptionPane features unstyleable and opaque Panels.
-        UIManager.put("OptionPane.background", WidgetUtils.COLOR_WELL_BACKGROUND);
-        UIManager.put("Panel.background", WidgetUtils.COLOR_WELL_BACKGROUND);
-
-        UIManager.put("List.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("List.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
-        UIManager.put("List.focusCellHighlightBorder", WidgetUtils.BORDER_THIN);
-
-        UIManager.put("Tree.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("Tree.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
-        UIManager.put("Tree.selectionBorderColor", WidgetUtils.BG_COLOR_MEDIUM);
-
-        UIManager.put("Table.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("Table.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
-        UIManager.put("Table.focusCellHighlightBorder", WidgetUtils.BORDER_THIN);
-
-        // splitpane "flattening" (remove bevel like borders in divider)
-        UIManager.put("SplitPane.border", new EmptyBorder(0, 0, 0, 0));
-        UIManager.put("SplitPaneDivider.border", new EmptyBorder(0, 0, 0, 0));
-
-        final Color menuBackground = WidgetUtils.BG_COLOR_LESS_BRIGHT;
-        UIManager.put("PopupMenu.background", menuBackground);
-        UIManager.put("PopupMenu.foreground", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("PopupMenu.border", emptyBorder);
-        UIManager.put("Menu.background", menuBackground);
-        UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("Menu.border", WidgetUtils.BORDER_MENU_ITEM);
-        UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_BLUE_DARK);
-        UIManager.put("MenuItem.background", menuBackground);
-        UIManager.put("MenuItem.foreground", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("MenuItem.border", WidgetUtils.BORDER_MENU_ITEM);
-        UIManager.put("MenuBar.background", menuBackground);
-        UIManager.put("MenuBar.foreground", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("MenuBar.border", emptyBorder);
-
-        // separator styling
-        final Color separatorColor = WidgetUtils.slightlyDarker(menuBackground);
-        UIManager.put("Separator.background", separatorColor);
-        UIManager.put("Separator.foreground", separatorColor);
-        UIManager.put("Separator.highlight", separatorColor);
-        UIManager.put("Separator.shadow", separatorColor);
-
-        // white background for input components
-        UIManager.put("Tree.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("EditorPane.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("Spinner.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-
-        // Input fields
-        UIManager.put("TextField.border", WidgetUtils.BORDER_INPUT);
-        UIManager.put("TextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("TextField.disabledBackground", WidgetUtils.BG_COLOR_BRIGHT);
-
-        UIManager.put("TextArea.border", WidgetUtils.BORDER_INPUT);
-        UIManager.put("TextArea.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-
-        UIManager.put("PasswordField.border", WidgetUtils.BORDER_INPUT);
-        UIManager.put("PasswordField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("PasswordField.disabledBackground", WidgetUtils.BG_COLOR_BRIGHT);
-
-        UIManager.put("FormattedTextField.border", WidgetUtils.BORDER_INPUT);
-        UIManager.put("FormattedTextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-
-        UIManager.put("ComboBox.border", WidgetUtils.BORDER_INPUT);
-        UIManager.put("ComboBox.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("ComboBox.arrowButtonBorder", BorderFactory.createEmptyBorder());
-        UIManager.put("ComboBox.editorBorder", BorderFactory.createEmptyBorder());
-        UIManager.put("ComboBox.selectionBackground", WidgetUtils.BG_COLOR_BRIGHTEST);
-
-        // table header styling
-        UIManager.put("TableHeader.background", WidgetUtils.COLOR_WELL_BACKGROUND);
-        UIManager.put("TableHeader.focusCellBackground", WidgetUtils.COLOR_WELL_BACKGROUND);
-        UIManager.put("TableHeader.foreground", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("TableHeader.font", WidgetUtils.FONT_TABLE_HEADER);
-        UIManager.put("TableHeader.cellBorder",
-                new CompoundBorder(new MatteBorder(0, 0, 0, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT),
-                        WidgetUtils.BORDER_EMPTY));
-
-        // titled borders
-        UIManager.put("TitledBorder.font", WidgetUtils.FONT_HEADER1);
-        UIManager.put("TitledBorder.titleColor", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-
-        // tool tip colors
-        UIManager.put("ToolTip.background", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
-        UIManager.put("ToolTip.foreground", WidgetUtils.BG_COLOR_BRIGHT);
-        UIManager.put("ToolTip.border", WidgetUtils.BORDER_WIDE_ALTERNATIVE);
-
-        // task pane colors
-        UIManager.put("TaskPaneContainer.background", WidgetUtils.COLOR_WELL_BACKGROUND);
-        UIManager.put("TaskPane.background", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("TaskPane.font", WidgetUtils.FONT_TABLE_HEADER);
-        UIManager.put("TaskPane.titleForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
-        UIManager.put("TaskPane.titleBackgroundGradientEnd", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
-        UIManager.put("TaskPane.borderColor", WidgetUtils.BG_COLOR_LESS_DARK);
-
-        // scrollbar color
-        UIManager.put("ScrollBar.minimumThumbSize", new Dimension(30, 30));
-
-        // progressbar color
-        UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
-
-        // file chooser
+        // file chooser icons (bundled images, not expressible in theme properties)
         UIManager.put("FileChooser.detailsViewIcon", imageManager.getImageIcon("images/filetypes/view-details.png"));
         UIManager.put("FileChooser.listViewIcon", imageManager.getImageIcon("images/filetypes/view-list.png"));
         UIManager.put("FileChooser.homeFolderIcon", imageManager.getImageIcon("images/filetypes/home-folder.png"));
         UIManager.put("FileChooser.newFolderIcon", imageManager.getImageIcon("images/filetypes/new-folder.png"));
         UIManager.put("FileChooser.upFolderIcon", imageManager.getImageIcon("images/filetypes/parent-folder.png"));
 
-        // date picker month view
-        UIManager.put("JXMonthView.foreground", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("JXMonthView.monthStringForeground", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("JXMonthView.daysOfTheWeekForeground", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("JXMonthView.weekOfTheYearForeground", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("JXMonthView.unselectableDayForeground", WidgetUtils.BG_COLOR_MEDIUM);
-
-        // sets the default font to use in Swing html elements
-        GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(WidgetUtils.FONT_NORMAL);
-
-        // tool tip tweaks
-        ToolTipManager.sharedInstance().setDismissDelay(10 * 1000);
+        // tool tip behaviour
         ToolTipManager.sharedInstance().setInitialDelay(100);
+        ToolTipManager.sharedInstance().setDismissDelay(10 * 1000);
+    }
+
+    /**
+     * Gets whether the dark theme is active.
+     *
+     * @return true if the dark theme is selected (default is false/light).
+     */
+    public boolean isDarkTheme() {
+        return THEME_DARK.equalsIgnoreCase(System.getProperty(SYSTEM_PROPERTY_THEME, THEME_LIGHT));
+    }
+
+    /**
+     * Switches between the light and dark UI themes at runtime. Installs the
+     * corresponding FlatLaf theme and refreshes all open windows. The caller
+     * is responsible for persisting the choice.
+     *
+     * @param dark true to enable the dark theme, false for the light theme.
+     */
+    public void setDarkTheme(final boolean dark) {
+        final String currentTheme = System.getProperty(SYSTEM_PROPERTY_THEME, THEME_LIGHT);
+        final String newTheme = dark ? THEME_DARK : THEME_LIGHT;
+        if (newTheme.equalsIgnoreCase(currentTheme)) {
+            return;
+        }
+
+        System.setProperty(SYSTEM_PROPERTY_THEME, newTheme);
+        try {
+            UIManager.setLookAndFeel(createThemeLaf());
+            logger.info("Look and feel set to: {}", UIManager.getLookAndFeel());
+
+            // refresh all components in all windows
+            FlatLaf.updateUI();
+        } catch (final UnsupportedLookAndFeelException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private LookAndFeel createThemeLaf() {
+        return isDarkTheme() ? new FlatDarkLaf() : new FlatLightLaf();
     }
 
     /**
@@ -241,9 +186,16 @@ public final class LookAndFeelManager {
      */
     private void applyUiScale() {
         final String scale = System.getProperty("datacleaner.ui.scale");
-        if (scale != null && !scale.trim().isEmpty() && System.getProperty("flatlaf.uiScale") == null) {
-            System.setProperty("flatlaf.uiScale", scale.trim());
-            logger.info("UI scale set to: {}", scale.trim());
+        if (scale == null || scale.trim().isEmpty() || System.getProperty("flatlaf.uiScale") != null) {
+            return;
         }
+
+        String value = scale.trim();
+        if (value.indexOf('.') < 0 && !value.endsWith("%") && !value.endsWith("x")) {
+            // bare integers (e.g. "150") are percentages
+            value = value + "%";
+        }
+        System.setProperty("flatlaf.uiScale", value);
+        logger.info("UI scale set to: {}", value);
     }
 }

@@ -303,6 +303,18 @@ public final class WidgetUtils {
         }
     }
 
+    /**
+     * Registers the DataCleaner fonts (Muli in all weights) with the graphics
+     * environment, so that they can be resolved by family name, e.g. in
+     * FlatLaf font properties such as {@code defaultFont}.
+     */
+    public static void registerFonts() {
+        final GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        graphicsEnvironment.registerFont(FONT_MULI_PLAIN);
+        graphicsEnvironment.registerFont(FONT_MULI_BOLD);
+        graphicsEnvironment.registerFont(FONT_MULI_LIGHT);
+    }
+
     public static void centerOnScreen(final Component component) {
         final Dimension paneSize = component.getSize();
         final Dimension screenSize = component.getToolkit().getScreenSize();

@@ -27,12 +27,14 @@ import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
@@ -50,6 +52,7 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -121,9 +124,38 @@ public class OptionsDialog extends AbstractWindow {
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new VerticalLayout(4));
         panel.add(getQuickAnalysisPanel());
+        panel.add(getUserInterfacePanel());
         panel.add(directoriesPanel);
 
         return panel;
+    }
+
+    private DCPanel getUserInterfacePanel() {
+        final boolean darkTheme = LookAndFeelManager.get().isDarkTheme();
+        final JRadioButton lightThemeButton = new JRadioButton("Light", !darkTheme);
+        lightThemeButton.setOpaque(false);
+        final JRadioButton darkThemeButton = new JRadioButton("Dark", darkTheme);
+        darkThemeButton.setOpaque(false);
+
+        final ButtonGroup themeButtonGroup = new ButtonGroup();
+        themeButtonGroup.add(lightThemeButton);
+        themeButtonGroup.add(darkThemeButton);
+
+        final ActionListener themeListener = event -> {
+            final boolean dark = darkThemeButton.isSelected();
+            _userPreferences.getAdditionalProperties().put(LookAndFeelManager.USER_PROPERTY_THEME,
+                    dark ? LookAndFeelManager.THEME_DARK : LookAndFeelManager.THEME_LIGHT);
+            _userPreferences.save();
+            LookAndFeelManager.get().setDarkTheme(dark);
+        };
+        lightThemeButton.addActionListener(themeListener);
+        darkThemeButton.addActionListener(themeListener);
+
+        final DCPanel userInterfacePanel = new DCPanel().setTitledBorder("User interface");
+        WidgetUtils.addToGridBag(DCLabel.dark("Theme:"), userInterfacePanel, 0, 0);
+        WidgetUtils.addToGridBag(lightThemeButton, userInterfacePanel, 1, 0);
+        WidgetUtils.addToGridBag(darkThemeButton, userInterfacePanel, 2, 0);
+        return userInterfacePanel;
     }
 
     private DCPanel getQuickAnalysisPanel() {

@@ -38,7 +38,6 @@ import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.jdesktop.swingx.JXTaskPane;
@@ -51,7 +50,6 @@ public final class DetailsResultWindow extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
 
-    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private static final ImageManager imageManager = ImageManager.get();
     private final RendererFactory _rendererFactory;
     private final List<AnalyzerResult> _results;
@@ -110,8 +108,8 @@ public final class DetailsResultWindow extends AbstractWindow {
         panel.add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 
         final Dimension preferredSize = panel.getPreferredSize();
-        final int height = Math.max(adjuster.adjust(500), preferredSize.height);
-        final int width = Math.max(adjuster.adjust(500), preferredSize.width);
+        final int height = Math.max(WidgetUtils.scalePx(500), preferredSize.height);
+        final int width = Math.max(WidgetUtils.scalePx(500), preferredSize.width);
         panel.setPreferredSize(width, height);
 
         return panel;

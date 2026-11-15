@@ -41,7 +41,6 @@ import javax.swing.table.TableModel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DCTable extends DCBaseTable implements MouseListener {
 
-    public static final int EDITABLE_TABLE_ROW_HEIGHT = WidgetScreenResolutionAdjuster.get().adjust(30);
+    public static final int EDITABLE_TABLE_ROW_HEIGHT = WidgetUtils.scalePx(30);
     private static final Logger logger = LoggerFactory.getLogger(DCTable.class);
     private static final long serialVersionUID = -5376226138423224572L;
     private final transient DCTableCellRenderer _tableCellRenderer;

@@ -28,6 +28,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
+import java.awt.Image;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Desktop;
@@ -63,15 +64,17 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.formdev.flatlaf.util.UIScale;
+
 import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 
 public final class WidgetUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
 
-    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     
-    public static final float FONT_SIZE_SMALL = adjuster.adjust(11f);
+    
+    public static final float FONT_SIZE_SMALL = UIScale.scale(11f);
 
     private static final Map<String, Font> fonts;
 
@@ -100,17 +103,17 @@ public final class WidgetUtils {
         fonts.put(FONT_MULI_PLAIN.getName(), FONT_MULI_PLAIN);
     }
 
-    public static final Font FONT_BANNER = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(21f));
-    public static final Font FONT_HEADER1 = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(18f));
-    public static final Font FONT_HEADER2 = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(16f));
-    public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, adjuster.adjust(14));
-    public static final Font FONT_BUTTON = FONT_MULI_PLAIN.deriveFont(adjuster.adjust(14f));
-    public static final Font FONT_NORMAL = FONT_MULI_PLAIN.deriveFont(adjuster.adjust(13f));
-    public static final Font FONT_BOLD = FONT_MULI_BOLD.deriveFont(adjuster.adjust(13f));
+    public static final Font FONT_BANNER = FONT_MULI_LIGHT.deriveFont(UIScale.scale(21f));
+    public static final Font FONT_HEADER1 = FONT_MULI_LIGHT.deriveFont(UIScale.scale(18f));
+    public static final Font FONT_HEADER2 = FONT_MULI_LIGHT.deriveFont(UIScale.scale(16f));
+    public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, UIScale.scale(14));
+    public static final Font FONT_BUTTON = FONT_MULI_PLAIN.deriveFont(UIScale.scale(14f));
+    public static final Font FONT_NORMAL = FONT_MULI_PLAIN.deriveFont(UIScale.scale(13f));
+    public static final Font FONT_BOLD = FONT_MULI_BOLD.deriveFont(UIScale.scale(13f));
     public static final Font FONT_SMALL = FONT_MULI_PLAIN.deriveFont(FONT_SIZE_SMALL);
     public static final Font FONT_TABLE_HEADER = FONT_NORMAL.deriveFont(Font.BOLD);
 
-    public static final int SCROLL_UNIT_INCREMENT = adjuster.adjust(20);
+    public static final int SCROLL_UNIT_INCREMENT = UIScale.scale(20);
 
     // blue base color of DC styling (#05b9f0)
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(5, 185, 240);
@@ -263,15 +266,15 @@ public final class WidgetUtils {
     @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
     public static final String CHAR_CARET_DOWN = "\uf0d7";
 
-    public static final int DIALOG_WIDTH_NORMAL = adjuster.adjust(600);
-    public static final int DIALOG_WIDTH_NARROW = adjuster.adjust(400);
-    public static final int DIALOG_WIDTH_WIDE = adjuster.adjust(700);
+    public static final int DIALOG_WIDTH_NORMAL = UIScale.scale(600);
+    public static final int DIALOG_WIDTH_NARROW = UIScale.scale(400);
+    public static final int DIALOG_WIDTH_WIDE = UIScale.scale(700);
 
     // ------------------------------------------------------------------
     // Spacing & typography scale system
     //
     // Base spacing units in unscaled "design pixels". They are scaled with
-    // the UI scale factor (see WidgetScreenResolutionAdjuster / FlatLaf
+    // the UI scale factor (see FlatLaf
     // UIScale) so that paddings and gaps follow the OS zoom setting and the
     // datacleaner.ui.scale property. Use these (or scalePx()) instead of raw
     // pixel literals; the font constants above (FONT_SMALL, FONT_NORMAL,
@@ -279,16 +282,16 @@ public final class WidgetUtils {
     // ------------------------------------------------------------------
 
     /** Small spacing, e.g. between a label and its field (base 4px). */
-    public static final int SPACING_SMALL = adjuster.adjust(4);
+    public static final int SPACING_SMALL = UIScale.scale(4);
 
     /** Medium spacing, e.g. between form fields (base 8px). */
-    public static final int SPACING_MEDIUM = adjuster.adjust(8);
+    public static final int SPACING_MEDIUM = UIScale.scale(8);
 
     /** Large spacing, e.g. between form sections (base 16px). */
-    public static final int SPACING_LARGE = adjuster.adjust(16);
+    public static final int SPACING_LARGE = UIScale.scale(16);
 
     /** Extra large spacing, e.g. between panels or dialog sections (base 24px). */
-    public static final int SPACING_XLARGE = adjuster.adjust(24);
+    public static final int SPACING_XLARGE = UIScale.scale(24);
 
     /**
      * Scales a value in "design pixels" with the UI scale factor (OS zoom and
@@ -299,7 +302,7 @@ public final class WidgetUtils {
      * @return scaled pixel value
      */
     public static int scalePx(final int px) {
-        return adjuster.adjust(px);
+        return UIScale.scale(px);
     }
 
     /**
@@ -310,7 +313,25 @@ public final class WidgetUtils {
      * @return scaled pixel value
      */
     public static float scalePx(final float px) {
-        return adjuster.adjust(px);
+        return UIScale.scale(px);
+    }
+
+    /**
+     * Scales an image with the UI scale factor (OS zoom and
+     * {@code datacleaner.ui.scale}), using smooth scaling. Returns the input
+     * image unchanged if no scaling is necessary.
+     *
+     * @param image the image to scale
+     * @return the scaled image
+     */
+    public static Image scaleImage(final Image image) {
+        final float factor = UIScale.getUserScaleFactor();
+        if (image == null || factor == 1f) {
+            return image;
+        }
+        final int w = image.getWidth(null);
+        final int h = image.getHeight(null);
+        return image.getScaledInstance(Math.round(w * factor), Math.round(h * factor), Image.SCALE_SMOOTH);
     }
 
     private WidgetUtils() {
@@ -798,6 +819,6 @@ public final class WidgetUtils {
     }
 
     private static int pix(final int size) {
-        return adjuster.adjust(size);
+        return UIScale.scale(size);
     }
 }

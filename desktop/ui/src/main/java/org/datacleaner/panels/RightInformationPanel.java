@@ -30,17 +30,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.datacleaner.actions.MoveComponentTimerActionListener;
-import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 
 public class RightInformationPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final WidgetScreenResolutionAdjuster ADJUSTER = WidgetScreenResolutionAdjuster.get();
-    private static final int WIDTH = ADJUSTER.adjust(360);
-    private static final int HEIGHT = ADJUSTER.adjust(500);
-    private static final int POSITION_Y = ADJUSTER.adjust(130);
+    private static final int WIDTH = WidgetUtils.scalePx(360);
+    private static final int HEIGHT = WidgetUtils.scalePx(500);
+    private static final int POSITION_Y = WidgetUtils.scalePx(130);
 
     private final DCGlassPane _glassPane;
     private final CardLayout _carLayout = new CardLayout();
@@ -54,8 +52,8 @@ public class RightInformationPanel extends JPanel {
         super();
         _glassPane = glassPane;
 
-        final int pix20 = ADJUSTER.adjust(20);
-        final int pix30 = ADJUSTER.adjust(30);
+        final int pix20 = WidgetUtils.scalePx(20);
+        final int pix30 = WidgetUtils.scalePx(30);
 
         setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(pix20, pix20, pix20, pix30)));
         setSize(WIDTH, HEIGHT);

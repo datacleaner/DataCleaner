@@ -43,7 +43,6 @@ import javax.swing.text.SimpleAttributeSet;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.tree.SchemaTree;
@@ -62,12 +61,11 @@ public class SchemaTreePanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private static final Logger logger = LoggerFactory.getLogger(SchemaTreePanel.class);
 
     private static final String DEFAULT_SEARCH_FIELD_TEXT = "Search component library...";
 
-    private static final int LOADER_WIDTH = adjuster.adjust(150);
+    private static final int LOADER_WIDTH = WidgetUtils.scalePx(150);
     private final InjectorBuilder _injectorBuilder;
     private final JXTextField _searchTextField;
     private final JComponent _resetSearchButton;

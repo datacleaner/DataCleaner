@@ -39,7 +39,6 @@ import javax.swing.border.EmptyBorder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
@@ -53,10 +52,9 @@ import org.datacleaner.windows.AnalysisJobBuilderWindow.AnalysisWindowPanelType;
 public class DCSplashPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
-    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     
-    public static final int WIDTH_CONTENT = adjuster.adjust(800);
-    public static final int MARGIN_LEFT = adjuster.adjust(20);
+    public static final int WIDTH_CONTENT = WidgetUtils.scalePx(800);
+    public static final int MARGIN_LEFT = WidgetUtils.scalePx(20);
     private static final Image BACKGROUND_IMAGE = getBackgroundImage();
     private final AnalysisJobBuilderWindow _window;
 
@@ -77,7 +75,7 @@ public class DCSplashPanel extends DCPanel {
         final DCLabel titleLabel = new DCLabel(false, text, WidgetUtils.BG_COLOR_BLUE_DARK, null);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
 
-        final EmptyBorder border = new EmptyBorder(adjuster.adjust(20), MARGIN_LEFT, adjuster.adjust(10), 0);
+        final EmptyBorder border = new EmptyBorder(WidgetUtils.scalePx(20), MARGIN_LEFT, WidgetUtils.scalePx(10), 0);
 
         if (backButtonActionListener != null) {
             titleLabel.addMouseListener(new MouseAdapter() {

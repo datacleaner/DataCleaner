@@ -39,7 +39,6 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.ChangeRequirementButton;
@@ -56,7 +55,6 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     private static final long serialVersionUID = 1L;
 
-    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private final ComponentBuilder _componentBuilder;
     private final ComponentScopeButton _componentScopeButton;
     private final ChangeRequirementButton _changeRequirementButton;
@@ -176,7 +174,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         panel.setLayout(new BorderLayout());
         panel.add(configurationComponent, BorderLayout.CENTER);
         panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
-        panel.setPreferredSize(adjuster.adjust(700), adjuster.adjust(500));
+        panel.setPreferredSize(WidgetUtils.scalePx(700), WidgetUtils.scalePx(500));
         return panel;
     }
 

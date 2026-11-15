@@ -193,7 +193,7 @@ public final class LookAndFeelManager {
      * Accepts percentages ({@code 150}), factors ({@code 1.5}) and suffixed
      * values ({@code 150%} / {@code 1.5x}), delegating to FlatLaf's
      * {@code flatlaf.uiScale} mechanism which scales fonts, paddings, icons
-     * and the {@link WidgetScreenResolutionAdjuster}.
+     * (FlatLaf UIScale).
      */
     private void applyUiScale() {
         final String scale = System.getProperty("datacleaner.ui.scale");

@@ -64,7 +64,6 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.windows.ComponentConfigurationDialog;
@@ -90,7 +89,6 @@ public final class JobGraph {
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraph.class);
 
-    private final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
     private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
     private final Set<Object> _highlighedVertexes;
@@ -163,7 +161,7 @@ public final class JobGraph {
         if (point == null) {
             return new Rectangle(0, 0, 0, 0);
         }
-        final int radius = adjuster.adjust(14) + 1;
+        final int radius = WidgetUtils.scalePx(14) + 1;
         return new Rectangle(point.x - radius, point.y - radius, radius * 2, radius * 2);
     }
 
@@ -305,7 +303,7 @@ public final class JobGraph {
                 // draw a drop indicator while a drag-and-drop operation is hovering the canvas
                 final Point dropIndicatorPoint = _dropIndicatorPoint;
                 if (dropIndicatorPoint != null) {
-                    final int radius = adjuster.adjust(14);
+                    final int radius = WidgetUtils.scalePx(14);
                     final Color originalColor = g.getColor();
                     final Color indicatorColor =
                             new Color(WidgetUtils.BG_COLOR_BLUE_MEDIUM.getRGB(), true);
@@ -326,7 +324,7 @@ public final class JobGraph {
                 }
 
                 final Dimension size = _panel.getSize();
-                if (size.height < adjuster.adjust(300) || size.width < adjuster.adjust(500)) {
+                if (size.height < WidgetUtils.scalePx(300) || size.width < WidgetUtils.scalePx(500)) {
                     // don't show the background hints - it will be too
                     // disturbing
                     return;
@@ -379,7 +377,7 @@ public final class JobGraph {
                                     "Click the 'Execute' button in the upper-right\ncorner when you're ready to run the job.";
                             imagePath = "images/window/canvas-bg-execute.png";
                             g.drawImage(ImageManager.get().getImage("images/window/canvas-bg-execute-hint.png"),
-                                    size.width - adjuster.adjust(175), 0, null);
+                                    size.width - WidgetUtils.scalePx(175), 0, null);
                         } else {
                             title = "Configure the job ...";
                             subTitle = "Job is not correctly configured";
@@ -406,17 +404,17 @@ public final class JobGraph {
                     }
                 }
 
-                final int yOffset = size.height - adjuster.adjust(150);
-                final int xOffset = adjuster.adjust(150);
+                final int yOffset = size.height - WidgetUtils.scalePx(150);
+                final int xOffset = WidgetUtils.scalePx(150);
 
                 final float titleFontSize;
                 final float subTitleFontSize;
-                if (size.width < adjuster.adjust(650)) {
-                    titleFontSize = adjuster.adjust(30f);
-                    subTitleFontSize = adjuster.adjust(17f);
+                if (size.width < WidgetUtils.scalePx(650)) {
+                    titleFontSize = WidgetUtils.scalePx(30f);
+                    subTitleFontSize = WidgetUtils.scalePx(17f);
                 } else {
-                    titleFontSize = adjuster.adjust(35f);
-                    subTitleFontSize = adjuster.adjust(20f);
+                    titleFontSize = WidgetUtils.scalePx(35f);
+                    subTitleFontSize = WidgetUtils.scalePx(20f);
                 }
 
                 if (title != null) {
@@ -427,16 +425,16 @@ public final class JobGraph {
                 if (subTitle != null) {
                     final String[] lines = subTitle.split("\n");
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(subTitleFontSize));
-                    int y = yOffset + adjuster.adjust(10);
+                    int y = yOffset + WidgetUtils.scalePx(10);
                     for (final String line : lines) {
-                        y = y + adjuster.adjust(30);
+                        y = y + WidgetUtils.scalePx(30);
                         g.drawString(line, xOffset, y);
                     }
                 }
 
                 if (imagePath != null) {
-                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - adjuster.adjust(120),
-                            yOffset - adjuster.adjust(30), null);
+                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - WidgetUtils.scalePx(120),
+                            yOffset - WidgetUtils.scalePx(30), null);
                 }
             }
         });

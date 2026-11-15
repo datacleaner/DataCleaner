@@ -28,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -168,14 +167,8 @@ public final class DataCleanerHome {
 
 	public static List<String> getAllInitialFiles() {
 		final List<String> allFilePaths = new ArrayList<>();
-		if (Version.isCommunityEdition()) {
-			final DemoConfiguration demoConfiguration = new DemoConfiguration();
-			allFilePaths.addAll(demoConfiguration.getAllFilePaths());
-		} else {
-			final ServiceLoader<InitialConfiguration> initialConfigurations = ServiceLoader
-					.load(InitialConfiguration.class);
-			initialConfigurations.forEach(configuration -> allFilePaths.addAll(configuration.getAllFilePaths()));
-		}
+		final DemoConfiguration demoConfiguration = new DemoConfiguration();
+		allFilePaths.addAll(demoConfiguration.getAllFilePaths());
 		return allFilePaths;
 	}
 

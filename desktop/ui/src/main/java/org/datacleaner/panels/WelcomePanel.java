@@ -60,7 +60,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.net.UrlEscapers;
 import com.google.inject.Injector;
 
 /**
@@ -125,68 +124,48 @@ public class WelcomePanel extends DCSplashPanel {
 
         if (result == null) {
             result = new DCPanel();
-            if (Version.isCommunityEdition()) {
-                final JEditorPane editorPane = new JEditorPane("text/html",
-                        "You're now using the <i>Community Edition</i> of DataCleaner.<br/><br/>"
-                                + "We hope that you enjoy this free product. We encourage you to also check out the "
-                                + "commercial DataCleaner editions which feature added functionality, "
-                                + "helpful getting started wizards and commercial support. "
-                                + "You can find more information about them online.");
-                editorPane.setEditable(false);
-                editorPane.setOpaque(false);
-                editorPane.setFont(WidgetUtils.FONT_HEADER2);
-                editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, WidgetUtils.scalePx(120)));
+            final JEditorPane editorPane = new JEditorPane("text/html",
+                    "You're now using DataCleaner v. " + Version.getVersion() + ".<br/><br/>"
+                            + "We hope that you enjoy this product. If you have questions or feedback, "
+                            + "please visit the discussion forum.");
+            editorPane.setEditable(false);
+            editorPane.setOpaque(false);
+            editorPane.setFont(WidgetUtils.FONT_HEADER2);
+            editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, WidgetUtils.scalePx(120)));
 
-                final JButton tryProfessionalButton =
-                        WidgetFactory.createDefaultButton("Try professional edition", IconUtils.APPLICATION_ICON);
-                tryProfessionalButton.addActionListener(e -> WidgetUtils
-                        .openUrl("https://www.humaninference.com/en/solutions/datacleaner"));
-                final JButton discussionForumButton =
-                        WidgetFactory.createDefaultButton("Visit the discussion forum", "images/menu/forum.png");
-                discussionForumButton
-                        .setToolTipText("Visit the online discussion forum for questions and answers in the community");
-                final OpenDataCleanerWebsiteActionListener forumActionListener =
-                        new OpenDataCleanerWebsiteActionListener("/discuss");
-                discussionForumButton.addActionListener(forumActionListener);
+            final JButton discussionForumButton =
+                    WidgetFactory.createDefaultButton("Visit the discussion forum", "images/menu/forum.png");
+            discussionForumButton
+                    .setToolTipText("Visit the online discussion forum for questions and answers");
+            final OpenDataCleanerWebsiteActionListener forumActionListener =
+                    new OpenDataCleanerWebsiteActionListener("/discuss");
+            discussionForumButton.addActionListener(forumActionListener);
 
-                final JButton twitterButton = WidgetFactory.createDefaultButton(null, "images/menu/twitter.png");
-                twitterButton.setToolTipText("Spread the message about #DataCleaner on Twitter");
-                twitterButton.addActionListener(e -> WidgetUtils.openUrl("https://twitter.com/intent/tweet?text="
-                        + UrlEscapers.urlFormParameterEscaper().escape("I'm using @DataCleaner (v. "
-                                + Version.getVersion() + ") for some really fancy #dataquality stuff!")));
+            final JLabel loveFeedbackAnimation =
+                    new JLabel(ImageManager.get().getImageIcon("images/window/we_love_community_and_feedback.gif"),
+                            JLabel.LEFT);
+            loveFeedbackAnimation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            loveFeedbackAnimation.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(final MouseEvent e) {
+                    forumActionListener.actionPerformed(null);
+                }
+            });
 
-                final JButton linkedInButton = WidgetFactory.createDefaultButton(null, "images/menu/linkedin.png");
-                linkedInButton.setToolTipText("Join our LinkedIn group of users and professionals");
-                linkedInButton.addActionListener(
-                        e -> WidgetUtils.openUrl("http://www.linkedin.com/groups?gid=3352784"));
+            final DCPanel innerPanel = new DCPanel();
+            innerPanel.setLayout(new VerticalLayout());
+            innerPanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY,
+                    new EmptyBorder(0, WidgetUtils.scalePx(20), 0, 0)));
+            innerPanel.add(editorPane);
+            innerPanel.add(Box.createVerticalStrut(WidgetUtils.scalePx(80)));
+            innerPanel.add(loveFeedbackAnimation);
+            innerPanel.add(Box.createVerticalStrut(WidgetUtils.scalePx(20)));
+            innerPanel.add(DCPanel.flow(discussionForumButton));
+            innerPanel.add(Box.createVerticalStrut(WidgetUtils.SPACING_SMALL));
 
-                final JLabel loveFeedbackAnimation =
-                        new JLabel(ImageManager.get().getImageIcon("images/window/we_love_community_and_feedback.gif"),
-                                JLabel.LEFT);
-                loveFeedbackAnimation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                loveFeedbackAnimation.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(final MouseEvent e) {
-                        forumActionListener.actionPerformed(null);
-                    }
-                });
-
-                final DCPanel innerPanel = new DCPanel();
-                innerPanel.setLayout(new VerticalLayout());
-                innerPanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY,
-                        new EmptyBorder(0, WidgetUtils.scalePx(20), 0, 0)));
-                innerPanel.add(editorPane);
-                innerPanel.add(DCPanel.flow(tryProfessionalButton));
-                innerPanel.add(Box.createVerticalStrut(WidgetUtils.scalePx(80)));
-                innerPanel.add(loveFeedbackAnimation);
-                innerPanel.add(Box.createVerticalStrut(WidgetUtils.scalePx(20)));
-                innerPanel.add(DCPanel.flow(discussionForumButton, twitterButton, linkedInButton));
-                innerPanel.add(Box.createVerticalStrut(WidgetUtils.SPACING_SMALL));
-
-                result.setLayout(new VerticalLayout());
-                result.add(Box.createVerticalStrut(WidgetUtils.scalePx(100)));
-                result.add(innerPanel);
-            }
+            result.setLayout(new VerticalLayout());
+            result.add(Box.createVerticalStrut(WidgetUtils.scalePx(100)));
+            result.add(innerPanel);
         }
 
         return wrapContent(result);

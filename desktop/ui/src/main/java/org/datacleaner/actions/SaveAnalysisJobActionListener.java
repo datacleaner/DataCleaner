@@ -174,7 +174,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 
         final String jobDescription;
         if (Strings.isNullOrEmpty(existingMetadata.getJobDescription())) {
-            jobDescription = "Created with DataCleaner " + Version.getEdition() + " " + Version.getVersion();
+            jobDescription = "Created with DataCleaner " + Version.getVersion();
         } else {
             jobDescription = existingMetadata.getJobDescription();
         }

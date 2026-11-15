@@ -55,6 +55,11 @@
 			<artifactId>flatlaf</artifactId>
 			<version>3.5</version>
 		</dependency>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf-extras</artifactId>
+			<version>3.5</version>
+		</dependency>
 
 		<!-- Guice is used for Dependency Injection in the desktop app -->
 		<dependency>

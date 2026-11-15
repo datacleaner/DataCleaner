@@ -477,14 +477,14 @@ public final class IconUtils {
         if (column.isPhysicalColumn()) {
             return getColumnIcon(column.getPhysicalColumn(), iconSize);
         }
-        return _imageManager.getImageIcon(MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL);
+        return _imageManager.getIcon(MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL);
     }
 
     public static Icon getColumnIcon(final Column column, final int iconSize) {
         if (column.isPrimaryKey()) {
-            return _imageManager.getImageIcon(MODEL_COLUMN_KEY, iconSize);
+            return _imageManager.getIcon(MODEL_COLUMN_KEY, iconSize);
         }
-        return _imageManager.getImageIcon(MODEL_COLUMN, iconSize);
+        return _imageManager.getIcon(MODEL_COLUMN, iconSize);
     }
 
     protected static String getDatastoreImagePath(final Datastore datastore,

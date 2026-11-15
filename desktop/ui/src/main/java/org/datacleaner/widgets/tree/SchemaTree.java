@@ -616,15 +616,15 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             final String schemaName = schema.getName();
             component = _rendererDelegate
                     .getTreeCellRendererComponent(tree, schemaName, selected, expanded, leaf, row, hasFocus);
-            icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA, IconUtils.ICON_SIZE_MENU_ITEM);
+            icon = imageManager.getIcon(IconUtils.MODEL_SCHEMA, IconUtils.ICON_SIZE_MENU_ITEM);
             if (MetaModelHelper.isInformationSchema(schema)) {
-                icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA_INFORMATION, IconUtils.ICON_SIZE_MENU_ITEM);
+                icon = imageManager.getIcon(IconUtils.MODEL_SCHEMA_INFORMATION, IconUtils.ICON_SIZE_MENU_ITEM);
             }
         } else if (value instanceof Table) {
             component = _rendererDelegate
                     .getTreeCellRendererComponent(tree, ((Table) value).getName(), selected, expanded, leaf, row,
                             hasFocus);
-            icon = imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_MENU_ITEM);
+            icon = imageManager.getIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof Column) {
             final Column column = (Column) value;
             final String columnLabel = column.getName();

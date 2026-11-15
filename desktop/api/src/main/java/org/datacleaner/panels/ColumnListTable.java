@@ -115,7 +115,7 @@ public final class ColumnListTable extends DCPanel {
             final DCPanel headerPanel = new DCPanel();
             headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
             final JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(),
-                    imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
+                    imageManager.getIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
             headerPanel.add(tableNameLabel);

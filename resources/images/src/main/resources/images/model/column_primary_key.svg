@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Primary key column (column with key badge) -->
+  <rect x="3" y="4" width="26" height="24" rx="2" fill="#f9f9f9" stroke="#ceced0" stroke-width="1.5"/>
+  <rect x="3.75" y="4.75" width="24.5" height="5.5" rx="1.25" fill="#ceced0"/>
+  <line x1="3" y1="17" x2="29" y2="17" stroke="#ceced0" stroke-width="1.5"/>
+  <line x1="3" y1="23" x2="29" y2="23" stroke="#ceced0" stroke-width="1.5"/>
+  <rect x="14" y="4" width="6.5" height="24" fill="#58c6f4" stroke="#ceced0" stroke-width="1.5"/>
+  <g stroke="#ff814f" stroke-width="2.4" fill="none">
+    <circle cx="22.5" cy="8.5" r="4" fill="#ff814f" stroke="none"/>
+    <path d="M22.5 12.5 L22.5 19.5 M22.5 16.5 L20 16.5 M22.5 18.5 L25 18.5"/>
+  </g>
+</svg>

@@ -269,7 +269,7 @@ public class JobGraphTransformers {
     public Function<Object, Icon> getVertexIconTransformer() {
         return obj -> {
             if (obj == JobGraph.MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
-                return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
+                return imageManager.getIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
             }
             if (obj instanceof ComponentBuilder) {
                 final ComponentBuilder componentBuilder = (ComponentBuilder) obj;
@@ -289,7 +289,7 @@ public class JobGraphTransformers {
                 return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
             }
             if (obj instanceof Table) {
-                return imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_LARGE);
+                return imageManager.getIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_LARGE);
             }
             if (obj instanceof Class) {
                 final Class<?> cls = (Class<?>) obj;

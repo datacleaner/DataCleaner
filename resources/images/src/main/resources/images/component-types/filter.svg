@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Filter (funnel) -->
+  <path d="M3 5 L29 5 L19.5 16 L19.5 25.5 L12.5 28 L12.5 16 Z" fill="#3fb8eb" stroke="#313131"
+        stroke-width="2" stroke-linejoin="round"/>
+  <path d="M7 9 L25 9" stroke="#f9f9f9" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -207,6 +207,13 @@
 						</documentation>
 					</annotation>
 				</element>
+				<element name="duckdb-datastore" type="ab:duckdbDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a DuckDB database file.
+						</documentation>
+					</annotation>
+				</element>
 				<element name="excel-datastore" type="ab:excelDatastoreType">
 					<annotation>
 						<documentation>
@@ -464,6 +471,16 @@
 			<extension base="ab:abstractDatastoreType">
 				<sequence>
 					<element name="directory" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="duckdbDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="url" minOccurs="1" maxOccurs="1" type="string" />
 				</sequence>
 			</extension>
 		</complexContent>

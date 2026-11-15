@@ -15,7 +15,7 @@
 		<easymock.version>4.3</easymock.version>
 		<httpcomponents.version>4.5.14</httpcomponents.version>
 		<metamodel.version>5.5.0</metamodel.version>
-		<duckdb-jdbc.version>1.4.2</duckdb-jdbc.version>
+		<duckdb-jdbc.version>1.4.1.0</duckdb-jdbc.version>
 				<spring.version>5.3.39</spring.version>
 		<freemarker.version>2.3.34</freemarker.version>
 		<icu4j.version>74.2</icu4j.version>

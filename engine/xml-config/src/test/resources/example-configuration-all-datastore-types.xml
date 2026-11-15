@@ -57,6 +57,10 @@
 		<sas-datastore name="my_sas" description="folder of sas7bdat files">
 			<directory>../../datastores/basic-datastores/src/test/resources/sas</directory>
 		</sas-datastore>
+
+		<duckdb-datastore name="my_duckdb" description="DuckDB database file">
+			<url>jdbc:duckdb:target/test_duckdb_config.duckdb</url>
+		</duckdb-datastore>
 		
 
 		

@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets.table;
 
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -57,6 +58,12 @@ public class DCTable extends DCBaseTable implements MouseListener {
     private static final long serialVersionUID = -5376226138423224572L;
     private final transient DCTableCellRenderer _tableCellRenderer;
     protected transient List<JMenuItem> _rightClickMenuItems;
+
+    /**
+     * The initial/default row height of the table. Rows may grow (never shrink below this) to fit tall cell
+     * contents such as images and buttons.
+     */
+    private final int _defaultRowHeight;
     
     private ActionListener _copySelectItemsActionListener = e -> {
         final int rowIndex = DCTable.this.getSelectedRow();
@@ -82,6 +89,7 @@ public class DCTable extends DCBaseTable implements MouseListener {
         addMouseListener(this);
 
         _tableCellRenderer = new DCTableCellRenderer(this);
+        _defaultRowHeight = getRowHeight();
     }
 
     public DCTable() {
@@ -91,6 +99,41 @@ public class DCTable extends DCBaseTable implements MouseListener {
     public DCTable(final TableModel tableModel) {
         this();
         setModel(tableModel);
+    }
+
+    /**
+     * Grows the row height (never shrinks it) so that tall cell contents such as images and buttons are not
+     * cropped inside the cell. Measured from the prepared renderer/editor component's preferred size.
+     */
+    private void ensureRowHeight(final int row, final Component component) {
+        if (component == null || row < 0 || row >= getRowCount()) {
+            return;
+        }
+        final int preferredHeight = component.getPreferredSize().height + 2;
+        if (preferredHeight > getRowHeight(row)) {
+            setRowHeight(row, preferredHeight);
+        }
+    }
+
+    @Override
+    public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
+        final Component component = super.prepareRenderer(renderer, row, column);
+        ensureRowHeight(row, component);
+        return component;
+    }
+
+    @Override
+    public Component prepareEditor(final TableCellEditor editor, final int row, final int column) {
+        final Component component = super.prepareEditor(editor, row, column);
+        ensureRowHeight(row, component);
+        return component;
+    }
+
+    @Override
+    public void setModel(final TableModel tableModel) {
+        super.setModel(tableModel);
+        // reset rows to the default height so that removed/changed content does not leave stale tall rows
+        setRowHeight(_defaultRowHeight);
     }
 
     protected List<JMenuItem> getCopyMenuItems() {

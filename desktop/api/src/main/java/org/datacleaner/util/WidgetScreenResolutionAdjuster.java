@@ -21,13 +21,17 @@ package org.datacleaner.util;
 
 import java.awt.Image;
 
+import com.formdev.flatlaf.util.UIScale;
+
 /**
- * Class responsible for adjusting/scaling widgets according to the screen resolution.
+ * Class responsible for adjusting/scaling widgets according to the UI scale
+ * factor. Delegates to FlatLaf's {@link UIScale}, which applies the zoom
+ * configured via the {@code datacleaner.ui.scale} / {@code flatlaf.uiScale}
+ * system properties (in addition to the JRE's native HiDPI scaling).
  *
- * NOTE: Historically this class scaled hardcoded pixel sizes based on the screen
- * width. Since the move to Java 17 + FlatLaf, the JVM handles HiDPI scaling
- * natively (including per-monitor scale factors), so this class is now a no-op
- * compatibility shim. It is scheduled for removal - do not use it in new code.
+ * NOTE: this class is a compatibility shim for the many legacy call sites that
+ * use hardcoded pixel sizes. New code should use layout managers and scale
+ * from font metrics instead. See UI_MODERNIZATION.md.
  */
 public class WidgetScreenResolutionAdjuster {
 
@@ -41,22 +45,28 @@ public class WidgetScreenResolutionAdjuster {
     }
 
     public int adjust(int size) {
-        return size;
+        return UIScale.scale(size);
     }
 
     public float adjust(float size) {
-        return size;
+        return UIScale.scale(size);
     }
 
     public double adjust(double size) {
-        return size;
+        return UIScale.scale((float) size);
     }
 
     public float getSizeAdjustment() {
-        return 1;
+        return UIScale.getUserScaleFactor();
     }
 
     public Image scale(Image image) {
-        return image;
+        final float factor = getSizeAdjustment();
+        if (image == null || factor == 1f) {
+            return image;
+        }
+        final int w = image.getWidth(null);
+        final int h = image.getHeight(null);
+        return image.getScaledInstance(Math.round(w * factor), Math.round(h * factor), Image.SCALE_SMOOTH);
     }
 }

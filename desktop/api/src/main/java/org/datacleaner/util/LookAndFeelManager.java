@@ -86,6 +86,8 @@ public final class LookAndFeelManager {
      *            {@link FlatLightLaf} is installed.
      */
     public void init(final LookAndFeel laf) {
+        applyUiScale();
+
         try {
             UIManager.setLookAndFeel(laf != null ? laf : new FlatLightLaf());
             logger.info("Look and feel set to: {}", UIManager.getLookAndFeel());
@@ -230,5 +232,21 @@ public final class LookAndFeelManager {
         // tool tip tweaks
         ToolTipManager.sharedInstance().setDismissDelay(10 * 1000);
         ToolTipManager.sharedInstance().setInitialDelay(100);
+    }
+
+    /**
+     * Applies the UI scale (zoom) configured via the {@code datacleaner.ui.scale}
+     * system property, e.g. {@code -Ddatacleaner.ui.scale=150} for 150% zoom.
+     * Accepts percentages ({@code 150}), factors ({@code 1.5}) and suffixed
+     * values ({@code 150%} / {@code 1.5x}), delegating to FlatLaf's
+     * {@code flatlaf.uiScale} mechanism which scales fonts, paddings, icons
+     * and the {@link WidgetScreenResolutionAdjuster}.
+     */
+    private void applyUiScale() {
+        final String scale = System.getProperty("datacleaner.ui.scale");
+        if (scale != null && !scale.trim().isEmpty() && System.getProperty("flatlaf.uiScale") == null) {
+            System.setProperty("flatlaf.uiScale", scale.trim());
+            logger.info("UI scale set to: {}", scale.trim());
+        }
     }
 }

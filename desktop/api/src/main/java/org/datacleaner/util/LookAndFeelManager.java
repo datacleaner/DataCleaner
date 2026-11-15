@@ -19,6 +19,10 @@
  */
 package org.datacleaner.util;
 
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+
 import javax.swing.LookAndFeel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -56,6 +60,40 @@ public final class LookAndFeelManager {
      * ({@link #THEME_LIGHT} or {@link #THEME_DARK}) is persisted.
      */
     public static final String USER_PROPERTY_THEME = "ui.theme";
+
+    /**
+     * System property used to select the UI scale/zoom, e.g.
+     * {@code -Ddatacleaner.ui.scale=150} for 150%. Accepts percentages
+     * ({@code 150}), factors ({@code 1.5}) and suffixed values
+     * ({@code 150%} / {@code 1.5x}). If not set, an automatic scale based on
+     * the screen resolution is applied when the OS/JRE does not apply any
+     * HiDPI scaling itself.
+     */
+    public static final String SYSTEM_PROPERTY_SCALE = "datacleaner.ui.scale";
+
+    /**
+     * Key in the user preferences' additional properties where the UI scale
+     * is persisted ({@code auto} or a percentage like {@code 150}).
+     */
+    public static final String USER_PROPERTY_SCALE = "ui.scale";
+
+    /**
+     * Value for the persisted UI scale preference indicating automatic
+     * (screen-resolution based) scaling.
+     */
+    public static final String SCALE_AUTO = "auto";
+
+    /**
+     * The screen width (in pixels) that the automatic scale factor considers
+     * "normal" (zoom level 1.0). Mirrors the reference width of the retired
+     * WidgetScreenResolutionAdjuster.
+     */
+    private static final int AUTO_SCALE_REFERENCE_WIDTH = 1600;
+
+    /**
+     * The maximum automatically applied zoom factor.
+     */
+    private static final float AUTO_SCALE_MAX = 3.0f;
 
     public static final String THEME_LIGHT = "light";
     public static final String THEME_DARK = "dark";
@@ -194,9 +232,15 @@ public final class LookAndFeelManager {
      * values ({@code 150%} / {@code 1.5x}), delegating to FlatLaf's
      * {@code flatlaf.uiScale} mechanism which scales fonts, paddings, icons
      * (FlatLaf UIScale).
+     *
+     * <p>If the property is not set, an automatic zoom is derived from the
+     * screen resolution (see {@link #detectAutomaticUiScale()}).</p>
      */
     private void applyUiScale() {
-        final String scale = System.getProperty("datacleaner.ui.scale");
+        String scale = System.getProperty(SYSTEM_PROPERTY_SCALE);
+        if (scale == null || scale.trim().isEmpty()) {
+            scale = detectAutomaticUiScale();
+        }
         if (scale == null || scale.trim().isEmpty() || System.getProperty("flatlaf.uiScale") != null) {
             return;
         }
@@ -208,5 +252,46 @@ public final class LookAndFeelManager {
         }
         System.setProperty("flatlaf.uiScale", value);
         logger.info("UI scale set to: {}", value);
+    }
+
+    /**
+     * Detects an automatic UI scale factor for high resolution screens that
+     * do not get any HiDPI scaling from the OS/JRE (common on Linux/X11
+     * desktops where the display scale is not configured). The scale grows
+     * with the screen width relative to a 1600px reference width, capped at
+     * 3x - mirroring the behaviour of the retired
+     * WidgetScreenResolutionAdjuster, but only applied when the OS/JRE does
+     * not scale anything itself.
+     *
+     * @return a scale factor like {@code 1.6}, or null when the OS/JRE
+     *         already applies scaling or the screen does not warrant zooming
+     */
+    private String detectAutomaticUiScale() {
+        try {
+            final GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            final GraphicsConfiguration configuration =
+                    graphicsEnvironment.getDefaultScreenDevice().getDefaultConfiguration();
+
+            if (configuration.getDefaultTransform().getScaleX() > 1.0) {
+                // the OS/JRE already applies HiDPI scaling
+                return null;
+            }
+
+            final int screenWidth = configuration.getBounds().width;
+            if (screenWidth <= AUTO_SCALE_REFERENCE_WIDTH) {
+                return null;
+            }
+
+            final float scale = Math.min(AUTO_SCALE_MAX, (float) screenWidth / AUTO_SCALE_REFERENCE_WIDTH);
+            final String value = String.valueOf(Math.round(scale * 100f) / 100f);
+            logger.info("Automatic UI scale for screen width {}px: {}", screenWidth, value);
+            return value;
+        } catch (final HeadlessException e) {
+            // no screen available (e.g. headless test environments)
+            return null;
+        } catch (final Throwable e) {
+            logger.debug("Could not detect automatic UI scale", e);
+            return null;
+        }
     }
 }

@@ -26,7 +26,15 @@ per-monitor scaling) natively in Swing, making the entire mechanism obsolete.
 
 - **Java 8 → 17 → 21** (`<release>21</release>` in the root `pom.xml`).
 - **PlasticXP → FlatLaf** (FlatLightLaf default, FlatDarkLaf available).
-- **UI zoom** via `-Ddatacleaner.ui.scale=150` (delegates to FlatLaf `uiScale`).
+- **UI zoom** via `-Ddatacleaner.ui.scale=150` (delegates to FlatLaf `uiScale`),
+  plus **automatic screen-resolution scaling**: when the OS/JRE applies no
+  HiDPI scaling (e.g. Linux/X11 with no display scale configured) and the
+  screen is wider than 1600px, a zoom of `min(3, width/1600)` is applied
+  automatically — restoring the comfortable size the old
+  WidgetScreenResolutionAdjuster produced, without double-scaling on systems
+  that already scale. The zoom is user-selectable in *Options → General →
+  User interface* (Automatic / 100–300%, restart required) and persisted in
+  the user preferences (`ui.scale`).
 - **`WidgetScreenResolutionAdjuster` neutered** — now a compatibility shim over
   FlatLaf `UIScale` (identity when no zoom is configured). *The ~70 legacy call
   sites remain; deleting them is a still-open sweep.*

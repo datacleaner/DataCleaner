@@ -30,6 +30,7 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -151,11 +152,60 @@ public class OptionsDialog extends AbstractWindow {
         lightThemeButton.addActionListener(themeListener);
         darkThemeButton.addActionListener(themeListener);
 
+        final JComboBox<String> scaleComboBox = createScaleComboBox();
+
         final DCPanel userInterfacePanel = new DCPanel().setTitledBorder("User interface");
         WidgetUtils.addToGridBag(DCLabel.dark("Theme:"), userInterfacePanel, 0, 0);
         WidgetUtils.addToGridBag(lightThemeButton, userInterfacePanel, 1, 0);
         WidgetUtils.addToGridBag(darkThemeButton, userInterfacePanel, 2, 0);
+        WidgetUtils.addToGridBag(DCLabel.dark("Scale (restart required):"), userInterfacePanel, 0, 1);
+        WidgetUtils.addToGridBag(scaleComboBox, userInterfacePanel, 1, 1);
         return userInterfacePanel;
+    }
+
+    /**
+     * Creates the combo box for selecting the UI scale (zoom). "Automatic"
+     * follows the screen resolution when the OS does not apply HiDPI
+     * scaling; the other options pin the zoom factor.
+     *
+     * @return a combo box with the scale options
+     */
+    private JComboBox<String> createScaleComboBox() {
+        final String persistedScale =
+                _userPreferences.getAdditionalProperties().get(LookAndFeelManager.USER_PROPERTY_SCALE);
+        final String automaticLabel = "Automatic (follow screen resolution)";
+
+        final JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.addItem(automaticLabel);
+        for (final String percentage : new String[] { "100", "125", "150", "175", "200", "250", "300" }) {
+            comboBox.addItem(percentage + "%");
+        }
+
+        if (persistedScale == null || LookAndFeelManager.SCALE_AUTO.equalsIgnoreCase(persistedScale)) {
+            comboBox.setSelectedItem(automaticLabel);
+        } else {
+            final String pinned = persistedScale.endsWith("%") ? persistedScale : persistedScale + "%";
+            for (int i = 0; i < comboBox.getItemCount(); i++) {
+                if (comboBox.getItemAt(i).equals(pinned)) {
+                    comboBox.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+
+        comboBox.addActionListener(e -> {
+            final Object selectedItem = comboBox.getSelectedItem();
+            if (automaticLabel.equals(selectedItem)) {
+                _userPreferences.getAdditionalProperties().put(LookAndFeelManager.USER_PROPERTY_SCALE,
+                        LookAndFeelManager.SCALE_AUTO);
+            } else {
+                final String percentage = selectedItem.toString().replace("%", "");
+                _userPreferences.getAdditionalProperties().put(LookAndFeelManager.USER_PROPERTY_SCALE, percentage);
+            }
+            _userPreferences.save();
+        });
+
+        return comboBox;
     }
 
     private DCPanel getQuickAnalysisPanel() {

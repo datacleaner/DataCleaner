@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 
@@ -167,13 +168,17 @@ public final class Bootstrap {
 		final DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
 
 		if (!cliMode) {
-			// init the look and feel. The theme is persisted in the user
-			// preferences, so load those first to make it available.
+			// init the look and feel. The theme and UI scale are persisted in
+			// the user preferences, so load those first to make them available.
 			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
-			final String theme = userPreferences.getAdditionalProperties()
-					.get(LookAndFeelManager.USER_PROPERTY_THEME);
+			final Map<String, String> additionalProperties = userPreferences.getAdditionalProperties();
+			final String theme = additionalProperties.get(LookAndFeelManager.USER_PROPERTY_THEME);
 			if (theme != null) {
 				System.setProperty(LookAndFeelManager.SYSTEM_PROPERTY_THEME, theme);
+			}
+			final String scale = additionalProperties.get(LookAndFeelManager.USER_PROPERTY_SCALE);
+			if (scale != null && !LookAndFeelManager.SCALE_AUTO.equalsIgnoreCase(scale)) {
+				System.setProperty(LookAndFeelManager.SYSTEM_PROPERTY_SCALE, scale);
 			}
 			LookAndFeelManager.get().init();
 		}

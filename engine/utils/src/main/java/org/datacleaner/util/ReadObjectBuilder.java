@@ -118,7 +118,8 @@ public final class ReadObjectBuilder<E extends Serializable> {
         }
     }
 
-    private void deserializeFields(final Field[] fields, final GetField getField) throws IOException {
+    private void deserializeFields(final Field[] fields, final GetField getField) throws IOException,
+            ClassNotFoundException {
         for (final Field field : fields) {
             final int modifiers = field.getModifiers();
             if (!Modifier.isTransient(modifiers) && !Modifier.isStatic(modifiers)) {
@@ -127,7 +128,8 @@ public final class ReadObjectBuilder<E extends Serializable> {
         }
     }
 
-    private void deserializeField(final Field field, final GetField getField) throws IOException {
+    private void deserializeField(final Field field, final GetField getField) throws IOException,
+            ClassNotFoundException {
         final String fieldName = field.getName();
         try {
             field.setAccessible(true);

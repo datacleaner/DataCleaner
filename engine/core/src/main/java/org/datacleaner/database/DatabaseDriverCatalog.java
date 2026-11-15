@@ -61,6 +61,7 @@ public class DatabaseDriverCatalog implements Serializable {
     public static final String DATABASE_NAME_PERVASIVE = "Pervasive";
     public static final String DATABASE_NAME_CUBRID = "Cubrid";
     public static final String DATABASE_NAME_HIVE = "Apache Hive";
+    public static final String DATABASE_NAME_DUCKDB = "DuckDB";
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DatabaseDriverCatalog.class);
     private static final List<DatabaseDriverDescriptor> _databaseDrivers;
@@ -144,6 +145,8 @@ public class DatabaseDriverCatalog implements Serializable {
                 "org.apache.hive.jdbc.HiveDriver",
                 "http://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/1.2.1/hive-jdbc-1.2.1.jar",
                 "jdbc:hive2://<hostname>:10000/<database>");
+        add(DATABASE_NAME_DUCKDB, "images/datastore-types/duckdb.png", "org.duckdb.DuckDBDriver", null,
+                "jdbc:duckdb:<path/to/database>.duckdb");
         // @checkstyle:on
         // @formatter:on
 

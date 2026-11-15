@@ -29,6 +29,7 @@ import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
+import org.datacleaner.windows.DuckDbDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
@@ -63,6 +64,11 @@ public class DatastoreDescriptors {
     private static final DatastoreDescriptor SAS_DATASTORE_DESCRIPTOR =
             new DatastoreDescriptorImpl("SAS library", "A directory of SAS library files (.sas7bdat).",
                     SasDatastore.class, SasDatastoreDialog.class, IconUtils.SAS_IMAGEPATH, true);
+
+    private static final DatastoreDescriptor DUCKDB_DATASTORE_DESCRIPTOR =
+            new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_DUCKDB,
+                    "An embedded DuckDB database file", DuckDbDatastore.class, DuckDbDatastoreDialog.class,
+                    IconUtils.DUCKDB_IMAGEPATH, true);
 
     private static final DatastoreDescriptor HIVE_DATASTORE_DESCRIPTOR =
             new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_HIVE, "Connect to an Apache Hive database",
@@ -134,6 +140,7 @@ public class DatastoreDescriptors {
         availableCloudBasedDatabaseDescriptors.add(POSTGRESQL_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(SQLSERVER_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(HIVE_DATASTORE_DESCRIPTOR);
+        availableCloudBasedDatabaseDescriptors.add(DUCKDB_DATASTORE_DESCRIPTOR);
 
         return availableCloudBasedDatabaseDescriptors;
     }
@@ -172,6 +179,10 @@ public class DatastoreDescriptors {
 
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
             datastoreDescriptors.add(SQLSERVER_DATASTORE_DESCRIPTOR);
+        }
+
+        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_DUCKDB)) {
+            datastoreDescriptors.add(DUCKDB_DATASTORE_DESCRIPTOR);
         }
 
         return datastoreDescriptors;

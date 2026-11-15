@@ -87,12 +87,12 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
     private static final ImageManager imageManager = ImageManager.get();
 
     private final DatabaseDriverCatalog _databaseDriverCatalog;
-    private final JXTextField _driverClassNameTextField;
-    private final DCCheckBox<Object> _multipleConnectionsCheckBox;
+    protected final JXTextField _driverClassNameTextField;
+    protected final DCCheckBox<Object> _multipleConnectionsCheckBox;
     private final DCComboBox<Object> _databaseDriverComboBox;
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final CloseableTabbedPane _tabbedPane;
-    private final DatabaseConnectionPresenter[] _connectionPresenters;
+    protected final DatabaseConnectionPresenter[] _connectionPresenters;
 
     @Inject
     protected JdbcDatastoreDialog(@Nullable final JdbcDatastore originalDatastore,

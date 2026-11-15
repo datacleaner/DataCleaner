@@ -21,7 +21,7 @@ package org.datacleaner.api;
 
 import java.io.Serializable;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Represents a "super category" of components. Where {@link ComponentCategory}

@@ -30,11 +30,11 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.MetaModelException;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.DataSetTableModel;
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.MetaModelException;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.data.DataSetTableModel;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;

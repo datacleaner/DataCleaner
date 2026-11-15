@@ -28,7 +28,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.builder.AnalysisJobBuilder;

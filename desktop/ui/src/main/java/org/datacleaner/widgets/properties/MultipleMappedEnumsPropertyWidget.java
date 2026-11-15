@@ -30,7 +30,7 @@ import java.util.WeakHashMap;
 import javax.swing.JComponent;
 import javax.swing.ListCellRenderer;
 
-import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.util.LazyRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.EnumerationProvider;

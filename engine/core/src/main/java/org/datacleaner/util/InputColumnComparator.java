@@ -22,7 +22,7 @@ package org.datacleaner.util;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.TransformedInputColumn;
 

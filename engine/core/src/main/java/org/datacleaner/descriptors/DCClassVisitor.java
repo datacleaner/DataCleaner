@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.TruePredicate;
+import org.datacleaner.metamodel.util.TruePredicate;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;
@@ -32,13 +32,13 @@ import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.util.ReflectionUtils;
-import org.kohsuke.asm6.AnnotationVisitor;
-import org.kohsuke.asm6.Attribute;
-import org.kohsuke.asm6.ClassVisitor;
-import org.kohsuke.asm6.FieldVisitor;
-import org.kohsuke.asm6.MethodVisitor;
-import org.kohsuke.asm6.Opcodes;
-import org.kohsuke.asm6.Type;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Attribute;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 final class DCClassVisitor extends ClassVisitor {
 
-    private static final int API_VERSION = Opcodes.ASM4;
+    private static final int API_VERSION = Opcodes.ASM9;
 
     private static final Logger logger = LoggerFactory.getLogger(DCClassVisitor.class);
     private final ClassLoader _classLoader;

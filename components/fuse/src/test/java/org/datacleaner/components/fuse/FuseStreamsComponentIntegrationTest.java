@@ -22,9 +22,9 @@ package org.datacleaner.components.fuse;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.data.Row;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.data.Row;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;

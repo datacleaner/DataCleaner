@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.UpdateableDataContext;
 
 /**
  * Subclass of {@link DatastoreConnectionLease} for {@link UpdateableDatastore}

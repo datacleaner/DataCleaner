@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Schema;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.Schema;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;

@@ -33,7 +33,7 @@ import javax.swing.JScrollPane;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.ColumnType;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.bootstrap.SimpleWindowContext;
 import org.datacleaner.bootstrap.WindowContext;

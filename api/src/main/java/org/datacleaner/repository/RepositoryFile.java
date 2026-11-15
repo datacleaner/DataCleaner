@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.Function;
 
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Resource;
 
 /**
  * Represents a file in the {@link Repository}.

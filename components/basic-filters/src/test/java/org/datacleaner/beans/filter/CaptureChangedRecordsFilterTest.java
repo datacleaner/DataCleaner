@@ -25,9 +25,9 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Properties;
 
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.InMemoryResource;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.InMemoryResource;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;

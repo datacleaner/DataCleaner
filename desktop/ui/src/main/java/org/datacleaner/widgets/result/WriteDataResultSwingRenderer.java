@@ -34,9 +34,9 @@ import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.writers.WriteDataResult;

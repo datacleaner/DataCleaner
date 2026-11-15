@@ -25,8 +25,8 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.util.BaseObject;
 import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.ReadObjectBuilder.Moved;
 import org.slf4j.Logger;

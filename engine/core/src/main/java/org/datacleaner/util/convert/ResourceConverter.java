@@ -29,8 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
@@ -151,11 +150,6 @@ public class ResourceConverter implements Converter<Resource> {
         final List<ResourceTypeHandler<?>> result = new ArrayList<>();
         result.add(new FileResourceTypeHandler(configuration.getHomeFolder()));
         result.add(new UrlResourceTypeHandler());
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_HDFS, configuration));
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_EMRFS, configuration));
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_MAPRFS, configuration));
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_S3, configuration));
-        result.add(new HdfsResourceTypeHandler(HdfsResource.SCHEME_SWIFT, configuration));
         result.add(new ClasspathResourceTypeHandler());
         result.add(new VfsResourceTypeHandler());
         return result;

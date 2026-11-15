@@ -28,11 +28,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.query.FunctionType;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.util.AggregateBuilder;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.query.FunctionType;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.util.AggregateBuilder;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;

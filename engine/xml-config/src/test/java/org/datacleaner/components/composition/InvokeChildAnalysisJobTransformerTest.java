@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.FileResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.beans.composition.InvokeChildAnalysisJobTransformer;

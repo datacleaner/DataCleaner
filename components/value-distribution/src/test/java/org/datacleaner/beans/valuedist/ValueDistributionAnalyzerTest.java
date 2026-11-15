@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableColumn;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;

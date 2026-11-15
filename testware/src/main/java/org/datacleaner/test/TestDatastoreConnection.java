@@ -19,9 +19,9 @@
  */
 package org.datacleaner.test;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.jdbc.JdbcDataContext;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.jdbc.JdbcDataContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.connection.UpdateableDatastoreConnection;

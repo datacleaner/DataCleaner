@@ -24,28 +24,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.schema.TableType;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.HdfsResource;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.SimpleTableDef;
-import org.apache.metamodel.util.UrlResource;
-import org.apache.metamodel.xml.XmlDomDataContext;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.schema.TableType;
+import org.datacleaner.metamodel.util.FileResource;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.util.UrlResource;
+import org.datacleaner.metamodel.xml.XmlDomDataContext;
 import org.datacleaner.connection.ArffDatastore;
-import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.connection.DynamoDbDatastore;
-import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.connection.KafkaDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
-import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.Dictionary;
@@ -60,11 +53,6 @@ import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.reference.regexswap.Category;
 import org.datacleaner.reference.regexswap.Regex;
 import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
-import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
-import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
-import org.datacleaner.server.HadoopClusterInformation;
-import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
@@ -106,14 +94,6 @@ public class DomConfigurationWriter {
      * @return
      */
     public boolean isExternalizable(final ServerInformation serverInformation) {
-        if (serverInformation == null) {
-            return false;
-        }
-
-        if (serverInformation instanceof HadoopClusterInformation) {
-            return true;
-        }
-
         return false;
     }
 
@@ -147,36 +127,6 @@ public class DomConfigurationWriter {
             return isExternalizable(resource);
         }
 
-        if (datastore instanceof ElasticSearchDatastore) {
-            final SimpleTableDef[] tableDefs = ((ElasticSearchDatastore) datastore).getTableDefs();
-            if (tableDefs == null) {
-                return true;
-            }
-        }
-
-        if (datastore instanceof MongoDbDatastore) {
-            final SimpleTableDef[] tableDefs = ((MongoDbDatastore) datastore).getTableDefs();
-            if (tableDefs == null) {
-                return true;
-            }
-        }
-
-        if (datastore instanceof CouchDbDatastore) {
-            final SimpleTableDef[] tableDefs = ((CouchDbDatastore) datastore).getTableDefs();
-            if (tableDefs == null) {
-                return true;
-            }
-        }
-
-        if (datastore instanceof SalesforceDatastore) {
-            return true;
-        }
-        if (datastore instanceof DynamoDbDatastore) {
-            final SimpleTableDef[] tableDefs = ((DynamoDbDatastore) datastore).getTableDefs();
-            if (tableDefs == null) {
-                return true;
-            }
-        }
         if (datastore instanceof JsonDatastore) {
             final Resource resource = ((JsonDatastore) datastore).getResource();
             return isExternalizable(resource);
@@ -184,15 +134,12 @@ public class DomConfigurationWriter {
         if (datastore instanceof FixedWidthDatastore) {
             return true;
         }
-        if (datastore instanceof KafkaDatastore) {
-            return true;
-        }
+
         return false;
     }
 
     private boolean isExternalizable(Resource resource) {
-        return resource instanceof FileResource || resource instanceof HadoopResource
-                || resource instanceof HdfsResource || resource instanceof UrlResource;
+        return resource instanceof FileResource || resource instanceof UrlResource;
     }
 
     public boolean isExternalizable(final Dictionary dict) {
@@ -299,18 +246,7 @@ public class DomConfigurationWriter {
 
         final Element elem;
 
-        if (serverInformation instanceof HadoopClusterInformation) {
-            elem = toElement((HadoopClusterInformation) serverInformation);
-        } else {
-            throw new UnsupportedOperationException("Non-supported serverInformation: " + serverInformation);
-        }
-
-        final Element serverInformationCatalogElement = getHadoopClustersElement();
-        serverInformationCatalogElement.appendChild(elem);
-
-        onDocumentChanged(getDocument());
-
-        return elem;
+        throw new UnsupportedOperationException("Non-supported serverInformation: " + serverInformation);
     }
 
     /**
@@ -341,16 +277,6 @@ public class DomConfigurationWriter {
             elem = toElement((ExcelDatastore) datastore, filename);
         } else if (datastore instanceof JdbcDatastore) {
             elem = toElement((JdbcDatastore) datastore);
-        } else if (datastore instanceof ElasticSearchDatastore) {
-            elem = toElement((ElasticSearchDatastore) datastore);
-        } else if (datastore instanceof MongoDbDatastore) {
-            elem = toElement((MongoDbDatastore) datastore);
-        } else if (datastore instanceof CouchDbDatastore) {
-            elem = toElement((CouchDbDatastore) datastore);
-        } else if (datastore instanceof DynamoDbDatastore) {
-            elem = toElement((DynamoDbDatastore) datastore);
-        } else if (datastore instanceof SalesforceDatastore) {
-            elem = toElement((SalesforceDatastore) datastore);
         } else if (datastore instanceof JsonDatastore) {
             final Resource resource = ((JsonDatastore) datastore).getResource();
             final String filename = toFilename(resource);
@@ -359,8 +285,6 @@ public class DomConfigurationWriter {
             final Resource resource = ((FixedWidthDatastore) datastore).getResource();
             final String filename = toFilename(resource);
             elem = toElement((FixedWidthDatastore) datastore, filename);
-        } else if (datastore instanceof KafkaDatastore) {
-            elem = toElement((KafkaDatastore) datastore);
         } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
@@ -621,12 +545,6 @@ public class DomConfigurationWriter {
         if (resource instanceof FileResource) {
             return ((FileResource) resource).getFile().getPath();
         }
-        if (resource instanceof HadoopResource) {
-            return ((HadoopResource) resource).getTemplatedPath();
-        }
-        if (resource instanceof HdfsResource) {
-            return resource.getQualifiedPath();
-        }
         if (resource instanceof UrlResource) {
             return resource.getQualifiedPath();
         }
@@ -687,152 +605,6 @@ public class DomConfigurationWriter {
         return encodePassword(new String(password));
     }
 
-    /**
-     * Externalizes a {@link HadoopClusterInformation} to a XML element.
-     *
-     * @param hadoopClusterInformation the hadoopClusterInformation to externalize
-     * @return a XML element representing the datastore.
-     */
-    public Element toElement(final HadoopClusterInformation hadoopClusterInformation) {
-        final Element hadoopClusterElement = getDocument().createElement("hadoop-cluster");
-
-        hadoopClusterElement.setAttribute("name", hadoopClusterInformation.getName());
-
-        final String description = hadoopClusterInformation.getDescription();
-        if (!Strings.isNullOrEmpty(description)) {
-            hadoopClusterElement.setAttribute("description", description);
-        }
-
-        // These inherit each other, so order is important
-        if (hadoopClusterInformation instanceof DirectConnectionHadoopClusterInformation) {
-            appendElement(hadoopClusterElement, "namenode-url",
-                    ((DirectConnectionHadoopClusterInformation) hadoopClusterInformation).getNameNodeUri().toString());
-        } else if (hadoopClusterInformation instanceof EnvironmentBasedHadoopClusterInformation) {
-            appendElement(hadoopClusterElement, "environment-configured", "");
-        } else if (hadoopClusterInformation instanceof DirectoryBasedHadoopClusterInformation) {
-            final DirectoryBasedHadoopClusterInformation directoryBasedHadoopClusterInformation =
-                    (DirectoryBasedHadoopClusterInformation) hadoopClusterInformation;
-            final Element directoriesElement = getDocument().createElement("directories");
-            hadoopClusterElement.appendChild(directoriesElement);
-            for (final String directory : directoryBasedHadoopClusterInformation.getDirectories()) {
-                appendElement(directoriesElement, "directory", directory);
-            }
-        } else {
-            throw new UnsupportedOperationException("Unknown Hadoop cluster configuration");
-        }
-
-        return hadoopClusterElement;
-    }
-
-    /**
-     * Externalizes a {@link ElasticSearchDatastore} to a XML element
-     *
-     * @param datastore
-     * @return
-     */
-    @SuppressWarnings("deprecation")
-    public Element toElement(final ElasticSearchDatastore datastore) {
-        final Element ds = getDocument().createElement("elasticsearch-datastore");
-        ds.setAttribute("name", datastore.getName());
-        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
-            ds.setAttribute("description", datastore.getDescription());
-        }
-
-        appendElement(ds, "hostname", datastore.getHostname());
-        appendElement(ds, "port", datastore.getPort());
-        appendElement(ds, "cluster-name", datastore.getClusterName());
-        appendElement(ds, "index-name", datastore.getIndexName());
-        appendElement(ds, "client-type", datastore.getClientType().name());
-        appendElement(ds, "username", datastore.getUsername());
-        appendElement(ds, "password", encodePassword(datastore.getPassword()));
-        appendElement(ds, "ssl", datastore.getSsl());
-
-        if (datastore.getSsl()) {
-            appendElement(ds, "keystore-path", datastore.getKeystorePath());
-            appendElement(ds, "keystore-password", encodePassword(datastore.getKeystorePassword()));
-        }
-
-        return ds;
-    }
-
-    /**
-     * Externalizes a {@link MongoDbDatastore} to a XML element
-     *
-     * @param datastore
-     * @return
-     */
-    public Element toElement(final MongoDbDatastore datastore) {
-        final Element ds = getDocument().createElement("mongodb-datastore");
-        ds.setAttribute("name", datastore.getName());
-        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
-            ds.setAttribute("description", datastore.getDescription());
-        }
-
-        appendElement(ds, "hostname", datastore.getHostname());
-        appendElement(ds, "port", datastore.getPort());
-        appendElement(ds, "database-name", datastore.getDatabaseName());
-        appendElement(ds, "username", datastore.getUsername());
-        appendElement(ds, "password", encodePassword(datastore.getPassword()));
-
-        return ds;
-    }
-
-    /**
-     * Externalizes a {@link DynamoDbDatastore} to a XML element
-     * 
-     * @param datastore
-     * @return
-     */
-    public Element toElement(final DynamoDbDatastore datastore) {
-        final Element ds = getDocument().createElement("dynamodb-datastore");
-        ds.setAttribute("name", datastore.getName());
-        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
-            ds.setAttribute("description", datastore.getDescription());
-        }
-
-        appendElement(ds, "region", datastore.getRegion());
-        appendElement(ds, "accessKeyId", datastore.getAccessKeyId());
-        appendElement(ds, "secretAccessKey", encodePassword(datastore.getSecretAccessKey()));
-        return ds;
-    }
-
-    /**
-     * Externalizes a {@link CouchDbDatastore} to a XML element
-     *
-     * @param datastore
-     * @return
-     */
-    public Element toElement(final CouchDbDatastore datastore) {
-        final Element ds = getDocument().createElement("couchdb-datastore");
-        ds.setAttribute("name", datastore.getName());
-        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
-            ds.setAttribute("description", datastore.getDescription());
-        }
-
-        appendElement(ds, "hostname", datastore.getHostname());
-        appendElement(ds, "port", datastore.getPort());
-        appendElement(ds, "username", datastore.getUsername());
-        appendElement(ds, "password", encodePassword(datastore.getPassword()));
-        appendElement(ds, "ssl", datastore.isSslEnabled());
-
-        return ds;
-    }
-
-    public Element toElement(KafkaDatastore datastore) {
-        final Element ds = getDocument().createElement("kafka-datastore");
-        ds.setAttribute("name", datastore.getName());
-        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
-            ds.setAttribute("description", datastore.getDescription());
-        }
-        appendElement(ds, "bootstrap-servers", datastore.getBootstrapServers());
-        for (String topic : datastore.getTopics()) {
-            appendElement(ds, "topic", topic);
-        }
-        appendElement(ds, "key-type", datastore.getKeyType().name());
-        appendElement(ds, "value-type", datastore.getValueType().name());
-        return ds;
-    }
-
     public Element toElement(final FixedWidthDatastore datastore, final String filename) {
         final Element ds = getDocument().createElement("fixed-width-datastore");
         ds.setAttribute("name", datastore.getName());
@@ -868,31 +640,6 @@ public class DomConfigurationWriter {
         appendElement(ds, "fail-on-inconsistencies", String.valueOf(datastore.isFailOnInconsistencies()));
         appendElement(ds, "skip-ebcdic-header", String.valueOf(datastore.isSkipEbcdicHeader()));
         appendElement(ds, "eol-present", String.valueOf(datastore.isEolPresent()));
-
-        return ds;
-    }
-
-    /**
-     * Externalizes a {@link CouchDbDatastore} to an XML element
-     *
-     * @param datastore
-     * @return
-     */
-    public Element toElement(final SalesforceDatastore datastore) {
-        final Element ds = getDocument().createElement("salesforce-datastore");
-        ds.setAttribute("name", datastore.getName());
-        if (!Strings.isNullOrEmpty(datastore.getDescription())) {
-            ds.setAttribute("description", datastore.getDescription());
-        }
-
-        appendElement(ds, "username", datastore.getUsername());
-        appendElement(ds, "password", encodePassword(datastore.getPassword()));
-        appendElement(ds, "security-token", datastore.getSecurityToken());
-
-        final String endpointUrl = datastore.getEndpointUrl();
-        if (!Strings.isNullOrEmpty(endpointUrl)) {
-            appendElement(ds, "endpoint-url", endpointUrl);
-        }
 
         return ds;
     }

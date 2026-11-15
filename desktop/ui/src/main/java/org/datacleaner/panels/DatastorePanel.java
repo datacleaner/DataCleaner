@@ -29,32 +29,19 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.connection.AccessDatastore;
-import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
-import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.connection.DbaseDatastore;
-import org.datacleaner.connection.DynamoDbDatastore;
-import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
-import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
-import org.datacleaner.connection.Neo4jDatastore;
-import org.datacleaner.connection.OdbDatastore;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.connection.ResourceDatastore;
-import org.datacleaner.connection.SalesforceDatastore;
-import org.datacleaner.connection.SasDatastore;
-import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.InjectorBuilder;
@@ -65,26 +52,13 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.windows.AccessDatastoreDialog;
-import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
-import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
-import org.datacleaner.windows.DbaseDatastoreDialog;
-import org.datacleaner.windows.DynamoDbDatastoreDialog;
-import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
-import org.datacleaner.windows.HBaseDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.JsonDatastoreDialog;
-import org.datacleaner.windows.MongoDbDatastoreDialog;
-import org.datacleaner.windows.Neo4jDatastoreDialog;
-import org.datacleaner.windows.OdbDatastoreDialog;
 import org.datacleaner.windows.QueryWindow;
-import org.datacleaner.windows.SalesforceDatastoreDialog;
-import org.datacleaner.windows.SasDatastoreDialog;
-import org.datacleaner.windows.SugarCrmDatastoreDialog;
 import org.datacleaner.windows.XmlDatastoreDialog;
 
 import com.google.inject.Injector;
@@ -179,23 +153,6 @@ public class DatastorePanel extends DCPanel {
                 return jdbcUrl;
             }
             return datasourceJndiUrl;
-        } else if (datastore instanceof ElasticSearchDatastore) {
-            final ElasticSearchDatastore elasticSearchDatastore = (ElasticSearchDatastore) datastore;
-            return elasticSearchDatastore.getIndexName();
-        } else if (datastore instanceof CassandraDatastore) {
-            final CassandraDatastore cassandraDatastore = (CassandraDatastore) datastore;
-            return cassandraDatastore.getKeyspace();
-        } else if (datastore instanceof MongoDbDatastore) {
-            final MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastore;
-            return mongoDbDatastore.getHostname() + ":" + mongoDbDatastore.getPort() + " - " + mongoDbDatastore
-                    .getDatabaseName();
-        } else if (datastore instanceof Neo4jDatastore) {
-            final Neo4jDatastore neo4jDbDatastore = (Neo4jDatastore) datastore;
-            return neo4jDbDatastore.getHostname() + ":" + neo4jDbDatastore.getPort();
-        } else if (datastore instanceof CouchDbDatastore) {
-            final CouchDbDatastore couchDbDatastore = (CouchDbDatastore) datastore;
-            return (couchDbDatastore.isSslEnabled() ? "https://" : "http://") + couchDbDatastore.getHostname() + ":"
-                    + couchDbDatastore.getPort();
         } else if (datastore instanceof PojoDatastore) {
             return "In-memory collection of records.";
         } else if (datastore instanceof CompositeDatastore) {
@@ -268,22 +225,10 @@ public class DatastorePanel extends DCPanel {
                 final CsvDatastoreDialog dialog = injector.getInstance(CsvDatastoreDialog.class);
                 dialog.open();
             });
-        } else if (datastore instanceof AccessDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(AccessDatastore.class, datastore).createInjector();
-                final AccessDatastoreDialog dialog = injector.getInstance(AccessDatastoreDialog.class);
-                dialog.open();
-            });
         } else if (datastore instanceof ExcelDatastore) {
             editButton.addActionListener(e -> {
                 final Injector injector = getInjectorBuilder().with(ExcelDatastore.class, datastore).createInjector();
                 final ExcelDatastoreDialog dialog = injector.getInstance(ExcelDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof SasDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(SasDatastore.class, datastore).createInjector();
-                final SasDatastoreDialog dialog = injector.getInstance(SasDatastoreDialog.class);
                 dialog.open();
             });
         } else if (datastore instanceof XmlDatastore) {
@@ -292,81 +237,11 @@ public class DatastorePanel extends DCPanel {
                 final XmlDatastoreDialog dialog = injector.getInstance(XmlDatastoreDialog.class);
                 dialog.open();
             });
-        } else if (datastore instanceof OdbDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(OdbDatastore.class, datastore).createInjector();
-                final OdbDatastoreDialog dialog = injector.getInstance(OdbDatastoreDialog.class);
-                dialog.open();
-            });
         } else if (datastore instanceof FixedWidthDatastore) {
             editButton.addActionListener(e -> {
                 final Injector injector =
                         getInjectorBuilder().with(FixedWidthDatastore.class, datastore).createInjector();
                 final FixedWidthDatastoreDialog dialog = injector.getInstance(FixedWidthDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof DbaseDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(DbaseDatastore.class, datastore).createInjector();
-                final DbaseDatastoreDialog dialog = injector.getInstance(DbaseDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof HBaseDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(HBaseDatastore.class, datastore).createInjector();
-                final HBaseDatastoreDialog dialog = injector.getInstance(HBaseDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof CassandraDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector =
-                        getInjectorBuilder().with(CassandraDatastore.class, datastore).createInjector();
-                final CassandraDatastoreDialog dialog = injector.getInstance(CassandraDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof ElasticSearchDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector =
-                        getInjectorBuilder().with(ElasticSearchDatastore.class, datastore).createInjector();
-                final ElasticSearchDatastoreDialog dialog = injector.getInstance(ElasticSearchDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof CouchDbDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(CouchDbDatastore.class, datastore).createInjector();
-                final CouchDbDatastoreDialog dialog = injector.getInstance(CouchDbDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof DynamoDbDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(DynamoDbDatastore.class, datastore).createInjector();
-                final DynamoDbDatastoreDialog dialog = injector.getInstance(DynamoDbDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof MongoDbDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(MongoDbDatastore.class, datastore).createInjector();
-                final MongoDbDatastoreDialog dialog = injector.getInstance(MongoDbDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof SalesforceDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector =
-                        getInjectorBuilder().with(SalesforceDatastore.class, datastore).createInjector();
-                final SalesforceDatastoreDialog dialog = injector.getInstance(SalesforceDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof SugarCrmDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector =
-                        getInjectorBuilder().with(SugarCrmDatastore.class, datastore).createInjector();
-                final SugarCrmDatastoreDialog dialog = injector.getInstance(SugarCrmDatastoreDialog.class);
-                dialog.open();
-            });
-        } else if (datastore instanceof Neo4jDatastore) {
-            editButton.addActionListener(e -> {
-                final Injector injector = getInjectorBuilder().with(Neo4jDatastore.class, datastore).createInjector();
-                final Neo4jDatastoreDialog dialog = injector.getInstance(Neo4jDatastoreDialog.class);
                 dialog.open();
             });
         } else if (datastore instanceof CompositeDatastore) {

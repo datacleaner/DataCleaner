@@ -25,7 +25,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.swing.filechooser.FileFilter;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.FileProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.configuration.DataCleanerConfiguration;

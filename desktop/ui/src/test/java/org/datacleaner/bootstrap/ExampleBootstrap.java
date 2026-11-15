@@ -26,8 +26,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.BooleanAnalyzer;
 import org.datacleaner.beans.DateAndTimeAnalyzer;

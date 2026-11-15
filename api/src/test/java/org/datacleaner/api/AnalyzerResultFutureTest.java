@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.metamodel.util.ImmutableRef;
-import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.util.ImmutableRef;
+import org.datacleaner.metamodel.util.LazyRef;
 import org.datacleaner.api.AnalyzerResultFuture.Listener;
 
 import junit.framework.TestCase;

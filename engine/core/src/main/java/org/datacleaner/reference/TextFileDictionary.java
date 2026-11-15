@@ -27,8 +27,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.ReadObjectBuilder.Adaptor;

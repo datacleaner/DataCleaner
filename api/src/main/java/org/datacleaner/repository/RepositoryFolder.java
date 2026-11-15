@@ -22,7 +22,7 @@ package org.datacleaner.repository;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.metamodel.util.Action;
+import org.datacleaner.metamodel.util.Action;
 
 /**
  * Represents a folder in the {@link Repository}.

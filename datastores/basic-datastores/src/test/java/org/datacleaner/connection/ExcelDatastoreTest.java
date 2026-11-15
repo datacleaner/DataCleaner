@@ -21,7 +21,7 @@ package org.datacleaner.connection;
 
 import java.util.Arrays;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 
 import junit.framework.TestCase;
 

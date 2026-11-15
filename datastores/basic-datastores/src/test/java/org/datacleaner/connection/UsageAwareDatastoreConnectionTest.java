@@ -21,8 +21,8 @@ package org.datacleaner.connection;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.util.MutableRef;
 import org.junit.Ignore;
 
 import junit.framework.TestCase;

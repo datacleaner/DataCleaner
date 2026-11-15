@@ -27,7 +27,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.user.UserPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

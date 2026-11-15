@@ -22,11 +22,11 @@ package org.datacleaner.output.csv;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.csv.CsvWriter;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.csv.CsvWriter;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.output.OutputRow;
 import org.datacleaner.output.OutputWriter;

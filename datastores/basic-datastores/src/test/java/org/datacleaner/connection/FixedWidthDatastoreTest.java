@@ -19,9 +19,9 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileResource;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.FileResource;
 
 import junit.framework.TestCase;
 

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.test.TestHelper;
 import org.xml.sax.Attributes;

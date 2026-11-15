@@ -19,33 +19,24 @@
  */
 package org.datacleaner.util;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
-import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.connection.OdbDatastore;
-import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.XmlDatastore;
 
 public class DatastoreCreationUtil {
 
     public enum FileDatastoreEnum {
-        CSV("csv", "tsv", "txt", "dat"), EXCEL("xls", "xlsx"), ACCESS("mdb"),
-
-        // TODO: Add .sas7bdat file support
-        SAS(), DBASE("dbf"), XML("xml"), JSON("json"), OPENOFFICE("odb");
+        CSV("csv", "tsv", "txt", "dat"), EXCEL("xls", "xlsx"), XML("xml"), JSON("json");
 
         private final List<String> _extensions;
 
@@ -67,14 +58,6 @@ public class DatastoreCreationUtil {
     }
 
     public static FileDatastoreEnum inferDatastoreTypeFromResource(final Resource resource) {
-        if (resource instanceof FileResource) {
-            final FileResource fileResource = (FileResource) resource;
-            final File file = fileResource.getFile();
-            if (file.isDirectory()) {
-                return FileDatastoreEnum.SAS;
-            }
-        }
-
         return FileDatastoreEnum.getDatastoreTypeFromResource(resource);
     }
 
@@ -108,17 +91,8 @@ public class DatastoreCreationUtil {
             return new CsvDatastore(datastoreName, resource, csvConfiguration);
         case EXCEL:
             return new ExcelDatastore(datastoreName, resource, resource.getQualifiedPath());
-        case ACCESS:
-            return new AccessDatastore(datastoreName, resource.getQualifiedPath());
-        case SAS:
-            final FileResource fileResource = (FileResource) resource;
-            return new SasDatastore(datastoreName, fileResource.getFile());
-        case DBASE:
-            return new DbaseDatastore(datastoreName, resource.getQualifiedPath());
         case JSON:
             return new JsonDatastore(datastoreName, resource);
-        case OPENOFFICE:
-            return new OdbDatastore(datastoreName, resource.getQualifiedPath());
         case XML:
             return new XmlDatastore(datastoreName, resource.getQualifiedPath());
         default:

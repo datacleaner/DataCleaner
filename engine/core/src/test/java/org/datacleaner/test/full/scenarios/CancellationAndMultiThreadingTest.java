@@ -21,8 +21,8 @@ package org.datacleaner.test.full.scenarios;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.components.mock.AnalyzerMock;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;

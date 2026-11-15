@@ -19,21 +19,43 @@
  */
 package org.datacleaner.job.output;
 
-import org.apache.metamodel.schema.Table;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.connection.PerformanceCharacteristics;
 import org.datacleaner.connection.PerformanceCharacteristicsImpl;
+import org.datacleaner.util.TableSnapshot;
 
 public class PushOutputDataStream implements OutputDataStream {
 
     private static final long serialVersionUID = 1L;
 
     private final String _name;
-    private final Table _table;
+    private transient Table _table;
 
     public PushOutputDataStream(final String name, final Table table) {
         _name = name;
         _table = table;
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        if (_table != null) {
+            out.writeBoolean(true);
+            out.writeObject(new TableSnapshot(_table));
+        } else {
+            out.writeBoolean(false);
+        }
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        if (in.readBoolean()) {
+            _table = ((TableSnapshot) in.readObject()).rebuild();
+        }
     }
 
     @Override

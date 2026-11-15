@@ -29,6 +29,7 @@ import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,55 +39,41 @@ import java.util.Set;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.ColumnTypeImpl;
-import org.apache.metamodel.schema.TableType;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.SimpleTableDef;
-import org.apache.metamodel.xml.XmlSaxTableDef;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.ColumnTypeImpl;
+import org.datacleaner.metamodel.schema.TableType;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.xml.XmlSaxTableDef;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
-import org.datacleaner.configuration.jaxb.AccessDatastoreType;
 import org.datacleaner.configuration.jaxb.ArffDatastoreType;
 import org.datacleaner.configuration.jaxb.BerkeleyDbStorageProviderType;
-import org.datacleaner.configuration.jaxb.CassandraDatastoreType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType.Package;
 import org.datacleaner.configuration.jaxb.CombinedStorageProviderType;
 import org.datacleaner.configuration.jaxb.CompositeDatastoreType;
 import org.datacleaner.configuration.jaxb.Configuration;
 import org.datacleaner.configuration.jaxb.ConfigurationMetadataType;
-import org.datacleaner.configuration.jaxb.CouchdbDatastoreType;
 import org.datacleaner.configuration.jaxb.CsvDatastoreType;
 import org.datacleaner.configuration.jaxb.CustomElementType;
 import org.datacleaner.configuration.jaxb.CustomElementType.Property;
 import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
 import org.datacleaner.configuration.jaxb.DatastoreDictionaryType;
 import org.datacleaner.configuration.jaxb.DatastoreSynonymCatalogType;
-import org.datacleaner.configuration.jaxb.DbaseDatastoreType;
 import org.datacleaner.configuration.jaxb.DescriptorProvidersType;
-import org.datacleaner.configuration.jaxb.DynamoDbDatastoreType;
-import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType;
-import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef.Field;
 import org.datacleaner.configuration.jaxb.ExcelDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
-import org.datacleaner.configuration.jaxb.HadoopClusterType;
-import org.datacleaner.configuration.jaxb.HbaseDatastoreType;
-import org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column;
 import org.datacleaner.configuration.jaxb.InMemoryStorageProviderType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType.TableTypes;
 import org.datacleaner.configuration.jaxb.JsonDatastoreType;
-import org.datacleaner.configuration.jaxb.KafkaDatastoreType;
-import org.datacleaner.configuration.jaxb.MongodbDatastoreType;
 import org.datacleaner.configuration.jaxb.MultithreadedTaskrunnerType;
-import org.datacleaner.configuration.jaxb.Neo4JDatastoreType;
 import org.datacleaner.configuration.jaxb.ObjectFactory;
-import org.datacleaner.configuration.jaxb.OpenOfficeDatabaseDatastoreType;
 import org.datacleaner.configuration.jaxb.PojoDatastoreType;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
@@ -94,13 +81,10 @@ import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPattern
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
 import org.datacleaner.configuration.jaxb.RegexPatternType;
 import org.datacleaner.configuration.jaxb.RegexSwapPatternType;
-import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
-import org.datacleaner.configuration.jaxb.SasDatastoreType;
 import org.datacleaner.configuration.jaxb.ServersType;
 import org.datacleaner.configuration.jaxb.SimplePatternType;
 import org.datacleaner.configuration.jaxb.SinglethreadedTaskrunnerType;
 import org.datacleaner.configuration.jaxb.StorageProviderType;
-import org.datacleaner.configuration.jaxb.SugarCrmDatastoreType;
 import org.datacleaner.configuration.jaxb.TableTypeEnum;
 import org.datacleaner.configuration.jaxb.TextFileDictionaryType;
 import org.datacleaner.configuration.jaxb.TextFileSynonymCatalogType;
@@ -108,32 +92,16 @@ import org.datacleaner.configuration.jaxb.ValueListDictionaryType;
 import org.datacleaner.configuration.jaxb.ValueListSynonymCatalogType;
 import org.datacleaner.configuration.jaxb.XmlDatastoreType;
 import org.datacleaner.configuration.jaxb.XmlDatastoreType.TableDef;
-import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.ArffDatastore;
-import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
-import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.connection.DbaseDatastore;
-import org.datacleaner.connection.DynamoDbDatastore;
-import org.datacleaner.connection.ElasticSearchDatastore;
-import org.datacleaner.connection.ElasticSearchDatastore.ClientType;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
-import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.connection.KafkaDatastore;
-import org.datacleaner.connection.KafkaDatastore.KeyValueType;
-import org.datacleaner.connection.MongoDbDatastore;
-import org.datacleaner.connection.Neo4jDatastore;
-import org.datacleaner.connection.OdbDatastore;
-import org.datacleaner.connection.SalesforceDatastore;
-import org.datacleaner.connection.SasDatastore;
-import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -162,15 +130,11 @@ import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.reference.regexswap.Category;
 import org.datacleaner.reference.regexswap.Regex;
 import org.datacleaner.reference.regexswap.RegexSwapStringPattern;
-import org.datacleaner.server.DirectConnectionHadoopClusterInformation;
-import org.datacleaner.server.DirectoryBasedHadoopClusterInformation;
-import org.datacleaner.server.EnvironmentBasedHadoopClusterInformation;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.util.CollectionUtils2;
-import org.datacleaner.util.HadoopResource;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.SecurityUtils;
@@ -767,7 +731,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         // read all single, non-custom datastores
         final List<AbstractDatastoreType> datastoreTypes =
-                datastoreCatalogType.getJdbcDatastoreOrAccessDatastoreOrDynamodbDatastore();
+                datastoreCatalogType.getJdbcDatastoreOrCsvDatastoreOrArffDatastore();
         for (final AbstractDatastoreType datastoreType : datastoreTypes) {
             final String name = datastoreType.getName();
             checkName(name, Datastore.class, datastores);
@@ -782,42 +746,14 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 ds = createDatastore(name, (JdbcDatastoreType) datastoreType);
             } else if (datastoreType instanceof FixedWidthDatastoreType) {
                 ds = createDatastore(name, (FixedWidthDatastoreType) datastoreType, temporaryConfiguration);
-            } else if (datastoreType instanceof SasDatastoreType) {
-                ds = createDatastore(name, (SasDatastoreType) datastoreType);
-            } else if (datastoreType instanceof AccessDatastoreType) {
-                ds = createDatastore(name, (AccessDatastoreType) datastoreType);
             } else if (datastoreType instanceof XmlDatastoreType) {
                 ds = createDatastore(name, (XmlDatastoreType) datastoreType);
-            } else if (datastoreType instanceof DynamoDbDatastoreType) {
-                ds = createDatastore(name, (DynamoDbDatastoreType) datastoreType);
             } else if (datastoreType instanceof ExcelDatastoreType) {
                 ds = createDatastore(name, (ExcelDatastoreType) datastoreType, temporaryConfiguration);
             } else if (datastoreType instanceof JsonDatastoreType) {
                 ds = createDatastore(name, (JsonDatastoreType) datastoreType, temporaryConfiguration);
-            } else if (datastoreType instanceof DbaseDatastoreType) {
-                ds = createDatastore(name, (DbaseDatastoreType) datastoreType);
-            } else if (datastoreType instanceof OpenOfficeDatabaseDatastoreType) {
-                ds = createDatastore(name, (OpenOfficeDatabaseDatastoreType) datastoreType);
             } else if (datastoreType instanceof PojoDatastoreType) {
                 ds = createDatastore(name, (PojoDatastoreType) datastoreType, temporaryConfiguration);
-            } else if (datastoreType instanceof CouchdbDatastoreType) {
-                ds = createDatastore(name, (CouchdbDatastoreType) datastoreType);
-            } else if (datastoreType instanceof KafkaDatastoreType) {
-                ds = createDatastore(name, (KafkaDatastoreType) datastoreType);
-            } else if (datastoreType instanceof MongodbDatastoreType) {
-                ds = createDatastore(name, (MongodbDatastoreType) datastoreType);
-            } else if (datastoreType instanceof ElasticSearchDatastoreType) {
-                ds = createDatastore(name, (ElasticSearchDatastoreType) datastoreType);
-            } else if (datastoreType instanceof CassandraDatastoreType) {
-                ds = createDatastore(name, (CassandraDatastoreType) datastoreType);
-            } else if (datastoreType instanceof HbaseDatastoreType) {
-                ds = createDatastore(name, (HbaseDatastoreType) datastoreType);
-            } else if (datastoreType instanceof SalesforceDatastoreType) {
-                ds = createDatastore(name, (SalesforceDatastoreType) datastoreType);
-            } else if (datastoreType instanceof SugarCrmDatastoreType) {
-                ds = createDatastore(name, (SugarCrmDatastoreType) datastoreType);
-            } else if (datastoreType instanceof Neo4JDatastoreType) {
-                ds = createDatastore(name, (Neo4JDatastoreType) datastoreType);
             } else if (datastoreType instanceof CompositeDatastoreType) {
                 // skip composite datastores at this point
                 continue;
@@ -874,170 +810,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             return temporaryConfiguration.getServerInformationCatalog();
         }
 
-        final Map<String, ServerInformation> servers = new HashMap<>();
-
-        final List<HadoopClusterType> hadoopClusterTypes = serversType.getHadoopClusters().getHadoopCluster();
-
-        for (final HadoopClusterType hadoopClusterType : hadoopClusterTypes) {
-            final String name = hadoopClusterType.getName();
-            checkName(name, ServerInformation.class, servers);
-            final String description = hadoopClusterType.getDescription();
-
-            final ServerInformation serverInformation =
-                    createHadoopClusterInformation(hadoopClusterType, name, description);
-            servers.put(name, serverInformation);
-        }
-
-        try {
-            servers.put(HadoopResource.DEFAULT_CLUSTERREFERENCE,
-                    new EnvironmentBasedHadoopClusterInformation(HadoopResource.DEFAULT_CLUSTERREFERENCE, null));
-        } catch (final IllegalStateException e) {
-            logger.info("No Hadoop environment variables, skipping default server");
-        }
-
-        return new ServerInformationCatalogImpl(servers.values());
-    }
-
-    private ServerInformation createHadoopClusterInformation(final HadoopClusterType hadoopClusterType,
-            final String name, final String description) {
-        final ServerInformation serverInformation;
-        if (hadoopClusterType.getEnvironmentConfigured() != null) {
-            serverInformation = new EnvironmentBasedHadoopClusterInformation(name, description);
-        } else if (hadoopClusterType.getDirectories() != null) {
-            final List<String> directoryList = hadoopClusterType.getDirectories().getDirectory();
-            // TODO: Variable-thingy
-            final String[] directories = directoryList.toArray(new String[directoryList.size()]);
-            serverInformation = new DirectoryBasedHadoopClusterInformation(name, description, directories);
-        } else if (hadoopClusterType.getNamenodeUrl() != null) {
-            serverInformation = new DirectConnectionHadoopClusterInformation(name, description,
-                    URI.create(hadoopClusterType.getNamenodeUrl()));
-        } else {
-            throw new UnsupportedOperationException("Unsupported hadoop cluster configuration method");
-        }
-
-        return serverInformation;
-    }
-
-    private Datastore createDatastore(final String name, final Neo4JDatastoreType datastoreType) {
-        final String hostname = getStringVariable("hostname", datastoreType.getHostname());
-        Integer port = getIntegerVariable("port", datastoreType.getPort());
-        if (port == null) {
-            port = Neo4jDatastore.DEFAULT_PORT;
-        }
-        final String username = getStringVariable("username", datastoreType.getUsername());
-        final String password = getPasswordVariable("password", datastoreType.getPassword());
-        return new Neo4jDatastore(name, hostname, port, username, password);
-    }
-
-    private Datastore createDatastore(final String name, final CassandraDatastoreType datastoreType) {
-
-        final String hostname = getStringVariable("hostname", datastoreType.getHostname());
-        Integer port = getIntegerVariable("port", datastoreType.getPort());
-        if (port == null) {
-            port = CassandraDatastore.DEFAULT_PORT;
-        }
-        final String keySpace = getStringVariable("keyspace", datastoreType.getKeyspace());
-        final String username = getStringVariable("username", datastoreType.getUsername());
-        final String password = getPasswordVariable("password", datastoreType.getPassword());
-        final boolean ssl = getBooleanVariable("ssl", datastoreType.isSsl(), false);
-
-        final List<org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef> tableDefList =
-                datastoreType.getTableDef();
-        final SimpleTableDef[] tableDefs;
-        if (tableDefList == null || tableDefList.isEmpty()) {
-            tableDefs = null;
-        } else {
-            tableDefs = new SimpleTableDef[tableDefList.size()];
-            for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef tableDef = tableDefList.get(i);
-                final String tableName = tableDef.getTableName();
-                final List<org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef.Column> columnList =
-                        tableDef.getColumn();
-
-                final String[] columnNames = new String[columnList.size()];
-                final ColumnType[] columnTypes = new ColumnType[columnList.size()];
-
-                for (int j = 0; j < columnTypes.length; j++) {
-                    final String propertyName = columnList.get(j).getName();
-                    final String propertyTypeName = columnList.get(j).getType();
-                    final ColumnType propertyType;
-                    if (StringUtils.isNullOrEmpty(propertyTypeName)) {
-                        propertyType = ColumnType.STRING;
-                    } else {
-                        propertyType = ColumnTypeImpl.valueOf(propertyTypeName);
-                    }
-                    columnNames[j] = propertyName;
-                    columnTypes[j] = propertyType;
-                }
-
-                tableDefs[i] = new SimpleTableDef(tableName, columnNames, columnTypes);
-            }
-        }
-
-        return new CassandraDatastore(name, hostname, port, keySpace, username, password, ssl, tableDefs);
+        return new ServerInformationCatalogImpl(Collections.emptySet());
     }
 
     @SuppressWarnings("deprecation")
-    private Datastore createDatastore(final String name, final ElasticSearchDatastoreType datastoreType) {
-        final String clusterName = getStringVariable("clusterName", datastoreType.getClusterName());
-        final String hostname = getStringVariable("hostname", datastoreType.getHostname());
-        final String username = getStringVariable("username", datastoreType.getUsername());
-        final String password = getPasswordVariable("password", datastoreType.getPassword());
-        final boolean ssl = getBooleanVariable("ssl", datastoreType.isSsl(), false);
-        final String keystorePath = getStringVariable("keystorePath", datastoreType.getKeystorePath());
-        final String keystorePassword = getPasswordVariable("keystorePassword", datastoreType.getKeystorePassword());
-
-        Integer port = getIntegerVariable("port", datastoreType.getPort());
-        final String indexName = getStringVariable("indexName", datastoreType.getIndexName());
-        String clientType = getStringVariable("clientType", datastoreType.getClientType());
-        // for backwards compatibility, the default ClientType was a TRANSPORT by default (bug)
-        if (clientType == null) {
-            clientType = ClientType.TRANSPORT.name();
-            if (port == null) {
-                port = ElasticSearchDatastore.TRANSPORT_PORT;
-            }
-        }
-        if (port == null) {
-            port = ElasticSearchDatastore.DEFAULT_PORT;
-        }
-        final List<org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef> tableDefList =
-                datastoreType.getTableDef();
-        final SimpleTableDef[] tableDefs;
-        if (tableDefList.isEmpty()) {
-            tableDefs = null;
-        } else {
-            tableDefs = new SimpleTableDef[tableDefList.size()];
-            for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef tableDef =
-                        tableDefList.get(i);
-
-                final String docType = tableDef.getDocumentType();
-                final List<Field> fieldList = tableDef.getField();
-
-                final String[] columnNames = new String[fieldList.size()];
-                final ColumnType[] columnTypes = new ColumnType[fieldList.size()];
-
-                for (int j = 0; j < columnTypes.length; j++) {
-                    final String propertyName = fieldList.get(j).getName();
-                    final String propertyTypeName = fieldList.get(j).getType();
-                    final ColumnType propertyType;
-                    if (StringUtils.isNullOrEmpty(propertyTypeName)) {
-                        propertyType = ColumnType.STRING;
-                    } else {
-                        propertyType = ColumnTypeImpl.valueOf(propertyTypeName);
-                    }
-                    columnNames[j] = propertyName;
-                    columnTypes[j] = propertyType;
-                }
-
-                tableDefs[i] = new SimpleTableDef(docType, columnNames, columnTypes);
-            }
-        }
-
-        return new ElasticSearchDatastore(name, ClientType.valueOf(clientType), hostname, port, clusterName, indexName,
-                tableDefs, username, password, ssl, keystorePath, keystorePassword);
-    }
-
     private Datastore createDatastore(final String name, final JsonDatastoreType datastoreType,
             final DataCleanerConfiguration configuration) {
         final String filename = getStringVariable("filename", datastoreType.getFilename());
@@ -1045,171 +821,10 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return new JsonDatastore(name, resource);
     }
 
-    private Datastore createDatastore(final String name, final HbaseDatastoreType datastoreType) {
-        final String zookeeperHostname = getStringVariable("zookeeperHostname", datastoreType.getZookeeperHostname());
-        final int zookeeperPort = getIntegerVariable("zookeeperPort", datastoreType.getZookeeperPort());
-        final List<org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef> tableDefList =
-                datastoreType.getTableDef();
-
-        final SimpleTableDef[] tableDefs;
-        if (tableDefList.isEmpty()) {
-            tableDefs = null;
-        } else {
-            tableDefs = new SimpleTableDef[tableDefList.size()];
-            for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef tableDef = tableDefList.get(i);
-                final String tableName = tableDef.getName();
-                final List<org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column> columnList =
-                        tableDef.getColumn();
-                final String[] columnNames = new String[columnList.size()];
-                final ColumnType[] columnTypes = new ColumnType[columnList.size()];
-                for (int j = 0; j < columnTypes.length; j++) {
-                    final Column column = columnList.get(j);
-                    final String columnName;
-                    final String family = column.getFamily();
-                    if (Strings.isNullOrEmpty(family)) {
-                        columnName = column.getName();
-                    } else {
-                        columnName = family + ":" + column.getName();
-                    }
-                    final String columnTypeName = column.getType();
-                    final ColumnType columnType;
-                    if (StringUtils.isNullOrEmpty(columnTypeName)) {
-                        columnType = ColumnType.STRING;
-                    } else {
-                        columnType = ColumnTypeImpl.valueOf(columnTypeName);
-                    }
-                    columnNames[j] = columnName;
-                    columnTypes[j] = columnType;
-                }
-
-                tableDefs[i] = new SimpleTableDef(tableName, columnNames, columnTypes);
-            }
-        }
-        return new HBaseDatastore(name, zookeeperHostname, zookeeperPort, tableDefs);
-    }
-
-    private Datastore createDatastore(final String name, final SalesforceDatastoreType datastoreType) {
-        final String username = getStringVariable("username", datastoreType.getUsername());
-        final String password = getPasswordVariable("password", datastoreType.getPassword());
-        final String securityToken = getStringVariable("securityToken", datastoreType.getSecurityToken());
-        final String endpointUrl = getStringVariable("endpointUrl", datastoreType.getEndpointUrl());
-        return new SalesforceDatastore(name, username, password, securityToken, endpointUrl);
-    }
-
-    private Datastore createDatastore(final String name, final SugarCrmDatastoreType datastoreType) {
-        final String baseUrl = getStringVariable("baseUrl", datastoreType.getBaseUrl());
-        final String username = getStringVariable("username", datastoreType.getUsername());
-        final String password = getPasswordVariable("password", datastoreType.getPassword());
-        return new SugarCrmDatastore(name, baseUrl, username, password);
-    }
-
-    private Datastore createDatastore(final String name, final MongodbDatastoreType mongodbDatastoreType) {
-        final String hostname = getStringVariable("hostname", mongodbDatastoreType.getHostname());
-        final Integer port = getIntegerVariable("port", mongodbDatastoreType.getPort());
-        final String databaseName = getStringVariable("databaseName", mongodbDatastoreType.getDatabaseName());
-        final String username = getStringVariable("username", mongodbDatastoreType.getUsername());
-        final String password = getPasswordVariable("password", mongodbDatastoreType.getPassword());
-
-        final List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef> tableDefList =
-                mongodbDatastoreType.getTableDef();
-        final SimpleTableDef[] tableDefs;
-        if (tableDefList.isEmpty()) {
-            tableDefs = null;
-        } else {
-            tableDefs = new SimpleTableDef[tableDefList.size()];
-            for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef tableDef = tableDefList.get(i);
-                final String collectionName = tableDef.getCollection();
-                final List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef.Property> propertyList =
-                        tableDef.getProperty();
-                final String[] propertyNames = new String[propertyList.size()];
-                final ColumnType[] columnTypes = new ColumnType[propertyList.size()];
-                for (int j = 0; j < columnTypes.length; j++) {
-                    final String propertyName = propertyList.get(j).getName();
-                    final String propertyTypeName = propertyList.get(j).getType();
-                    final ColumnType propertyType;
-                    if (StringUtils.isNullOrEmpty(propertyTypeName)) {
-                        propertyType = ColumnType.STRING;
-                    } else {
-                        propertyType = ColumnTypeImpl.valueOf(propertyTypeName);
-                    }
-                    propertyNames[j] = propertyName;
-                    columnTypes[j] = propertyType;
-                }
-
-                tableDefs[i] = new SimpleTableDef(collectionName, propertyNames, columnTypes);
-            }
-        }
-
-        return new MongoDbDatastore(name, hostname, port, databaseName, username, password, tableDefs);
-    }
-
-    private Datastore createDatastore(final String name, final KafkaDatastoreType kafkaDatastoreType) {
-        final String bootstrapServers = kafkaDatastoreType.getBootstrapServers();
-        final Collection<String> topics = kafkaDatastoreType.getTopic();
-        final KeyValueType keyType = KeyValueType.valueOf(kafkaDatastoreType.getKeyType());
-        final KeyValueType valueType = KeyValueType.valueOf(kafkaDatastoreType.getValueType());
-        return new KafkaDatastore(name, bootstrapServers, topics, keyType, valueType);
-    }
-
-    private Datastore createDatastore(final String name, final CouchdbDatastoreType couchdbDatastoreType) {
-        final String hostname = getStringVariable("hostname", couchdbDatastoreType.getHostname());
-        final Integer port = getIntegerVariable("port", couchdbDatastoreType.getPort());
-        final String username = getStringVariable("username", couchdbDatastoreType.getUsername());
-        final String password = getPasswordVariable("password", couchdbDatastoreType.getPassword());
-        final boolean sslEnabled = getBooleanVariable("ssl", couchdbDatastoreType.isSsl(), false);
-
-        final List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef> tableDefList =
-                couchdbDatastoreType.getTableDef();
-        final SimpleTableDef[] tableDefs;
-        if (tableDefList.isEmpty()) {
-            tableDefs = null;
-        } else {
-            tableDefs = new SimpleTableDef[tableDefList.size()];
-            for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef tableDef = tableDefList.get(i);
-                final String databaseName = tableDef.getDatabase();
-                final List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef.Field> fieldList =
-                        tableDef.getField();
-                final String[] propertyNames = new String[fieldList.size()];
-                final ColumnType[] columnTypes = new ColumnType[fieldList.size()];
-                for (int j = 0; j < columnTypes.length; j++) {
-                    final String propertyName = fieldList.get(j).getName();
-                    final String propertyTypeName = fieldList.get(j).getType();
-                    final ColumnType propertyType;
-                    if (StringUtils.isNullOrEmpty(propertyTypeName)) {
-                        propertyType = ColumnType.STRING;
-                    } else {
-                        propertyType = ColumnTypeImpl.valueOf(propertyTypeName);
-                    }
-                    propertyNames[j] = propertyName;
-                    columnTypes[j] = propertyType;
-                }
-
-                tableDefs[i] = new SimpleTableDef(databaseName, propertyNames, columnTypes);
-            }
-        }
-
-        return new CouchDbDatastore(name, hostname, port, username, password, sslEnabled, tableDefs);
-    }
-
     private Datastore createDatastore(final String name, final PojoDatastoreType pojoDatastore,
             final DataCleanerConfigurationImpl temporaryConfiguration) {
         final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor(temporaryConfiguration);
         return adaptor.read(pojoDatastore);
-    }
-
-    private Datastore createDatastore(final String name, final OpenOfficeDatabaseDatastoreType odbDatastoreType) {
-        final String filenamePath = getStringVariable("filename", odbDatastoreType.getFilename());
-        final String filename = createFilename(filenamePath);
-        return new OdbDatastore(name, filename);
-    }
-
-    private Datastore createDatastore(final String name, final DbaseDatastoreType dbaseDatastoreType) {
-        final String filenamePath = getStringVariable("filename", dbaseDatastoreType.getFilename());
-        final String filename = createFilename(filenamePath);
-        return new DbaseDatastore(name, filename);
     }
 
     private Datastore createDatastore(final String name, final ExcelDatastoreType excelDatastoreType,
@@ -1222,42 +837,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             customColumnNames = excelDatastoreType.getCustomColumnNames().getColumnName();
         }
         return new ExcelDatastore(name, resource, filename, customColumnNames);
-    }
-
-    private Datastore createDatastore(final String name, final DynamoDbDatastoreType dynamoDbDatastoreType) {
-        final String region = getStringVariable("region", dynamoDbDatastoreType.getRegion());
-        final String accessKeyId = getStringVariable("accessKeyId", dynamoDbDatastoreType.getAccessKeyId());
-        final String secretAccessKey = getPasswordVariable("secretAccessKey", dynamoDbDatastoreType.getSecretAccessKey());
-        final SimpleTableDef[] tableDefs;
-        final List<org.datacleaner.configuration.jaxb.DynamoDbDatastoreType.TableDef> tableDefList =
-                dynamoDbDatastoreType.getTableDef();
-        if (tableDefList.isEmpty()) {
-            tableDefs = null;
-        } else {
-            tableDefs = new SimpleTableDef[tableDefList.size()];
-            for (int i = 0; i < tableDefs.length; i++) {
-                final String tableName = tableDefList.get(i).getTableName();
-                final List<org.datacleaner.configuration.jaxb.DynamoDbDatastoreType.TableDef.Column> columnList =
-                        tableDefList.get(i).getColumn();
-
-                final String[] columnNames = new String[columnList.size()];
-                final ColumnType[] columnTypes = new ColumnType[columnList.size()];
-
-                for (int j = 0; j < columnList.size(); j++) {
-                    columnNames[j] = columnList.get(j).getName();
-                    final String columnTypeName = columnList.get(j).getType();
-                    final ColumnType columnType;
-                    if (StringUtils.isNullOrEmpty(columnTypeName)) {
-                        columnType = ColumnType.STRING;
-                    } else {
-                        columnType = ColumnTypeImpl.valueOf(columnTypeName);
-                    }
-                    columnTypes[j] = columnType;
-                }
-                tableDefs[i] = new SimpleTableDef(tableName, columnNames, columnTypes);
-            }
-        }
-        return new DynamoDbDatastore(name, region, accessKeyId, secretAccessKey, tableDefs);
     }
 
     private Datastore createDatastore(final String name, final XmlDatastoreType xmlDatastoreType) {
@@ -1277,18 +856,6 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         return new XmlDatastore(name, filename, tableDefs);
-    }
-
-    private Datastore createDatastore(final String name, final AccessDatastoreType accessDatastoreType) {
-        final String filenamePath = getStringVariable("filename", accessDatastoreType.getFilename());
-        final String filename = createFilename(filenamePath);
-        return new AccessDatastore(name, filename);
-    }
-
-    private Datastore createDatastore(final String name, final SasDatastoreType sasDatastoreType) {
-        final String directoryPath = getStringVariable("directory", sasDatastoreType.getDirectory());
-        final File directory = new File(directoryPath);
-        return new SasDatastore(name, directory);
     }
 
     private Datastore createDatastore(final String name, final FixedWidthDatastoreType fixedWidthDatastore,

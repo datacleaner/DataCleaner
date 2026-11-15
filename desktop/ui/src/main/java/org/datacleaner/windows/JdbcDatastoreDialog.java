@@ -37,7 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDescriptorImpl;

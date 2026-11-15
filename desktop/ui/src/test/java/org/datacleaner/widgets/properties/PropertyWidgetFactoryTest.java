@@ -23,7 +23,7 @@ import java.io.File;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.util.EqualsBuilder;
+import org.datacleaner.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.configuration.DataCleanerConfiguration;

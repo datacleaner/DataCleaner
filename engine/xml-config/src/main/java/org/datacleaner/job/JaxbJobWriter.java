@@ -31,10 +31,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.metamodel.MetaModelHelper;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.TableType;
+import org.datacleaner.metamodel.MetaModelHelper;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.TableType;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
@@ -218,7 +218,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             jaxbColumn.setPath(getColumnPath(physicalColumn, columnPathQualification));
             jaxbColumn.setId(getColumnId(inputColumn, columnMappings));
 
-            final org.apache.metamodel.schema.ColumnType columnType = physicalColumn.getType();
+            final org.datacleaner.metamodel.schema.ColumnType columnType = physicalColumn.getType();
             if (columnType != null) {
                 jaxbColumn.setType(columnType.toString());
             }

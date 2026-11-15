@@ -21,9 +21,9 @@ package org.datacleaner.api;
 
 import java.io.Serializable;
 
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.connection.PerformanceCharacteristics;
 
 /**

@@ -8,7 +8,7 @@
 	</appender>
 	
 	<logger name="org.datacleaner" level="INFO"/>
-	<logger name="org.apache.metamodel" level="INFO"/>
+	<logger name="org.datacleaner.metamodel" level="INFO"/>
 
 	<root level="warn">
 		<appender-ref ref="fileAppender" />

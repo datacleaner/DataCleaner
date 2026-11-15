@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.HasName;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;

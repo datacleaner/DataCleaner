@@ -21,8 +21,8 @@ package org.datacleaner.extension.output;
 
 import java.util.Comparator;
 
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.util.NumberComparator;
+import org.datacleaner.metamodel.data.Row;
+import org.datacleaner.metamodel.util.NumberComparator;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
@@ -41,7 +41,7 @@ public class SortHelper {
      *            the index of the column in the input {@link Row}
      * @return the comparator instance
      */
-    public static Comparator<Row> createComparator(final InputColumn<?> column, final int columnIndex) {
+    public static Comparator<Object[]> createComparator(final InputColumn<?> column, final int columnIndex) {
         final Class<?> dataType = column.getDataType();
         final boolean isNumber = dataType != null && ReflectionUtils.isNumber(dataType);
         final boolean isDate = dataType != null && ReflectionUtils.isDate(dataType);
@@ -58,10 +58,10 @@ public class SortHelper {
                 // exactly the same. Now look at other values of all the
                 // columns to
                 // find if the two rows are same.
-                final int numberOfSelectItems = row1.getSelectItems().size();
-                for (int i = 0; i < numberOfSelectItems; i++) {
-                    final String rowValue1 = (String) row1.getValue(i);
-                    final String rowValue2 = (String) row2.getValue(i);
+                final int numberOfValues = row1.length;
+                for (int i = 0; i < numberOfValues; i++) {
+                    final String rowValue1 = (String) row1[i];
+                    final String rowValue2 = (String) row2[i];
                     final int compareResult = rowValue1.compareToIgnoreCase(rowValue2);
                     if (compareResult == 0) {
                         continue;
@@ -75,9 +75,9 @@ public class SortHelper {
         };
     }
 
-    private static Comparable<?> getComparableValue(final Row row, final int columnIndex, final boolean isNumber,
+    private static Comparable<?> getComparableValue(final Object[] row, final int columnIndex, final boolean isNumber,
             final boolean isDate) {
-        final String value = (String) row.getValue(columnIndex);
+        final String value = (String) row[columnIndex];
         if (isNumber) {
             final Number result = ConvertToNumberTransformer.transformValue(value);
             if (result instanceof Comparable) {

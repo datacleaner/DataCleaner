@@ -19,7 +19,7 @@
  */
 package org.datacleaner.test.mock;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 import org.easymock.IArgumentMatcher;
 import org.junit.Assert;
 

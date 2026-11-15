@@ -39,8 +39,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.QueryActionListener;
 import org.datacleaner.api.InputColumn;

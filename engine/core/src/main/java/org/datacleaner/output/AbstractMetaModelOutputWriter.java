@@ -23,9 +23,9 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.insert.RowInsertionBuilder;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.insert.RowInsertionBuilder;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

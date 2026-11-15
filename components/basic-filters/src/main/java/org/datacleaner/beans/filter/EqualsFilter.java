@@ -25,11 +25,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.metamodel.query.FilterItem;
-import org.apache.metamodel.query.OperatorType;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.query.SelectItem;
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.query.FilterItem;
+import org.datacleaner.metamodel.query.OperatorType;
+import org.datacleaner.metamodel.query.Query;
+import org.datacleaner.metamodel.query.SelectItem;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;

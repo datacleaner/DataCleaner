@@ -24,9 +24,9 @@ import java.awt.GridBagConstraints;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.drop.DropTable;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.UpdateableDataContext;
+import org.datacleaner.metamodel.drop.DropTable;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;

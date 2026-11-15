@@ -22,7 +22,7 @@ package org.datacleaner.result;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.CollectionUtils;
 
 /**
  * Represents a group of values, counted as one item.

@@ -28,11 +28,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableSchema;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.EqualsBuilder;
+import org.datacleaner.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.MutableSchema;
+import org.datacleaner.metamodel.schema.MutableTable;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.util.EqualsBuilder;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;

@@ -163,7 +163,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-hadoop-datastores</artifactId>
+			<artifactId>DataCleaner-basic-datastores</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

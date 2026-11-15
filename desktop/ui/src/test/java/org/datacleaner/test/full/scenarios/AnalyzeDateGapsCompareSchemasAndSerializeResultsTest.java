@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.metamodel.util.ObjectComparator;
+import org.datacleaner.metamodel.util.ObjectComparator;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;

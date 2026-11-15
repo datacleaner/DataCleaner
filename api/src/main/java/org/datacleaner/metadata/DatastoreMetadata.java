@@ -21,7 +21,7 @@ package org.datacleaner.metadata;
 
 import java.util.List;
 
-import org.apache.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Schema;
 import org.datacleaner.connection.Datastore;
 
 /**

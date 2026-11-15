@@ -21,8 +21,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-core</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-core</artifactId>
 		</dependency>
 
 		<!-- JSR 330: Dependency Injection -->
@@ -53,8 +53,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-csv</artifactId>
+			<groupId>org.datacleaner.metamodel</groupId>
+			<artifactId>metamodel-csv</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

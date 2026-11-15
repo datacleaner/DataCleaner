@@ -25,10 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.pojo.MapTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.pojo.MapTableDataProvider;
+import org.datacleaner.metamodel.pojo.TableDataProvider;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 
 import junit.framework.TestCase;
 

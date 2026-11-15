@@ -19,7 +19,7 @@
  */
 package org.datacleaner.util.convert;
 
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.metamodel.util.Resource;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFileResource;
 import org.datacleaner.repository.RepositoryFolder;

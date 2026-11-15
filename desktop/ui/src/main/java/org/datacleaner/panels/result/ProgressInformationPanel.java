@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JTextArea;
 import javax.swing.border.MatteBorder;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.api.RestrictedFunctionalityCallToAction;
 import org.datacleaner.api.RestrictedFunctionalityException;
 import org.datacleaner.panels.DCPanel;

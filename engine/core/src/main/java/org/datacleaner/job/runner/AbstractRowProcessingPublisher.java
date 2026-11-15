@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;

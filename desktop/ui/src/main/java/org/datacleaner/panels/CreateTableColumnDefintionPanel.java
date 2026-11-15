@@ -25,9 +25,9 @@ import java.util.Collection;
 import javax.swing.Box;
 import javax.swing.JButton;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.schema.MutableColumn;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;

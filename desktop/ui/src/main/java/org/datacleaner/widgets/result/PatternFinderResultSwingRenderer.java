@@ -30,8 +30,8 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.LazyRef;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.LazyRef;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.stringpattern.PatternFinderResult;

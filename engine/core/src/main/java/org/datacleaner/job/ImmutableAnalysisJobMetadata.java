@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.metamodel.schema.ColumnType;
+import org.datacleaner.metamodel.util.BaseObject;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

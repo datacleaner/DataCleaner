@@ -27,30 +27,23 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.hbase.HBaseConfiguration;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.ExclusionPredicate;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.DataContext;
+import org.datacleaner.metamodel.csv.CsvConfiguration;
+import org.datacleaner.metamodel.data.DataSet;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Schema;
+import org.datacleaner.metamodel.schema.Table;
+import org.datacleaner.metamodel.util.ExclusionPredicate;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.connection.ArffDatastore;
-import org.datacleaner.connection.CassandraDatastore;
-import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.connection.DynamoDbDatastore;
-import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
-import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.connection.XmlDatastore;
@@ -74,7 +67,6 @@ import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
-import org.datacleaner.server.HadoopClusterInformation;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
@@ -203,7 +195,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
                 reader.create(new File("src/test/resources/example-configuration-valid.xml"));
 
         final DatastoreCatalog datastoreCatalog = getDataStoreCatalog(configuration);
-        assertEquals("[composite_datastore, my database, mydb_jndi, mydb_neo4j, persons_csv]",
+        assertEquals("[composite_datastore, my database, mydb_jndi, persons_csv]",
                 Arrays.toString(datastoreCatalog.getDatastoreNames()));
 
         assertTrue(configuration.getEnvironment().getTaskRunner() instanceof SingleThreadedTaskRunner);
@@ -230,15 +222,12 @@ public class JaxbConfigurationReaderTest extends TestCase {
         final DatastoreCatalog datastoreCatalog = getDataStoreCatalog(getConfiguration());
         final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
         assertEquals(
-                "[my arff, my cassandra db, my couch, my es index, my hbase, my mongo, my_access, my_composite, my_csv, "
-                        + "my_custom, my_dbase, my_dom_xml, my_dynamo, my_excel_2003, my_fixed_width_1, "
-                        + "my_fixed_width_2, my_jdbc_connection, my_jdbc_datasource, my_json, my_odb, my_pojo, "
-                        + "my_sas, my_sax_xml, my_sfdc_ds, my_sugarcrm]", Arrays.toString(datastoreNames));
+                "[my arff, my_composite, my_csv, my_custom, my_dom_xml, my_excel_2003, my_fixed_width_1, "
+                        + "my_fixed_width_2, my_jdbc_connection, my_jdbc_datasource, my_json, my_pojo, "
+                        + "my_sax_xml]", Arrays.toString(datastoreNames));
 
-        assertEquals("a mongo db based datastore", datastoreCatalog.getDatastore("my mongo").getDescription());
         assertEquals("jdbc_con", datastoreCatalog.getDatastore("my_jdbc_connection").getDescription());
         assertEquals("jdbc_ds", datastoreCatalog.getDatastore("my_jdbc_datasource").getDescription());
-        assertEquals("dbf", datastoreCatalog.getDatastore("my_dbase").getDescription());
 
         final CsvDatastore myCsvDatastore = (CsvDatastore) datastoreCatalog.getDatastore("my_csv");
         assertEquals("csv", myCsvDatastore.getDescription());
@@ -246,41 +235,11 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertTrue(myCsvDatastore.isFailOnInconsistencies());
         assertEquals('\\', myCsvDatastore.getEscapeChar().charValue());
 
-        final CassandraDatastore cassandraDatastore =
-                (CassandraDatastore) datastoreCatalog.getDatastore("my cassandra db");
-        assertEquals("localhost", cassandraDatastore.getHostname());
-        assertEquals(9042, cassandraDatastore.getPort());
-        assertEquals("my_keyspace", cassandraDatastore.getKeyspace());
-        assertEquals("foo", cassandraDatastore.getUsername());
-        assertEquals("bar", cassandraDatastore.getPassword());
-        assertEquals("[SimpleTableDef[name=table,columnNames=[bah, baz],columnTypes=[STRING, STRING]]]",
-                Arrays.toString(cassandraDatastore.getTableDefs()));
-
-        final ElasticSearchDatastore esDatastore =
-                (ElasticSearchDatastore) datastoreCatalog.getDatastore("my es index");
-        assertEquals("localhost", esDatastore.getHostname());
-        assertEquals(9300, esDatastore.getPort().intValue());
-        assertEquals("my_es_cluster", esDatastore.getClusterName());
-        assertEquals("my_index", esDatastore.getIndexName());
-        assertNull(esDatastore.getTableDefs());
-        
-        final DynamoDbDatastore dynamoDatastore = (DynamoDbDatastore) datastoreCatalog.getDatastore("my_dynamo");
-        assertEquals("regionX", dynamoDatastore.getRegion());
-        assertEquals("foo", dynamoDatastore.getAccessKeyId());
-        assertEquals("bar", dynamoDatastore.getSecretAccessKey());
-        assertNull(dynamoDatastore.getTableDefs());
-
-        assertEquals("a SugarCRM instance", datastoreCatalog.getDatastore("my_sugarcrm").getDescription());
         assertEquals("dom xml", datastoreCatalog.getDatastore("my_dom_xml").getDescription());
         assertEquals("sax xml", datastoreCatalog.getDatastore("my_sax_xml").getDescription());
         assertEquals("custom", datastoreCatalog.getDatastore("my_custom").getDescription());
-        assertEquals("odb", datastoreCatalog.getDatastore("my_odb").getDescription());
         assertEquals("xls", datastoreCatalog.getDatastore("my_excel_2003").getDescription());
         assertEquals("comp", datastoreCatalog.getDatastore("my_composite").getDescription());
-        assertEquals("salesforce.com is an online CRM system",
-                datastoreCatalog.getDatastore("my_sfdc_ds").getDescription());
-        assertEquals("mdb", datastoreCatalog.getDatastore("my_access").getDescription());
-        assertEquals("folder of sas7bdat files", datastoreCatalog.getDatastore("my_sas").getDescription());
         assertEquals("A datastore based on plain values", datastoreCatalog.getDatastore("my_pojo").getDescription());
 
         final PojoDatastore pojoDatastore = (PojoDatastore) datastoreCatalog.getDatastore("my_pojo");
@@ -319,23 +278,6 @@ public class JaxbConfigurationReaderTest extends TestCase {
             }
         }
 
-        final CouchDbDatastore couchDbDatastore = (CouchDbDatastore) datastoreCatalog.getDatastore("my couch");
-        assertEquals("localhost", couchDbDatastore.getHostname());
-        assertEquals("user", couchDbDatastore.getUsername());
-        assertEquals("pass", couchDbDatastore.getPassword());
-        assertEquals(true, couchDbDatastore.isSslEnabled());
-        assertEquals(1, couchDbDatastore.getTableDefs().length);
-        assertEquals("SimpleTableDef[name=foobar,columnNames=[foo, bar, baz],columnTypes=[MAP, INTEGER, VARCHAR]]",
-                couchDbDatastore.getTableDefs()[0].toString());
-
-        final MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastoreCatalog.getDatastore("my mongo");
-        assertEquals("analyzerbeans_test", mongoDbDatastore.getDatabaseName());
-        assertEquals("localhost", mongoDbDatastore.getHostname());
-        assertEquals(27017, mongoDbDatastore.getPort());
-        SimpleTableDef[] tableDefs = mongoDbDatastore.getTableDefs();
-        assertEquals("[SimpleTableDef[name=my_col_1,columnNames=[foo, bar, baz],columnTypes=[VARCHAR, INTEGER, DATE]]]",
-                Arrays.toString(tableDefs));
-
         final XmlDatastore xmlDatastore = (XmlDatastore) datastoreCatalog.getDatastore("my_sax_xml");
         assertEquals("../../datastores/basic-datastores/src/test/resources/example-xml-file.xml", xmlDatastore.getFilename());
         assertEquals("[XmlSaxTableDef[rowXpath=/greetings/greeting,"
@@ -352,19 +294,6 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertEquals("[4, 17, 19]", Arrays.toString(ds.getValueWidths()));
         assertEquals(1, ds.getHeaderLineNumber());
 
-        final HBaseDatastore hbaseDatastore = (HBaseDatastore) datastoreCatalog.getDatastore("my hbase");
-        assertEquals("HBaseDatastore[name=my hbase]", hbaseDatastore.toString());
-        assertEquals("localhost", hbaseDatastore.getZookeeperHostname());
-        assertEquals(HBaseConfiguration.DEFAULT_ZOOKEEPER_PORT, hbaseDatastore.getZookeeperPort());
-        tableDefs = hbaseDatastore.getTableDefs();
-        assertNotNull(tableDefs);
-        assertEquals(2, tableDefs.length);
-        assertEquals(
-                "SimpleTableDef[name=table1,columnNames=[fam1:foo, fam1:bar, fam2:baz],columnTypes=[STRING, STRING, INTEGER]]",
-                tableDefs[0].toString());
-        assertEquals("SimpleTableDef[name=table2,columnNames=[fam3:hello, fam3:world],columnTypes=[STRING, VARCHAR]]",
-                tableDefs[1].toString());
-
         final JsonDatastore jsonDatastore = (JsonDatastore) datastoreCatalog.getDatastore("my_json");
         assertEquals("JsonDatastore[name=my_json]", jsonDatastore.toString());
         
@@ -372,11 +301,8 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertEquals("example.arff", arffDatastore.getResource().getName());
 
         for (final String name : datastoreNames) {
-            // test that all connections, except the JNDI-, MongoDB- and
-            // CouchDB-based on will work
-            if (!"my_jdbc_datasource".equals(name) && !"my mongo".equals(name) && !"my couch".equals(name)
-                    && !"my hbase".equals(name) && !"my_sfdc_ds".equals(name) && !"my_sugarcrm".equals(name)
-                    && !"my es index".equals(name) && !"my_dynamo".equals(name)) {
+            // test that all connections, except the JNDI-based one, will work
+            if (!"my_jdbc_datasource".equals(name)) {
                 final Datastore datastore = datastoreCatalog.getDatastore(name);
                 final DataContext dc;
                 try {
@@ -394,7 +320,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
             try (DatastoreConnection con = compositeDatastore.openConnection()) {
                 final DataContext dataContext = con.getDataContext();
                 final List<String> schemaNames = dataContext.getSchemaNames();
-                assertEquals("[PUBLIC, Spreadsheet2003.xls, developers.mdb, resources]", schemaNames.toString());
+                assertEquals("[PUBLIC, Spreadsheet2003.xls, resources]", schemaNames.toString());
             }
         }
     }
@@ -543,18 +469,9 @@ public class JaxbConfigurationReaderTest extends TestCase {
     public void testServerConfigurations() {
         final DataCleanerConfiguration configuration = getConfigurationFromXMLFile();
         final ServerInformationCatalog serverInformationCatalog = configuration.getServerInformationCatalog();
-        Assert.assertTrue(serverInformationCatalog.containsServer("environment"));
-        Assert.assertTrue(serverInformationCatalog.containsServer("directories"));
-        Assert.assertTrue(serverInformationCatalog.containsServer("namenode"));
-
-        final HadoopClusterInformation environment =
-                (HadoopClusterInformation) serverInformationCatalog.getServer("environment");
-        Assert.assertEquals("environment", environment.getName());
-
-        final HadoopClusterInformation namenode =
-                (HadoopClusterInformation) serverInformationCatalog.getServer("namenode");
-        Assert.assertEquals("namenode", namenode.getName());
-        Assert.assertEquals("hdfs://localhost:8020/", namenode.getConfiguration().get("fs.defaultFS"));
+        Assert.assertFalse(serverInformationCatalog.containsServer("environment"));
+        Assert.assertFalse(serverInformationCatalog.containsServer("directories"));
+        Assert.assertFalse(serverInformationCatalog.containsServer("namenode"));
     }
 
 
@@ -582,7 +499,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
     public void testReadFixedWidthDatastore() throws Exception {
         final DataCleanerConfiguration configuration =
                 reader.create(new File("src/test/resources/example-job-fixed-width-datastore.xml"));
-        assertEquals("[employees-hadoop, my fixed width ds]",
+        assertEquals("[my fixed width ds]",
                 Arrays.toString(configuration.getDatastoreCatalog().getDatastoreNames()));
     }
 }

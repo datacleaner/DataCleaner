@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.concurrent.TaskListener;

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.data;
 
-import org.apache.metamodel.schema.Column;
+import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.InputColumnComparator;
 

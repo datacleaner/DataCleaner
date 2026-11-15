@@ -9,6 +9,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-api</artifactId>
 			<version>${project.version}</version>
@@ -21,11 +25,6 @@
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-basic-datastores</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-hadoop-datastores</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -69,8 +68,9 @@
 		<!-- Used for classpath scanning. Required if the ClasspathScanDescriptorProvider 
 			is used -->
 		<dependency>
-			<groupId>org.kohsuke</groupId>
-			<artifactId>asm6</artifactId>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>9.7.1</version>
 		</dependency>
 
 		<!-- Logging dependencies -->

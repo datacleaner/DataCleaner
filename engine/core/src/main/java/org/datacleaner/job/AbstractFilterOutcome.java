@@ -21,7 +21,7 @@ package org.datacleaner.job;
 
 import java.util.List;
 
-import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.metamodel.util.BaseObject;
 import org.datacleaner.job.builder.LazyFilterOutcome;
 
 /**

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.api;
 
-import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.query.Query;
 
 /**
  * A filter which can, under certain circumstances, be optimized by using a

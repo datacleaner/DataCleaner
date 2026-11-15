@@ -40,9 +40,9 @@ import java.util.jar.JarFile;
 
 import javax.inject.Named;
 
-import org.apache.metamodel.util.ExclusionPredicate;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.TruePredicate;
+import org.datacleaner.metamodel.util.ExclusionPredicate;
+import org.datacleaner.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.TruePredicate;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;
@@ -54,7 +54,7 @@ import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
-import org.kohsuke.asm6.ClassReader;
+import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

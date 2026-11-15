@@ -32,7 +32,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.metamodel.schema.Table;
 import org.datacleaner.actions.DefaultRenameComponentActionListener;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;

@@ -21,7 +21,7 @@ package org.datacleaner.result;
 
 import java.io.Serializable;
 
-import org.apache.metamodel.data.IRowFilter;
+import org.datacleaner.metamodel.data.IRowFilter;
 
 public interface SerializableRowFilter extends IRowFilter, Serializable {
 

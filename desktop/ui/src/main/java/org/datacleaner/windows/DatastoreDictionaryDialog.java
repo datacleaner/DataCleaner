@@ -33,8 +33,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.schema.Column;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;

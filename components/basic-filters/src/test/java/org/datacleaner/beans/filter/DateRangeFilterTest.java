@@ -22,8 +22,8 @@ package org.datacleaner.beans.filter;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
+import org.datacleaner.metamodel.util.DateUtils;
+import org.datacleaner.metamodel.util.Month;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;

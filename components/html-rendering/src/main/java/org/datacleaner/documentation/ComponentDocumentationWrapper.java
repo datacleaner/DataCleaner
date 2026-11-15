@@ -30,7 +30,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.Concurrent;

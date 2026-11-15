@@ -23,21 +23,18 @@ import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.HasName;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.metamodel.util.Action;
+import org.datacleaner.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.windows.CouchDbDatastoreDialog;
-import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.TableDefinitionDialog;
 
 /**
  * A widget used for selecting whether to automatically discover or to manually
- * create table definitions for a particular datastore, eg. in the
- * {@link MongoDbDatastoreDialog} or {@link CouchDbDatastoreDialog}.
+ * create table definitions for a particular datastore.
  */
 public class TableDefinitionOptionSelectionPanel extends DCPanel {
 

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.util;
 
-import org.apache.metamodel.util.HasName;
+import org.datacleaner.metamodel.util.HasName;
 
 /**
  * Represents any object (typically a {@link HasName} instance) which has

@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.metamodel.util.CollectionUtils;
 import org.datacleaner.api.Metric;
 import org.datacleaner.util.LabelUtils;
 

@@ -94,14 +94,12 @@ public class AddDatastorePanel extends DCPanel {
 
         final PopupButton databaseButton = createDatabaseButton();
 
-        final PopupButton cloudButton = createCloudButton();
-
         final DCPanel buttonPanel;
         if (showExistingDatastoresButton) {
             final PopupButton existingDatastoresButton = createExistingDatastoresButton();
-            buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton, existingDatastoresButton);
+            buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, existingDatastoresButton);
         } else {
-            buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton);
+            buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton);
         }
 
         c = new GridBagConstraints();
@@ -129,22 +127,6 @@ public class AddDatastorePanel extends DCPanel {
             menu.add(menuItem);
         }
         return existingDatastoresButton;
-    }
-
-    private PopupButton createCloudButton() {
-        final PopupButton cloudButton =
-                WidgetFactory.createDefaultPopupButton("Cloud service", IconUtils.CLOUD_IMAGEPATH);
-        cloudButton.setFont(WidgetUtils.FONT_HEADER2);
-        final List<DatastoreDescriptor> cloudDatastores =
-                new DatastoreDescriptors(_databaseDriverCatalog).getAvailableCloudBasedDatastoreDescriptors();
-
-        for (final DatastoreDescriptor datastoreDescriptor : cloudDatastores) {
-            cloudButton.getMenu()
-                    .add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                            datastoreDescriptor.getIconPath(), datastoreDescriptor.getDatastoreClass(),
-                            datastoreDescriptor.getDatastoreDialogClass()));
-        }
-        return cloudButton;
     }
 
     private PopupButton createDatabaseButton() {

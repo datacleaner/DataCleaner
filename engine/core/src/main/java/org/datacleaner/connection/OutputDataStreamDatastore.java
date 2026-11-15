@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.DataContext;
+import org.datacleaner.metamodel.DataContext;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.data.OutputDataStreamDataContext;
 

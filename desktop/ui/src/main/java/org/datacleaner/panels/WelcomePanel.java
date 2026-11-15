@@ -49,6 +49,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.PopupButton.MenuPosition;

@@ -125,6 +125,17 @@ public final class LookAndFeelManager {
             throw new IllegalStateException(e);
         }
 
+        // Explicitly set the DataCleaner design fonts. FlatLaf's "system font
+        // policy" would otherwise rescale the theme's defaultFont down to the
+        // desktop font size (e.g. 13pt -> ~10pt with default Linux/GNOME or
+        // Windows settings), making the whole UI much smaller than
+        // DataCleaner's design (13pt Muli). All FlatLaf component fonts
+        // (e.g. "TableHeader.font = +bold") derive from "defaultFont", so a
+        // single override restores the design sizes. Users can still zoom
+        // everything via the datacleaner.ui.scale property.
+        UIManager.put("defaultFont", WidgetUtils.FONT_NORMAL);
+        UIManager.put("TitledBorder.font", WidgetUtils.FONT_HEADER1);
+
         // file chooser icons (bundled images, not expressible in theme properties)
         UIManager.put("FileChooser.detailsViewIcon", imageManager.getImageIcon("images/filetypes/view-details.png"));
         UIManager.put("FileChooser.listViewIcon", imageManager.getImageIcon("images/filetypes/view-list.png"));

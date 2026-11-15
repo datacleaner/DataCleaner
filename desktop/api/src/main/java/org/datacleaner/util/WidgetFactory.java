@@ -52,11 +52,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.widgets.DCTaskPane;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.DCCollapsiblePane;
 import org.jdesktop.swingx.JXFormattedTextField;
-import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.JXTitledPanel;
@@ -326,7 +326,7 @@ public final class WidgetFactory {
         return new DCTaskPaneContainer();
     }
 
-    public static JXTaskPane createTaskPane(final String title, final String imagePath) {
+    public static DCTaskPane createTaskPane(final String title, final String imagePath) {
         final ImageIcon icon;
         if (Strings.isNullOrEmpty(imagePath)) {
             icon = null;
@@ -336,15 +336,10 @@ public final class WidgetFactory {
         return createTaskPane(title, icon);
     }
 
-    public static JXTaskPane createTaskPane(final String title, final Icon icon) {
-        final JXTaskPane taskPane = new JXTaskPane();
-        final Container cp = taskPane.getContentPane();
-        ((JComponent) cp).setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK));
+    public static DCTaskPane createTaskPane(final String title, final Icon icon) {
+        final DCTaskPane taskPane = new DCTaskPane(title, icon);
+        taskPane.getContentPane().setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK));
         taskPane.setFocusable(false);
-        taskPane.setTitle(title);
-        if (icon != null) {
-            taskPane.setIcon(icon);
-        }
         return taskPane;
     }
 

@@ -43,7 +43,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.windows.ResultWindow;
-import org.jdesktop.swingx.JXTaskPane;
+import org.datacleaner.widgets.DCTaskPane;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.VerticalLayout;
 import org.joda.time.LocalTime;
@@ -84,7 +84,7 @@ public class ProgressInformationPanel extends DCPanel {
         _progressBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         _progressBarPanel.setLayout(new VerticalLayout(4));
 
-        final JXTaskPane progressTaskPane = WidgetFactory.createTaskPane("Progress", IconUtils.ACTION_EXECUTE);
+        final DCTaskPane progressTaskPane = WidgetFactory.createTaskPane("Progress", IconUtils.ACTION_EXECUTE);
         progressTaskPane.add(_progressBarPanel);
 
         final JXTitledPanel executionLogPanel =

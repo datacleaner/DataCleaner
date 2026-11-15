@@ -28,7 +28,6 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -51,9 +50,7 @@ import org.datacleaner.widgets.result.AbstractCrosstabResultSwingRenderer;
 import org.datacleaner.widgets.table.DCTable;
 import org.datacleaner.widgets.table.DCTableCellRenderer;
 import org.datacleaner.windows.DetailsResultWindow;
-import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
-import org.jdesktop.swingx.decorator.Highlighter;
 
 public class FillPatternGroupTablePanel extends JPanel {
 
@@ -90,7 +87,12 @@ public class FillPatternGroupTablePanel extends JPanel {
         }
 
         final DCTable table = new DCTable(tableModel);
-        table.setHighlighters(new InternalHighlighter());
+        table.setValueColor(LabelUtils.NULL_LABEL, WidgetUtils.BG_COLOR_BRIGHT,
+                WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT);
+        table.setValueColor(LabelUtils.BLANK_LABEL, WidgetUtils.BG_COLOR_BRIGHT,
+                WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
+        table.setValueColor(FillPatternAnalyzer.FILLED_LABEL, WidgetUtils.BG_COLOR_BRIGHTEST,
+                WidgetUtils.BG_COLOR_BLUE_DARK);
         table.setColumnControlVisible(false);
 
         // right align them all
@@ -100,58 +102,6 @@ public class FillPatternGroupTablePanel extends JPanel {
 
         setLayout(new BorderLayout());
         add(table.toPanel(), BorderLayout.CENTER);
-    }
-
-    private class InternalHighlighter implements Highlighter {
-
-        private ColorHighlighter _normalHighlighter;
-        private ColorHighlighter _blankHighlighter;
-        private ColorHighlighter _filledHighlighter;
-        private ColorHighlighter _nullHighlighter;
-
-        public InternalHighlighter() {
-            _normalHighlighter = new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_DARKEST,
-                    WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_DARKEST);
-            _filledHighlighter = new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BLUE_DARK,
-                    WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BLUE_DARK);
-            _blankHighlighter =
-                    new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT,
-                            WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
-            _nullHighlighter =
-                    new ColorHighlighter(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT,
-                            WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT);
-        }
-
-        @Override
-        public Component highlight(Component component, ComponentAdapter adapter) {
-            if (adapter.getValue() instanceof String) {
-                final String str = (String) adapter.getValue();
-                switch (str) {
-                case LabelUtils.NULL_LABEL:
-                    return _nullHighlighter.highlight(component, adapter);
-                case LabelUtils.BLANK_LABEL:
-                    return _blankHighlighter.highlight(component, adapter);
-                case FillPatternAnalyzer.FILLED_LABEL:
-                    return _filledHighlighter.highlight(component, adapter);
-                default:
-                    return _normalHighlighter.highlight(component, adapter);
-                }
-            }
-            return component;
-        }
-
-        @Override
-        public void addChangeListener(ChangeListener l) {
-        }
-
-        @Override
-        public void removeChangeListener(ChangeListener l) {
-        }
-
-        @Override
-        public ChangeListener[] getChangeListeners() {
-            return new ChangeListener[0];
-        }
     }
 
     protected DCTableCellRenderer createTableCellRenderer(DCTable table) {

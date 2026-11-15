@@ -49,8 +49,8 @@ import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetCollection;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.datacleaner.widgets.properties.PropertyWidgetPanel;
-import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
+import org.datacleaner.widgets.DCTaskPane;
+import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +69,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     private final ComponentDescriptor<?> _descriptor;
     private final JComponent _buttonPanel;
     private final OutputDataStreamsViewer _outputDataStreamsViewer;
-    private JXTaskPane _outputDataStreamsTaskPane;
+    private DCTaskPane _outputDataStreamsTaskPane;
 
     protected AbstractComponentBuilderPanel(final String watermarkImagePath, final ComponentBuilder componentBuilder,
             final PropertyWidgetFactory propertyWidgetFactory) {
@@ -108,7 +108,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         return buttonPanel;
     }
 
-    protected JXTaskPaneContainer getTaskPaneContainer() {
+    protected DCTaskPaneContainer getTaskPaneContainer() {
         return _taskPaneContainer;
     }
 
@@ -227,23 +227,23 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         return getPropertyWidgetFactory().create(propertyDescriptor);
     }
 
-    protected JXTaskPane addTaskPane(final String iconImagePath, final String title, final JComponent content) {
+    protected DCTaskPane addTaskPane(final String iconImagePath, final String title, final JComponent content) {
         return addTaskPane(iconImagePath, title, content, true);
     }
 
-    protected JXTaskPane addTaskPane(final String iconImagePath, final String title, final JComponent content,
+    protected DCTaskPane addTaskPane(final String iconImagePath, final String title, final JComponent content,
             final boolean expanded) {
         final ImageIcon icon = imageManager.getImageIcon(iconImagePath, IconUtils.ICON_SIZE_TASK_PANE);
         return addTaskPane(icon, title, content, expanded);
     }
 
-    protected JXTaskPane addTaskPane(final Icon icon, final String title, final JComponent content) {
+    protected DCTaskPane addTaskPane(final Icon icon, final String title, final JComponent content) {
         return addTaskPane(icon, title, content, true);
     }
 
-    protected JXTaskPane addTaskPane(final Icon icon, final String title, final JComponent content,
+    protected DCTaskPane addTaskPane(final Icon icon, final String title, final JComponent content,
             final boolean expanded) {
-        final JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
+        final DCTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
         taskPane.setCollapsed(!expanded);
         taskPane.add(content);
         _taskPaneContainer.add(taskPane);

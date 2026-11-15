@@ -53,7 +53,7 @@ import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.table.DCTable;
-import org.jdesktop.swingx.table.TableColumnExt;
+import javax.swing.table.TableColumn;
 
 /**
  * Panel that displays columns in a table-layout. Used for both the "Source" tab
@@ -205,7 +205,7 @@ public final class ColumnListTable extends DCPanel {
         _columnTable.setModel(model);
 
         if (hasPhysicalColumns && _editable) {
-            final TableColumnExt columnExt = _columnTable.getColumnExt(2);
+            final TableColumn columnExt = _columnTable.getColumnModel().getColumn(2);
             columnExt.setMinWidth(26);
             columnExt.setMaxWidth(80);
             columnExt.setPreferredWidth(30);

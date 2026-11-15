@@ -168,7 +168,7 @@ public class ReorderColumnsActionListener implements ActionListener {
 
         table.setModel(tableModel);
 
-        final TableColumn moveColumn = table.getColumns().get(1);
+        final TableColumn moveColumn = table.getColumnModel().getColumn(1);
         moveColumn.setMaxWidth(70);
         moveColumn.setMinWidth(70);
     }

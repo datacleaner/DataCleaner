@@ -42,7 +42,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.datacleaner.widgets.properties.SingleEnumPropertyWidget;
-import org.jdesktop.swingx.JXTaskPane;
+import org.datacleaner.widgets.DCTaskPane;
 
 public class TextCaseTransformerPresenter extends TransformerComponentBuilderPanel
         implements TransformerComponentBuilderPresenter {
@@ -56,7 +56,7 @@ public class TextCaseTransformerPresenter extends TransformerComponentBuilderPan
     private final ConfiguredPropertyDescriptor _wordDictionaryProperty;
     private final ConfiguredPropertyDescriptor _beginWordDictionaryProperty;
     private final ConfiguredPropertyDescriptor _endWordDictionaryProperty;
-    private JXTaskPane _dictionaryTaskPane;
+    private DCTaskPane _dictionaryTaskPane;
 
     TextCaseTransformerPresenter(final TransformerComponentBuilder<?> transformerJobBuilder,
             final WindowContext windowContext, final PropertyWidgetFactory propertyWidgetFactory,
@@ -103,8 +103,8 @@ public class TextCaseTransformerPresenter extends TransformerComponentBuilderPan
     }
 
     @Override
-    protected JXTaskPane addTaskPane(Icon icon, String title, JComponent content, boolean expanded) {
-        final JXTaskPane taskPane = super.addTaskPane(icon, title, content, expanded);
+    protected DCTaskPane addTaskPane(Icon icon, String title, JComponent content, boolean expanded) {
+        final DCTaskPane taskPane = super.addTaskPane(icon, title, content, expanded);
 
         if (title.equals(TASK_PANE_TITLE_DICTIONARIES)) {
             _dictionaryTaskPane = taskPane;

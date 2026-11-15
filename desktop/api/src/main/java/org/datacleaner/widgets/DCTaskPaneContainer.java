@@ -21,90 +21,60 @@ package org.datacleaner.widgets;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.Dimension;
+
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 
 /**
- * Minor improvement to the regular JXTaskPaneContainer, wrapping all task panes
- * in a bordered panel.
+ * A vertical stack of {@link DCTaskPane}s - a lightweight replacement for
+ * SwingX's {@code DCTaskPaneContainer}, wrapping all task panes in a
+ * bordered panel.
  */
-public class DCTaskPaneContainer extends JXTaskPaneContainer {
+public class DCTaskPaneContainer extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
     public DCTaskPaneContainer() {
-        super();
         setOpaque(false);
-        setBackgroundPainter(null);
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
     }
 
-    public void add(final JXTaskPane taskPane) {
+    public void add(final DCTaskPane taskPane) {
         final DCPanel panel = createTaskPanePanel(taskPane);
         super.add(panel);
     }
 
-    public void add(final JXTaskPane taskPane, final int index) {
+    public void add(final DCTaskPane taskPane, final int index) {
         final DCPanel panel = createTaskPanePanel(taskPane);
         super.add(panel, index);
     }
 
-    private DCPanel createTaskPanePanel(final JXTaskPane taskPane) {
+    private DCPanel createTaskPanePanel(final DCTaskPane taskPane) {
         final DCPanel panel = new DCPanel();
         panel.setBorder(WidgetUtils.BORDER_SHADOW);
         panel.setLayout(new BorderLayout());
         panel.add(taskPane, BorderLayout.CENTER);
-
-        taskPane.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(final ComponentEvent e) {
-                panel.setVisible(false);
-            }
-
-            @Override
-            public void componentShown(final ComponentEvent e) {
-                panel.setVisible(true);
-            }
-        });
-
+        // make the panel fill the full width of the container
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         return panel;
     }
 
-    @Override
-    public Component add(final Component comp) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Component add(final Component comp, final int index) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void add(final Component comp, final Object constraints) {
-        super.add(comp, constraints);
-    }
-
-    @Override
-    public void add(final Component comp, final Object constraints, final int index) {
-        throw new UnsupportedOperationException();
-    }
-
-    public JXTaskPane[] getTaskPanes() {
+    public DCTaskPane[] getTaskPanes() {
         final Component[] components = getComponents();
-        final JXTaskPane[] result = new JXTaskPane[components.length];
+        final DCTaskPane[] result = new DCTaskPane[components.length];
         for (int i = 0; i < result.length; i++) {
             final DCPanel panel = (DCPanel) components[i];
-            result[i] = (JXTaskPane) panel.getComponent(0);
+            result[i] = (DCTaskPane) panel.getComponent(0);
         }
         return result;
     }
 
-    public void remove(final JXTaskPane group) {
+    public void remove(final DCTaskPane group) {
         final Component[] components = getComponents();
         for (final Component component : components) {
             if (component instanceof DCPanel) {

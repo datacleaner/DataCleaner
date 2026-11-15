@@ -40,7 +40,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCTaskPaneContainer;
-import org.jdesktop.swingx.JXTaskPane;
+import org.datacleaner.widgets.DCTaskPane;
 
 /**
  * Window for showing a single analysis result in a separate window. Typically
@@ -118,7 +118,7 @@ public final class DetailsResultWindow extends AbstractWindow {
     public void addRenderedResult(final JComponent component) {
         final ImageIcon icon =
                 imageManager.getImageIcon(IconUtils.ACTION_DRILL_TO_DETAIL, IconUtils.ICON_SIZE_TASK_PANE);
-        final JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
+        final DCTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
 
         final DCPanel taskPanePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         taskPanePanel.setBorder(new EmptyBorder(4, 4, 4, 4));

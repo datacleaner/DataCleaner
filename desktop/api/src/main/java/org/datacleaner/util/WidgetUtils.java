@@ -59,8 +59,6 @@ import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.widgets.table.DCTablePanel;
 import org.datacleaner.windows.ErrorDialog;
-import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,12 +239,6 @@ public final class WidgetUtils {
     public static final Object BORDER_MENU_ITEM = new EmptyBorder(pix(2), pix(2), pix(2), pix(2));
 
     /**
-     * A highlighter for coloring odd/even rows in a table
-     */
-    public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory
-            .createAlternateStriping(colorBetween(BG_COLOR_BRIGHTEST, BG_COLOR_BRIGHT), BG_COLOR_BRIGHTEST);
-
-    /**
      * Slightly moderated version of COLOR.FACTOR
      */
     private static final double COLOR_SCALE_FACTOR = 0.9;
@@ -265,6 +257,18 @@ public final class WidgetUtils {
      */
     @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
     public static final String CHAR_CARET_DOWN = "\uf0d7";
+
+    /**
+     * The right-pointing 'caret' character used for collapsed sections with the {@link #FONT_FONTAWESOME} font.
+     */
+    @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
+    public static final String CHAR_CARET_RIGHT = "\uf0da";
+
+    /**
+     * The up-pointing 'caret' character used for collapsible sections with the {@link #FONT_FONTAWESOME} font.
+     */
+    @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
+    public static final String CHAR_CARET_UP = "\uf0d8";
 
     public static final int DIALOG_WIDTH_NORMAL = UIScale.scale(600);
     public static final int DIALOG_WIDTH_NARROW = UIScale.scale(400);

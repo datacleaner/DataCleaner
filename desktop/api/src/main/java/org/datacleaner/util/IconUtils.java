@@ -41,6 +41,7 @@ import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
@@ -194,6 +195,7 @@ public final class IconUtils {
     public static final String ACCESS_IMAGEPATH = "images/datastore-types/access.png";
     public static final String DBASE_IMAGEPATH = "images/datastore-types/dbase.png";
     public static final String FIXEDWIDTH_IMAGEPATH = "images/datastore-types/fixedwidth.png";
+    public static final String SAS_IMAGEPATH = "images/datastore-types/sas.png";
     public static final String ODB_IMAGEPATH = "images/datastore-types/odb.png";
     public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
     public static final String JSON_IMAGEPATH = "images/datastore-types/json.png";
@@ -509,6 +511,8 @@ public final class IconUtils {
             imagePath = EXCEL_IMAGEPATH;
         } else if (datastore instanceof FixedWidthDatastore) {
             imagePath = FIXEDWIDTH_IMAGEPATH;
+        } else if (datastore instanceof SasDatastore) {
+            imagePath = SAS_IMAGEPATH;
         } else if (datastore instanceof XmlDatastore) {
             imagePath = XML_IMAGEPATH;
         } else if (datastore instanceof JsonDatastore) {

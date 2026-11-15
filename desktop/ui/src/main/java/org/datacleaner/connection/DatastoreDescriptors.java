@@ -32,6 +32,7 @@ import org.datacleaner.windows.CsvDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
+import org.datacleaner.windows.SasDatastoreDialog;
 import org.datacleaner.windows.JsonDatastoreDialog;
 import org.datacleaner.windows.XmlDatastoreDialog;
 
@@ -58,6 +59,10 @@ public class DatastoreDescriptors {
     private static final DatastoreDescriptor JSON_DATASTORE_DESCRIPTOR =
             new DatastoreDescriptorImpl("JSON file", "JavaScript Object NOtation file (.json).", JsonDatastore.class,
                     JsonDatastoreDialog.class, IconUtils.JSON_IMAGEPATH, true);
+
+    private static final DatastoreDescriptor SAS_DATASTORE_DESCRIPTOR =
+            new DatastoreDescriptorImpl("SAS library", "A directory of SAS library files (.sas7bdat).",
+                    SasDatastore.class, SasDatastoreDialog.class, IconUtils.SAS_IMAGEPATH, true);
 
     private static final DatastoreDescriptor HIVE_DATASTORE_DESCRIPTOR =
             new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_HIVE, "Connect to an Apache Hive database",
@@ -141,6 +146,7 @@ public class DatastoreDescriptors {
         datastoreDescriptors.add(FIXEDWIDTH_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(XML_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(JSON_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(SAS_DATASTORE_DESCRIPTOR);
 
         return datastoreDescriptors;
     }

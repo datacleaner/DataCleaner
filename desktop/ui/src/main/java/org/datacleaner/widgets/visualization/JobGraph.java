@@ -28,6 +28,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.AdjustmentListener;
 import java.util.Collection;
@@ -145,8 +146,25 @@ public final class JobGraph {
     }
 
     private void setDropIndicatorPoint(final Point point) {
-        _dropIndicatorPoint = point;
-        _panel.repaint();
+        final Point old = _dropIndicatorPoint;
+        _dropIndicatorPoint = (point == null) ? null : new Point(point);
+
+        // repaint only the dirty regions (old + new indicator location) to
+        // avoid re-rendering the whole graph on every dragOver event
+        final Rectangle dirty =
+                new Rectangle(0, 0, -1, -1).union(getIndicatorRepaintBounds(old)).union(getIndicatorRepaintBounds(
+                        _dropIndicatorPoint));
+        if (dirty.width > 0 && dirty.height > 0) {
+            _panel.repaint(dirty);
+        }
+    }
+
+    private Rectangle getIndicatorRepaintBounds(final Point point) {
+        if (point == null) {
+            return new Rectangle(0, 0, 0, 0);
+        }
+        final int radius = adjuster.adjust(14) + 1;
+        return new Rectangle(point.x - radius, point.y - radius, radius * 2, radius * 2);
     }
 
     public JobGraph highlightVertex(final Object vertex) {
@@ -213,13 +231,7 @@ public final class JobGraph {
                     // force COPY semantics so that the copy cursor is shown during the drag
                     support.setDropAction(TransferHandler.COPY);
                     _lastDropLocateTime = System.currentTimeMillis();
-                    final Point dropPoint = support.getDropLocation().getDropPoint();
-                    if (_dropIndicatorPoint == null) {
-                        setDropIndicatorPoint(dropPoint);
-                    } else {
-                        _dropIndicatorPoint.setLocation(dropPoint);
-                        _panel.repaint();
-                    }
+                    setDropIndicatorPoint(support.getDropLocation().getDropPoint());
                 }
                 return importable;
             }

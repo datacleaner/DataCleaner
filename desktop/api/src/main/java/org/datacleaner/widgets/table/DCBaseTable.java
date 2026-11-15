@@ -218,6 +218,18 @@ public class DCBaseTable extends JTable {
         // no-op
     }
 
+    /**
+     * Gets the {@link TableColumn} at the given view index (convenience
+     * replacement for the former JXTable method; equivalent to
+     * {@code getColumnModel().getColumn(viewIndex)}).
+     *
+     * @param viewIndex the view index of the column
+     * @return the column
+     */
+    public TableColumn getColumn(final int viewIndex) {
+        return getColumnModel().getColumn(viewIndex);
+    }
+
     public void setVisibleColumns(final int min, final int max) {
         final TableColumnModel columnModel = getColumnModel();
 

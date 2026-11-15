@@ -140,8 +140,12 @@ public final class WidgetFactory {
         b.setMargin(new Insets(0, 0, 0, 0));
         b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
 
-        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
-        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        final MatteBorder outerBorder =
+                new MatteBorder(WidgetUtils.scalePx(1), WidgetUtils.scalePx(1), WidgetUtils.scalePx(1),
+                        WidgetUtils.scalePx(1), WidgetUtils.getThemeBorderColor());
+        b.setBorder(new CompoundBorder(outerBorder,
+                new EmptyBorder(WidgetUtils.scalePx(2), WidgetUtils.scalePx(4), WidgetUtils.scalePx(2),
+                        WidgetUtils.scalePx(4))));
         b.setFocusPainted(false);
 
         return b;
@@ -247,8 +251,10 @@ public final class WidgetFactory {
     public static JPanel createStatusBar(final JComponent comp) {
         final JPanel statusBar = new JPanel(new BorderLayout());
         statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-        final MatteBorder outerBorder = new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_LESS_DARK);
-        final EmptyBorder innerBorder = new EmptyBorder(2, 2, 2, 2);
+        final MatteBorder outerBorder =
+                new MatteBorder(WidgetUtils.scalePx(1), 0, 0, 0, WidgetUtils.BG_COLOR_LESS_DARK);
+        final EmptyBorder innerBorder = new EmptyBorder(WidgetUtils.scalePx(2), WidgetUtils.scalePx(2),
+                WidgetUtils.scalePx(2), WidgetUtils.scalePx(2));
         statusBar.setBorder(new CompoundBorder(outerBorder, innerBorder));
         statusBar.add(comp, BorderLayout.CENTER);
         return statusBar;
@@ -315,8 +321,12 @@ public final class WidgetFactory {
 
         b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
 
-        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
-        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        final MatteBorder outerBorder =
+                new MatteBorder(WidgetUtils.scalePx(1), WidgetUtils.scalePx(1), WidgetUtils.scalePx(1),
+                        WidgetUtils.scalePx(1), WidgetUtils.getThemeBorderColor());
+        b.setBorder(new CompoundBorder(outerBorder,
+                new EmptyBorder(WidgetUtils.scalePx(2), WidgetUtils.scalePx(4), WidgetUtils.scalePx(2),
+                        WidgetUtils.scalePx(4))));
         b.setFocusPainted(false);
 
         return b;
@@ -338,7 +348,8 @@ public final class WidgetFactory {
 
     public static DCTaskPane createTaskPane(final String title, final Icon icon) {
         final DCTaskPane taskPane = new DCTaskPane(title, icon);
-        taskPane.getContentPane().setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK));
+        taskPane.getContentPane().setBorder(new MatteBorder(0, WidgetUtils.scalePx(1), WidgetUtils.scalePx(1),
+                WidgetUtils.scalePx(1), WidgetUtils.getThemeBorderColor()));
         taskPane.setFocusable(false);
         return taskPane;
     }
@@ -416,7 +427,9 @@ public final class WidgetFactory {
         final JXTextArea ta = new JXTextArea(promptText);
         ta.setColumns(17);
         ta.setRows(6);
-        ta.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(2, 2, 2, 2)));
+        ta.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN,
+                new EmptyBorder(WidgetUtils.scalePx(2), WidgetUtils.scalePx(2), WidgetUtils.scalePx(2),
+                        WidgetUtils.scalePx(2))));
         return ta;
     }
 

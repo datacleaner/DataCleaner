@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Query (magnifier over data) -->
+  <circle cx="14" cy="14" r="9.5" fill="#f9f9f9" stroke="#3fb8eb" stroke-width="3"/>
+  <line x1="21" y1="21" x2="28" y2="28" stroke="#3fb8eb" stroke-width="4" stroke-linecap="round"/>
+  <g fill="#58c6f4">
+    <rect x="9" y="10" width="10" height="2" rx="1"/>
+    <rect x="9" y="14" width="7" height="2" rx="1"/>
+    <rect x="9" y="18" width="8.5" height="2" rx="1"/>
+  </g>
+</svg>

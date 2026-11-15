@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Database column (highlighted column in a table) -->
+  <rect x="3" y="4" width="26" height="24" rx="2" fill="#f9f9f9" stroke="#ceced0" stroke-width="1.5"/>
+  <rect x="3.75" y="4.75" width="24.5" height="5.5" rx="1.25" fill="#ceced0"/>
+  <line x1="3" y1="17" x2="29" y2="17" stroke="#ceced0" stroke-width="1.5"/>
+  <line x1="3" y1="23" x2="29" y2="23" stroke="#ceced0" stroke-width="1.5"/>
+  <rect x="14" y="4" width="6.5" height="24" fill="#58c6f4" stroke="#ceced0" stroke-width="1.5"/>
+</svg>

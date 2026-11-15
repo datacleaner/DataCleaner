@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Refresh (circular arrows) -->
+  <g fill="none" stroke="#3fb8eb" stroke-width="2.8" stroke-linecap="round">
+    <path d="M25.5 13 A10 10 0 0 0 8.5 9.5"/>
+    <path d="M6.5 19 A10 10 0 0 0 23.5 22.5"/>
+  </g>
+  <path d="M25.5 13 L29.5 8.5 L23 7.5 Z" fill="#3fb8eb"/>
+  <path d="M6.5 19 L2.5 23.5 L9 24.5 Z" fill="#3fb8eb"/>
+  <circle cx="16" cy="16" r="3" fill="#3fb8eb"/>
+</svg>

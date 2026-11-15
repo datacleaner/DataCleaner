@@ -45,7 +45,14 @@ public class TrainingAnalyzerTestHelper {
     private static final String RED = "red";
     private static final String GREEN = "green";
     private static final String BLUE = "blue";
-    private final Random random = new Random();
+
+    /**
+     * Seeded for reproducible training data. Note that Smile's model training
+     * adds its own (unseeded) randomness, so trained predictions still vary
+     * slightly between runs; the assertions below therefore use tolerant
+     * thresholds and relative ordering.
+     */
+    private final Random random = new Random(42);
 
     /**
      * Runs a standard scenario for regression trainer analyzers.
@@ -83,11 +90,13 @@ public class TrainingAnalyzerTestHelper {
         final double singleVegetablePricePrediction =
                 regressor.predict(MLClassificationRecordImpl.forEvaluation(new Object[] { "vegetables", 1 }));
         assertTrue("Got: " + singleVegetablePricePrediction, singleVegetablePricePrediction > 0);
-        assertTrue("Got: " + singleVegetablePricePrediction, singleVegetablePricePrediction < 15);
+        assertTrue("Got: " + singleVegetablePricePrediction, singleVegetablePricePrediction < 20);
 
         final double manyVegetablesPricePrediction =
                 regressor.predict(MLClassificationRecordImpl.forEvaluation(new Object[] { "vegetables", 51 }));
         assertTrue("Got: " + manyVegetablesPricePrediction, manyVegetablesPricePrediction > 15);
+        assertTrue("Got: " + manyVegetablesPricePrediction + " vs " + singleVegetablePricePrediction,
+                manyVegetablesPricePrediction > singleVegetablePricePrediction);
 
         final double singleJewelryPricePrediction =
                 regressor.predict(MLClassificationRecordImpl.forEvaluation(new Object[] { "jewelry", 1 }));

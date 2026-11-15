@@ -24,11 +24,13 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.google.common.cache.Cache;
 
 /**
@@ -78,6 +80,33 @@ public final class ImageManager {
 
     public ImageIcon getImageIcon(final String imagePath, final int newWidth, final ClassLoader... classLoaders) {
         return new ImageIcon(getImage(imagePath, newWidth, classLoaders));
+    }
+
+    /**
+     * Gets an icon for the given image path, preferring a vector SVG sibling
+     * of the referenced raster image if one exists (e.g.
+     * {@code images/model/table.svg} for {@code images/model/table.png}). SVG
+     * icons are rendered crisp at any size and scale factor, avoiding the
+     * blur of scaled raster icons.
+     *
+     * @param imagePath image path (typically a .png resource)
+     * @param size the icon size (width and height) in pixels
+     * @param classLoaders optional class loaders to load the resource from
+     * @return an icon, either vector-based (SVG) or raster-based (fallback)
+     */
+    public Icon getIcon(final String imagePath, final int size, final ClassLoader... classLoaders) {
+        if (imagePath.endsWith(".png")) {
+            final String svgPath = imagePath.substring(0, imagePath.length() - ".png".length()) + ".svg";
+            final URL svgUrl = resourceManager.getUrl(svgPath, classLoaders);
+            if (svgUrl != null) {
+                try {
+                    return new FlatSVGIcon(svgUrl).derive(size, size);
+                } catch (final Exception | LinkageError e) {
+                    logger.warn("Failed to load SVG icon {}, falling back to PNG: {}", svgPath, e.getMessage());
+                }
+            }
+        }
+        return getImageIcon(imagePath, size, classLoaders);
     }
 
     public Image getImage(final String imagePath, final ClassLoader... classLoaders) {

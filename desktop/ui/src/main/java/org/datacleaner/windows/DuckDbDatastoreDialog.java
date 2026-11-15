@@ -48,6 +48,11 @@ public final class DuckDbDatastoreDialog extends JdbcDatastoreDialog {
         _driverClassNameTextField.setText(DuckDbDatastore.DRIVER_CLASS);
         _driverClassNameTextField.setEnabled(false);
 
+        if (originalDatastore == null) {
+            setSelectedDatabase(DatabaseDriverCatalog.DATABASE_NAME_DUCKDB);
+        }
+        _databaseDriverComboBox.setEnabled(false);
+
         final JdbcDatastore datastoreToPresent =
                 originalDatastore != null ? originalDatastore
                         : new JdbcDatastore("dummy", "jdbc:duckdb:", DuckDbDatastore.DRIVER_CLASS);
@@ -55,14 +60,11 @@ public final class DuckDbDatastoreDialog extends JdbcDatastoreDialog {
     }
 
     @Override
-    protected JdbcDatastore createDatastore() {
-        final String datastoreName = _datastoreNameTextField.getText();
+    protected JdbcDatastore createDatastore(final String datastoreName, final String connectionString,
+            final String driverClass, final String username, final String password, final boolean multipleConnections) {
         if (datastoreName.trim().isEmpty()) {
             throw new IllegalStateException("Please enter a datastore name");
         }
-
-        final String connectionString = _connectionPresenters[0].getJdbcUrl();
-        final boolean multipleConnections = _multipleConnectionsCheckBox.isSelected();
 
         return new DuckDbDatastore(datastoreName, connectionString, multipleConnections);
     }

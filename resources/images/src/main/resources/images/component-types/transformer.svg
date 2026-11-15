@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Transformer (input rows flowing through a processing node) -->
+  <g stroke="#313131" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 10 L8.5 10 M6.5 7.5 L9 10 L6.5 12.5"/>
+    <path d="M2 22 L8.5 22 M6.5 19.5 L9 22 L6.5 24.5"/>
+    <path d="M23.5 10 L30 10 M27.5 7.5 L30 10 L27.5 12.5"/>
+    <path d="M23.5 22 L30 22 M27.5 19.5 L30 22 L27.5 24.5"/>
+  </g>
+  <circle cx="16" cy="16" r="6.5" fill="#3fb8eb" stroke="#313131" stroke-width="2"/>
+  <circle cx="16" cy="16" r="2.2" fill="#f9f9f9"/>
+</svg>

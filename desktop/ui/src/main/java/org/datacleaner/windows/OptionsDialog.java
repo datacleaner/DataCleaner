@@ -27,12 +27,15 @@ import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
@@ -50,6 +53,7 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -79,7 +83,7 @@ public class OptionsDialog extends AbstractWindow {
     protected OptionsDialog(final WindowContext windowContext, final DataCleanerConfiguration configuration,
             final UserPreferences userPreferences, final DatabaseDriversPanel databaseDriversPanel) {
         super(windowContext);
-        setMinimumSize(new Dimension(500, 500));
+        setMinimumSize(new Dimension(WidgetUtils.scalePx(500), WidgetUtils.scalePx(500)));
         _userPreferences = userPreferences;
         _configuration = configuration;
         _tabbedPane = new CloseableTabbedPane(true);
@@ -121,9 +125,87 @@ public class OptionsDialog extends AbstractWindow {
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new VerticalLayout(4));
         panel.add(getQuickAnalysisPanel());
+        panel.add(getUserInterfacePanel());
         panel.add(directoriesPanel);
 
         return panel;
+    }
+
+    private DCPanel getUserInterfacePanel() {
+        final boolean darkTheme = LookAndFeelManager.get().isDarkTheme();
+        final JRadioButton lightThemeButton = new JRadioButton("Light", !darkTheme);
+        lightThemeButton.setOpaque(false);
+        final JRadioButton darkThemeButton = new JRadioButton("Dark", darkTheme);
+        darkThemeButton.setOpaque(false);
+
+        final ButtonGroup themeButtonGroup = new ButtonGroup();
+        themeButtonGroup.add(lightThemeButton);
+        themeButtonGroup.add(darkThemeButton);
+
+        final ActionListener themeListener = event -> {
+            final boolean dark = darkThemeButton.isSelected();
+            _userPreferences.getAdditionalProperties().put(LookAndFeelManager.USER_PROPERTY_THEME,
+                    dark ? LookAndFeelManager.THEME_DARK : LookAndFeelManager.THEME_LIGHT);
+            _userPreferences.save();
+            LookAndFeelManager.get().setDarkTheme(dark);
+        };
+        lightThemeButton.addActionListener(themeListener);
+        darkThemeButton.addActionListener(themeListener);
+
+        final JComboBox<String> scaleComboBox = createScaleComboBox();
+
+        final DCPanel userInterfacePanel = new DCPanel().setTitledBorder("User interface");
+        WidgetUtils.addToGridBag(DCLabel.dark("Theme:"), userInterfacePanel, 0, 0);
+        WidgetUtils.addToGridBag(lightThemeButton, userInterfacePanel, 1, 0);
+        WidgetUtils.addToGridBag(darkThemeButton, userInterfacePanel, 2, 0);
+        WidgetUtils.addToGridBag(DCLabel.dark("Scale (restart required):"), userInterfacePanel, 0, 1);
+        WidgetUtils.addToGridBag(scaleComboBox, userInterfacePanel, 1, 1);
+        return userInterfacePanel;
+    }
+
+    /**
+     * Creates the combo box for selecting the UI scale (zoom). "Automatic"
+     * follows the screen resolution when the OS does not apply HiDPI
+     * scaling; the other options pin the zoom factor.
+     *
+     * @return a combo box with the scale options
+     */
+    private JComboBox<String> createScaleComboBox() {
+        final String persistedScale =
+                _userPreferences.getAdditionalProperties().get(LookAndFeelManager.USER_PROPERTY_SCALE);
+        final String automaticLabel = "Automatic (follow screen resolution)";
+
+        final JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.addItem(automaticLabel);
+        for (final String percentage : new String[] { "100", "125", "150", "175", "200", "250", "300" }) {
+            comboBox.addItem(percentage + "%");
+        }
+
+        if (persistedScale == null || LookAndFeelManager.SCALE_AUTO.equalsIgnoreCase(persistedScale)) {
+            comboBox.setSelectedItem(automaticLabel);
+        } else {
+            final String pinned = persistedScale.endsWith("%") ? persistedScale : persistedScale + "%";
+            for (int i = 0; i < comboBox.getItemCount(); i++) {
+                if (comboBox.getItemAt(i).equals(pinned)) {
+                    comboBox.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+
+        comboBox.addActionListener(e -> {
+            final Object selectedItem = comboBox.getSelectedItem();
+            if (automaticLabel.equals(selectedItem)) {
+                _userPreferences.getAdditionalProperties().put(LookAndFeelManager.USER_PROPERTY_SCALE,
+                        LookAndFeelManager.SCALE_AUTO);
+            } else {
+                final String percentage = selectedItem.toString().replace("%", "");
+                _userPreferences.getAdditionalProperties().put(LookAndFeelManager.USER_PROPERTY_SCALE, percentage);
+            }
+            _userPreferences.save();
+        });
+
+        return comboBox;
     }
 
     private DCPanel getQuickAnalysisPanel() {
@@ -327,7 +409,7 @@ public class OptionsDialog extends AbstractWindow {
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
-        panel.setPreferredSize(700, 500);
+        panel.setPreferredSize(WidgetUtils.scalePx(700), WidgetUtils.scalePx(500));
 
         return panel;
     }

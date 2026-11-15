@@ -129,7 +129,7 @@ public class DataSetWindow extends AbstractWindow {
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
-        _loadingIcon.setPreferredSize(700, 300);
+        _loadingIcon.setPreferredSize(WidgetUtils.scalePx(700), WidgetUtils.scalePx(300));
         panel.add(_loadingIcon, BorderLayout.NORTH);
         panel.add(tablePanel, BorderLayout.CENTER);
         if (pagingButtonPanel != null) {

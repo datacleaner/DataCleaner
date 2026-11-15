@@ -23,27 +23,31 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
+import java.awt.Image;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Desktop;
 import java.awt.LayoutManager;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -55,29 +59,22 @@ import javax.swing.text.JTextComponent;
 
 import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.widgets.DarkButtonUI;
-import org.datacleaner.widgets.DarkToggleButtonUI;
-import org.datacleaner.widgets.DefaultButtonUI;
-import org.datacleaner.widgets.DefaultToggleButtonUI;
-import org.datacleaner.widgets.PrimaryButtonUI;
 import org.datacleaner.widgets.table.DCTablePanel;
 import org.datacleaner.windows.ErrorDialog;
-import org.jdesktop.swingx.JXErrorPane;
-import org.jdesktop.swingx.border.DropShadowBorder;
-import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.error.ErrorInfo;
-import org.jdesktop.swingx.error.ErrorLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.formdev.flatlaf.util.UIScale;
+
+import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 
 public final class WidgetUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
 
-    private static final WidgetScreenResolutionAdjuster adjuster = WidgetScreenResolutionAdjuster.get();
     
-    public static final float FONT_SIZE_SMALL = adjuster.adjust(11f);
+    
+    public static final float FONT_SIZE_SMALL = UIScale.scale(11f);
 
     private static final Map<String, Font> fonts;
 
@@ -106,17 +103,17 @@ public final class WidgetUtils {
         fonts.put(FONT_MULI_PLAIN.getName(), FONT_MULI_PLAIN);
     }
 
-    public static final Font FONT_BANNER = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(21f));
-    public static final Font FONT_HEADER1 = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(18f));
-    public static final Font FONT_HEADER2 = FONT_MULI_LIGHT.deriveFont(adjuster.adjust(16f));
-    public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, adjuster.adjust(14));
-    public static final Font FONT_BUTTON = FONT_MULI_PLAIN.deriveFont(adjuster.adjust(14f));
-    public static final Font FONT_NORMAL = FONT_MULI_PLAIN.deriveFont(adjuster.adjust(13f));
-    public static final Font FONT_BOLD = FONT_MULI_BOLD.deriveFont(adjuster.adjust(13f));
+    public static final Font FONT_BANNER = FONT_MULI_LIGHT.deriveFont(UIScale.scale(21f));
+    public static final Font FONT_HEADER1 = FONT_MULI_LIGHT.deriveFont(UIScale.scale(18f));
+    public static final Font FONT_HEADER2 = FONT_MULI_LIGHT.deriveFont(UIScale.scale(16f));
+    public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, UIScale.scale(14));
+    public static final Font FONT_BUTTON = FONT_MULI_PLAIN.deriveFont(UIScale.scale(14f));
+    public static final Font FONT_NORMAL = FONT_MULI_PLAIN.deriveFont(UIScale.scale(13f));
+    public static final Font FONT_BOLD = FONT_MULI_BOLD.deriveFont(UIScale.scale(13f));
     public static final Font FONT_SMALL = FONT_MULI_PLAIN.deriveFont(FONT_SIZE_SMALL);
     public static final Font FONT_TABLE_HEADER = FONT_NORMAL.deriveFont(Font.BOLD);
 
-    public static final int SCROLL_UNIT_INCREMENT = adjuster.adjust(20);
+    public static final int SCROLL_UNIT_INCREMENT = UIScale.scale(20);
 
     // blue base color of DC styling (#05b9f0)
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(5, 185, 240);
@@ -181,8 +178,157 @@ public final class WidgetUtils {
 
     public static final int BORDER_WIDE_WIDTH = pix(4);
 
+    // ------------------------------------------------------------------
+    // Theme-aware colors
+    //
+    // The constants above are the fixed light-theme design palette. In dark
+    // mode, DC's custom-painted components should use the getters below so
+    // they follow the selected theme (see LookAndFeelManager.setDarkTheme).
+    // ------------------------------------------------------------------
+
+    /**
+     * The background color for "default" surfaces (white in light mode).
+     *
+     * @return theme-aware default background color
+     */
+    public static Color getThemeDefaultBackground() {
+        return isDarkTheme() ? BG_COLOR_DARK : BG_COLOR_BRIGHTEST;
+    }
+
+    /**
+     * The background color for "well" surfaces (slightly tinted in light
+     * mode, slightly darker than the default in dark mode).
+     *
+     * @return theme-aware well background color
+     */
+    public static Color getThemeWellBackground() {
+        return isDarkTheme() ? slightlyDarker(BG_COLOR_DARK) : BG_COLOR_BRIGHT;
+    }
+
+    /**
+     * The background color for "alternative" surfaces (the dark side panels
+     * in light mode, slightly lighter than the default in dark mode).
+     *
+     * @return theme-aware alternative background color
+     */
+    public static Color getThemeAlternativeBackground() {
+        return isDarkTheme() ? new ColorUIResource(42, 42, 42) : BG_COLOR_DARK;
+    }
+
+    /**
+     * The normal text color (dark text in light mode, light text in dark
+     * mode).
+     *
+     * @return theme-aware text color
+     */
+    public static Color getThemeTextColor() {
+        return isDarkTheme() ? BG_COLOR_BRIGHTEST : BG_COLOR_DARKEST;
+    }
+
+    /**
+     * The text color for de-emphasized text.
+     *
+     * @return theme-aware disabled text color
+     */
+    public static Color getThemeDisabledTextColor() {
+        return BG_COLOR_MEDIUM;
+    }
+
+    /**
+     * The border color for thin outlines and separators (light gray in light
+     * mode, subtle dark gray in dark mode).
+     *
+     * @return theme-aware border color
+     */
+    public static Color getThemeBorderColor() {
+        return isDarkTheme() ? new ColorUIResource(70, 70, 73) : BG_COLOR_LESS_BRIGHT;
+    }
+
+    /**
+     * Gets whether the dark theme is active.
+     *
+     * @return true if the dark theme is selected
+     */
+    public static boolean isDarkTheme() {
+        return LookAndFeelManager.THEME_DARK
+                .equalsIgnoreCase(System.getProperty(LookAndFeelManager.SYSTEM_PROPERTY_THEME, LookAndFeelManager.THEME_LIGHT));
+    }
+
+    /**
+     * Maps a light-theme text color role (one of the DC palette constants)
+     * to the appropriate color for the current theme. Non-palette colors are
+     * returned unchanged.
+     *
+     * @param color the (light-theme) color role
+     * @return the theme-aware color
+     */
+    public static Color getThemeAwareTextColor(final Color color) {
+        if (isDarkTheme()) {
+            if (color == BG_COLOR_DARKEST) {
+                // dark text becomes light text in dark mode
+                return BG_COLOR_BRIGHTEST;
+            }
+            if (color == BG_COLOR_LESS_BRIGHT || color == BG_COLOR_LESS_DARK) {
+                return BG_COLOR_MEDIUM;
+            }
+        }
+        return color;
+    }
+
+    /**
+     * A border that paints theme-aware (see {@link #getThemeBorderColor()})
+     * lines along the specified edges, staying in sync with the selected
+     * theme at paint time.
+     */
+    static class ThemeEdgeBorder extends AbstractBorder {
+
+        private static final long serialVersionUID = 1L;
+
+        private final int _top;
+        private final int _left;
+        private final int _bottom;
+        private final int _right;
+
+        ThemeEdgeBorder(final int top, final int left, final int bottom, final int right) {
+            _top = top;
+            _left = left;
+            _bottom = bottom;
+            _right = right;
+        }
+
+        @Override
+        public void paintBorder(final Component c, final Graphics g, final int x, final int y, final int width,
+                final int height) {
+            final Color color = getThemeBorderColor();
+            g.setColor(color);
+            if (_top > 0) {
+                g.fillRect(x, y, width, _top);
+            }
+            if (_left > 0) {
+                g.fillRect(x, y, _left, height);
+            }
+            if (_bottom > 0) {
+                g.fillRect(x, y + height - _bottom, width, _bottom);
+            }
+            if (_right > 0) {
+                g.fillRect(x + width - _right, y, _right, height);
+            }
+        }
+
+        @Override
+        public Insets getBorderInsets(final Component c, final Insets insets) {
+            insets.set(_top, _left, _bottom, _right);
+            return insets;
+        }
+
+        @Override
+        public boolean isBorderOpaque() {
+            return false;
+        }
+    }
+
     public static final Border BORDER_SHADOW =
-            new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, pix(6));
+            new FlatDropShadowBorder(WidgetUtils.BG_COLOR_DARK, pix(6), 0.2f);
 
     public static final Border BORDER_WIDE_ALTERNATIVE =
             new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
@@ -199,12 +345,12 @@ public final class WidgetUtils {
             WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
     public static Border BORDER_TOP_PADDING = new EmptyBorder(pix(10), 0, 0, 0);
 
-    public static final Border BORDER_THIN = new LineBorder(BG_COLOR_LESS_BRIGHT);
+    public static final Border BORDER_THIN = new ThemeEdgeBorder(1, 1, 1, 1);
     public static final Border BORDER_THIN_DARK = new LineBorder(BG_COLOR_DARK);
 
     public static final Border BORDER_LIST_ITEM =
             new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
+                    new ThemeEdgeBorder(0, 0, 1, 0));
 
     public static final Border BORDER_LIST_ITEM_LEFT_ONLY =
             new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM), new EmptyBorder(0, 0, pix(1), 0));
@@ -215,12 +361,12 @@ public final class WidgetUtils {
 
     public static final Border BORDER_LIST_ITEM_SUBTLE =
             new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_MEDIUM));
+                    new ThemeEdgeBorder(0, 0, 1, 0));
 
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, pix(2), false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
-    public static final Border BORDER_TABLE_PANEL = new MatteBorder(pix(1), pix(1), 0, 0, BG_COLOR_LESS_BRIGHT);
+    public static final Border BORDER_TABLE_PANEL = new ThemeEdgeBorder(1, 1, 0, 0);
 
     /**
      * Border for indented button panels where the content has to align with check boxes above or below.
@@ -244,12 +390,6 @@ public final class WidgetUtils {
     public static final Object BORDER_MENU_ITEM = new EmptyBorder(pix(2), pix(2), pix(2), pix(2));
 
     /**
-     * A highlighter for coloring odd/even rows in a table
-     */
-    public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory
-            .createAlternateStriping(colorBetween(BG_COLOR_BRIGHTEST, BG_COLOR_BRIGHT), BG_COLOR_BRIGHTEST);
-
-    /**
      * Slightly moderated version of COLOR.FACTOR
      */
     private static final double COLOR_SCALE_FACTOR = 0.9;
@@ -269,9 +409,85 @@ public final class WidgetUtils {
     @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
     public static final String CHAR_CARET_DOWN = "\uf0d7";
 
-    public static final int DIALOG_WIDTH_NORMAL = adjuster.adjust(600);
-    public static final int DIALOG_WIDTH_NARROW = adjuster.adjust(400);
-    public static final int DIALOG_WIDTH_WIDE = adjuster.adjust(700);
+    /**
+     * The right-pointing 'caret' character used for collapsed sections with the {@link #FONT_FONTAWESOME} font.
+     */
+    @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
+    public static final String CHAR_CARET_RIGHT = "\uf0da";
+
+    /**
+     * The up-pointing 'caret' character used for collapsible sections with the {@link #FONT_FONTAWESOME} font.
+     */
+    @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
+    public static final String CHAR_CARET_UP = "\uf0d8";
+
+    public static final int DIALOG_WIDTH_NORMAL = UIScale.scale(600);
+    public static final int DIALOG_WIDTH_NARROW = UIScale.scale(400);
+    public static final int DIALOG_WIDTH_WIDE = UIScale.scale(700);
+
+    // ------------------------------------------------------------------
+    // Spacing & typography scale system
+    //
+    // Base spacing units in unscaled "design pixels". They are scaled with
+    // the UI scale factor (see FlatLaf
+    // UIScale) so that paddings and gaps follow the OS zoom setting and the
+    // datacleaner.ui.scale property. Use these (or scalePx()) instead of raw
+    // pixel literals; the font constants above (FONT_SMALL, FONT_NORMAL,
+    // FONT_HEADER1, FONT_HEADER2, FONT_BANNER) form the typographic scale.
+    // ------------------------------------------------------------------
+
+    /** Small spacing, e.g. between a label and its field (base 4px). */
+    public static final int SPACING_SMALL = UIScale.scale(4);
+
+    /** Medium spacing, e.g. between form fields (base 8px). */
+    public static final int SPACING_MEDIUM = UIScale.scale(8);
+
+    /** Large spacing, e.g. between form sections (base 16px). */
+    public static final int SPACING_LARGE = UIScale.scale(16);
+
+    /** Extra large spacing, e.g. between panels or dialog sections (base 24px). */
+    public static final int SPACING_XLARGE = UIScale.scale(24);
+
+    /**
+     * Scales a value in "design pixels" with the UI scale factor (OS zoom and
+     * {@code datacleaner.ui.scale}). Use for one-off pixel sizes that cannot
+     * be expressed through the spacing constants above.
+     *
+     * @param px unscaled pixel value
+     * @return scaled pixel value
+     */
+    public static int scalePx(final int px) {
+        return UIScale.scale(px);
+    }
+
+    /**
+     * Scales a value in "design pixels" with the UI scale factor (OS zoom and
+     * {@code datacleaner.ui.scale}).
+     *
+     * @param px unscaled pixel value
+     * @return scaled pixel value
+     */
+    public static float scalePx(final float px) {
+        return UIScale.scale(px);
+    }
+
+    /**
+     * Scales an image with the UI scale factor (OS zoom and
+     * {@code datacleaner.ui.scale}), using smooth scaling. Returns the input
+     * image unchanged if no scaling is necessary.
+     *
+     * @param image the image to scale
+     * @return the scaled image
+     */
+    public static Image scaleImage(final Image image) {
+        final float factor = UIScale.getUserScaleFactor();
+        if (image == null || factor == 1f) {
+            return image;
+        }
+        final int w = image.getWidth(null);
+        final int h = image.getHeight(null);
+        return image.getScaledInstance(Math.round(w * factor), Math.round(h * factor), Image.SCALE_SMOOTH);
+    }
 
     private WidgetUtils() {
         // prevent instantiation
@@ -305,6 +521,71 @@ public final class WidgetUtils {
             throw new IllegalStateException(e);
         } finally {
             FileHelper.safeClose(in);
+        }
+    }
+
+    /**
+     * Registers the DataCleaner fonts (Muli in all weights) with the graphics
+     * environment, so that they can be resolved by family name, e.g. in
+     * FlatLaf font properties such as {@code defaultFont}.
+     */
+    public static void registerFonts() {
+        final GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        graphicsEnvironment.registerFont(FONT_MULI_PLAIN);
+        graphicsEnvironment.registerFont(FONT_MULI_BOLD);
+        graphicsEnvironment.registerFont(FONT_MULI_LIGHT);
+    }
+
+    /**
+     * Opens the given URL in the default system browser (best effort; does
+     * nothing if no desktop browser is available).
+     *
+     * @param url the URL to open; null or empty is a no-op
+     */
+    public static void openUrl(final String url) {
+        if (StringUtils.isNullOrEmpty(url)) {
+            return;
+        }
+        try {
+            openUrl(new URI(url));
+        } catch (final URISyntaxException e) {
+            logger.warn("Could not open URL: {}", url, e);
+        }
+    }
+
+    /**
+     * Opens the given URL in the default system browser (best effort; does
+     * nothing if no desktop browser is available).
+     *
+     * @param url the URL to open
+     */
+    public static void openUrl(final URL url) {
+        if (url == null) {
+            return;
+        }
+        try {
+            openUrl(url.toURI());
+        } catch (final URISyntaxException e) {
+            logger.warn("Could not open URL: {}", url, e);
+        }
+    }
+
+    /**
+     * Opens the given URI in the default system browser (best effort; does
+     * nothing if no desktop browser is available).
+     *
+     * @param uri the URI to open
+     */
+    public static void openUrl(final URI uri) {
+        if (uri == null) {
+            return;
+        }
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(uri);
+            }
+        } catch (final Exception e) {
+            logger.warn("Could not open URL: {}", uri, e);
         }
     }
 
@@ -435,39 +716,20 @@ public final class WidgetUtils {
     }
 
     public static void showErrorMessage(final String shortMessage, final String detailedMessage) {
-        final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
-        final String finalShortMessage = shortMessage == null ? "" : shortMessage;
-        final ErrorDialog dialog = new ErrorDialog(finalShortMessage, finalDetailedMessage);
-
-        dialog.setModal(true);
-        dialog.open();
+        showErrorMessage(shortMessage, detailedMessage, null);
     }
 
     public static void showErrorMessage(final String shortMessage, final String detailedMessage,
             final Throwable exception) {
-        final Throwable presentedException = ErrorUtils.unwrapForPresentation(exception);
-        if (exception == null) {
-            showErrorMessage(shortMessage, detailedMessage);
-            return;
-        }
-
         final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
         final String finalShortMessage = shortMessage == null ? "" : shortMessage;
+        final Throwable presentedException =
+                exception == null ? null : ErrorUtils.unwrapForPresentation(exception);
 
-        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error", presentedException,
-                ErrorLevel.SEVERE, null);
-        final JXErrorPane errorPane = new JXErrorPane();
-        errorPane.setErrorInfo(info);
+        final ErrorDialog dialog = new ErrorDialog(finalShortMessage, finalDetailedMessage, presentedException);
 
-        final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
-
-        centerOnScreen(dialog);
-        JXErrorPane.setDefaultLocale(Locale.ENGLISH);
-        dialog.setLocale(Locale.ENGLISH);
         dialog.setModal(true);
-        dialog.setTitle(finalShortMessage);
-        dialog.setVisible(true);
-        dialog.toFront();
+        dialog.open();
     }
 
     public static void showErrorMessage(final String shortMessage, final Throwable exception) {
@@ -676,27 +938,42 @@ public final class WidgetUtils {
         }
     }
 
+    /**
+     * Styles a button as a "primary" (call-to-action) button. FlatLaf paints
+     * buttons with a custom background borderless and derives hover/pressed
+     * shades from it, so no custom UI delegate is needed.
+     */
     public static void setPrimaryButtonStyle(final AbstractButton button) {
-        button.setUI(PrimaryButtonUI.get());
+        button.setFocusPainted(false);
+        button.setFont(WidgetUtils.FONT_BUTTON);
+        button.setBackground(WidgetUtils.BG_COLOR_BLUE_DARK);
+        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
+    /**
+     * Styles a button for placement on dark backgrounds. FlatLaf derives
+     * hover/pressed shades from the custom background color.
+     */
     public static void setDarkButtonStyle(final AbstractButton button) {
-        if (button instanceof JToggleButton) {
-            button.setUI(DarkToggleButtonUI.get());
-        } else {
-            button.setUI(DarkButtonUI.get());
-        }
+        button.setFocusPainted(false);
+        button.setFont(WidgetUtils.FONT_BUTTON);
+        button.setBackground(WidgetUtils.BG_COLOR_DARK);
+        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
+    /**
+     * Styles a button with the look-and-feel defaults (no color overrides),
+     * letting the installed LaF (FlatLaf) paint it natively.
+     */
     public static void setDefaultButtonStyle(final AbstractButton button) {
-        if (button instanceof JToggleButton) {
-            button.setUI(DefaultToggleButtonUI.get());
-        } else {
-            button.setUI(DefaultButtonUI.get());
-        }
+        button.setFocusPainted(false);
+        button.setFont(WidgetUtils.FONT_BUTTON);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     private static int pix(final int size) {
-        return adjuster.adjust(size);
+        return UIScale.scale(size);
     }
 }

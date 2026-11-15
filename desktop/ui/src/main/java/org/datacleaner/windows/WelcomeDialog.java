@@ -34,7 +34,6 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**
  * A welcome dialog for DataCleaner. Specifically used in embedded situations as
@@ -59,7 +58,7 @@ public class WelcomeDialog extends JDialog {
 
         final JButton websiteButton =
                 WidgetFactory.createDefaultButton("Visit the DataCleaner website", IconUtils.WEBSITE);
-        websiteButton.addActionListener(new OpenBrowserAction("https://datacleaner.org"));
+        websiteButton.addActionListener(e -> WidgetUtils.openUrl("https://datacleaner.org"));
 
         panel.add(DCPanel.flow(Alignment.CENTER, continueButton, websiteButton), BorderLayout.SOUTH);
 

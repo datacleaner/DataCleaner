@@ -6,4 +6,18 @@
 		<version>5.9.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-orderdb</artifactId>
+
+	<dependencies>
+		<!--
+			The orderdb.script database files are generated with HSQLDB 2.x and
+			loaded via the "jdbc:hsqldb:res:orderdb" classpath URL at runtime,
+			so the matching JDBC driver must ship with every consumer of this
+			module (the desktop application bundles it in its lib/ folder).
+		-->
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
 </project>

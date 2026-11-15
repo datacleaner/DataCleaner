@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import org.datacleaner.util.SystemProperties;
-import org.jdesktop.swingx.action.OpenBrowserAction;
+import org.datacleaner.util.WidgetUtils;
 
 /**
  * ActionListener class for opening up the DataCleaner website in the client
@@ -51,8 +51,7 @@ public class OpenDataCleanerWebsiteActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final OpenBrowserAction actionListener = new OpenBrowserAction(url);
-        actionListener.actionPerformed(e);
+        WidgetUtils.openUrl(url);
     }
 
 }

@@ -320,7 +320,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         }
         window.repaint();
 
-        window.setPreferredSize(new Dimension(800, 600));
+        window.setPreferredSize(new Dimension(WidgetUtils.scalePx(800), WidgetUtils.scalePx(600)));
 
         window.setVisible(true);
     }

@@ -26,10 +26,10 @@ import javax.swing.JComponent;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.widgets.DCCollapsiblePane;
 import org.datacleaner.widgets.result.DisplayChartCallback;
 import org.datacleaner.widgets.result.DisplayChartCallbackImpl;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+
 
 /**
  * A panel that contains the view for a {@link Crosstab}. This includes a
@@ -70,7 +70,7 @@ public class CrosstabPanel extends DCPanel {
             tableComponent = table.toPanel();
         }
 
-        final JXCollapsiblePane chartContainer = WidgetFactory.createCollapsiblePane(Direction.UP);
+        final DCCollapsiblePane chartContainer = WidgetFactory.createCollapsiblePane(DCCollapsiblePane.Direction.UP);
         chartContainer.setCollapsed(true);
 
         _displayChartCallback = new DisplayChartCallbackImpl(chartContainer);

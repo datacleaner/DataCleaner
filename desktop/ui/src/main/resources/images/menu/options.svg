@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Options (gear) -->
+  <g fill="#3fb8eb">
+    <path d="M16 2 L18.5 2 L19.5 6.5 L23.8 4.6 L26.6 7.4 L24.7 11.7 L29.2 12.7 L29.2 15.2 L29.2 17.7 L24.7 18.7
+             L26.6 23 L23.8 25.8 L19.5 23.9 L18.5 28.4 L16 28.4 L13.5 28.4 L12.5 23.9 L8.2 25.8 L5.4 23
+             L7.3 18.7 L2.8 17.7 L2.8 15.2 L2.8 12.7 L7.3 11.7 L5.4 7.4 L8.2 4.6 L12.5 6.5 L13.5 2 Z"
+          transform="translate(1, 1.6) scale(0.94)"/>
+  </g>
+  <circle cx="16" cy="16.5" r="5" fill="#f9f9f9"/>
+</svg>

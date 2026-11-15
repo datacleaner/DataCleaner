@@ -131,7 +131,7 @@ public class ComponentDocumentationWrapper {
 
     public String getIconSrc(final int width) throws IOException {
         // Attach the image  
-        final Image descriptorIcon = IconUtils.getDescriptorIcon(_componentDescriptor, width).getImage();
+        final Image descriptorIcon = IconUtils.iconToImage(IconUtils.getDescriptorIcon(_componentDescriptor, width));
 
         /* We need a buffered image type in order to obtain the */
         final BufferedImage bufferedImage = ComponentDocumentationBuilder.toBufferedImage(descriptorIcon);

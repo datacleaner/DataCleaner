@@ -42,6 +42,8 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
 
+import com.formdev.flatlaf.FlatClientProperties;
+
 public abstract class AbstractDialog extends JDialog implements DCWindow, WindowListener {
 
     private static final long serialVersionUID = 1L;
@@ -66,6 +68,10 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         // modal dialogs are turned off because they prevent use of default
         // uncaught exception handlers(!)
         setModal(false);
+
+        // modern FlatLaf window decorations (title bar); ignored on platforms
+        // where not supported
+        getRootPane().putClientProperty(FlatClientProperties.USE_WINDOW_DECORATIONS, Boolean.TRUE);
 
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         addWindowListener(this);
@@ -198,7 +204,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         panel.setPreferredSize(getDialogWidth(),
                 bannerHeight + dialogContent.getPreferredSize().height + getDialogHeightBuffer());
 
-        setMinimumSize(new Dimension(getDialogWidth(), 300));
+        setMinimumSize(new Dimension(getDialogWidth(), WidgetUtils.scalePx(300)));
 
         return panel;
     }

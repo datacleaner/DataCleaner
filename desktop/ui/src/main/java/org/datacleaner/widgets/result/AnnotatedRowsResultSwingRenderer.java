@@ -57,10 +57,8 @@ import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCFileChooser;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.PopupButton;
-import org.datacleaner.widgets.table.ColumnHighlighter;
 import org.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.VerticalLayout;
-import org.jdesktop.swingx.decorator.Highlighter;
 
 @RendererBean(SwingRenderingFormat.class)
 public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<AnnotatedRowsResult, DCPanel> {
@@ -142,7 +140,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
             final TableModel tableModel = _result.toDistinctValuesTableModel(highlightedColumns[0]);
             _table.setModel(tableModel);
             _table.autoSetHorizontalScrollEnabled();
-            _table.setHighlighters(new Highlighter[0]);
+            _table.setHighlightedColumns();
         }
 
         public void applyDetailedView() {
@@ -161,7 +159,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                         highligthedColumnIndexes[i] = _result.getColumnIndex(highlightedColumns[i]);
                     }
 
-                    _table.addHighlighter(new ColumnHighlighter(highligthedColumnIndexes));
+                    _table.setHighlightedColumns(highligthedColumnIndexes);
                 }
             }
         }

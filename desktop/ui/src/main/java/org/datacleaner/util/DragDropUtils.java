@@ -102,7 +102,7 @@ public class DragDropUtils {
                     setDragImage(image);
                 } else if (modelObject instanceof ComponentDescriptor) {
                     final ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) modelObject;
-                    setDragImage(IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_MEDIUM).getImage());
+                    setDragImage(IconUtils.iconToImage(IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_MEDIUM)));
                 }
 
                 return transferable;

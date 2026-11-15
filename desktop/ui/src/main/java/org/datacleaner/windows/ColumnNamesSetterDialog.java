@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -46,7 +47,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 
 public class ColumnNamesSetterDialog extends AbstractDialog {
@@ -148,7 +148,7 @@ public class ColumnNamesSetterDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(buttonPanel, centerPanel, 0, 2, 1, 1, GridBagConstraints.CENTER, 4, 0, 0.1);
         centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JPanel statusBar = WidgetFactory.createStatusBar(_statusLabel);
         final DescriptionLabel descriptionLabel = new DescriptionLabel();
         descriptionLabel.setText("Configure the datastore's column names");
 

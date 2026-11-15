@@ -124,8 +124,8 @@ public class ComboButton extends JPanel {
      */
     public void addButton(final AbstractButton button) {
         WidgetUtils.setDefaultButtonStyle(button);
-        final EmptyBorder baseBorder =
-                new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH - 1, 9, WidgetUtils.BORDER_WIDE_WIDTH - 1, 9);
+        final EmptyBorder baseBorder = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH - 1, WidgetUtils.scalePx(9),
+                WidgetUtils.BORDER_WIDE_WIDTH - 1, WidgetUtils.scalePx(9));
         if (getComponentCount() == 0) {
             button.setBorder(baseBorder);
         } else {
@@ -133,7 +133,8 @@ public class ComboButton extends JPanel {
             if (lastComponent instanceof AbstractButton) {
                 // previous component was also a button - add a line on the left
                 // side
-                final Border outsideBorder = new MatteBorder(0, 1, 0, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+                final Border outsideBorder =
+                        new MatteBorder(0, WidgetUtils.scalePx(1), 0, 0, WidgetUtils.getThemeBorderColor());
                 button.setBorder(new CompoundBorder(outsideBorder, baseBorder));
             } else {
                 button.setBorder(baseBorder);

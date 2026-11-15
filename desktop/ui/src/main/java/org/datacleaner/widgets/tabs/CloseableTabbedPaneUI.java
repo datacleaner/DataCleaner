@@ -42,20 +42,23 @@ import org.datacleaner.util.WidgetUtils;
 final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 
     // the close image(s)
-    private static final Image CLOSE_IMAGE = ImageManager.get().getImage("images/widgets/tab_close.png");
-    private static final Image CLOSE_IMAGE_HOVER = ImageManager.get().getImage("images/widgets/tab_close_hover.png");
+    private static final Image CLOSE_IMAGE =
+            ImageManager.get().getImage("images/widgets/tab_close.png", IconUtils.ICON_SIZE_MEDIUM);
+    private static final Image CLOSE_IMAGE_HOVER =
+            ImageManager.get().getImage("images/widgets/tab_close_hover.png", IconUtils.ICON_SIZE_MEDIUM);
 
     // the width of the close images
     private static final int CLOSE_ICON_WIDTH = IconUtils.ICON_SIZE_MEDIUM;
 
     // the top-margin of a close icon
-    private static final int CLOSE_ICON_RIGHT_MARGIN = 6;
+    private static final int CLOSE_ICON_RIGHT_MARGIN = WidgetUtils.scalePx(6);
 
     // the insets for a single tab
-    private static final Insets TAB_INSETS = new Insets(0, 2, 1, 3);
+    private static final Insets TAB_INSETS = new Insets(0, WidgetUtils.scalePx(2), WidgetUtils.scalePx(1),
+            WidgetUtils.scalePx(3));
 
     // the width of a separator
-    private static final int SEPARATOR_WIDTH = 10;
+    private static final int SEPARATOR_WIDTH = WidgetUtils.scalePx(10);
 
     private final Color _tabUnselectedBackgroundColor = WidgetUtils.COLOR_WELL_BACKGROUND;
     private final Color _tabSelectedBackgroundColor = WidgetUtils.COLOR_DEFAULT_BACKGROUND;
@@ -82,7 +85,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 
     @Override
     protected Insets getContentBorderInsets(final int tabPlacement) {
-        return new Insets(2, 2, 2, 2);
+        return new Insets(WidgetUtils.scalePx(2), WidgetUtils.scalePx(2), WidgetUtils.scalePx(2),
+                WidgetUtils.scalePx(2));
     }
 
     @Override

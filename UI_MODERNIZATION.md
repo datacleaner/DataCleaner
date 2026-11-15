@@ -20,6 +20,104 @@ per-monitor scaling) natively in Swing, making the entire mechanism obsolete.
 
 ---
 
+## Progress log
+
+### Done (Phase 0)
+
+- **Java 8 → 17 → 21** (`<release>21</release>` in the root `pom.xml`).
+- **PlasticXP → FlatLaf** (FlatLightLaf default, FlatDarkLaf available).
+- **UI zoom** via `-Ddatacleaner.ui.scale=150` (delegates to FlatLaf `uiScale`),
+  plus **automatic screen-resolution scaling**: when the OS/JRE applies no
+  HiDPI scaling (e.g. Linux/X11 with no display scale configured) and the
+  screen is wider than 1600px, a zoom of `min(3, width/1600)` is applied
+  automatically — restoring the comfortable size the old
+  WidgetScreenResolutionAdjuster produced, without double-scaling on systems
+  that already scale. The zoom is user-selectable in *Options → General →
+  User interface* (Automatic / 100–300%, restart required) and persisted in
+  the user preferences (`ui.scale`).
+- **`WidgetScreenResolutionAdjuster` neutered** — now a compatibility shim over
+  FlatLaf `UIScale` (identity when no zoom is configured). *The ~70 legacy call
+  sites remain; deleting them is a still-open sweep.*
+- **Dark mode**: theme properties in `org.datacleaner.themes`
+  (`FlatLaf.properties`, `FlatLightLaf.properties`, `FlatDarkLaf.properties`),
+  Light/Dark switcher in *Options → General → User interface*, persisted in the
+  user preferences (`ui.theme`), applied live via `FlatLaf.updateUI()`.
+
+### Done (Phase 1)
+
+- **All `LookAndFeelManager` `UIManager.put` patches replaced** by the FlatLaf
+  theme properties above; DC brand accent `#04a6d8`; Muli registered as the
+  `defaultFont`.
+- **Custom UI delegates retired** — `DefaultButtonUI`, `DefaultToggleButtonUI`,
+  `DarkButtonUI`, `DarkToggleButtonUI`, `PrimaryButtonUI`, `DCPopupFactory` and
+  the `MetalButtonUI`/`MetalStatusBarUI` usages are gone. Buttons style via
+  colors and let FlatLaf paint (custom background = borderless filled with
+  derived hover/pressed shades). `DCToolTip` now presents its component itself.
+- **Spacing/typography system** in `WidgetUtils`: `SPACING_SMALL/MEDIUM/LARGE/XLARGE`
+  (4/8/16/24 design px) and `scalePx()` helpers on top of FlatLaf `UIScale`;
+  the `FONT_*` constants are the type scale.
+- **Hardcoded dialog sizes are zoom-aware**: raw pixel literals swept through
+  `WidgetUtils.scalePx` (dialogs, windows, tables, charts, progress bars).
+- **SVG icons**: `ImageManager.getIcon()` prefers an `.svg` sibling of a
+  `.png` and renders it via `FlatSVGIcon` (flatlaf-extras), falling back to
+  raster. First vectorized icons: model `schema/table/column/column_primary_key/
+  query/row` and component-type `analyzer/transformer/filter` (tree, job graph
+  and column lists now render crisp at any scale).
+- **SwingX reduced**: `JXStatusBar` → plain `JPanel`; `JXErrorPane` → DC
+  `ErrorDialog` with scrollable stack trace; `OpenBrowserAction` →
+  `WidgetUtils.openUrl`; `DropShadowBorder` → FlatLaf `FlatDropShadowBorder`.
+
+### Done (Phase 2, Option A "deep Swing modernization")
+
+- **Window chrome**: `AbstractWindow`/`AbstractDialog` request FlatLaf window
+  decorations (modern title bar on Windows 10/11; ignored elsewhere).
+- **Welcome screen refresh**: SwingX-free content, spacing-system button row.
+
+### Done (follow-up batch)
+
+- **Font sizing**: resolved — `LookAndFeelManager` now sets `defaultFont`
+  (Muli 13) and `TitledBorder.font` (Muli Light 18) explicitly after LaF
+  install, because FlatLaf's system font policy would otherwise rescale the
+  theme's font sizes down to the desktop font size. Zoom everything with
+  `-Ddatacleaner.ui.scale=150`.
+- **`WidgetScreenResolutionAdjuster` deleted** — all call sites now use
+  `WidgetUtils.scalePx()`/`scaleImage()` (FlatLaf `UIScale`).
+- **More SVG icons + SVG-aware `getDescriptorIcon`**: descriptor, datastore,
+  super-category and factory button/menu icons all render SVG siblings via
+  `ImageManager.getIcon()` (error-overlay composites rasterize any `Icon`);
+  added `model/datastore` and menu `open/new/execute/refresh/options` glyphs.
+- **Remaining SwingX usage replaced**: `JXTable` (DCTable/DCEditableTable now
+  extend plain `JTable` with native striping, sorting, pack, editability),
+  `JXDatePicker`/`JXMonthView` (LGoodDatePicker), `JXTaskPane` (new
+  `DCTaskPane`/`DCTaskPaneContainer`), `JXCollapsiblePane` (new
+  `DCCollapsiblePane`). *Kept deliberately:* `JXTextField` prompt support,
+  `VerticalLayout`/`HorizontalLayout`, `JXTree` renderers, `JXTitledPanel`,
+  `JXEditorPane` in error dialogs, `JXLabel`/`JXRadioGroup`/`JXTextArea`
+  occurrences — low risk, no visual impact.
+- **Dark mode for custom-painted components**: `WidgetUtils` provides
+  `isDarkTheme()` + theme-aware palette getters; `DCPanel` and `DCLabel`
+  re-map their light-theme palette colors on `updateUI()` (triggered by
+  `FlatLaf.updateUI()` on theme switches); `BORDER_THIN`/`BORDER_INPUT`/
+  `BORDER_TABLE_PANEL`/list-item dividers and table striping paint with
+  theme-aware colors.
+- **Launcher scripts**: `datacleaner.sh`/`datacleaner.cmd` now guard for
+  Java 21+. No bundled JREs exist in the repo.
+
+### Still open (future polish)
+
+- Convert the remaining ~95 PNG icons to SVG siblings (mechanism in place;
+  adding an `.svg` next to a `.png` is all it takes).
+- Datastore-type icons are largely vendor logos — vectorizing them requires
+  the original artwork.
+- Full visual QA pass per the verification checklist below (screenshots on
+  Windows HiDPI 125/150%, macOS Retina; dark mode smoke test).
+- Consider `flatlaf-swingx`/`flatlaf-jide-oss` addons if more SwingX
+  components need FlatLaf-consistent styling while they remain in use.
+- The FontAwesome 4.3 icon font is still bundled for misc glyphs
+  (`WidgetUtils.CHAR_*`); a maintained icon set would be a nice follow-up.
+
+---
+
 ## Phase 0 — Low hanging fruit (immediate, low risk)
 
 1. **Adopt [FlatLaf](https://www.formdev.com/flatlaf/) as the look &amp; feel**

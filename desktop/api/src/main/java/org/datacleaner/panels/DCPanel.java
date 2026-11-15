@@ -29,6 +29,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
 
+import org.datacleaner.util.WidgetUtils;
+
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -49,8 +51,10 @@ public class DCPanel extends JPanel {
     private final int _imageWidth;
     private final float _horizontalAlignment;
     private final float _verticalAlignment;
-    private final Color _bottomColor;
-    private final Color _topColor;
+    private final Color _originalTopColor;
+    private final Color _originalBottomColor;
+    private Color _bottomColor;
+    private Color _topColor;
 
     public DCPanel() {
         this(null, 0, 0);
@@ -112,8 +116,10 @@ public class DCPanel extends JPanel {
         } else {
             setOpaque(true);
         }
-        _topColor = topColor;
-        _bottomColor = bottomColor;
+        _originalTopColor = topColor;
+        _originalBottomColor = bottomColor;
+        _topColor = mapThemeColor(topColor);
+        _bottomColor = mapThemeColor(bottomColor);
         _watermark = watermark;
         _horizontalAlignment = horizontalAlignmentInPercent / 100f;
         _verticalAlignment = verticalAlignmentInPercent / 100f;
@@ -125,6 +131,34 @@ public class DCPanel extends JPanel {
             _imageWidth = -1;
             _imageHeight = -1;
         }
+    }
+
+    /**
+     * Maps the (light-theme) design palette colors to their dark-theme
+     * counterparts when the dark theme is active. Custom colors are kept.
+     */
+    private static Color mapThemeColor(final Color color) {
+        if (color == null) {
+            return null;
+        }
+        if (color == WidgetUtils.BG_COLOR_BRIGHTEST || color == WidgetUtils.COLOR_DEFAULT_BACKGROUND) {
+            return WidgetUtils.getThemeDefaultBackground();
+        }
+        if (color == WidgetUtils.BG_COLOR_BRIGHT || color == WidgetUtils.COLOR_WELL_BACKGROUND) {
+            return WidgetUtils.getThemeWellBackground();
+        }
+        if (color == WidgetUtils.BG_COLOR_DARK || color == WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND) {
+            return WidgetUtils.getThemeAlternativeBackground();
+        }
+        return color;
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        // follow theme changes (see LookAndFeelManager.setDarkTheme)
+        _topColor = mapThemeColor(_originalTopColor);
+        _bottomColor = mapThemeColor(_originalBottomColor);
     }
 
     public static DCPanel around(final Component component) {

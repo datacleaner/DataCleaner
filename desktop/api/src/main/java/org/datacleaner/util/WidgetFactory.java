@@ -29,7 +29,6 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Field;
 import java.text.Format;
 import java.text.ParseException;
 
@@ -43,29 +42,24 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import javax.swing.plaf.metal.MetalButtonUI;
 
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.widgets.DCTaskPane;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.PopupButton;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+import org.datacleaner.widgets.DCCollapsiblePane;
 import org.jdesktop.swingx.JXFormattedTextField;
-import org.jdesktop.swingx.JXStatusBar;
-import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.JXTitledPanel;
-import org.jdesktop.swingx.plaf.basic.BasicStatusBarUI;
-import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
 import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +99,7 @@ public final class WidgetFactory {
     public static JMenuItem createMenuItem(final String text, final String iconPath) {
         Icon icon = null;
         if (iconPath != null) {
-            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_MENU_ITEM);
+            icon = ImageManager.get().getIcon(iconPath, IconUtils.ICON_SIZE_MENU_ITEM);
         }
         return createMenuItem(text, icon);
     }
@@ -114,7 +108,7 @@ public final class WidgetFactory {
         if (Strings.isNullOrEmpty(imagePath)) {
             return null;
         }
-        return ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
+        return ImageManager.get().getIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
     }
 
     public static PopupButton createDarkPopupButton(final String text, final String imagePath) {
@@ -144,11 +138,14 @@ public final class WidgetFactory {
 
         b.setFont(WidgetUtils.FONT_SMALL);
         b.setMargin(new Insets(0, 0, 0, 0));
-        b.setUI(new MetalButtonUI());
         b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
 
-        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
-        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        final MatteBorder outerBorder =
+                new MatteBorder(WidgetUtils.scalePx(1), WidgetUtils.scalePx(1), WidgetUtils.scalePx(1),
+                        WidgetUtils.scalePx(1), WidgetUtils.getThemeBorderColor());
+        b.setBorder(new CompoundBorder(outerBorder,
+                new EmptyBorder(WidgetUtils.scalePx(2), WidgetUtils.scalePx(4), WidgetUtils.scalePx(2),
+                        WidgetUtils.scalePx(4))));
         b.setFocusPainted(false);
 
         return b;
@@ -243,16 +240,23 @@ public final class WidgetFactory {
         return createDarkButton(text, icon);
     }
 
-    public static JXStatusBar createStatusBar(final JComponent comp) {
-        final JXStatusBar statusBar = new JXStatusBar();
-        statusBar.setUI(new MetalStatusBarUI());
-        statusBar.putClientProperty(BasicStatusBarUI.AUTO_ADD_SEPARATOR, false);
+    /**
+     * Creates a dark status bar panel with the given component as its main
+     * content. Additional components can be added with
+     * {@code BorderLayout.EAST} / {@code BorderLayout.WEST} constraints.
+     *
+     * @param comp the main status component
+     * @return a status bar panel
+     */
+    public static JPanel createStatusBar(final JComponent comp) {
+        final JPanel statusBar = new JPanel(new BorderLayout());
         statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-        final MatteBorder outerBorder = new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_LESS_DARK);
-        final EmptyBorder innerBorder = new EmptyBorder(2, 2, 2, 2);
+        final MatteBorder outerBorder =
+                new MatteBorder(WidgetUtils.scalePx(1), 0, 0, 0, WidgetUtils.BG_COLOR_LESS_DARK);
+        final EmptyBorder innerBorder = new EmptyBorder(WidgetUtils.scalePx(2), WidgetUtils.scalePx(2),
+                WidgetUtils.scalePx(2), WidgetUtils.scalePx(2));
         statusBar.setBorder(new CompoundBorder(outerBorder, innerBorder));
-        final JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
-        statusBar.add(comp, c1);
+        statusBar.add(comp, BorderLayout.CENTER);
         return statusBar;
     }
 
@@ -271,11 +275,11 @@ public final class WidgetFactory {
     }
 
     public static JButton createToolbarButton(final String text, final String iconPath) {
-        final ImageIcon icon;
+        final Icon icon;
         if (iconPath == null) {
             icon = null;
         } else {
-            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
+            icon = ImageManager.get().getIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
         }
         final JButton button = new JButton(text, icon);
         button.addMouseListener(new MouseAdapter() {
@@ -299,7 +303,7 @@ public final class WidgetFactory {
     }
 
     public static JButton createSmallButton(final String text, final String imagePath) {
-        final Icon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+        final Icon icon = ImageManager.get().getIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
         return createSmallButton(text, icon);
     }
 
@@ -315,11 +319,14 @@ public final class WidgetFactory {
         }
         b.setMargin(new Insets(0, 0, 0, 0));
 
-        b.setUI(new MetalButtonUI());
         b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
 
-        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
-        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        final MatteBorder outerBorder =
+                new MatteBorder(WidgetUtils.scalePx(1), WidgetUtils.scalePx(1), WidgetUtils.scalePx(1),
+                        WidgetUtils.scalePx(1), WidgetUtils.getThemeBorderColor());
+        b.setBorder(new CompoundBorder(outerBorder,
+                new EmptyBorder(WidgetUtils.scalePx(2), WidgetUtils.scalePx(4), WidgetUtils.scalePx(2),
+                        WidgetUtils.scalePx(4))));
         b.setFocusPainted(false);
 
         return b;
@@ -329,7 +336,7 @@ public final class WidgetFactory {
         return new DCTaskPaneContainer();
     }
 
-    public static JXTaskPane createTaskPane(final String title, final String imagePath) {
+    public static DCTaskPane createTaskPane(final String title, final String imagePath) {
         final ImageIcon icon;
         if (Strings.isNullOrEmpty(imagePath)) {
             icon = null;
@@ -339,15 +346,11 @@ public final class WidgetFactory {
         return createTaskPane(title, icon);
     }
 
-    public static JXTaskPane createTaskPane(final String title, final Icon icon) {
-        final JXTaskPane taskPane = new JXTaskPane();
-        final Container cp = taskPane.getContentPane();
-        ((JComponent) cp).setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK));
+    public static DCTaskPane createTaskPane(final String title, final Icon icon) {
+        final DCTaskPane taskPane = new DCTaskPane(title, icon);
+        taskPane.getContentPane().setBorder(new MatteBorder(0, WidgetUtils.scalePx(1), WidgetUtils.scalePx(1),
+                WidgetUtils.scalePx(1), WidgetUtils.getThemeBorderColor()));
         taskPane.setFocusable(false);
-        taskPane.setTitle(title);
-        if (icon != null) {
-            taskPane.setIcon(icon);
-        }
         return taskPane;
     }
 
@@ -424,7 +427,9 @@ public final class WidgetFactory {
         final JXTextArea ta = new JXTextArea(promptText);
         ta.setColumns(17);
         ta.setRows(6);
-        ta.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(2, 2, 2, 2)));
+        ta.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN,
+                new EmptyBorder(WidgetUtils.scalePx(2), WidgetUtils.scalePx(2), WidgetUtils.scalePx(2),
+                        WidgetUtils.scalePx(2))));
         return ta;
     }
 
@@ -436,21 +441,10 @@ public final class WidgetFactory {
         return button;
     }
 
-    public static JXCollapsiblePane createCollapsiblePane(final Direction direction) {
-        final JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(direction);
+    public static DCCollapsiblePane createCollapsiblePane(final DCCollapsiblePane.Direction direction) {
+        final DCCollapsiblePane collapsiblePane = new DCCollapsiblePane(direction);
         collapsiblePane.setOpaque(false);
-
-        // hack to make it non-opaque!
-        try {
-            final Field field = JXCollapsiblePane.class.getDeclaredField("wrapper");
-            field.setAccessible(true);
-            final JViewport viewPort = (JViewport) field.get(collapsiblePane);
-            viewPort.setOpaque(false);
-            final JComponent component = (JComponent) viewPort.getView();
-            component.setOpaque(false);
-        } catch (final Exception e) {
-            logger.info("Failed to make JXCollapsiblePane non-opaque", e);
-        }
+        collapsiblePane.getContentPane().setOpaque(false);
         return collapsiblePane;
     }
 

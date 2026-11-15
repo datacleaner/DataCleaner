@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets.table;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -27,7 +28,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -41,7 +44,6 @@ import javax.swing.table.TableModel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.WidgetScreenResolutionAdjuster;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.slf4j.Logger;
@@ -53,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DCTable extends DCBaseTable implements MouseListener {
 
-    public static final int EDITABLE_TABLE_ROW_HEIGHT = WidgetScreenResolutionAdjuster.get().adjust(30);
+    public static final int EDITABLE_TABLE_ROW_HEIGHT = WidgetUtils.scalePx(30);
     private static final Logger logger = LoggerFactory.getLogger(DCTable.class);
     private static final long serialVersionUID = -5376226138423224572L;
     private final transient DCTableCellRenderer _tableCellRenderer;
@@ -77,10 +79,20 @@ public class DCTable extends DCBaseTable implements MouseListener {
     private ActionListener _copyEntireTableActionListener =
             e -> copyToClipboard(0, 0, DCTable.this.getColumnCount(), DCTable.this.getRowCount());
 
+    /**
+     * Column indexes that are highlighted with a dark background (replaces
+     * the former SwingX ColumnHighlighter).
+     */
+    private int[] _highlightedColumns = new int[0];
+
+    /**
+     * Per-value colors, replacing the former SwingX value-based highlighters.
+     */
+    private final Map<String, Color> _valueBackgrounds = new HashMap<>();
+    private final Map<String, Color> _valueForegrounds = new HashMap<>();
+
     public DCTable(final String... columnNames) {
         super(columnNames);
-        
-        setSortable(true);
 
         // currently (because of the implementation of the editor) the enabled
         // "editable" property is only to enable clicking on buttons etc. in
@@ -118,8 +130,61 @@ public class DCTable extends DCBaseTable implements MouseListener {
     @Override
     public Component prepareRenderer(final TableCellRenderer renderer, final int row, final int column) {
         final Component component = super.prepareRenderer(renderer, row, column);
+        if (!isCellSelected(row, column)) {
+            if (isHighlightedColumn(column)) {
+                component.setBackground(WidgetUtils.BG_COLOR_LESS_DARK);
+                component.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+            } else {
+                final Color valueBackground = _valueBackgrounds.get(getTextValueAt(row, column));
+                if (valueBackground != null) {
+                    component.setBackground(valueBackground);
+                }
+                final Color valueForeground = _valueForegrounds.get(getTextValueAt(row, column));
+                if (valueForeground != null) {
+                    component.setForeground(valueForeground);
+                }
+            }
+        }
         ensureRowHeight(row, component);
         return component;
+    }
+
+    /**
+     * Assigns a background/foreground color to cells displaying the given
+     * text value (replaces the former SwingX value-based highlighters).
+     *
+     * @param value the (text) value to colorize
+     * @param background the background color (null to keep the default)
+     * @param foreground the foreground color (null to keep the default)
+     */
+    public void setValueColor(final String value, final Color background, final Color foreground) {
+        if (background != null) {
+            _valueBackgrounds.put(value, background);
+        }
+        if (foreground != null) {
+            _valueForegrounds.put(value, foreground);
+        }
+        repaint();
+    }
+
+    /**
+     * Marks the given columns as highlighted with a dark background (e.g. to
+     * point out the columns of interest in annotated rows results).
+     *
+     * @param columnIndexes the (model) indexes of the columns to highlight
+     */
+    public void setHighlightedColumns(final int... columnIndexes) {
+        _highlightedColumns = columnIndexes == null ? new int[0] : columnIndexes;
+        repaint();
+    }
+
+    private boolean isHighlightedColumn(final int column) {
+        for (final int highlightedColumn : _highlightedColumns) {
+            if (highlightedColumn == column) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

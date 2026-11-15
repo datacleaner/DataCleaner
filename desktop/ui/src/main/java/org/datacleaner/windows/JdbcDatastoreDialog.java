@@ -61,6 +61,7 @@ import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.database.CubridDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.DatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.DefaultDatabaseConnectionPresenter;
+import org.datacleaner.widgets.database.DuckDbDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.H2DatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.HiveDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.MysqlDatabaseConnectionPresenter;
@@ -89,7 +90,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
     private final DatabaseDriverCatalog _databaseDriverCatalog;
     protected final JXTextField _driverClassNameTextField;
     protected final DCCheckBox<Object> _multipleConnectionsCheckBox;
-    private final DCComboBox<Object> _databaseDriverComboBox;
+    protected final DCComboBox<Object> _databaseDriverComboBox;
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final CloseableTabbedPane _tabbedPane;
     protected final DatabaseConnectionPresenter[] _connectionPresenters;
@@ -318,6 +319,9 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
         case DatabaseDriverCatalog.DATABASE_NAME_H2:
             result = new H2DatabaseConnectionPresenter();
             break;
+        case DatabaseDriverCatalog.DATABASE_NAME_DUCKDB:
+            result = new DuckDbDatabaseConnectionPresenter(getUserPreferences().getOpenDatastoreDirectory());
+            break;
         case DatabaseDriverCatalog.DATABASE_NAME_HIVE:
             result = new HiveDatabaseConnectionPresenter();
             break;
@@ -440,6 +444,12 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
         final String password = connectionPresenter.getPassword();
         final boolean multipleConnections = _multipleConnectionsCheckBox.isSelected();
 
+        return createDatastore(datastoreName, connectionString, driverClass, username, password,
+                multipleConnections);
+    }
+
+    protected JdbcDatastore createDatastore(final String datastoreName, final String connectionString,
+            final String driverClass, final String username, final String password, final boolean multipleConnections) {
         return new JdbcDatastore(datastoreName, connectionString, driverClass, username, password, multipleConnections);
     }
 

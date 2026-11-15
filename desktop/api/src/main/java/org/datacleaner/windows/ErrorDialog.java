@@ -20,25 +20,27 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.event.HyperlinkEvent;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
-import org.jdesktop.swingx.JXEditorPane;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 
-import com.google.common.base.Strings;
 
 /**
- * Error dialog for simple error messages (without stack traces) in DataCleaner.
+ * Error dialog for error messages in DataCleaner, optionally with a
+ * scrollable stack trace of an exception.
  */
 public class ErrorDialog extends AbstractDialog {
 
@@ -46,11 +48,17 @@ public class ErrorDialog extends AbstractDialog {
 
     private final String _shortMessage;
     private final String _detailedMessage;
+    private final Throwable _exception;
 
     public ErrorDialog(final String shortMessage, final String detailedMessage) {
+        this(shortMessage, detailedMessage, null);
+    }
+
+    public ErrorDialog(final String shortMessage, final String detailedMessage, final Throwable exception) {
         super(null, ImageManager.get().getImage("images/window/banner-error.png"));
         _shortMessage = shortMessage;
         _detailedMessage = detailedMessage;
+        _exception = exception;
     }
 
     @Override
@@ -82,27 +90,43 @@ public class ErrorDialog extends AbstractDialog {
             detailedMessage = _detailedMessage.replace("\n", "<br/>");
         }
 
-        final JXEditorPane detailedMessagePane = new JXEditorPane("text/html", detailedMessage);
+        final JEditorPane detailedMessagePane = new JEditorPane("text/html", detailedMessage);
         detailedMessagePane.setEditable(false);
         detailedMessagePane.setOpaque(false);
         detailedMessagePane.addHyperlinkListener(event -> {
             if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
-                final String href = event.getDescription();
-                if (!Strings.isNullOrEmpty(href)) {
-                    final OpenBrowserAction openBrowserAction = new OpenBrowserAction(href);
-                    openBrowserAction.actionPerformed(null);
-                }
+                WidgetUtils.openUrl(event.getDescription());
             }
         });
-        detailedMessagePane.setBorder(new EmptyBorder(10, 10, 40, 10));
+        detailedMessagePane.setBorder(WidgetUtils.BORDER_EMPTY);
 
         final JButton button = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         button.addActionListener(e -> ErrorDialog.this.close());
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        panel.setLayout(new BorderLayout());
-        panel.add(detailedMessagePane, BorderLayout.CENTER);
+        panel.setLayout(new BorderLayout(WidgetUtils.SPACING_SMALL, WidgetUtils.SPACING_SMALL));
+        panel.setBorder(WidgetUtils.BORDER_EMPTY);
+        panel.add(detailedMessagePane, BorderLayout.NORTH);
+        panel.add(createStackTraceComponent(), BorderLayout.CENTER);
         panel.add(DCPanel.flow(Alignment.CENTER, button), BorderLayout.SOUTH);
         return panel;
+    }
+
+    private JComponent createStackTraceComponent() {
+        if (_exception == null) {
+            // empty, invisible filler component
+            final DCPanel filler = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+            return filler;
+        }
+
+        final JTextArea stackTraceArea = new JTextArea(ExceptionUtils.getStackTrace(_exception));
+        stackTraceArea.setFont(WidgetUtils.FONT_MONOSPACE);
+        stackTraceArea.setEditable(false);
+        stackTraceArea.setCaretPosition(0);
+
+        final JScrollPane scrollPane = WidgetUtils.scrolleable(stackTraceArea);
+        scrollPane.setPreferredSize(
+                new Dimension(getDialogWidth() - WidgetUtils.SPACING_XLARGE, WidgetUtils.scalePx(150)));
+        return scrollPane;
     }
 }

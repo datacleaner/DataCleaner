@@ -35,7 +35,7 @@ public class DCProgressBar extends JProgressBar {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int DEFAULT_HEIGHT = 20;
+    private static final int DEFAULT_HEIGHT = WidgetUtils.scalePx(20);
 
     private final ProgressCounter _value;
 

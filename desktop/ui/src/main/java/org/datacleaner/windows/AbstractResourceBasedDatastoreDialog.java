@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
@@ -65,7 +66,6 @@ import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.ResourceSelector;
 import org.datacleaner.widgets.ResourceTypePresenter;
 import org.datacleaner.widgets.table.DCTable;
-import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -338,7 +338,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
 
         centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JPanel statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);

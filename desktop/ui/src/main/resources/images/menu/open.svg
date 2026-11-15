@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Open (folder) -->
+  <path d="M2 7 L12 7 L15 10 L30 10 L30 27 L2 27 Z" fill="none" stroke="#ffffff" stroke-width="2.5"
+        stroke-linejoin="round"/>
+  <path d="M5 14 L27 14" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
+</svg>

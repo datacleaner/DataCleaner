@@ -31,6 +31,8 @@ import javax.swing.JFrame;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.util.WidgetUtils;
 
+import com.formdev.flatlaf.FlatClientProperties;
+
 public abstract class AbstractWindow extends JFrame implements DCWindow, WindowListener {
 
     /**
@@ -41,8 +43,8 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
     public static final String SYSTEM_PROPERTY_HIDE_WINDOWS = "DataCleaner.Windows.Hide";
 
     private static final long serialVersionUID = 1L;
-    private static final int MIN_WIDTH = 400;
-    private static final int MIN_HEIGHT = 300;
+    private static final int MIN_WIDTH = WidgetUtils.scalePx(400);
+    private static final int MIN_HEIGHT = WidgetUtils.scalePx(300);
     private final WindowContext _windowContext;
     private volatile boolean initialized = false;
 
@@ -52,6 +54,10 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(this);
         getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
+
+        // modern FlatLaf window decorations (title bar); ignored on platforms
+        // where not supported
+        getRootPane().putClientProperty(FlatClientProperties.USE_WINDOW_DECORATIONS, Boolean.TRUE);
     }
 
     protected boolean maximizeWindow() {

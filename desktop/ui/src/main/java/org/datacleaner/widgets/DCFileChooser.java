@@ -56,7 +56,7 @@ public class DCFileChooser extends JFileChooser {
 
     public DCFileChooser(final File dir) {
         super(dir);
-        setPreferredSize(new Dimension(600, 550));
+        setPreferredSize(new Dimension(WidgetUtils.scalePx(600), WidgetUtils.scalePx(550)));
         setFilePaneBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
         setAcceptAllFileFilterUsed(false);
     }
@@ -97,7 +97,7 @@ public class DCFileChooser extends JFileChooser {
     @Override
     protected JDialog createDialog(final Component parent) throws HeadlessException {
         final JDialog dialog = super.createDialog(parent);
-        dialog.setMinimumSize(new Dimension(400, 400));
+        dialog.setMinimumSize(new Dimension(WidgetUtils.scalePx(400), WidgetUtils.scalePx(400)));
         return dialog;
     }
 

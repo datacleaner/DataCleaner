@@ -20,6 +20,8 @@
 package org.datacleaner.result.html;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -93,6 +95,12 @@ public class HtmlAnalysisResultWriterTest {
         final File benchmarkFile = new File(
                 "src/test/resources/benchmark-renderings/" + getClass().getSimpleName() + "-" + testName.getMethodName()
                         + ".html");
+        if ("true".equalsIgnoreCase(System.getProperty("benchmark.update"))) {
+            // regenerate the benchmark file (use when rendered output
+            // legitimately changes, e.g. icon or styling updates)
+            Files.writeString(benchmarkFile.toPath(), actual, StandardCharsets.UTF_8);
+            return;
+        }
         if (!benchmarkFile.exists()) {
             Assert.assertEquals("File does not exist: " + benchmarkFile, actual);
         }

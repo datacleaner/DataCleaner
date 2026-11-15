@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -48,7 +49,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 
 /**
@@ -234,7 +234,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
         centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JPanel statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);

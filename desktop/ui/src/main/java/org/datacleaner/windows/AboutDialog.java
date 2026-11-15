@@ -64,7 +64,6 @@ import org.datacleaner.widgets.DCListCellRenderer;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**
  * The "About" dialog of the DataCleaner application.
@@ -181,7 +180,7 @@ public class AboutDialog extends AbstractDialog {
                 "Licensing");
         tabbedPane.setUnclosableTab(1);
 
-        tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 500));
+        tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), WidgetUtils.scalePx(500)));
 
         return tabbedPane;
     }
@@ -243,7 +242,7 @@ public class AboutDialog extends AbstractDialog {
             final LicensedProject project = (LicensedProject) item;
             final String websiteUrl = project.websiteUrl;
             if (!StringUtils.isNullOrEmpty(websiteUrl)) {
-                new OpenBrowserAction(websiteUrl).actionPerformed(e);
+                WidgetUtils.openUrl(websiteUrl);
             }
         });
 
@@ -288,16 +287,16 @@ public class AboutDialog extends AbstractDialog {
 
         final JButton datacleanerButton = new JButton(imageManager.getImageIcon("images/links/datacleaner.png"));
         WidgetUtils.setDefaultButtonStyle(datacleanerButton);
-        datacleanerButton.addActionListener(new OpenBrowserAction("https://datacleaner.org"));
+        datacleanerButton.addActionListener(e -> WidgetUtils.openUrl("https://datacleaner.org"));
         datacleanerButton.setToolTipText("Visit the DataCleaner website");
 
         final JButton bloggerButton = new JButton(imageManager.getImageIcon("images/links/blogger.png"));
-        bloggerButton.addActionListener(new OpenBrowserAction("http://kasper.eobjects.org"));
+        bloggerButton.addActionListener(e -> WidgetUtils.openUrl("http://kasper.eobjects.org"));
         bloggerButton.setToolTipText("Follow along at our blog");
         WidgetUtils.setDefaultButtonStyle(bloggerButton);
 
         final JButton linkedInButton = new JButton(imageManager.getImageIcon("images/links/linkedin.png"));
-        linkedInButton.addActionListener(new OpenBrowserAction("http://www.linkedin.com/groups?gid=3352784"));
+        linkedInButton.addActionListener(e -> WidgetUtils.openUrl("http://www.linkedin.com/groups?gid=3352784"));
         linkedInButton.setToolTipText("Join the DataCleaner LinkedIn group");
         WidgetUtils.setDefaultButtonStyle(linkedInButton);
 

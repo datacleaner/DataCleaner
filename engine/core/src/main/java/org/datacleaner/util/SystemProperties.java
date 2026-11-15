@@ -66,15 +66,9 @@ public class SystemProperties {
     public static final String DEFAULT_RESOURCE_SCHEME = "datacleaner.resources.scheme.default";
 
     /**
-     * Property used for keeping the license key for commercial DataCleaner
-     * editions.
+     * Property used for keeping a DataCleaner license key.
      */
     public static final String LICENSE_KEY = "datacleaner.license.key";
-
-    /**
-     * Identifies the name of the current DataCleaner edition
-     */
-    public static final String EDITION_NAME = "datacleaner.edition.name";
 
     /**
      * Property for the hostname of the DC monitor app

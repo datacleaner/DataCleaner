@@ -38,7 +38,7 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
      * Constructs a {@link RestrictedFunctionalityCallToAction}.
      *
      * @param name
-     *            the name of the action, e.g. "Upgrade to Enterprise edition"
+     *            the name of the action, e.g. "Enable this feature"
      *            or "Buy credits"
      * @param href
      *            a HTTP link to open if the user wants to know more
@@ -51,7 +51,7 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
      * Constructs a {@link RestrictedFunctionalityCallToAction}.
      *
      * @param name
-     *            the name of the action, e.g. "Upgrade to Enterprise edition"
+     *            the name of the action, e.g. "Enable this feature"
      *            or "Buy credits"
      * @param href
      *            a HTTP link to open if the user wants to know more
@@ -81,7 +81,7 @@ public class RestrictedFunctionalityCallToAction implements Serializable {
     }
 
     /**
-     * Gets the name of the action, e.g. "Upgrade to Enterprise edition" or
+     * Gets the name of the action, e.g. "Enable this feature" or
      * "Buy credits"
      *
      * @return the action name

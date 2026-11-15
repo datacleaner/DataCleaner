@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.vfs2.FileObject;
 import org.datacleaner.metamodel.util.FileHelper;
-import org.datacleaner.Version;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
@@ -180,17 +179,9 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
             return openAnalysisJob(file, ajb);
         } catch (final NoSuchComponentException e) {
-            final String message;
-            if (Version.EDITION_COMMUNITY.equals(Version.getEdition())) {
-                message = "<html><p>Failed to open job because of a missing component:</p><pre>" + e.getMessage()
-                        + "</pre><p>This may happen if the job requires a "
-                        + "<a href=\"https://www.humaninference.com/en/solutions/datacleaner\">"
-                        + "Commercial Edition of DataCleaner</a>, or an extension that you do not have installed.</p>"
-                        + "</html>";
-            } else {
-                message = "<html>Failed to open job because of a missing component: " + e.getMessage() + "<br/><br/>"
-                        + "This may happen if the job requires an extension that you do not have installed.</html>";
-            }
+            final String message = "<html>Failed to open job because of a missing component: " + e.getMessage()
+                    + "<br/><br/>This may happen if the job requires an extension that you do not have installed."
+                    + "</html>";
             WidgetUtils.showErrorMessage("Cannot open job", message);
 
             return null;

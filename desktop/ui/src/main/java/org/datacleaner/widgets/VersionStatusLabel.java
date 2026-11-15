@@ -48,24 +48,26 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Label that shows the details about community edition of DataCleaner
+ * Label that shows the version of DataCleaner and whether an update is available.
  */
-public class CommunityEditionStatusLabel extends JLabel {
+public class VersionStatusLabel extends JLabel {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommunityEditionStatusLabel.class);
-    
+    private static final Logger logger = LoggerFactory.getLogger(VersionStatusLabel.class);
+
     private static final long serialVersionUID = 1L;
+
+    private static final String VERSION_LABEL = "DataCleaner " + Version.getVersion();
 
     private boolean _updateAvailable;
 
-    public CommunityEditionStatusLabel() {
-        super(Version.getEdition());
+    public VersionStatusLabel() {
+        super(VERSION_LABEL);
         _updateAvailable = false;
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
         checkForUpdates();
 
-        setIcon(ImageManager.get().getImageIcon("images/editions/community.png", IconUtils.ICON_SIZE_SMALL));
+        setIcon(ImageManager.get().getImageIcon(IconUtils.STATUS_INFO, IconUtils.ICON_SIZE_SMALL));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addMouseListener(new MouseAdapter() {
             @Override
@@ -106,13 +108,13 @@ public class CommunityEditionStatusLabel extends JLabel {
                     if (comparator.isComparable(currentVersion)) {
                         final int diff = comparator.compare(currentVersion, latestVersion);
                         if (diff < 0) {
-                            setText(Version.getEdition() + " - Update available: " + latestVersion);
+                            setText(VERSION_LABEL + " - Update available: " + latestVersion);
                             _updateAvailable = true;
                         } else {
-                            setText(Version.getEdition() + " - Up to date");
+                            setText(VERSION_LABEL + " - Up to date");
                         }
                     } else {
-                        setText(Version.getEdition() + " - Update available: " + latestVersion);
+                        setText(VERSION_LABEL + " - Update available: " + latestVersion);
                         _updateAvailable = true;
                     }
                 } catch (Exception e) {

@@ -279,8 +279,7 @@ public class AboutDialog extends AbstractDialog {
     }
 
     private JComponent getAboutPanel() {
-        final DCLabel headerLabel =
-                DCLabel.dark("DataCleaner " + Version.getEdition() + " " + Version.getDistributionVersion());
+        final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.getDistributionVersion());
         headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
         final ImageManager imageManager = ImageManager.get();
@@ -295,18 +294,11 @@ public class AboutDialog extends AbstractDialog {
         bloggerButton.setToolTipText("Follow along at our blog");
         WidgetUtils.setDefaultButtonStyle(bloggerButton);
 
-        final JButton linkedInButton = new JButton(imageManager.getImageIcon("images/links/linkedin.png"));
-        linkedInButton.addActionListener(e -> WidgetUtils.openUrl("http://www.linkedin.com/groups?gid=3352784"));
-        linkedInButton.setToolTipText("Join the DataCleaner LinkedIn group");
-        WidgetUtils.setDefaultButtonStyle(linkedInButton);
-
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new HorizontalLayout());
         buttonPanel.add(datacleanerButton);
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(bloggerButton);
-        buttonPanel.add(Box.createHorizontalStrut(10));
-        buttonPanel.add(linkedInButton);
 
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
@@ -315,15 +307,9 @@ public class AboutDialog extends AbstractDialog {
         contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR)));
         contentPanel.add(Box.createVerticalStrut(20));
 
-        if (Version.isCommunityEdition()) {
-            contentPanel.add(Box.createVerticalStrut(20));
-            contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
-            contentPanel.add(DCLabel.dark("(see Licensing tab)."));
-        } else {
-            final String licenseKey = Version.getLicenseKey();
-            contentPanel.add(Box.createVerticalStrut(20));
-            contentPanel.add(DCLabel.dark("License key: " + licenseKey));
-        }
+        contentPanel.add(Box.createVerticalStrut(20));
+        contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
+        contentPanel.add(DCLabel.dark("(see Licensing tab)."));
 
         contentPanel.add(Box.createVerticalStrut(30));
         contentPanel.add(DCLabel.dark("Java runtime information:"));

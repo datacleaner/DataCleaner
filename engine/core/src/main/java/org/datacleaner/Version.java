@@ -25,31 +25,22 @@ import java.util.Properties;
 import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.util.SystemProperties;
 
-import com.google.common.base.Strings;
-
 /**
  * Determines and exposes the version of DataCleaner.
  */
 public class Version {
 
     public static final String UNKNOWN_VERSION = "UNKNOWN";
-    public static final String EDITION_COMMUNITY = "Community edition";
     private static final String VERSION;
     private static final String DISTRIBUTION_VERSION;
-    private static final String EDITION;
 
     static {
         VERSION = determineVersion();
-        EDITION = determineEdition();
         DISTRIBUTION_VERSION = determineDistributionVersion();
     }
 
     public static String getVersion() {
         return VERSION;
-    }
-
-    public static String getEdition() {
-        return EDITION;
     }
 
     /**
@@ -77,13 +68,7 @@ public class Version {
     private static String determineDistributionVersion() {
         String version = null;
 
-        // try commercial editions packaging
-        if (version == null) {
-            version = determineVersionFromMavenProperties("com.hi.datacleaner",
-                    "DataCleaner-enterprise-edition-core-components", null);
-        }
-
-        // try community edition packaging
+        // try desktop app packaging
         if (version == null) {
             version = determineVersionFromMavenProperties("com.hi.datacleaner", "DataCleaner-desktop-app", null);
         }
@@ -120,15 +105,4 @@ public class Version {
         return properties.getProperty("version", valueIfNull);
     }
 
-    private static String determineEdition() {
-        final String systemProperty = System.getProperty(SystemProperties.EDITION_NAME);
-        if (!Strings.isNullOrEmpty(systemProperty)) {
-            return systemProperty;
-        }
-        return EDITION_COMMUNITY;
-    }
-
-    public static boolean isCommunityEdition() {
-        return getEdition() == EDITION_COMMUNITY;
-    }
 }

@@ -131,9 +131,9 @@ public class CliArguments {
     public static void printVersion(final PrintWriter out) {
         final String distributionVersion = Version.getDistributionVersion();
         if (!Strings.isNullOrEmpty(distributionVersion)) {
-            out.println("DataCleaner " + Version.getEdition() + " " + distributionVersion);
+            out.println("DataCleaner " + distributionVersion);
         } else {
-            out.println("DataCleaner " + Version.getEdition());
+            out.println("DataCleaner");
         }
 
         out.println("Core version " + Version.getVersion());

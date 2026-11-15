@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
     <job-metadata>
-        <job-description>Created with DataCleaner Community edition 5.6.1-SNAPSHOT</job-description>
+        <job-description>Created with DataCleaner 5.6.1-SNAPSHOT</job-description>
         <author>kasper</author>
         <updated-date>2019-03-24-07:00</updated-date>
         <metadata-properties>

@@ -6,6 +6,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+		<!-- DataCleaner releases are GitHub release assets, not Maven artifacts -->
+		<maven.deploy.skip>true</maven.deploy.skip>
+
 		<!-- Maven plugin versions -->
 		<javadoc.version>3.3.1</javadoc.version>
 
@@ -299,10 +302,10 @@
 			</plugin>
 
 			<plugin>
-				<!-- Exclude/skip this module when deploying artifacts -->
+				<!-- Artifact deployment is skipped via maven.deploy.skip -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.12.7</version>
+				<version>3.1.4</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.sonar</groupId>
@@ -313,22 +316,6 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<version>2.5.2</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.3</version><!--$NO-MVN-MAN-VER$ -->
-				<configuration>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<goals>deploy</goals>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.scm</groupId>
-						<artifactId>maven-scm-provider-gitexe</artifactId>
-						<version>1.9.5</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

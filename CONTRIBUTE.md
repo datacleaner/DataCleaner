@@ -56,6 +56,22 @@ Our code style looks a lot like any other Java coding guidelines. Distinctive ch
 * We format line wrapping using a desired max line length of 120 characters.
 * When possible, we tend to like the "final" keyword. This makes for more robust code and immutability is especially important in batch processing applications like DataCleaner.
 
+### Releases and versioning
+
+Releases are automated with [semantic-release](https://semantic-release.gitbook.io/) and
+triggered by commits on `main` that follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+| Commit type | Version bump | Example |
+|-------------|--------------|---------|
+| `fix:` | Patch | `fix: correct null handling in CSV reader` |
+| `feat:` | Minor | `feat: add support for Excel 365 files` |
+| `feat!:` or `BREAKING CHANGE:` | Major | `feat!: require Java 21` |
+| `chore:`, `docs:`, etc. | No release | `docs: update build instructions` |
+
+Release tags follow the `DataCleaner-${version}` format. The desktop zip produced by the
+build is attached to the GitHub release; Maven artifacts are not published. See
+[RELEASE_GUIDE.md](RELEASE_GUIDE.md) for details.
+
 ### Acceptance of changes
 
 A few general rules of thumb:

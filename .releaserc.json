@@ -1,0 +1,59 @@
+{
+  "branches": [
+    "main"
+  ],
+  "tagFormat": "DataCleaner-${version}",
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "releaseRules": [
+          { "breaking": true, "release": "major" },
+          { "type": "feat", "release": "minor" },
+          { "type": "fix", "release": "patch" },
+          { "type": "perf", "release": "patch" }
+        ]
+      }
+    ],
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    [
+      "@terrestris/maven-semantic-release",
+      {
+        "processAllModules": true,
+        "updateSnapshotVersion": true,
+        "mavenTarget": "deploy",
+        "clean": true
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "**/pom.xml",
+          "CHANGELOG.md"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "labels": false,
+        "releaseNameTemplate": "${nextRelease.version}",
+        "assets": [
+          {
+            "path": "desktop/ui/target/DataCleaner-*.zip",
+            "name": "DataCleaner-${nextRelease.version}.zip",
+            "label": "DataCleaner ${nextRelease.version} (zip)"
+          }
+        ]
+      }
+    ]
+  ]
+}

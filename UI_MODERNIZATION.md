@@ -65,20 +65,48 @@ per-monitor scaling) natively in Swing, making the entire mechanism obsolete.
   decorations (modern title bar on Windows 10/11; ignored elsewhere).
 - **Welcome screen refresh**: SwingX-free content, spacing-system button row.
 
-### Remaining (candidates for follow-up)
+### Done (follow-up batch)
 
-- Delete the remaining `WidgetScreenResolutionAdjuster` call sites (now a
-  mechanical sweep — the shim is already in place).
-- Convert more of the ~110 PNG icons to SVG siblings (mechanism and template
-  are in place; `DescriptorMenuItem`/`getDescriptorIcon` still rasterize for
-  the error-overlay compositing).
-- Replace the remaining SwingX usage where worthwhile: `JXTable` (DCTable),
-  `JXDatePicker`/`JXMonthView` (e.g. with LGoodDatePicker), `JXTaskPane`,
-  `JXCollapsiblePane`. `JXTextField` prompt support is kept deliberately.
-- Dark mode currently covers all LaF-painted components; DC's custom-painted
-  panels (which hardcode `WidgetUtils.BG_COLOR_*` colors) stay light — a full
-  dark mode needs theme-aware indirection for those constants.
-- Launcher scripts / bundled JREs need updating to Java 21 for releases.
+- **Font sizing**: resolved — `LookAndFeelManager` now sets `defaultFont`
+  (Muli 13) and `TitledBorder.font` (Muli Light 18) explicitly after LaF
+  install, because FlatLaf's system font policy would otherwise rescale the
+  theme's font sizes down to the desktop font size. Zoom everything with
+  `-Ddatacleaner.ui.scale=150`.
+- **`WidgetScreenResolutionAdjuster` deleted** — all call sites now use
+  `WidgetUtils.scalePx()`/`scaleImage()` (FlatLaf `UIScale`).
+- **More SVG icons + SVG-aware `getDescriptorIcon`**: descriptor, datastore,
+  super-category and factory button/menu icons all render SVG siblings via
+  `ImageManager.getIcon()` (error-overlay composites rasterize any `Icon`);
+  added `model/datastore` and menu `open/new/execute/refresh/options` glyphs.
+- **Remaining SwingX usage replaced**: `JXTable` (DCTable/DCEditableTable now
+  extend plain `JTable` with native striping, sorting, pack, editability),
+  `JXDatePicker`/`JXMonthView` (LGoodDatePicker), `JXTaskPane` (new
+  `DCTaskPane`/`DCTaskPaneContainer`), `JXCollapsiblePane` (new
+  `DCCollapsiblePane`). *Kept deliberately:* `JXTextField` prompt support,
+  `VerticalLayout`/`HorizontalLayout`, `JXTree` renderers, `JXTitledPanel`,
+  `JXEditorPane` in error dialogs, `JXLabel`/`JXRadioGroup`/`JXTextArea`
+  occurrences — low risk, no visual impact.
+- **Dark mode for custom-painted components**: `WidgetUtils` provides
+  `isDarkTheme()` + theme-aware palette getters; `DCPanel` and `DCLabel`
+  re-map their light-theme palette colors on `updateUI()` (triggered by
+  `FlatLaf.updateUI()` on theme switches); `BORDER_THIN`/`BORDER_INPUT`/
+  `BORDER_TABLE_PANEL`/list-item dividers and table striping paint with
+  theme-aware colors.
+- **Launcher scripts**: `datacleaner.sh`/`datacleaner.cmd` now guard for
+  Java 21+. No bundled JREs exist in the repo.
+
+### Still open (future polish)
+
+- Convert the remaining ~95 PNG icons to SVG siblings (mechanism in place;
+  adding an `.svg` next to a `.png` is all it takes).
+- Datastore-type icons are largely vendor logos — vectorizing them requires
+  the original artwork.
+- Full visual QA pass per the verification checklist below (screenshots on
+  Windows HiDPI 125/150%, macOS Retina; dark mode smoke test).
+- Consider `flatlaf-swingx`/`flatlaf-jide-oss` addons if more SwingX
+  components need FlatLaf-consistent styling while they remain in use.
+- The FontAwesome 4.3 icon font is still bundled for misc glyphs
+  (`WidgetUtils.CHAR_*`); a maintained icon set would be a nice follow-up.
 
 ---
 

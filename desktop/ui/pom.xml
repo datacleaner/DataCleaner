@@ -226,12 +226,6 @@
 			<artifactId>freemarker</artifactId>
 		</dependency>
 
-		<!-- Enough Hadoop for uploading and submitting jobs -->
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-		</dependency>
-
 		<!-- Logging dependencies -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

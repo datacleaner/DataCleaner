@@ -19,8 +19,16 @@
  */
 package org.datacleaner.macos;
 
+import java.awt.Desktop;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
+import java.awt.Taskbar;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.OpenFilesEvent;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitResponse;
+import java.io.File;
+import java.util.Locale;
 
 import javax.inject.Provider;
 
@@ -32,9 +40,6 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.windows.AboutDialog;
 import org.datacleaner.windows.OptionsDialog;
-import org.simplericity.macify.eawt.ApplicationEvent;
-import org.simplericity.macify.eawt.ApplicationListener;
-import org.simplericity.macify.eawt.DefaultApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,51 +50,6 @@ import com.google.inject.Inject;
  * @author Kasper Sørensen
  */
 public class MacOSManager {
-
-    public class DCApplicationListener implements ApplicationListener {
-
-        @Override
-        public void handleAbout(final ApplicationEvent event) {
-            final AboutDialog dialog = new AboutDialog(_windowContext);
-            dialog.setVisible(true);
-            event.setHandled(true);
-        }
-
-        @Override
-        public void handleOpenFile(final ApplicationEvent event) {
-            final String filename = event.getFilename();
-            final OpenAnalysisJobActionListener actionListener = _openAnalysisJobActionListenerProvider.get();
-            try {
-                final FileObject file = VFSUtils.getFileSystemManager().resolveFile(filename);
-                actionListener.openFile(file);
-            } catch (final FileSystemException e) {
-                throw new IllegalArgumentException("Could not resolve filename: " + filename, e);
-            }
-        }
-
-        @Override
-        public void handlePreferences(final ApplicationEvent event) {
-            final OptionsDialog dialog = _optionsDialogProvider.get();
-            dialog.setVisible(true);
-        }
-
-        @Override
-        public void handleQuit(final ApplicationEvent event) {
-            _windowContext.exit();
-        }
-
-        @Override
-        public void handleOpenApplication(final ApplicationEvent event) {
-        }
-
-        @Override
-        public void handlePrintFile(final ApplicationEvent event) {
-        }
-
-        @Override
-        public void handleReOpenApplication(final ApplicationEvent event) {
-        }
-    }
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final WindowContext _windowContext;
@@ -104,37 +64,93 @@ public class MacOSManager {
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _optionsDialogProvider = optionsDialogProvider;
     }
-    
-    private BufferedImage bufferedImage(Image image) throws IllegalArgumentException {
-    	if (image instanceof BufferedImage) {
-    		return (BufferedImage) image;
-    	}
-        int width = image.getWidth(null);
-        int height = image.getHeight(null);
-        if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("Image dimensions are invalid");
+
+    private boolean isMacOS() {
+        return System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH).startsWith("mac");
+    }
+
+    private void handleAbout(final AboutEvent event) {
+        final AboutDialog dialog = new AboutDialog(_windowContext);
+        dialog.setVisible(true);
+    }
+
+    private void handleOpenFiles(final OpenFilesEvent event) {
+        final OpenAnalysisJobActionListener actionListener = _openAnalysisJobActionListenerProvider.get();
+        for (final File file : event.getFiles()) {
+            final String filename = file.getAbsolutePath();
+            try {
+                final FileObject fileObject = VFSUtils.getFileSystemManager().resolveFile(filename);
+                actionListener.openFile(fileObject);
+            } catch (final FileSystemException e) {
+                throw new IllegalArgumentException("Could not resolve filename: " + filename, e);
+            }
         }
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        bufferedImage.getGraphics().drawImage(image, 0, 0, null);
-        return bufferedImage;
+    }
+
+    private void handlePreferences(final PreferencesEvent event) {
+        final OptionsDialog dialog = _optionsDialogProvider.get();
+        dialog.setVisible(true);
+    }
+
+    private void handleQuit(final QuitEvent event, final QuitResponse response) {
+        _windowContext.exit();
+        response.performQuit();
+    }
+
+    private void setApplicationIcon() {
+        try {
+            if (!Taskbar.isTaskbarSupported()) {
+                logger.debug("Taskbar is not supported, omitting Mac OS application icon");
+                return;
+            }
+            final Taskbar taskbar = Taskbar.getTaskbar();
+            if (!taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
+                logger.debug("Taskbar icon images are not supported, omitting Mac OS application icon");
+                return;
+            }
+            final Image image = ImageManager.get().getImage("images/menu/dc-logo-30.png");
+            taskbar.setIconImage(image);
+        } catch (final RuntimeException e) {
+            logger.debug("Could not set Mac OS application icon", e);
+        }
+    }
+
+    private void initDesktopIntegration() {
+        if (!Desktop.isDesktopSupported()) {
+            logger.debug("Desktop API is not supported, omitting Mac OS menu integration");
+            return;
+        }
+
+        final Desktop desktop = Desktop.getDesktop();
+        if (desktop.isSupported(Desktop.Action.APP_ABOUT)) {
+            desktop.setAboutHandler(this::handleAbout);
+        }
+        if (desktop.isSupported(Desktop.Action.APP_PREFERENCES)) {
+            desktop.setPreferencesHandler(this::handlePreferences);
+        }
+        if (desktop.isSupported(Desktop.Action.APP_OPEN_FILE)) {
+            desktop.setOpenFileHandler(this::handleOpenFiles);
+        }
+        if (desktop.isSupported(Desktop.Action.APP_QUIT_HANDLER)) {
+            desktop.setQuitHandler(this::handleQuit);
+        }
     }
 
     public void init() {
-        final DefaultApplication app = new DefaultApplication();
-
-        if (!app.isMac()) {
+        if (!isMacOS()) {
             logger.debug("Omitting Mac OS initialization, since operating system is not Mac OS");
             return;
         }
 
         System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("apple.awt.application.name", "DataCleaner");
 
-        final Image image = ImageManager.get().getImage("images/menu/dc-logo-30.png");
-        app.setApplicationIconImage(bufferedImage(image));
-        app.addAboutMenuItem();
-        app.setEnabledAboutMenu(true);
-        app.addPreferencesMenuItem();
-        app.setEnabledPreferencesMenu(true);
-        app.addApplicationListener(new DCApplicationListener());
+        setApplicationIcon();
+
+        try {
+            initDesktopIntegration();
+        } catch (final RuntimeException e) {
+            logger.warn("Could not initialize Mac OS desktop integration", e);
+        }
     }
 }

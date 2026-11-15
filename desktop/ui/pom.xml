@@ -29,7 +29,6 @@
 						</manifest>
 						<manifestEntries>
 							<SplashScreen-Image>images/splash.png</SplashScreen-Image>
-							<Add-Exports>java.desktop/com.apple.eawt=ALL-UNNAMED</Add-Exports>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -184,11 +183,6 @@
 			<groupId>args4j</groupId>
 			<artifactId>args4j</artifactId>
 			<version>2.0.16</version>
-		</dependency>
-		<dependency>
-			<groupId>org.simplericity.macify</groupId>
-			<artifactId>macify</artifactId>
-			<version>1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>

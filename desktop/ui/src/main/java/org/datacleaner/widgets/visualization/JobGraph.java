@@ -474,7 +474,7 @@ public final class JobGraph {
         renderContext.setEdgeShapeTransformer(transformers.getEdgeShapeTransformer());
         renderContext.setEdgeLabelClosenessTransformer(JobGraphTransformers.EDGE_LABEL_CLOSENESS_TRANSFORMER);
         renderContext.setEdgeLabelRenderer(transformers.getEdgeLabelRenderer());
-        renderContext.setVertexIconTransformer(JobGraphTransformers.VERTEX_ICON_TRANSFORMER);
+        renderContext.setVertexIconTransformer(transformers.getVertexIconTransformer());
         renderContext.setVertexShapeTransformer(JobGraphTransformers.VERTEX_SHAPE_TRANSFORMER);
 
         final JButton graphPreferencesButton = createGraphPreferencesButton();

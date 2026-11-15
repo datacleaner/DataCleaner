@@ -25,7 +25,9 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -100,46 +102,37 @@ public class JobGraphTransformers {
         }
         return obj.toString();
     };
-    public static final Function<Object, Shape> VERTEX_SHAPE_TRANSFORMER = input -> {
-        final int size = IconUtils.ICON_SIZE_LARGE;
-        final int offset = -size / 2;
-        return new Rectangle(new Point(offset, offset), new Dimension(size, size));
-    };
+
+    /**
+     * Vertex shape is fixed size, so it is precomputed to avoid per-vertex allocations on every paint.
+     */
+    public static final Function<Object, Shape> VERTEX_SHAPE_TRANSFORMER;
+
+    static {
+        final int vertexShapeSize = IconUtils.ICON_SIZE_LARGE;
+        final int vertexShapeOffset = -vertexShapeSize / 2;
+        VERTEX_SHAPE_TRANSFORMER = input -> new Rectangle(
+                new Point(vertexShapeOffset, vertexShapeOffset), new Dimension(vertexShapeSize, vertexShapeSize));
+    }
+
     private static final ImageManager imageManager = ImageManager.get();
-    public static final Function<Object, Icon> VERTEX_ICON_TRANSFORMER = obj -> {
-        if (obj == JobGraph.MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
-            return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
-        }
-        if (obj instanceof ComponentBuilder) {
-            final ComponentBuilder componentBuilder = (ComponentBuilder) obj;
-            final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
-            final boolean configured;
-            if (componentBuilder.getInput().length == 0) {
-                configured = true;
-            } else {
-                configured = componentBuilder.isConfigured(false);
-            }
-            return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
-        }
-        if (obj instanceof FilterOutcome) {
-            return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
-        }
-        if (obj instanceof Table) {
-            return imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_LARGE);
-        }
-        if (obj instanceof Class) {
-            final Class<?> cls = (Class<?>) obj;
-            if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
-                return imageManager.getImageIcon(IconUtils.MODEL_RESULT, IconUtils.ICON_SIZE_LARGE);
-            }
-        }
-        return imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_LARGE);
-    };
     private final UserPreferences _userPreferences;
     private final Set<Object> _highlighedVertexes;
     private final DirectedGraph<Object, JobGraphLink> _graph;
     private final Font _normalFont;
     private final Font _boldFont;
+
+    /**
+     * Cache of vertex icons. Building icons (in particular the "unconfigured" error overlay) allocates a
+     * BufferedImage per icon, which is far too expensive to do per vertex on every paint.
+     */
+    private final Map<String, Icon> _vertexIconCache = new ConcurrentHashMap<>();
+
+    /**
+     * Cached "wedge" edge shape, used for compound requirement links. Created lazily because it is only needed
+     * for some graphs.
+     */
+    private Function<? super JobGraphLink, Shape> _compoundEdgeShapeTransformer;
 
     public JobGraphTransformers(DirectedGraph<Object, JobGraphLink> graph, final UserPreferences userPreferences,
             final Set<Object> highlighedVertexes) {
@@ -177,7 +170,10 @@ public class JobGraphTransformers {
                 // make a double link (actually a wedge, but close
                 // enough) to show that there are more than one filter
                 // outcome coming from this source
-                return EdgeShape.wedge(_graph, 10).apply(input);
+                if (_compoundEdgeShapeTransformer == null) {
+                    _compoundEdgeShapeTransformer = EdgeShape.wedge(_graph, 10);
+                }
+                return _compoundEdgeShapeTransformer.apply(input);
             }
             return result;
         };
@@ -262,6 +258,46 @@ public class JobGraphTransformers {
                 return _boldFont;
             }
             return _normalFont;
+        };
+    }
+
+    /**
+     * Provides the vertex icon transformer. Icons are cached per descriptor and configuration state, because
+     * building them (notably the "unconfigured" error overlay) allocates a BufferedImage per icon - much too
+     * expensive to do for every vertex on every paint.
+     */
+    public Function<Object, Icon> getVertexIconTransformer() {
+        return obj -> {
+            if (obj == JobGraph.MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
+                return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
+            }
+            if (obj instanceof ComponentBuilder) {
+                final ComponentBuilder componentBuilder = (ComponentBuilder) obj;
+                final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+                final boolean configured;
+                if (componentBuilder.getInput().length == 0) {
+                    configured = true;
+                } else {
+                    configured = componentBuilder.isConfigured(false);
+                }
+                final String cacheKey =
+                        descriptor.getComponentClass().getName() + "#" + configured + "#" + IconUtils.ICON_SIZE_LARGE;
+                return _vertexIconCache.computeIfAbsent(cacheKey,
+                        key -> IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE));
+            }
+            if (obj instanceof FilterOutcome) {
+                return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
+            }
+            if (obj instanceof Table) {
+                return imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_LARGE);
+            }
+            if (obj instanceof Class) {
+                final Class<?> cls = (Class<?>) obj;
+                if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
+                    return imageManager.getImageIcon(IconUtils.MODEL_RESULT, IconUtils.ICON_SIZE_LARGE);
+                }
+            }
+            return imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_LARGE);
         };
     }
 }

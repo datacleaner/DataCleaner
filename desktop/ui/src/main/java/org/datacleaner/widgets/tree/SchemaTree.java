@@ -20,6 +20,8 @@
 package org.datacleaner.widgets.tree;
 
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -158,6 +160,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         protected void done() {
             _schemaNode.remove(0);
             updateTreeNodeStructure(_schemaNode);
+            loadingStopped();
         }
 
     }
@@ -193,8 +196,14 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         protected void done() {
             _tableNode.remove(0);
             updateTreeNodeStructure(_tableNode);
+            loadingStopped();
         }
 
+    }
+
+    private void setBusyCursor(final boolean busy) {
+        final Cursor cursor = busy ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : null;
+        setCursor(cursor);
     }
 
     /**
@@ -211,8 +220,27 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         repaint();
     }
 
+    /**
+     * Shows/hides the busy ("wait") cursor to give the user feedback that the tree is working on loading content.
+     * A counter is used since multiple loads (e.g. several schema expansions) may overlap.
+     */
+    private int _loadingCount;
+
+    private synchronized void loadingStarted() {
+        _loadingCount++;
+        setBusyCursor(true);
+    }
+
+    private synchronized void loadingStopped() {
+        _loadingCount = Math.max(0, _loadingCount - 1);
+        if (_loadingCount == 0) {
+            setBusyCursor(false);
+        }
+    }
+
     public static final String LOADING_TABLES_STRING = "Loading tables...";
     public static final String LOADING_COLUMNS_STRING = "Loading columns...";
+    public static final String LOADING_DATASTORE_STRING = "Loading datastore...";
     public static final String UNNAMED_SCHEMA_STRING = "(unnamed schema)";
     public static final String LIBRARY_STRING = "Library";
     public static final String ROOT_NODE_STRING = "Schemas";
@@ -285,7 +313,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             addMouseListener(injector.getInstance(ColumnMouseListener.class));
             addMouseListener(injector.getInstance(ComponentDescriptorMouseListener.class));
         }
-        updateTree();
+        updateTreeAsync();
     }
 
     @Override
@@ -324,6 +352,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
     public void expandStandardPaths() {
         final TreeNode root = (TreeNode) getModel().getRoot();
+        if (root.getChildCount() < 2) {
+            // tree has not been fully loaded yet
+            return;
+        }
         final DefaultMutableTreeNode schemaNode = (DefaultMutableTreeNode) root.getChildAt(0);
         final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
 
@@ -374,7 +406,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         return _windowContext;
     }
 
-    private void updateTree() {
+    /**
+     * Builds the tree model (datastore schemas + component library). Assumes that schemas have been refreshed.
+     */
+    private DefaultTreeModel buildTreeModel() {
         final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
         final DefaultMutableTreeNode datastoreNode = new DefaultMutableTreeNode();
@@ -382,7 +417,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
         datastoreNode.setUserObject(_datastoreConnection.getDatastore());
         final SchemaNavigator schemaNavigator = _datastoreConnection.getSchemaNavigator();
-        schemaNavigator.refreshSchemas();
         final Schema[] schemas = schemaNavigator.getSchemas();
 
         // make sure that information schemas are arranged at the top
@@ -400,8 +434,37 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             rootNode.add(libraryRoot);
         }
 
-        final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
-        setModel(treeModel);
+        return new DefaultTreeModel(rootNode);
+    }
+
+    /**
+     * Refreshes the schemas of the datastore and rebuilds the tree. The (potentially slow) schema refresh is
+     * performed on a background thread while the tree shows a "loading" placeholder and a busy cursor.
+     */
+    private void updateTreeAsync() {
+        loadingStarted();
+        setModel(new DefaultTreeModel(new DefaultMutableTreeNode(LOADING_DATASTORE_STRING)));
+
+        final SchemaNavigator schemaNavigator = _datastoreConnection.getSchemaNavigator();
+        final SwingWorker<DefaultTreeModel, Void> worker = new SwingWorker<DefaultTreeModel, Void>() {
+            @Override
+            protected DefaultTreeModel doInBackground() {
+                schemaNavigator.refreshSchemas();
+                return buildTreeModel();
+            }
+
+            @Override
+            protected void done() {
+                loadingStopped();
+                try {
+                    setModel(get());
+                } catch (final Exception e) {
+                    logger.error("Failed to load datastore schemas", e);
+                }
+                expandStandardPaths();
+            }
+        };
+        worker.execute();
     }
 
     private DefaultMutableTreeNode createLibrary(final DefaultMutableTreeNode libraryRoot) {
@@ -522,6 +585,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         }
 
         if (worker != null) {
+            // show busy cursor while the loading is in progress
+            loadingStarted();
             worker.execute();
         }
     }
@@ -601,6 +666,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         }
 
         final boolean opaque = hasFocus || selected;
+        if (value instanceof String && isPlaceholderText((String) value)) {
+            // render loading placeholders in italic to signal ongoing work
+            component.setFont(component.getFont().deriveFont(Font.ITALIC));
+        }
         if (component instanceof JComponent) {
             ((JComponent) component).setOpaque(opaque);
         }
@@ -616,6 +685,11 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         }
 
         return component;
+    }
+
+    private static boolean isPlaceholderText(final String str) {
+        return LOADING_TABLES_STRING.equals(str) || LOADING_COLUMNS_STRING.equals(str)
+                || LOADING_DATASTORE_STRING.equals(str);
     }
 
     @Override
@@ -684,6 +758,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     public void onDescriptorsUpdated(final DescriptorProvider descriptorProvider) {
         WidgetUtils.invokeSwingAction(() -> {
             final TreeNode root = (TreeNode) getModel().getRoot();
+            if (root.getChildCount() < 2) {
+                // tree has not been fully loaded yet
+                return;
+            }
             final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
             libraryNode.removeAllChildren();
             createLibrary(libraryNode);
@@ -698,13 +776,13 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
      * Refreshes the tree's contents
      */
     public void refreshDatastore() {
-        updateTree();
+        updateTreeAsync();
         expandStandardPaths();
     }
 
     public void filter(final String searchTerm) {
         _searchTerm = searchTerm;
-        updateTree();
+        setModel(buildTreeModel());
         expandStandardPaths();
 
         // Expand only when search is active

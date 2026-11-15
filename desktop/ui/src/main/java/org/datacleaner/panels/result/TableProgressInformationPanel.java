@@ -107,8 +107,8 @@ public class TableProgressInformationPanel extends DCPanel {
         panel.setLayout(new BorderLayout());
         panel.add(iconLabel, BorderLayout.CENTER);
         panel.add(tableNameLabel, BorderLayout.SOUTH);
-        panel.setMaximumSize(new Dimension(150, 150));
-        panel.setMinimumSize(new Dimension(150, 10));
+        panel.setMaximumSize(new Dimension(WidgetUtils.scalePx(150), WidgetUtils.scalePx(150)));
+        panel.setMinimumSize(new Dimension(WidgetUtils.scalePx(150), WidgetUtils.scalePx(10)));
         return panel;
     }
 

@@ -89,7 +89,7 @@ public class DCPopupBubble {
             label.setIcon(icon);
         }
         label.setFont(WidgetUtils.FONT_SMALL);
-        label.setSize(240, 60);
+        label.setSize(WidgetUtils.scalePx(240), WidgetUtils.scalePx(60));
         if (_position == Position.BOTTOM) {
             label.setLocation(5, 20);
         } else {
@@ -98,7 +98,7 @@ public class DCPopupBubble {
         label.setVerticalAlignment(JLabel.CENTER);
 
         _panel.setLayout(null);
-        _panel.setSize(250, 81);
+        _panel.setSize(WidgetUtils.scalePx(250), WidgetUtils.scalePx(81));
         _panel.add(label);
     }
 

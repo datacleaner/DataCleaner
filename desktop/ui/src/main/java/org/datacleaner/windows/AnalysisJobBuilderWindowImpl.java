@@ -332,7 +332,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         _windowSizePreference =
                 new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
-        setMinimumSize(new Dimension(900, 550));
+        setMinimumSize(new Dimension(WidgetUtils.scalePx(900), WidgetUtils.scalePx(550)));
 
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);

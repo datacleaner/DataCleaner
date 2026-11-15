@@ -82,7 +82,7 @@ public class OptionsDialog extends AbstractWindow {
     protected OptionsDialog(final WindowContext windowContext, final DataCleanerConfiguration configuration,
             final UserPreferences userPreferences, final DatabaseDriversPanel databaseDriversPanel) {
         super(windowContext);
-        setMinimumSize(new Dimension(500, 500));
+        setMinimumSize(new Dimension(WidgetUtils.scalePx(500), WidgetUtils.scalePx(500)));
         _userPreferences = userPreferences;
         _configuration = configuration;
         _tabbedPane = new CloseableTabbedPane(true);
@@ -359,7 +359,7 @@ public class OptionsDialog extends AbstractWindow {
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
-        panel.setPreferredSize(700, 500);
+        panel.setPreferredSize(WidgetUtils.scalePx(700), WidgetUtils.scalePx(500));
 
         return panel;
     }

@@ -181,7 +181,7 @@ public class AboutDialog extends AbstractDialog {
                 "Licensing");
         tabbedPane.setUnclosableTab(1);
 
-        tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 500));
+        tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), WidgetUtils.scalePx(500)));
 
         return tabbedPane;
     }

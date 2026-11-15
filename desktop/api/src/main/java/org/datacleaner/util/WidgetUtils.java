@@ -268,6 +268,52 @@ public final class WidgetUtils {
     public static final int DIALOG_WIDTH_NARROW = adjuster.adjust(400);
     public static final int DIALOG_WIDTH_WIDE = adjuster.adjust(700);
 
+    // ------------------------------------------------------------------
+    // Spacing & typography scale system
+    //
+    // Base spacing units in unscaled "design pixels". They are scaled with
+    // the UI scale factor (see WidgetScreenResolutionAdjuster / FlatLaf
+    // UIScale) so that paddings and gaps follow the OS zoom setting and the
+    // datacleaner.ui.scale property. Use these (or scalePx()) instead of raw
+    // pixel literals; the font constants above (FONT_SMALL, FONT_NORMAL,
+    // FONT_HEADER1, FONT_HEADER2, FONT_BANNER) form the typographic scale.
+    // ------------------------------------------------------------------
+
+    /** Small spacing, e.g. between a label and its field (base 4px). */
+    public static final int SPACING_SMALL = adjuster.adjust(4);
+
+    /** Medium spacing, e.g. between form fields (base 8px). */
+    public static final int SPACING_MEDIUM = adjuster.adjust(8);
+
+    /** Large spacing, e.g. between form sections (base 16px). */
+    public static final int SPACING_LARGE = adjuster.adjust(16);
+
+    /** Extra large spacing, e.g. between panels or dialog sections (base 24px). */
+    public static final int SPACING_XLARGE = adjuster.adjust(24);
+
+    /**
+     * Scales a value in "design pixels" with the UI scale factor (OS zoom and
+     * {@code datacleaner.ui.scale}). Use for one-off pixel sizes that cannot
+     * be expressed through the spacing constants above.
+     *
+     * @param px unscaled pixel value
+     * @return scaled pixel value
+     */
+    public static int scalePx(final int px) {
+        return adjuster.adjust(px);
+    }
+
+    /**
+     * Scales a value in "design pixels" with the UI scale factor (OS zoom and
+     * {@code datacleaner.ui.scale}).
+     *
+     * @param px unscaled pixel value
+     * @return scaled pixel value
+     */
+    public static float scalePx(final float px) {
+        return adjuster.adjust(px);
+    }
+
     private WidgetUtils() {
         // prevent instantiation
     }

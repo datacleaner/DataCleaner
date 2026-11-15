@@ -171,7 +171,8 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
         }
 
         final JScrollPane checkBoxScrollPane = WidgetUtils.scrolleable(checkBoxPanel);
-        checkBoxScrollPane.setPreferredSize(new Dimension(checkBoxPanel.getWidth(), 300));
+        checkBoxScrollPane
+                .setPreferredSize(new Dimension(checkBoxPanel.getWidth(), WidgetUtils.scalePx(300)));
         checkBoxScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         checkBoxScrollPane.setBackground(_outerPanel.getBackground());
         WidgetUtils.addToGridBag(checkBoxScrollPane, formPanel, 0, 1, 2, 1);

@@ -155,7 +155,8 @@ public class QueryWindow extends AbstractWindow {
         outerPanel.add(_upperPanel, BorderLayout.NORTH);
         outerPanel.add(_centerPanel, BorderLayout.CENTER);
 
-        outerPanel.setPreferredSize(new Dimension(900, 400));
+        outerPanel.setPreferredSize(
+                new Dimension(WidgetUtils.scalePx(900), WidgetUtils.scalePx(400)));
 
         return outerPanel;
     }

@@ -41,7 +41,7 @@ public class FormPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int FIELD_LABEL_WIDTH = 240;
+    private static final int FIELD_LABEL_WIDTH = WidgetUtils.scalePx(240);
     private static final Insets INSETS = new Insets(2, 2, 2, 2);
     private int _rowCounter;
 

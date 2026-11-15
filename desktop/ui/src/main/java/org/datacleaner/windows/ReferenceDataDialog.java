@@ -130,7 +130,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
 
         updateSelectedTab();
 
-        _tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
+        _tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), WidgetUtils.scalePx(550)));
 
         final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         closeButton.addActionListener(e -> ReferenceDataDialog.this.dispose());

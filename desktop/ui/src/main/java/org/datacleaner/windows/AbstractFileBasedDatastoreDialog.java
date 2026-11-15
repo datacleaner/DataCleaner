@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import javax.swing.JPanel;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
@@ -67,7 +68,6 @@ import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.table.DCTable;
-import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -351,7 +351,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
         centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
-        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JPanel statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);

@@ -34,12 +34,10 @@ import java.awt.LayoutManager;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -57,14 +55,12 @@ import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.widgets.table.DCTablePanel;
 import org.datacleaner.windows.ErrorDialog;
-import org.jdesktop.swingx.JXErrorPane;
-import org.jdesktop.swingx.border.DropShadowBorder;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.error.ErrorInfo;
-import org.jdesktop.swingx.error.ErrorLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.formdev.flatlaf.ui.FlatDropShadowBorder;
 
 public final class WidgetUtils {
 
@@ -177,7 +173,7 @@ public final class WidgetUtils {
     public static final int BORDER_WIDE_WIDTH = pix(4);
 
     public static final Border BORDER_SHADOW =
-            new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, pix(6));
+            new FlatDropShadowBorder(WidgetUtils.BG_COLOR_DARK, pix(6), 0.2f);
 
     public static final Border BORDER_WIDE_ALTERNATIVE =
             new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
@@ -488,39 +484,20 @@ public final class WidgetUtils {
     }
 
     public static void showErrorMessage(final String shortMessage, final String detailedMessage) {
-        final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
-        final String finalShortMessage = shortMessage == null ? "" : shortMessage;
-        final ErrorDialog dialog = new ErrorDialog(finalShortMessage, finalDetailedMessage);
-
-        dialog.setModal(true);
-        dialog.open();
+        showErrorMessage(shortMessage, detailedMessage, null);
     }
 
     public static void showErrorMessage(final String shortMessage, final String detailedMessage,
             final Throwable exception) {
-        final Throwable presentedException = ErrorUtils.unwrapForPresentation(exception);
-        if (exception == null) {
-            showErrorMessage(shortMessage, detailedMessage);
-            return;
-        }
-
         final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
         final String finalShortMessage = shortMessage == null ? "" : shortMessage;
+        final Throwable presentedException =
+                exception == null ? null : ErrorUtils.unwrapForPresentation(exception);
 
-        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error", presentedException,
-                ErrorLevel.SEVERE, null);
-        final JXErrorPane errorPane = new JXErrorPane();
-        errorPane.setErrorInfo(info);
+        final ErrorDialog dialog = new ErrorDialog(finalShortMessage, finalDetailedMessage, presentedException);
 
-        final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
-
-        centerOnScreen(dialog);
-        JXErrorPane.setDefaultLocale(Locale.ENGLISH);
-        dialog.setLocale(Locale.ENGLISH);
         dialog.setModal(true);
-        dialog.setTitle(finalShortMessage);
-        dialog.setVisible(true);
-        dialog.toFront();
+        dialog.open();
     }
 
     public static void showErrorMessage(final String shortMessage, final Throwable exception) {

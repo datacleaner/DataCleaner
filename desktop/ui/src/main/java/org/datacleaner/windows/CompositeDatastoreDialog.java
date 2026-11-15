@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -46,7 +47,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCLabel;
-import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -184,7 +184,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
         centerPanel.add(formPanel);
         centerPanel.add(buttonPanel);
 
-        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JPanel statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
         _outerPanel.setLayout(new BorderLayout());
         _outerPanel.add(centerPanel, BorderLayout.CENTER);

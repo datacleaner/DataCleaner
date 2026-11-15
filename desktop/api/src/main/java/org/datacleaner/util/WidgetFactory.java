@@ -43,6 +43,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -58,12 +59,10 @@ import org.datacleaner.widgets.PopupButton;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXFormattedTextField;
-import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.JXTitledPanel;
-import org.jdesktop.swingx.plaf.basic.BasicStatusBarUI;
 import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -240,15 +239,21 @@ public final class WidgetFactory {
         return createDarkButton(text, icon);
     }
 
-    public static JXStatusBar createStatusBar(final JComponent comp) {
-        final JXStatusBar statusBar = new JXStatusBar();
-        statusBar.putClientProperty(BasicStatusBarUI.AUTO_ADD_SEPARATOR, false);
+    /**
+     * Creates a dark status bar panel with the given component as its main
+     * content. Additional components can be added with
+     * {@code BorderLayout.EAST} / {@code BorderLayout.WEST} constraints.
+     *
+     * @param comp the main status component
+     * @return a status bar panel
+     */
+    public static JPanel createStatusBar(final JComponent comp) {
+        final JPanel statusBar = new JPanel(new BorderLayout());
         statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
         final MatteBorder outerBorder = new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_LESS_DARK);
         final EmptyBorder innerBorder = new EmptyBorder(2, 2, 2, 2);
         statusBar.setBorder(new CompoundBorder(outerBorder, innerBorder));
-        final JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
-        statusBar.add(comp, c1);
+        statusBar.add(comp, BorderLayout.CENTER);
         return statusBar;
     }
 

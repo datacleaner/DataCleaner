@@ -37,6 +37,7 @@ import java.util.ServiceLoader;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.swing.JPanel;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -116,7 +117,6 @@ import org.datacleaner.widgets.InformationPanelDescriptor;
 import org.datacleaner.widgets.InformationPanelLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.visualization.JobGraph;
-import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -794,12 +794,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
         toolBar.add(WidgetFactory.createToolBarSeparator());
         _executeButton.addComponentsToToolbar(toolBar);
 
-        final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+        final JPanel statusBar = WidgetFactory.createStatusBar(_statusLabel);
         final RightInformationPanel rightInformationPanel = new RightInformationPanel(_glassPane);
 
         if (Version.isCommunityEdition()) {
             final CommunityEditionStatusLabel statusLabel = new CommunityEditionStatusLabel();
-            statusBar.add(statusLabel);
+            statusBar.add(statusLabel, BorderLayout.EAST);
             statusBar.add(Box.createHorizontalStrut(20));
         } else {
             final ServiceLoader<InformationPanelDescriptor> panelsLoaders =

@@ -244,7 +244,7 @@ public class SchemaTreePanel extends DCPanel {
 
     private void updateParentPanel() {
         if (_updatePanel != null) {
-            _updatePanel.updateUI();
+            _updatePanel.revalidate(); _updatePanel.repaint();
         }
     }
 

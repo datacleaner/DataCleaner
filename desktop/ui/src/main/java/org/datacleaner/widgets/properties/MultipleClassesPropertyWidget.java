@@ -70,7 +70,7 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
             final int componentCount = _outerPanel.getComponentCount();
             if (componentCount > 0) {
                 removeComboBox();
-                _outerPanel.updateUI();
+                _outerPanel.revalidate(); _outerPanel.repaint();
                 fireValueChanged();
             }
         });
@@ -119,7 +119,7 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
             while (_outerPanel.getComponentCount() > values.length) {
                 removeComboBox();
             }
-            _outerPanel.updateUI();
+            _outerPanel.revalidate(); _outerPanel.repaint();
         }
     }
 
@@ -147,7 +147,7 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
 
         _outerPanel.add(decoration);
         if (updateUI) {
-            _outerPanel.updateUI();
+            _outerPanel.revalidate(); _outerPanel.repaint();
         }
     }
 

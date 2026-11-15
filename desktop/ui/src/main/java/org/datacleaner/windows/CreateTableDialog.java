@@ -256,7 +256,7 @@ public class CreateTableDialog extends AbstractDialog {
     public void removeColumnDefinitionPanel(final CreateTableColumnDefintionPanel columnDefintionPanel) {
         _columnDefinitionPanels.remove(columnDefintionPanel);
         _columnsListPanel.remove(columnDefintionPanel);
-        _columnsListPanel.updateUI();
+        _columnsListPanel.revalidate(); _columnsListPanel.repaint();
     }
 
     public void addColumnDefinitionPanel() {
@@ -268,12 +268,12 @@ public class CreateTableDialog extends AbstractDialog {
     protected void removeAllColumns() {
         _columnDefinitionPanels.clear();
         _columnsListPanel.removeAll();
-        _columnsListPanel.updateUI();
+        _columnsListPanel.revalidate(); _columnsListPanel.repaint();
     }
 
     private void addColumnDefinitionPanel(final CreateTableColumnDefintionPanel columnDefintionPanel) {
         _columnDefinitionPanels.add(columnDefintionPanel);
         _columnsListPanel.add(columnDefintionPanel);
-        _columnsListPanel.updateUI();
+        _columnsListPanel.revalidate(); _columnsListPanel.repaint();
     }
 }

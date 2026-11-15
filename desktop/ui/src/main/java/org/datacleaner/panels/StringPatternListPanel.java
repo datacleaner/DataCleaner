@@ -216,7 +216,7 @@ public class StringPatternListPanel extends DCPanel implements ReferenceDataChan
             _listPanel.add(DCLabel.dark("(none)"));
         }
 
-        updateUI();
+        revalidate(); repaint();
     }
 
     @Override

@@ -72,7 +72,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
             final int componentCount = _textFieldPanel.getComponentCount();
             if (componentCount > 0) {
                 removeTextField();
-                _textFieldPanel.updateUI();
+                _textFieldPanel.revalidate(); _textFieldPanel.repaint();
                 fireValueChanged();
             }
         });
@@ -121,7 +121,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
             while (_textFieldPanel.getComponentCount() > values.length) {
                 removeTextField();
             }
-            _textFieldPanel.updateUI();
+            _textFieldPanel.revalidate(); _textFieldPanel.repaint();
         }
     }
 
@@ -154,7 +154,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 
         _textFieldPanel.add(decoration);
         if (updateUI) {
-            _textFieldPanel.updateUI();
+            _textFieldPanel.revalidate(); _textFieldPanel.repaint();
         }
     }
 

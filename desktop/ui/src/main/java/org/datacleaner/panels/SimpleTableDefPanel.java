@@ -89,7 +89,7 @@ public class SimpleTableDefPanel extends DCPanel {
         typeComboBox.setSelectedItem(columnType);
 
         _tableModel.addRow(new Object[] { nameTextField, typeComboBox });
-        updateUI();
+        revalidate(); repaint();
     }
 
     private ColumnType[] getAvailableColumnTypes() {

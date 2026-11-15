@@ -70,7 +70,7 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
             final int componentCount = _textFieldPanel.getComponentCount();
             if (componentCount > 0) {
                 removeEntryPanel();
-                _textFieldPanel.updateUI();
+                _textFieldPanel.revalidate(); _textFieldPanel.repaint();
                 fireValueChanged();
             }
         });
@@ -103,7 +103,7 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
         _textFieldPanel.add(entryPanel);
 
         if (updateUI) {
-            _textFieldPanel.updateUI();
+            _textFieldPanel.revalidate(); _textFieldPanel.repaint();
         }
     }
 
@@ -151,7 +151,7 @@ public class MapStringToStringPropertyWidget extends AbstractPropertyWidget<Map<
                 i++;
             }
         });
-        _textFieldPanel.updateUI();
+        _textFieldPanel.revalidate(); _textFieldPanel.repaint();
     }
 
     private void removeEntryPanel() {

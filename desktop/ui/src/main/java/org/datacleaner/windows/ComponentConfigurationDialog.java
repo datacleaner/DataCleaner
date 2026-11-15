@@ -131,7 +131,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             @Override
             protected void onNameChanged() {
                 banner.setTitle2(getBannerTitle2(true));
-                banner.updateUI();
+                banner.revalidate(); banner.repaint();
             }
         });
 

@@ -174,7 +174,7 @@ public class VerticalTabbedPane extends DCPanel {
             listener.stateChanged(index, tab);
         }
 
-        updateUI();
+        revalidate(); repaint();
     }
 
     public <C extends JComponent> Tab<C> addTab(final String title, final Icon icon, final C component) {

@@ -75,7 +75,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
             final int componentCount = _comboBoxPanel.getComponentCount();
             if (componentCount > 0) {
                 removeComboBox();
-                _comboBoxPanel.updateUI();
+                _comboBoxPanel.revalidate(); _comboBoxPanel.repaint();
                 fireValueChanged();
             }
         });
@@ -120,7 +120,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
         _comboBoxPanel.add(comboBox);
 
         if (updateUI) {
-            _comboBoxPanel.updateUI();
+            _comboBoxPanel.revalidate(); _comboBoxPanel.repaint();
         }
     }
 
@@ -170,7 +170,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
                 // remove text boxes if there are too many
                 removeComboBox();
             }
-            _comboBoxPanel.updateUI();
+            _comboBoxPanel.revalidate(); _comboBoxPanel.repaint();
         }
     }
 

@@ -115,7 +115,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         }
         final ResourceTypePresenter<?> presenter = _resourceTypePresenters.get(item);
         presenter.getWidget().setVisible(true);
-        updateUI();
+        revalidate(); repaint();
         _currentPresenter = presenter;
     }
 

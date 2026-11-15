@@ -162,7 +162,7 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
                 remove(_loadingIcon);
                 add(component, BorderLayout.CENTER);
 
-                updateUI();
+                revalidate(); repaint();
             }
 
         }.execute();

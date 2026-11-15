@@ -68,7 +68,7 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
             final int componentCount = _textFieldPanel.getComponentCount();
             if (componentCount > 0) {
                 _textFieldPanel.remove(componentCount - 1);
-                _textFieldPanel.updateUI();
+                _textFieldPanel.revalidate(); _textFieldPanel.repaint();
                 fireValueChanged();
             }
         });
@@ -106,7 +106,7 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
             }
         });
         _textFieldPanel.add(textField);
-        _textFieldPanel.updateUI();
+        _textFieldPanel.revalidate(); _textFieldPanel.repaint();
         return textField;
     }
 

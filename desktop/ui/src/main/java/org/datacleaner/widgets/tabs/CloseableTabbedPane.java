@@ -300,7 +300,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
             }
             final String title = getTitleAt(selectedIndex);
             bannerPanel.setTitle2(title);
-            bannerPanel.updateUI();
+            bannerPanel.revalidate(); bannerPanel.repaint();
         };
         addChangeListener(changeListener);
 

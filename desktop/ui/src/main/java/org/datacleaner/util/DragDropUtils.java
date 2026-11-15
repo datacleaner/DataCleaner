@@ -31,6 +31,7 @@ import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.metamodel.schema.Column;
 import org.datacleaner.metamodel.schema.Table;
 
@@ -99,6 +100,9 @@ public class DragDropUtils {
                 } else if (modelObject instanceof Table) {
                     final Image image = ImageManager.get().getImage(IconUtils.MODEL_TABLE);
                     setDragImage(image);
+                } else if (modelObject instanceof ComponentDescriptor) {
+                    final ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) modelObject;
+                    setDragImage(IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_MEDIUM).getImage());
                 }
 
                 return transferable;

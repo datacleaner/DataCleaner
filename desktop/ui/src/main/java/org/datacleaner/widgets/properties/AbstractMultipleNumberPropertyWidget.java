@@ -72,7 +72,7 @@ public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPr
             final int componentCount = _textFieldPanel.getComponentCount();
             if (componentCount > 0) {
                 _textFieldPanel.remove(componentCount - 1);
-                _textFieldPanel.updateUI();
+                _textFieldPanel.revalidate(); _textFieldPanel.repaint();
                 fireValueChanged();
             }
         });
@@ -121,7 +121,7 @@ public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPr
                 // remove text boxes if there are too many
                 _textFieldPanel.remove(_textFieldPanel.getComponentCount() - 1);
             }
-            _textFieldPanel.updateUI();
+            _textFieldPanel.revalidate(); _textFieldPanel.repaint();
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPr
         });
         _textFieldPanel.add(textField);
         if (updateUI) {
-            _textFieldPanel.updateUI();
+            _textFieldPanel.revalidate(); _textFieldPanel.repaint();
         }
     }
 

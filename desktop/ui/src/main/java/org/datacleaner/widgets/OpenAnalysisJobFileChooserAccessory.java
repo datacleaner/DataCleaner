@@ -247,7 +247,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
             _centerPanel.add(columnLabel);
         }
 
-        _centerPanel.updateUI();
+        _centerPanel.revalidate(); _centerPanel.repaint();
         setVisible(true);
     }
 }

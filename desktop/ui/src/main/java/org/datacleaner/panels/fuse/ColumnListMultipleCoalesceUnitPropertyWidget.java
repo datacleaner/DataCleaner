@@ -130,7 +130,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         if (componentCount > 1) {
             final int index = componentCount - 1;
             _unitContainerPanel.remove(index);
-            _unitContainerPanel.updateUI();
+            _unitContainerPanel.revalidate(); _unitContainerPanel.repaint();
             fireBothValuesChanged();
         }
         updateUI();
@@ -140,7 +140,7 @@ public class ColumnListMultipleCoalesceUnitPropertyWidget extends AbstractProper
         final int componentCount = _unitContainerPanel.getComponentCount();
         if (componentCount > 1) {
             _unitContainerPanel.remove(coalesceUnitPanel);
-            _unitContainerPanel.updateUI();
+            _unitContainerPanel.revalidate(); _unitContainerPanel.repaint();
             fireBothValuesChanged();
         }
         updateUI();

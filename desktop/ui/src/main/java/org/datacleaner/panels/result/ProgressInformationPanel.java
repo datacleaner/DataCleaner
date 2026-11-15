@@ -198,7 +198,7 @@ public class ProgressInformationPanel extends DCPanel {
         WidgetUtils.invokeSwingAction(() -> {
             _progressBarPanel.add(tableProgressInformationPanel);
             tableProgressInformationPanel.setProgressMaximum(expectedRows);
-            _progressBarPanel.updateUI();
+            _progressBarPanel.revalidate(); _progressBarPanel.repaint();
         });
     }
 

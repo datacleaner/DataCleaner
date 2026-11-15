@@ -387,7 +387,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"), bannerTitle);
         _tabbedPane.addListener((newIndex, newTab) -> {
             banner.setTitle2(newTab.getTitle());
-            banner.updateUI();
+            banner.revalidate(); banner.repaint();
         });
 
         final DCPanel panel = new DCPersistentSizedPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND, _windowSizePreference);
@@ -514,7 +514,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                         // instantiate result panels
                         getOrCreateResultPanel(componentJob, false);
                     }
-                    _tabbedPane.updateUI();
+                    _tabbedPane.revalidate(); _tabbedPane.repaint();
 
                     final String startingProcessingString = "Starting processing of " + table.getName();
 

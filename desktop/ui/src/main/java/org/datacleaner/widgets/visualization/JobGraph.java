@@ -19,7 +19,10 @@
  */
 package org.datacleaner.widgets.visualization;
 
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -99,6 +102,14 @@ public final class JobGraph {
     private int _scrollHorizontal;
     private int _scrollVertical;
 
+    /**
+     * Location of the current drag-and-drop operation (in component coordinates), shown as a drop indicator on the
+     * canvas while the user drags an item from the tree. Null when no drag is in progress.
+     */
+    private Point _dropIndicatorPoint;
+    private long _lastDropLocateTime;
+    private final javax.swing.Timer _dropIndicatorTimer;
+
     public JobGraph(final WindowContext windowContext, final UserPreferences userPreferences,
             final AnalysisJobBuilder analysisJobBuilder) {
         this(windowContext, userPreferences, analysisJobBuilder, null);
@@ -121,6 +132,21 @@ public final class JobGraph {
 
         _panel = new DCPanel();
         _panel.setLayout(new BorderLayout());
+
+        _dropIndicatorTimer = new javax.swing.Timer(250, event -> {
+            // hide the drop indicator if no drag-over location has been reported for a while
+            // (i.e. the drag has left the canvas)
+            if (_dropIndicatorPoint != null && System.currentTimeMillis() - _lastDropLocateTime > 500) {
+                setDropIndicatorPoint(null);
+            }
+        });
+        _dropIndicatorTimer.setRepeats(true);
+        _dropIndicatorTimer.start();
+    }
+
+    private void setDropIndicatorPoint(final Point point) {
+        _dropIndicatorPoint = point;
+        _panel.repaint();
     }
 
     public JobGraph highlightVertex(final Object vertex) {
@@ -132,7 +158,7 @@ public final class JobGraph {
         if (_panel.getComponentCount() == 0) {
             refresh();
         }
-        _panel.updateUI();
+        _panel.revalidate(); _panel.repaint();
         return _panel;
     }
 
@@ -147,7 +173,7 @@ public final class JobGraph {
         final JComponent newComponent = createJComponent(graph);
         _panel.removeAll();
         _panel.add(newComponent, BorderLayout.CENTER);
-        _panel.updateUI();
+        _panel.revalidate(); _panel.repaint();
     }
 
     /**
@@ -181,10 +207,25 @@ public final class JobGraph {
             private static final long serialVersionUID = 1L;
 
             public boolean canImport(final TransferSupport support) {
-                return support.isDataFlavorSupported(DragDropUtils.MODEL_DATA_FLAVOR);
+                final boolean importable =
+                        support.isDrop() && support.isDataFlavorSupported(DragDropUtils.MODEL_DATA_FLAVOR);
+                if (importable) {
+                    // force COPY semantics so that the copy cursor is shown during the drag
+                    support.setDropAction(TransferHandler.COPY);
+                    _lastDropLocateTime = System.currentTimeMillis();
+                    final Point dropPoint = support.getDropLocation().getDropPoint();
+                    if (_dropIndicatorPoint == null) {
+                        setDropIndicatorPoint(dropPoint);
+                    } else {
+                        _dropIndicatorPoint.setLocation(dropPoint);
+                        _panel.repaint();
+                    }
+                }
+                return importable;
             }
 
             public boolean importData(final TransferSupport support) {
+                setDropIndicatorPoint(null);
                 final Transferable transferable = support.getTransferable();
 
                 final Object data;
@@ -248,6 +289,29 @@ public final class JobGraph {
                     g.setColor(WidgetUtils.BG_COLOR_BRIGHT);
                 }
                 g.fillRect(0, 0, visualizationViewer.getWidth(), visualizationViewer.getHeight());
+
+                // draw a drop indicator while a drag-and-drop operation is hovering the canvas
+                final Point dropIndicatorPoint = _dropIndicatorPoint;
+                if (dropIndicatorPoint != null) {
+                    final int radius = adjuster.adjust(14);
+                    final Color originalColor = g.getColor();
+                    final Color indicatorColor =
+                            new Color(WidgetUtils.BG_COLOR_BLUE_MEDIUM.getRGB(), true);
+                    if (g instanceof Graphics2D) {
+                        final Graphics2D g2d = (Graphics2D) g;
+                        final Composite originalComposite = g2d.getComposite();
+                        g2d.setComposite(AlphaComposite.SrcOver.derive(0.6f));
+                        g2d.setColor(indicatorColor);
+                        g2d.fillOval(dropIndicatorPoint.x - radius, dropIndicatorPoint.y - radius, radius * 2,
+                                radius * 2);
+                        g2d.setComposite(originalComposite);
+                    } else {
+                        g.setColor(indicatorColor);
+                        g.fillOval(dropIndicatorPoint.x - radius, dropIndicatorPoint.y - radius, radius * 2,
+                                radius * 2);
+                    }
+                    g.setColor(originalColor);
+                }
 
                 final Dimension size = _panel.getSize();
                 if (size.height < adjuster.adjust(300) || size.width < adjuster.adjust(500)) {

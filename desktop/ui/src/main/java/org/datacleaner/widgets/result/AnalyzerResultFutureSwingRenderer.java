@@ -55,7 +55,7 @@ public class AnalyzerResultFutureSwingRenderer
 
         final DCPanel resultPanel = new DCPanel();
         resultPanel.add(loadingIcon);
-        resultPanel.updateUI();
+        resultPanel.revalidate(); resultPanel.repaint();
 
         renderable.addListener(new AnalyzerResultFuture.Listener<AnalyzerResult>() {
 
@@ -75,7 +75,7 @@ public class AnalyzerResultFutureSwingRenderer
                     }
                 } finally {
                     resultPanel.remove(loadingIcon);
-                    resultPanel.updateUI();
+                    resultPanel.revalidate(); resultPanel.repaint();
                 }
             }
 

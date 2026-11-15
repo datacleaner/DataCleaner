@@ -301,7 +301,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         }
         _table.setModel(model);
         _backButton.setVisible(false);
-        _rightPanel.updateUI();
+        _rightPanel.revalidate(); _rightPanel.repaint();
     }
 
     protected void setDataSetValue(final String label, final Integer value) {
@@ -394,6 +394,6 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         }
         _table.setModel(model);
         _backButton.setVisible(showBackButton);
-        _rightPanel.updateUI();
+        _rightPanel.revalidate(); _rightPanel.repaint();
     }
 }

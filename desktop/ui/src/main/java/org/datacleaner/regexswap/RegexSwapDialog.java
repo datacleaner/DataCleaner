@@ -169,7 +169,7 @@ public class RegexSwapDialog extends AbstractDialog {
                 if (selRow != -1) {
                     final TreePath path = _categoryTree.getPathForLocation(e.getX(), e.getY());
                     _categoryTree.setSelectionPath(path);
-                    _categoryTree.updateUI();
+                    _categoryTree.revalidate(); _categoryTree.repaint();
                     if (path.getPathCount() == 2) {
                         // A category is selected
                         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getPathComponent(1);
@@ -246,7 +246,7 @@ public class RegexSwapDialog extends AbstractDialog {
         }
         synchronized (_regexSelectionTable) {
             _regexSelectionTable.setModel(tableModel);
-            _regexSelectionTable.updateUI();
+            _regexSelectionTable.revalidate(); _regexSelectionTable.repaint();
         }
     }
 

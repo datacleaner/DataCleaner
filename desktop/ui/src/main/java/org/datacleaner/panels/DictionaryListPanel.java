@@ -235,7 +235,7 @@ public class DictionaryListPanel extends DCPanel implements ReferenceDataChangeL
             _listPanel.add(DCLabel.dark("(none)"));
         }
 
-        updateUI();
+        revalidate(); repaint();
     }
 
     @Override

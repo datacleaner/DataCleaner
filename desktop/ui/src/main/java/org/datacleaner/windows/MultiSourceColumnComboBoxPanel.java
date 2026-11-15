@@ -69,7 +69,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
             final int componentCount = _sourceComboBoxPanel.getComponentCount();
             if (componentCount > 0) {
                 _sourceComboBoxPanel.remove(componentCount - 1);
-                _sourceComboBoxPanel.updateUI();
+                _sourceComboBoxPanel.revalidate(); _sourceComboBoxPanel.repaint();
             }
         });
 
@@ -83,7 +83,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
         sourceColumnComboBox.setSelectedItem(column);
         _sourceColumnComboBoxes.add(sourceColumnComboBox);
         _sourceComboBoxPanel.add(sourceColumnComboBox);
-        _sourceComboBoxPanel.updateUI();
+        _sourceComboBoxPanel.revalidate(); _sourceComboBoxPanel.repaint();
     }
 
     /**

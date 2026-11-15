@@ -93,7 +93,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
                         table = column.getTable();
                     }
                     _synonymColumnsPanel.updateSourceComboBoxes(_datastore, table);
-                    _synonymColumnsPanel.updateUI();
+                    _synonymColumnsPanel.revalidate(); _synonymColumnsPanel.repaint();
                 });
 
                 _synonymColumnsPanel.setModel(_datastore);

@@ -107,7 +107,7 @@ public class SimpleTableDefsPanel extends DCPanel {
         } else {
             _tabbedPaneContainer.add(_instructionsLabel, BorderLayout.CENTER);
         }
-        _tabbedPaneContainer.updateUI();
+        _tabbedPaneContainer.revalidate(); _tabbedPaneContainer.repaint();
     }
 
     private DCPanel createButtonPanel() {

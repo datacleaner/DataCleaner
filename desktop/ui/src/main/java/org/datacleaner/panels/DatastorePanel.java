@@ -100,7 +100,7 @@ public class DatastorePanel extends DCPanel {
         _checkBox.addActionListener(e -> _datastoreListPanel.setSelectedDatastorePanel(DatastorePanel.this));
         _checkBox.addChangeListener(e -> {
             setOpaque(isSelected());
-            updateUI();
+            revalidate(); repaint();
         });
 
         final String datastoreName = datastore.getName();

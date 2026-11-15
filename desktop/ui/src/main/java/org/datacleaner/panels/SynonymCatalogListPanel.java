@@ -207,7 +207,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements ReferenceD
             _listPanel.add(DCLabel.dark("(none)"));
         }
 
-        updateUI();
+        revalidate(); repaint();
     }
 
     @Override

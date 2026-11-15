@@ -139,7 +139,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
 
                     });
                     _treePanel.add(WidgetUtils.scrolleable(schemaTree), BorderLayout.CENTER);
-                    _treePanel.updateUI();
+                    _treePanel.revalidate(); _treePanel.repaint();
                 }
             }
         });

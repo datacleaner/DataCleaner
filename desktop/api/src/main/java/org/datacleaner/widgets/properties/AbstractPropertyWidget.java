@@ -171,7 +171,8 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
     }
 
     protected void updateUI() {
-        _panel.updateUI();
+        _panel.revalidate();
+        _panel.repaint();
     }
 
     protected void setBorder(final Border border) {

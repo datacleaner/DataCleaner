@@ -26,7 +26,6 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.LookAndFeel;
-import javax.swing.PopupFactory;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -34,7 +33,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
-import org.datacleaner.widgets.tooltip.DCPopupFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +102,6 @@ public final class LookAndFeelManager {
         }
 
         ToolTipManager.sharedInstance().setInitialDelay(500);
-        PopupFactory.setSharedInstance(new DCPopupFactory());
 
         final EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
         UIManager.put("ScrollPane.border", emptyBorder);

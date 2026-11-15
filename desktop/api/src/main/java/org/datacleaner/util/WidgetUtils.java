@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -42,7 +43,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -55,11 +55,6 @@ import javax.swing.text.JTextComponent;
 
 import org.datacleaner.metamodel.util.FileHelper;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.widgets.DarkButtonUI;
-import org.datacleaner.widgets.DarkToggleButtonUI;
-import org.datacleaner.widgets.DefaultButtonUI;
-import org.datacleaner.widgets.DefaultToggleButtonUI;
-import org.datacleaner.widgets.PrimaryButtonUI;
 import org.datacleaner.widgets.table.DCTablePanel;
 import org.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
@@ -676,24 +671,39 @@ public final class WidgetUtils {
         }
     }
 
+    /**
+     * Styles a button as a "primary" (call-to-action) button. FlatLaf paints
+     * buttons with a custom background borderless and derives hover/pressed
+     * shades from it, so no custom UI delegate is needed.
+     */
     public static void setPrimaryButtonStyle(final AbstractButton button) {
-        button.setUI(PrimaryButtonUI.get());
+        button.setFocusPainted(false);
+        button.setFont(WidgetUtils.FONT_BUTTON);
+        button.setBackground(WidgetUtils.BG_COLOR_BLUE_DARK);
+        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
+    /**
+     * Styles a button for placement on dark backgrounds. FlatLaf derives
+     * hover/pressed shades from the custom background color.
+     */
     public static void setDarkButtonStyle(final AbstractButton button) {
-        if (button instanceof JToggleButton) {
-            button.setUI(DarkToggleButtonUI.get());
-        } else {
-            button.setUI(DarkButtonUI.get());
-        }
+        button.setFocusPainted(false);
+        button.setFont(WidgetUtils.FONT_BUTTON);
+        button.setBackground(WidgetUtils.BG_COLOR_DARK);
+        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
+    /**
+     * Styles a button with the look-and-feel defaults (no color overrides),
+     * letting the installed LaF (FlatLaf) paint it natively.
+     */
     public static void setDefaultButtonStyle(final AbstractButton button) {
-        if (button instanceof JToggleButton) {
-            button.setUI(DefaultToggleButtonUI.get());
-        } else {
-            button.setUI(DefaultButtonUI.get());
-        }
+        button.setFocusPainted(false);
+        button.setFont(WidgetUtils.FONT_BUTTON);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     private static int pix(final int size) {

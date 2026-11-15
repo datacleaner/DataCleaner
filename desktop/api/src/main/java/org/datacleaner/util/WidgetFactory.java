@@ -51,7 +51,6 @@ import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import javax.swing.plaf.metal.MetalButtonUI;
 
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.widgets.DCTaskPaneContainer;
@@ -65,7 +64,6 @@ import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.plaf.basic.BasicStatusBarUI;
-import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
 import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +142,6 @@ public final class WidgetFactory {
 
         b.setFont(WidgetUtils.FONT_SMALL);
         b.setMargin(new Insets(0, 0, 0, 0));
-        b.setUI(new MetalButtonUI());
         b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
 
         final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
@@ -245,7 +242,6 @@ public final class WidgetFactory {
 
     public static JXStatusBar createStatusBar(final JComponent comp) {
         final JXStatusBar statusBar = new JXStatusBar();
-        statusBar.setUI(new MetalStatusBarUI());
         statusBar.putClientProperty(BasicStatusBarUI.AUTO_ADD_SEPARATOR, false);
         statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
         final MatteBorder outerBorder = new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_LESS_DARK);
@@ -315,7 +311,6 @@ public final class WidgetFactory {
         }
         b.setMargin(new Insets(0, 0, 0, 0));
 
-        b.setUI(new MetalButtonUI());
         b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
 
         final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);

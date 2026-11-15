@@ -224,10 +224,11 @@ public class JaxbConfigurationReaderTest extends TestCase {
         assertEquals(
                 "[my arff, my_composite, my_csv, my_custom, my_dom_xml, my_excel_2003, my_fixed_width_1, "
                         + "my_fixed_width_2, my_jdbc_connection, my_jdbc_datasource, my_json, my_pojo, "
-                        + "my_sax_xml]", Arrays.toString(datastoreNames));
+                        + "my_sas, my_sax_xml]", Arrays.toString(datastoreNames));
 
         assertEquals("jdbc_con", datastoreCatalog.getDatastore("my_jdbc_connection").getDescription());
         assertEquals("jdbc_ds", datastoreCatalog.getDatastore("my_jdbc_datasource").getDescription());
+        assertEquals("folder of sas7bdat files", datastoreCatalog.getDatastore("my_sas").getDescription());
 
         final CsvDatastore myCsvDatastore = (CsvDatastore) datastoreCatalog.getDatastore("my_csv");
         assertEquals("csv", myCsvDatastore.getDescription());

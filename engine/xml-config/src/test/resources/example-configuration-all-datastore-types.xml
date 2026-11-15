@@ -53,6 +53,10 @@
 		<arff-datastore name="my arff">
 			<filename>../../datastores/basic-datastores/src/test/resources/example.arff</filename>
 		</arff-datastore>
+
+		<sas-datastore name="my_sas" description="folder of sas7bdat files">
+			<directory>../../datastores/basic-datastores/src/test/resources/sas</directory>
+		</sas-datastore>
 		
 
 		

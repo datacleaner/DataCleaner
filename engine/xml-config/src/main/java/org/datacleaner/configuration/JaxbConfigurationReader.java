@@ -80,6 +80,7 @@ import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
 import org.datacleaner.configuration.jaxb.RegexPatternType;
+import org.datacleaner.configuration.jaxb.SasDatastoreType;
 import org.datacleaner.configuration.jaxb.RegexSwapPatternType;
 import org.datacleaner.configuration.jaxb.ServersType;
 import org.datacleaner.configuration.jaxb.SimplePatternType;
@@ -94,6 +95,7 @@ import org.datacleaner.configuration.jaxb.XmlDatastoreType;
 import org.datacleaner.configuration.jaxb.XmlDatastoreType.TableDef;
 import org.datacleaner.connection.ArffDatastore;
 import org.datacleaner.connection.CompositeDatastore;
+import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -746,6 +748,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 ds = createDatastore(name, (JdbcDatastoreType) datastoreType);
             } else if (datastoreType instanceof FixedWidthDatastoreType) {
                 ds = createDatastore(name, (FixedWidthDatastoreType) datastoreType, temporaryConfiguration);
+            } else if (datastoreType instanceof SasDatastoreType) {
+                ds = createDatastore(name, (SasDatastoreType) datastoreType);
             } else if (datastoreType instanceof XmlDatastoreType) {
                 ds = createDatastore(name, (XmlDatastoreType) datastoreType);
             } else if (datastoreType instanceof ExcelDatastoreType) {
@@ -856,6 +860,12 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
 
         return new XmlDatastore(name, filename, tableDefs);
+    }
+
+    private Datastore createDatastore(final String name, final SasDatastoreType sasDatastoreType) {
+        final String directoryPath = getStringVariable("directory", sasDatastoreType.getDirectory());
+        final File directory = new File(directoryPath);
+        return new SasDatastore(name, directory);
     }
 
     private Datastore createDatastore(final String name, final FixedWidthDatastoreType fixedWidthDatastore,

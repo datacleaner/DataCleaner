@@ -197,7 +197,17 @@
 							file.
 						</documentation>
 					</annotation>
-				</element>				<element name="excel-datastore" type="ab:excelDatastoreType">
+				</element>
+				<element name="sas-datastore" type="ab:sasDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a directory of SAS
+							data
+							sets.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="excel-datastore" type="ab:excelDatastoreType">
 					<annotation>
 						<documentation>
 							Defines a datastore based on a MS Excel spreadsheet
@@ -445,6 +455,16 @@
 						</complexType>
 					</element>
 				</all>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="sasDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="directory" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
 			</extension>
 		</complexContent>
 	</complexType>

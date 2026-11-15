@@ -22,6 +22,7 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.Image;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -91,9 +92,9 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     }
 
     private static Image getBannerImage(final ComponentBuilder componentBuilder) {
-        final ImageIcon descriptorIcon =
+        final Icon descriptorIcon =
                 IconUtils.getDescriptorIcon(componentBuilder.getDescriptor(), IconUtils.ICON_SIZE_LARGE);
-        return descriptorIcon.getImage();
+        return IconUtils.iconToImage(descriptorIcon);
     }
 
     @Override

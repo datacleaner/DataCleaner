@@ -230,7 +230,7 @@ public final class IconUtils {
             }
         }
 
-        final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
+        final Icon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
 
         if (configured) {
             return descriptorIcon;
@@ -239,14 +239,21 @@ public final class IconUtils {
         return addErrorOverlay(descriptorIcon);
     }
 
-    public static ImageIcon addErrorOverlay(final ImageIcon imageIcon) {
+    /**
+     * Adds a small error decoration (a red badge) to the bottom-left of the
+     * given icon. The composite icon is rasterized.
+     *
+     * @param icon the icon to decorate
+     * @return a raster icon with the error badge
+     */
+    public static Icon addErrorOverlay(final Icon icon) {
         final int offset = WidgetUtils.scalePx(4);
-        final int iconWidth = imageIcon.getIconWidth();
+        final int iconWidth = icon.getIconWidth();
         final int decorationSize = iconWidth / 2;
         final Image errorImage = _imageManager.getImage(STATUS_ERROR, decorationSize);
         final BufferedImage bufferedImage =
                 new BufferedImage(iconWidth + offset, iconWidth + offset, BufferedImage.TYPE_INT_ARGB);
-        bufferedImage.getGraphics().drawImage(imageIcon.getImage(), offset, 0, null);
+        icon.paintIcon(null, bufferedImage.getGraphics(), offset, 0);
         bufferedImage.getGraphics().drawImage(errorImage, 0, iconWidth + offset - decorationSize, null);
 
         return new ImageIcon(bufferedImage);
@@ -259,7 +266,7 @@ public final class IconUtils {
      * @param newWidth
      * @return
      */
-    public static ImageIcon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final int newWidth) {
+    public static Icon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final int newWidth) {
         return getDescriptorIcon(descriptor, newWidth, false);
     }
 
@@ -272,7 +279,7 @@ public final class IconUtils {
      *            be found. This is useful for menu items where the icon is not a requirement.
      * @return
      */
-    public static ImageIcon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final int newWidth,
+    public static Icon getDescriptorIcon(final ComponentDescriptor<?> descriptor, final int newWidth,
             final boolean allowTransparentForUnspecific) {
         if (descriptor instanceof HasIcon) {
             final ImageIcon imageIcon = getIconFromData(descriptor, newWidth);
@@ -288,7 +295,7 @@ public final class IconUtils {
         if (imagePath == null) {
             return getTransparentIcon(newWidth);
         }
-        return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
+        return _imageManager.getIcon(imagePath, newWidth, classLoader);
     }
 
     private static ImageIcon getIconFromData(final ComponentDescriptor<?> componentDescriptor, final int width) {
@@ -338,35 +345,54 @@ public final class IconUtils {
         return new ImageIcon(image);
     }
 
-    public static ImageIcon getDescriptorIcon(final ComponentDescriptor<?> descriptor) {
+    public static Icon getDescriptorIcon(final ComponentDescriptor<?> descriptor) {
         return getDescriptorIcon(descriptor, ICON_SIZE_LARGE);
     }
 
-    public static ImageIcon getDatastoreIcon(final Datastore datastore, final int newWidth) {
-        final String imagePath = getDatastoreImagePath(datastore, true);
-        return _imageManager.getImageIcon(imagePath, newWidth);
+    /**
+     * Converts an icon (which may be vector-based) to a rasterized {@link Image}.
+     *
+     * @param icon the icon to convert
+     * @return an image representation of the icon
+     */
+    public static Image iconToImage(final Icon icon) {
+        if (icon instanceof ImageIcon) {
+            return ((ImageIcon) icon).getImage();
+        }
+        if (icon == null || icon.getIconWidth() <= 0 || icon.getIconHeight() <= 0) {
+            return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        }
+        final BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        icon.paintIcon(null, image.getGraphics(), 0, 0);
+        return image;
     }
 
-    public static ImageIcon getDatastoreIcon(final Datastore datastore) {
+    public static Icon getDatastoreIcon(final Datastore datastore, final int newWidth) {
+        final String imagePath = getDatastoreImagePath(datastore, true);
+        return _imageManager.getIcon(imagePath, newWidth);
+    }
+
+    public static Icon getDatastoreIcon(final Datastore datastore) {
         final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath);
     }
 
-    public static ImageIcon getComponentSuperCategoryIcon(final ComponentSuperCategory superCategory) {
+    public static Icon getComponentSuperCategoryIcon(final ComponentSuperCategory superCategory) {
         return getComponentSuperCategoryIcon(superCategory, ICON_SIZE_LARGE);
     }
 
-    public static ImageIcon getComponentSuperCategoryIcon(final ComponentSuperCategory superCategory,
+    public static Icon getComponentSuperCategoryIcon(final ComponentSuperCategory superCategory,
             final int newWidth) {
         final Class<? extends ComponentSuperCategory> superCategoryClass = superCategory.getClass();
         return getCategoryIcon(superCategoryClass, false, newWidth);
     }
 
-    public static ImageIcon getComponentCategoryIcon(final ComponentCategory category) {
+    public static Icon getComponentCategoryIcon(final ComponentCategory category) {
         return getComponentCategoryIcon(category, ICON_SIZE_LARGE);
     }
 
-    public static ImageIcon getComponentCategoryIcon(final ComponentCategory category, final int newWidth) {
+    public static Icon getComponentCategoryIcon(final ComponentCategory category, final int newWidth) {
         final Class<? extends ComponentCategory> categoryClass = category.getClass();
         return getCategoryIcon(categoryClass, true, newWidth);
     }

@@ -99,7 +99,7 @@ public final class WidgetFactory {
     public static JMenuItem createMenuItem(final String text, final String iconPath) {
         Icon icon = null;
         if (iconPath != null) {
-            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_MENU_ITEM);
+            icon = ImageManager.get().getIcon(iconPath, IconUtils.ICON_SIZE_MENU_ITEM);
         }
         return createMenuItem(text, icon);
     }
@@ -108,7 +108,7 @@ public final class WidgetFactory {
         if (Strings.isNullOrEmpty(imagePath)) {
             return null;
         }
-        return ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
+        return ImageManager.get().getIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
     }
 
     public static PopupButton createDarkPopupButton(final String text, final String imagePath) {
@@ -269,11 +269,11 @@ public final class WidgetFactory {
     }
 
     public static JButton createToolbarButton(final String text, final String iconPath) {
-        final ImageIcon icon;
+        final Icon icon;
         if (iconPath == null) {
             icon = null;
         } else {
-            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
+            icon = ImageManager.get().getIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
         }
         final JButton button = new JButton(text, icon);
         button.addMouseListener(new MouseAdapter() {
@@ -297,7 +297,7 @@ public final class WidgetFactory {
     }
 
     public static JButton createSmallButton(final String text, final String imagePath) {
-        final Icon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+        final Icon icon = ImageManager.get().getIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
         return createSmallButton(text, icon);
     }
 

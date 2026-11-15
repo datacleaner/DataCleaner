@@ -51,6 +51,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -151,12 +152,12 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 tableNode.add(loadingColumnsNode);
                 _schemaNode.add(tableNode);
             }
-            updateUI();
+            updateTreeNodeStructure(_schemaNode);
         }
 
         protected void done() {
             _schemaNode.remove(0);
-            updateUI();
+            updateTreeNodeStructure(_schemaNode);
         }
 
     }
@@ -186,14 +187,28 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 final DefaultMutableTreeNode columnNode = new DefaultMutableTreeNode(column);
                 _tableNode.add(columnNode);
             }
-            updateUI();
+            updateTreeNodeStructure(_tableNode);
         }
 
         protected void done() {
             _tableNode.remove(0);
-            updateUI();
+            updateTreeNodeStructure(_tableNode);
         }
 
+    }
+
+    /**
+     * Notifies the tree model that the structure below {@code node} has changed. This is a much cheaper alternative
+     * to {@link #updateUI()}, which would reinstall the whole UI delegate (expensive under FlatLaf) for every
+     * update.
+     */
+    private void updateTreeNodeStructure(final DefaultMutableTreeNode node) {
+        final TreeModel model = getModel();
+        if (model instanceof DefaultTreeModel) {
+            ((DefaultTreeModel) model).nodeStructureChanged(node);
+        }
+        revalidate();
+        repaint();
     }
 
     public static final String LOADING_TABLES_STRING = "Loading tables...";

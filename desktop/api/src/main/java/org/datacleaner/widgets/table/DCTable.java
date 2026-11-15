@@ -132,8 +132,11 @@ public class DCTable extends DCBaseTable implements MouseListener {
     @Override
     public void setModel(final TableModel tableModel) {
         super.setModel(tableModel);
-        // reset rows to the default height so that removed/changed content does not leave stale tall rows
-        setRowHeight(_defaultRowHeight);
+        // reset rows to the default height so that removed/changed content does not leave stale tall rows.
+        // Note: JTable's constructor calls setModel before field initialization, hence the > 0 guard.
+        if (_defaultRowHeight > 0) {
+            setRowHeight(_defaultRowHeight);
+        }
     }
 
     protected List<JMenuItem> getCopyMenuItems() {

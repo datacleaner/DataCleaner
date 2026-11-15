@@ -38,7 +38,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.ResultWindow;
-import org.jdesktop.swingx.JXCollapsiblePane;
+import org.datacleaner.widgets.DCCollapsiblePane;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -80,7 +80,7 @@ public class VerticalTabbedPane extends DCPanel {
     }
 
     protected JComponent wrapInCollapsiblePane(final JComponent panel) {
-        final JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
+        final DCCollapsiblePane collapsiblePane = new DCCollapsiblePane(DCCollapsiblePane.Direction.LEFT);
         collapsiblePane.getContentPane().setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         collapsiblePane.add(panel);
         collapsiblePane.setAnimated(false);

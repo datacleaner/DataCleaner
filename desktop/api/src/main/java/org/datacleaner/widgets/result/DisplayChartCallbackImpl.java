@@ -21,24 +21,24 @@ package org.datacleaner.widgets.result;
 
 import javax.swing.JComponent;
 
-import org.jdesktop.swingx.JXCollapsiblePane;
+import org.datacleaner.widgets.DCCollapsiblePane;
 
 /**
  * Default {@link DisplayChartCallback} implementation.
  */
 public class DisplayChartCallbackImpl implements DisplayChartCallback {
 
-    private final JXCollapsiblePane _chartContainer;
+    private final DCCollapsiblePane _chartContainer;
 
     /**
-     * @deprecated use {@link #DisplayChartCallbackImpl(JXCollapsiblePane)} instead
+     * @deprecated use {@link #DisplayChartCallbackImpl(DCCollapsiblePane)} instead
      */
     @Deprecated
-    public DisplayChartCallbackImpl(final JXCollapsiblePane chartContainer, final boolean allowAnimations) {
+    public DisplayChartCallbackImpl(final DCCollapsiblePane chartContainer, final boolean allowAnimations) {
         this(chartContainer);
     }
 
-    public DisplayChartCallbackImpl(final JXCollapsiblePane chartContainer) {
+    public DisplayChartCallbackImpl(final DCCollapsiblePane chartContainer) {
         _chartContainer = chartContainer;
     }
 

@@ -35,8 +35,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+
 
 /**
  * A panel that has a title, a small collapse/expand button and a label, which
@@ -49,7 +48,7 @@ public class DCCollapsiblePanel {
     private static final Icon _collapsedIcon =
             ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE_DARK, IconUtils.ICON_SIZE_SMALL);
 
-    private final JXCollapsiblePane _collapsiblePane;
+    private final DCCollapsiblePane _collapsiblePane;
     private final DCLabel _label;
     private final Supplier<? extends JComponent> _componentRef;
     private String _collapsedText;
@@ -64,7 +63,7 @@ public class DCCollapsiblePanel {
             final Supplier<? extends JComponent> componentRef) {
         _collapsedText = collapsedText;
         _expandedText = expandedText;
-        _collapsiblePane = WidgetFactory.createCollapsiblePane(Direction.DOWN);
+        _collapsiblePane = WidgetFactory.createCollapsiblePane(DCCollapsiblePane.Direction.DOWN);
         _componentRef = componentRef;
         if (collapsed) {
             _label = DCLabel.dark(collapsedText);

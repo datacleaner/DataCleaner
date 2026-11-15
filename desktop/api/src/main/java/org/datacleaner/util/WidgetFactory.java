@@ -29,7 +29,6 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Field;
 import java.text.Format;
 import java.text.ParseException;
 
@@ -47,7 +46,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -56,8 +54,7 @@ import javax.swing.border.MatteBorder;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.PopupButton;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXCollapsiblePane.Direction;
+import org.datacleaner.widgets.DCCollapsiblePane;
 import org.jdesktop.swingx.JXFormattedTextField;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
@@ -436,21 +433,10 @@ public final class WidgetFactory {
         return button;
     }
 
-    public static JXCollapsiblePane createCollapsiblePane(final Direction direction) {
-        final JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(direction);
+    public static DCCollapsiblePane createCollapsiblePane(final DCCollapsiblePane.Direction direction) {
+        final DCCollapsiblePane collapsiblePane = new DCCollapsiblePane(direction);
         collapsiblePane.setOpaque(false);
-
-        // hack to make it non-opaque!
-        try {
-            final Field field = JXCollapsiblePane.class.getDeclaredField("wrapper");
-            field.setAccessible(true);
-            final JViewport viewPort = (JViewport) field.get(collapsiblePane);
-            viewPort.setOpaque(false);
-            final JComponent component = (JComponent) viewPort.getView();
-            component.setOpaque(false);
-        } catch (final Exception e) {
-            logger.info("Failed to make JXCollapsiblePane non-opaque", e);
-        }
+        collapsiblePane.getContentPane().setOpaque(false);
         return collapsiblePane;
     }
 

@@ -28,7 +28,7 @@ import javax.swing.border.EmptyBorder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.JXCollapsiblePane;
+import org.datacleaner.widgets.DCCollapsiblePane;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -42,11 +42,11 @@ public class CollapsibleTreePanel extends DCPanel {
 
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final JXCollapsiblePane _collapsibleTreePane;
+    private final DCCollapsiblePane _collapsibleTreePane;
     private final JButton _toggleTreeViewButton;
 
     public CollapsibleTreePanel(final JComponent treeComponent) {
-        _collapsibleTreePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
+        _collapsibleTreePane = new DCCollapsiblePane(DCCollapsiblePane.Direction.LEFT);
         _collapsibleTreePane.getContentPane().setBackground(WidgetUtils.BG_COLOR_DARK);
         _collapsibleTreePane.add(treeComponent);
         _collapsibleTreePane.setAnimated(false);

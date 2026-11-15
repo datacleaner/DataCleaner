@@ -303,9 +303,10 @@ public class DCBaseTable extends JTable {
     }
 
     protected Color getStrippedBackgroundColor(final int row) {
+        final Color defaultBackground = WidgetUtils.getThemeDefaultBackground();
         if (row % 2 == 1) {
-            return WidgetUtils.colorBetween(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
+            return WidgetUtils.colorBetween(defaultBackground, WidgetUtils.slightlyDarker(defaultBackground));
         }
-        return WidgetUtils.BG_COLOR_BRIGHTEST;
+        return defaultBackground;
     }
 }

@@ -36,6 +36,12 @@ public class DCLabel extends JLabel {
 
     private final boolean _multiline;
 
+    /**
+     * The (light-theme) text color role, if the label was created with one
+     * of the DC palette colors; re-applied when the theme changes.
+     */
+    private final Color _textColorRole;
+
     public DCLabel(final boolean multiline, final String text, final Color textColor, final Icon icon) {
         super();
         _multiline = multiline;
@@ -43,12 +49,24 @@ public class DCLabel extends JLabel {
             setText(text);
         }
         if (textColor != null) {
-            setForeground(textColor);
+            _textColorRole = textColor;
+            setForeground(WidgetUtils.getThemeAwareTextColor(textColor));
+        } else {
+            _textColorRole = null;
         }
         if (icon != null) {
             setIcon(icon);
         }
         setVerticalAlignment(SwingConstants.TOP);
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        // follow theme changes (see LookAndFeelManager.setDarkTheme)
+        if (_textColorRole != null) {
+            setForeground(WidgetUtils.getThemeAwareTextColor(_textColorRole));
+        }
     }
 
     public static DCLabel bright(final String text) {

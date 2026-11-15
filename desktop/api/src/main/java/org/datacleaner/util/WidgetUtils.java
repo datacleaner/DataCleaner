@@ -26,6 +26,7 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.Image;
@@ -46,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -176,6 +178,155 @@ public final class WidgetUtils {
 
     public static final int BORDER_WIDE_WIDTH = pix(4);
 
+    // ------------------------------------------------------------------
+    // Theme-aware colors
+    //
+    // The constants above are the fixed light-theme design palette. In dark
+    // mode, DC's custom-painted components should use the getters below so
+    // they follow the selected theme (see LookAndFeelManager.setDarkTheme).
+    // ------------------------------------------------------------------
+
+    /**
+     * The background color for "default" surfaces (white in light mode).
+     *
+     * @return theme-aware default background color
+     */
+    public static Color getThemeDefaultBackground() {
+        return isDarkTheme() ? BG_COLOR_DARK : BG_COLOR_BRIGHTEST;
+    }
+
+    /**
+     * The background color for "well" surfaces (slightly tinted in light
+     * mode, slightly darker than the default in dark mode).
+     *
+     * @return theme-aware well background color
+     */
+    public static Color getThemeWellBackground() {
+        return isDarkTheme() ? slightlyDarker(BG_COLOR_DARK) : BG_COLOR_BRIGHT;
+    }
+
+    /**
+     * The background color for "alternative" surfaces (the dark side panels
+     * in light mode, slightly lighter than the default in dark mode).
+     *
+     * @return theme-aware alternative background color
+     */
+    public static Color getThemeAlternativeBackground() {
+        return isDarkTheme() ? new ColorUIResource(42, 42, 42) : BG_COLOR_DARK;
+    }
+
+    /**
+     * The normal text color (dark text in light mode, light text in dark
+     * mode).
+     *
+     * @return theme-aware text color
+     */
+    public static Color getThemeTextColor() {
+        return isDarkTheme() ? BG_COLOR_BRIGHTEST : BG_COLOR_DARKEST;
+    }
+
+    /**
+     * The text color for de-emphasized text.
+     *
+     * @return theme-aware disabled text color
+     */
+    public static Color getThemeDisabledTextColor() {
+        return BG_COLOR_MEDIUM;
+    }
+
+    /**
+     * The border color for thin outlines and separators (light gray in light
+     * mode, subtle dark gray in dark mode).
+     *
+     * @return theme-aware border color
+     */
+    public static Color getThemeBorderColor() {
+        return isDarkTheme() ? new ColorUIResource(70, 70, 73) : BG_COLOR_LESS_BRIGHT;
+    }
+
+    /**
+     * Gets whether the dark theme is active.
+     *
+     * @return true if the dark theme is selected
+     */
+    public static boolean isDarkTheme() {
+        return LookAndFeelManager.THEME_DARK
+                .equalsIgnoreCase(System.getProperty(LookAndFeelManager.SYSTEM_PROPERTY_THEME, LookAndFeelManager.THEME_LIGHT));
+    }
+
+    /**
+     * Maps a light-theme text color role (one of the DC palette constants)
+     * to the appropriate color for the current theme. Non-palette colors are
+     * returned unchanged.
+     *
+     * @param color the (light-theme) color role
+     * @return the theme-aware color
+     */
+    public static Color getThemeAwareTextColor(final Color color) {
+        if (isDarkTheme()) {
+            if (color == BG_COLOR_DARKEST) {
+                // dark text becomes light text in dark mode
+                return BG_COLOR_BRIGHTEST;
+            }
+            if (color == BG_COLOR_LESS_BRIGHT || color == BG_COLOR_LESS_DARK) {
+                return BG_COLOR_MEDIUM;
+            }
+        }
+        return color;
+    }
+
+    /**
+     * A border that paints theme-aware (see {@link #getThemeBorderColor()})
+     * lines along the specified edges, staying in sync with the selected
+     * theme at paint time.
+     */
+    static class ThemeEdgeBorder extends AbstractBorder {
+
+        private static final long serialVersionUID = 1L;
+
+        private final int _top;
+        private final int _left;
+        private final int _bottom;
+        private final int _right;
+
+        ThemeEdgeBorder(final int top, final int left, final int bottom, final int right) {
+            _top = top;
+            _left = left;
+            _bottom = bottom;
+            _right = right;
+        }
+
+        @Override
+        public void paintBorder(final Component c, final Graphics g, final int x, final int y, final int width,
+                final int height) {
+            final Color color = getThemeBorderColor();
+            g.setColor(color);
+            if (_top > 0) {
+                g.fillRect(x, y, width, _top);
+            }
+            if (_left > 0) {
+                g.fillRect(x, y, _left, height);
+            }
+            if (_bottom > 0) {
+                g.fillRect(x, y + height - _bottom, width, _bottom);
+            }
+            if (_right > 0) {
+                g.fillRect(x + width - _right, y, _right, height);
+            }
+        }
+
+        @Override
+        public Insets getBorderInsets(final Component c, final Insets insets) {
+            insets.set(_top, _left, _bottom, _right);
+            return insets;
+        }
+
+        @Override
+        public boolean isBorderOpaque() {
+            return false;
+        }
+    }
+
     public static final Border BORDER_SHADOW =
             new FlatDropShadowBorder(WidgetUtils.BG_COLOR_DARK, pix(6), 0.2f);
 
@@ -194,12 +345,12 @@ public final class WidgetUtils {
             WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
     public static Border BORDER_TOP_PADDING = new EmptyBorder(pix(10), 0, 0, 0);
 
-    public static final Border BORDER_THIN = new LineBorder(BG_COLOR_LESS_BRIGHT);
+    public static final Border BORDER_THIN = new ThemeEdgeBorder(1, 1, 1, 1);
     public static final Border BORDER_THIN_DARK = new LineBorder(BG_COLOR_DARK);
 
     public static final Border BORDER_LIST_ITEM =
             new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
+                    new ThemeEdgeBorder(0, 0, 1, 0));
 
     public static final Border BORDER_LIST_ITEM_LEFT_ONLY =
             new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM), new EmptyBorder(0, 0, pix(1), 0));
@@ -210,12 +361,12 @@ public final class WidgetUtils {
 
     public static final Border BORDER_LIST_ITEM_SUBTLE =
             new CompoundBorder(new MatteBorder(0, pix(3), 0, 0, BG_COLOR_BLUE_MEDIUM),
-                    new MatteBorder(0, 0, pix(1), 0, WidgetUtils.BG_COLOR_MEDIUM));
+                    new ThemeEdgeBorder(0, 0, 1, 0));
 
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, pix(2), false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
-    public static final Border BORDER_TABLE_PANEL = new MatteBorder(pix(1), pix(1), 0, 0, BG_COLOR_LESS_BRIGHT);
+    public static final Border BORDER_TABLE_PANEL = new ThemeEdgeBorder(1, 1, 0, 0);
 
     /**
      * Border for indented button panels where the content has to align with check boxes above or below.

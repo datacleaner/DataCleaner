@@ -31,6 +31,8 @@ import javax.swing.JFrame;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.util.WidgetUtils;
 
+import com.formdev.flatlaf.FlatClientProperties;
+
 public abstract class AbstractWindow extends JFrame implements DCWindow, WindowListener {
 
     /**
@@ -52,6 +54,10 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(this);
         getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
+
+        // modern FlatLaf window decorations (title bar); ignored on platforms
+        // where not supported
+        getRootPane().putClientProperty(FlatClientProperties.USE_WINDOW_DECORATIONS, Boolean.TRUE);
     }
 
     protected boolean maximizeWindow() {

@@ -28,7 +28,7 @@ import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.documentation.ComponentDocumentationWrapper;
 import org.datacleaner.documentation.builder.ComponentReferenceDocumentationBuilder;
-import org.jdesktop.swingx.action.OpenBrowserAction;
+import org.datacleaner.util.WidgetUtils;
 
 /**
  * Action listener for buttons or menu items that should start the generation of
@@ -65,8 +65,7 @@ public class ComponentReferenceDocumentationActionListener implements ActionList
             builder.writeDocumentationToDirectory(docDirectory);
         }
 
-        final OpenBrowserAction openBrowserAction = new OpenBrowserAction(documentationFile.toURI());
-        openBrowserAction.actionPerformed(e);
+        WidgetUtils.openUrl(documentationFile.toURI());
     }
 
 }

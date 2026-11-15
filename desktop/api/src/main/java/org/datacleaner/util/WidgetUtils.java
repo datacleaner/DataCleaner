@@ -30,8 +30,11 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Desktop;
 import java.awt.LayoutManager;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -355,6 +358,59 @@ public final class WidgetUtils {
         graphicsEnvironment.registerFont(FONT_MULI_PLAIN);
         graphicsEnvironment.registerFont(FONT_MULI_BOLD);
         graphicsEnvironment.registerFont(FONT_MULI_LIGHT);
+    }
+
+    /**
+     * Opens the given URL in the default system browser (best effort; does
+     * nothing if no desktop browser is available).
+     *
+     * @param url the URL to open; null or empty is a no-op
+     */
+    public static void openUrl(final String url) {
+        if (StringUtils.isNullOrEmpty(url)) {
+            return;
+        }
+        try {
+            openUrl(new URI(url));
+        } catch (final URISyntaxException e) {
+            logger.warn("Could not open URL: {}", url, e);
+        }
+    }
+
+    /**
+     * Opens the given URL in the default system browser (best effort; does
+     * nothing if no desktop browser is available).
+     *
+     * @param url the URL to open
+     */
+    public static void openUrl(final URL url) {
+        if (url == null) {
+            return;
+        }
+        try {
+            openUrl(url.toURI());
+        } catch (final URISyntaxException e) {
+            logger.warn("Could not open URL: {}", url, e);
+        }
+    }
+
+    /**
+     * Opens the given URI in the default system browser (best effort; does
+     * nothing if no desktop browser is available).
+     *
+     * @param uri the URI to open
+     */
+    public static void openUrl(final URI uri) {
+        if (uri == null) {
+            return;
+        }
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(uri);
+            }
+        } catch (final Exception e) {
+            logger.warn("Could not open URL: {}", uri, e);
+        }
     }
 
     public static void centerOnScreen(final Component component) {

@@ -20,8 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Desktop;
-import java.net.URI;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -38,7 +36,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 
-import com.google.common.base.Strings;
 
 /**
  * Error dialog for error messages in DataCleaner, optionally with a
@@ -97,10 +94,7 @@ public class ErrorDialog extends AbstractDialog {
         detailedMessagePane.setOpaque(false);
         detailedMessagePane.addHyperlinkListener(event -> {
             if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
-                final String href = event.getDescription();
-                if (!Strings.isNullOrEmpty(href)) {
-                    openInBrowser(href);
-                }
+                WidgetUtils.openUrl(event.getDescription());
             }
         });
         detailedMessagePane.setBorder(WidgetUtils.BORDER_EMPTY);
@@ -133,15 +127,5 @@ public class ErrorDialog extends AbstractDialog {
         scrollPane.setPreferredSize(
                 new Dimension(getDialogWidth() - WidgetUtils.SPACING_XLARGE, WidgetUtils.scalePx(150)));
         return scrollPane;
-    }
-
-    private void openInBrowser(final String href) {
-        try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                Desktop.getDesktop().browse(new URI(href));
-            }
-        } catch (final Exception e) {
-            // ignore - opening the browser is a nice-to-have
-        }
     }
 }

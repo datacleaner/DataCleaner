@@ -114,6 +114,12 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<!-- modern date picker, replaces SwingX JXDatePicker -->
+			<groupId>com.github.lgooddatepicker</groupId>
+			<artifactId>LGoodDatePicker</artifactId>
+			<version>11.2.1</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-orderdb</artifactId>
 			<version>${project.version}</version>

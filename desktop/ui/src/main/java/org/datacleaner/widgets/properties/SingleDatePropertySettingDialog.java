@@ -23,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
@@ -48,7 +50,8 @@ import org.datacleaner.util.convert.YesterdayDate;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.windows.AbstractDialog;
-import org.jdesktop.swingx.JXDatePicker;
+
+import com.github.lgooddatepicker.components.DatePicker;
 
 public class SingleDatePropertySettingDialog extends AbstractDialog {
     
@@ -70,7 +73,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
 
     private final SingleDatePropertyWidget _widget;
     private final ButtonGroup _buttonGroup;
-    private final JXDatePicker _datePicker;
+    private final DatePicker _datePicker;
     private final JRadioButton _dateNowRadio;
     private final JRadioButton _dateTodayRadio;
     private final JRadioButton _dateYesterdayRadio;
@@ -111,7 +114,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
 
     private boolean isParticularDateSpecified() {
         return (!_dateNowRadio.isSelected() && !_dateTodayRadio.isSelected() && !_dateYesterdayRadio.isSelected()
-                && !_todayPlusRadio.isSelected() && !_datePicker.getEditor().getText().isEmpty());
+                && !_todayPlusRadio.isSelected() && !_datePicker.getDateStringOrEmptyString().isEmpty());
     }
 
     private JTextField createTodayPlusTextField() {
@@ -169,14 +172,15 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
         return label;
     }
 
-    private JXDatePicker createDatePicker() {
-        final JXDatePicker datePicker = new JXDatePicker();
-        datePicker.setFormats(DATE_FORMAT);
-        datePicker.addActionListener(e -> {
+    private DatePicker createDatePicker() {
+        final DatePicker datePicker = new DatePicker();
+        datePicker.getSettings().setFormatForDatesCommonEra(DATE_FORMAT);
+        datePicker.getSettings().setAllowEmptyDates(true);
+        datePicker.addDateChangeListener(event -> {
             clearRadioGroup();
             updateWidget();
         });
-        datePicker.getEditor().addFocusListener(new FocusListener() {
+        datePicker.getComponentDateTextField().addFocusListener(new FocusListener() {
             @Override
             public void focusGained(final FocusEvent e) {
                 clearRadioGroup();
@@ -184,7 +188,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
 
             @Override
             public void focusLost(final FocusEvent e) {
-                // this for some reason does not work properly, so value can not be updated here
+                // value updates happen through the date change listener
             }
         });
 
@@ -277,8 +281,19 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
         } else if (_todayPlusRadio.isSelected()) {
             return new ShiftedToday(_todayPlusTextField.getText());
         } else {
-            return _datePicker.getDate();
+            final LocalDate localDate = getDatePickerDateOrNull();
+            if (localDate == null) {
+                return null;
+            }
+            return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
+    }
+
+    private LocalDate getDatePickerDateOrNull() {
+        if (_datePicker.getDateStringOrEmptyString().isEmpty() || !_datePicker.isTextFieldValid()) {
+            return null;
+        }
+        return _datePicker.getDate();
     }
 
     protected void setValue(final Date value) {
@@ -293,7 +308,7 @@ public class SingleDatePropertySettingDialog extends AbstractDialog {
             _todayPlusTextField.setText(((ShiftedToday) value).getInput());
         } else if (value != null) {
             clearRadioGroup();
-            _datePicker.setDate(value);
+            _datePicker.setDate(value.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         }
     }
 

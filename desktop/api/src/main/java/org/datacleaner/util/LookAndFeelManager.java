@@ -34,14 +34,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
-import org.datacleaner.widgets.DCComboBoxUI;
-import org.datacleaner.widgets.DCScrollBarUI;
 import org.datacleaner.widgets.tooltip.DCPopupFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jgoodies.looks.LookUtils;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  * Class that encapsulates all central configuration of look and feel and
@@ -78,29 +75,29 @@ public final class LookAndFeelManager {
     }
 
     public void init() {
+        init(null);
+    }
+
+    /**
+     * Initializes the look and feel.
+     *
+     * @param laf
+     *            the look and feel to install. If null, the default
+     *            {@link FlatLightLaf} is installed.
+     */
+    public void init(final LookAndFeel laf) {
         try {
-            final LookAndFeel laf = new PlasticXPLookAndFeel();
-            UIManager.setLookAndFeel(laf);
+            UIManager.setLookAndFeel(laf != null ? laf : new FlatLightLaf());
             logger.info("Look and feel set to: {}", UIManager.getLookAndFeel());
         } catch (final UnsupportedLookAndFeelException e) {
             throw new IllegalStateException(e);
         }
 
-        UIManager.put("ClassLoader", LookUtils.class.getClassLoader());
-
+        // set default font on all component types
         final Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
-
         for (final Object propertyKey : propertyKeys) {
-            if (propertyKey instanceof String) {
-                final String str = (String) propertyKey;
-
-                if (str.endsWith(".font")) {
-                    // set default font
-                    UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
-                } else if (str.endsWith(".background")) {
-                    // set default background color
-                    UIManager.put(propertyKey, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-                }
+            if (propertyKey instanceof String && ((String) propertyKey).endsWith(".font")) {
+                UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
             }
         }
 
@@ -159,18 +156,6 @@ public final class LookAndFeelManager {
         UIManager.put("EditorPane.background", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("Spinner.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 
-        // Buttons
-        // UIManager.put("Button.background", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-        // UIManager.put("Button.darkShadow", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-        // UIManager.put("Button.shadow", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-        // UIManager.put("Button.highlight", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-        // UIManager.put("Button.light", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-        // UIManager.put("Button.select", WidgetUtils.BG_COLOR_BLUE_DARK);
-        // UIManager.put("Button.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        // UIManager.put("Button.is3DEnabled", Boolean.FALSE);
-        // UIManager.put("Button.borderPaintsFocus", Boolean.FALSE);
-        // UIManager.put("Button.border", WidgetUtils.BORDER_BUTTON);
-
         // Input fields
         UIManager.put("TextField.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("TextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -191,7 +176,6 @@ public final class LookAndFeelManager {
         UIManager.put("ComboBox.arrowButtonBorder", BorderFactory.createEmptyBorder());
         UIManager.put("ComboBox.editorBorder", BorderFactory.createEmptyBorder());
         UIManager.put("ComboBox.selectionBackground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("ComboBoxUI", DCComboBoxUI.class.getName());
 
         // table header styling
         UIManager.put("TableHeader.background", WidgetUtils.COLOR_WELL_BACKGROUND);
@@ -221,21 +205,7 @@ public final class LookAndFeelManager {
         UIManager.put("TaskPane.borderColor", WidgetUtils.BG_COLOR_LESS_DARK);
 
         // scrollbar color
-        UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_LESS_BRIGHT);
-        UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
-        UIManager.put("ScrollBar.thumbShadow", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
-        UIManager.put("ScrollBar.thumbDarkShadow", WidgetUtils.BG_COLOR_LESS_BRIGHT);
         UIManager.put("ScrollBar.minimumThumbSize", new Dimension(30, 30));
-        UIManager.put("ScrollBar.highlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBar.shadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBar.darkShadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBar.background", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBar.foreground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBar.track", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBar.trackForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBar.trackHighlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBar.trackHighlightForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        UIManager.put("ScrollBarUI", DCScrollBarUI.class.getName());
 
         // progressbar color
         UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);

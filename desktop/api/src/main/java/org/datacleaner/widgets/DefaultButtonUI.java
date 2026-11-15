@@ -8,8 +8,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this distribution; if not, write to:
@@ -19,19 +19,18 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.Color;
 import java.awt.Cursor;
 
 import javax.swing.AbstractButton;
 import javax.swing.plaf.ButtonUI;
-import javax.swing.plaf.metal.MetalButtonUI;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 import org.datacleaner.util.WidgetUtils;
 
 /***
  * A {@link ButtonUI} for default buttons in the DataCleaner user interface.
  */
-public class DefaultButtonUI extends MetalButtonUI {
+public class DefaultButtonUI extends BasicButtonUI {
 
     private static final DefaultButtonUI INSTANCE = new DefaultButtonUI();
 
@@ -52,15 +51,4 @@ public class DefaultButtonUI extends MetalButtonUI {
         b.setBorder(WidgetUtils.BORDER_BUTTON_DEFAULT);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
-
-    @Override
-    protected Color getDisabledTextColor() {
-        return WidgetUtils.BG_COLOR_MEDIUM;
-    }
-
-    @Override
-    protected Color getSelectColor() {
-        return WidgetUtils.BG_COLOR_LESS_BRIGHT;
-    }
-
 }

@@ -8,8 +8,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+ * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this distribution; if not, write to:
@@ -19,20 +19,18 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.Color;
 import java.awt.Cursor;
 
 import javax.swing.AbstractButton;
 import javax.swing.plaf.ButtonUI;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 import org.datacleaner.util.WidgetUtils;
-
-import com.jgoodies.looks.plastic.PlasticButtonUI;
 
 /***
  * A {@link ButtonUI} for primary buttons in the DataCleaner user interface.
  */
-public class PrimaryButtonUI extends PlasticButtonUI {
+public class PrimaryButtonUI extends BasicButtonUI {
 
     private static final PrimaryButtonUI INSTANCE = new PrimaryButtonUI();
 
@@ -41,11 +39,6 @@ public class PrimaryButtonUI extends PlasticButtonUI {
 
     public static PrimaryButtonUI get() {
         return INSTANCE;
-    }
-
-    @Override
-    protected boolean is3D(final AbstractButton b) {
-        return false;
     }
 
     @Override
@@ -58,15 +51,4 @@ public class PrimaryButtonUI extends PlasticButtonUI {
         b.setBorder(WidgetUtils.BORDER_BUTTON_PRIMARY);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
-
-    @Override
-    protected Color getDisabledTextColor() {
-        return WidgetUtils.BG_COLOR_LESS_BRIGHT;
-    }
-
-    @Override
-    protected Color getSelectColor() {
-        return WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_BLUE_DARK);
-    }
-
 }
